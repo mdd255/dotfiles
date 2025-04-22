@@ -1,0 +1,19 @@
+configuration {
+	modi:                "window,run,drun";
+	font:                "FiraCode Nerd Font Mono 12";
+	show-icons:          false;
+	terminal:            "kitty";
+	matching:            "fuzzy";
+	sort:                true;
+	case-sensitive:      false;
+	sorting-method:      "fzf";
+	kb-primary-paste:    "Alt+v";
+	kb-mode-next:        "Ctrl+i,Alt+i";
+	kb-mode-previous:    "Ctrl+h,Alt+h";
+	kb-row-up:           "Ctrl+e,Alt+e";
+	kb-row-down:         "Ctrl+n,Alt+n";
+	kb-remove-char-back: "BackSpace";
+	kb-move-end: "";
+}
+
+@theme "./theme.rasi"

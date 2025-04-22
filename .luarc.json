@@ -1,0 +1,10 @@
+{
+    "diagnostics.globals": [
+        "vim",
+        "ngx"
+    ],
+    "runtime.version": "LuaJIT",
+    "workspace.library": [
+        "${3rd}/OpenResty/library"
+    ]
+}

@@ -1,0 +1,64 @@
+{
+   "Vsnip": {
+      "prefix": ["snip", "sn"],
+      "body": [
+         "\"$1\": {",
+         "\t\"prefix\": [\"$2\"],",
+         "\t\"body\": \"$3\"",
+         "}"
+      ]
+   },
+   "$lt": {
+      "prefix": ["lt"],
+      "body": "< "
+   },
+   "$lte": {
+      "prefix": ["le"],
+      "body": "<= "
+   },
+   "$gt": {
+      "prefix": ["gt"],
+      "body": "> "
+   },
+   "$gte": {
+      "prefix": ["ge"],
+      "body": ">= "
+   },
+   "$eq": {
+      "prefix": ["eq"],
+      "body": "== "
+   },
+   "$ne": {
+      "prefix": ["ne"],
+      "body": "!= "
+   },
+   "$or": {
+      "prefix": ["or"],
+      "body": "|| "
+   },
+   "$and": {
+      "prefix": ["an"],
+      "body": "&& "
+   },
+   "true": {
+      "prefix": [".t"],
+      "body": "true"
+   },
+   "false": {
+      "prefix": [".f"],
+      "body": "false"
+   },
+   ".editorconfig": {
+      "prefix": ["ecf"],
+      "body": [
+         "root = true",
+         "",
+         "[*]",
+         "end_of_line = lf",
+         "insert_final_newline = false",
+         "charset = utf-8",
+         "indent_size = 3",
+         "indent_style = space"
+      ]
+   }
+}

@@ -1,0 +1,107 @@
+# nav aliases
+alias ".."="cd .."
+alias "..."="cd ../.."
+alias "/"="cd"
+alias "?"="alias | fzf --preview=''"
+alias "h"="history | fzf --preview=''"
+
+# applications
+alias vi="nvim $@"
+alias lg="lazygit $@"
+alias ls="eza --long"
+alias top="btop $@"
+alias wifi="nmcli dev wifi $@"
+
+# git aliases
+alias gst="git status"
+alias gbr="git branch"
+alias gb="gbr -a | fzf --no-preview"
+alias gad="git add ."
+alias ga="git add $@"
+alias gco="git commit"
+alias gpu="git push $@"
+alias gpl="git pull"
+alias gdi="git diff $@"
+alias glo="git log"
+alias gbl="git blame"
+alias gck="git checkout $@"
+alias gsi="git stash"
+alias gso="git stash pop"
+alias gsc="git stash drop"
+alias gcp="git cherry-pick $@"
+alias gcc="git cherry-pick --abort"
+alias grb="git rebase -i HEAD~$@"
+
+# docker aliases
+alias dp="docker ps -a | docker-color-output"
+alias dP="docker ps | docker-color-output"
+alias dl="docker logs -f $@"
+alias dL="docker logs $@"
+alias dpl="docker pull $@"
+alias db="docker build"
+alias drm="docker rm $@"
+alias dr="docker run $@"
+alias dx="docker exec -it $@"
+alias dS="docker stop $@"
+alias ds="docker start $@"
+alias dR="docker restart $@"
+
+# docker image aliases
+alias di="docker images | docker-color-output"
+alias dri="docker rmi $@"
+
+# docker compose aliases
+alias dc="docker compose ps -a | docker-color-output"
+alias dcu="docker compose up --build"
+alias dcb="docker compose build $@"
+alias dcd="docker compose down $@"
+
+# docker volume aliases
+alias dvl="docker volume ls $@"
+alias dvp="docker volume prune $@"
+
+# fan aliases
+alias fan="sudo bash ~/.config/qtile/.init-scripts/fan-speed.sh"
+
+# pipenv aliases
+alias pir="pipenv run $@"
+alias pii="pipenv install $@"
+alias piu="pipenv uninstall $@"
+
+# git add | commit | pull | push all in one
+function git_ultimate {
+   lint_result=$(echo "$*" | commitlint | grep ✖)
+
+   if [[ -z $lint_result ]] then
+      git add .
+      git commit -m "$*"
+      git pull
+      git push
+   else
+      echo "commit msg not valid:"
+      echo $lint_result
+   fi
+}
+
+alias ggu="noglob git_ultimate"
+
+function git_ultimate_v2 {
+  git add .
+  git restore --staged src/main.ts src/common/interceptors/current-user.interceptor.ts src/modules/prisma/prisma.service.ts
+  git commit -n -m "$*"
+  git push
+}
+
+alias gu="noglob git_ultimate_v2"
+
+# zipped file aliases
+function ztac {
+   zcat $1 | tac
+}
+
+alias ztail="zcat $1 | tail"
+alias zhead="zcat $1 | head"
+
+# misc
+alias ks="kitty +kitten ssh"
+alias psn="sudo pacman -Suy --noconfirm ; yay --noconfirm ; cd /home/$(whoami)/.config/dotfiles ; ggu \"feat: automate commit\" ; cd ~ ; omz update"

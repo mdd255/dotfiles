@@ -1,0 +1,60 @@
+{
+   "shebang": {
+      "prefix": ["sb"],
+      "body": "#!/usr/bin/node\n\n"
+   },
+   "require_common": {
+      "prefix": ["re"],
+      "body": "const $2 = require('$1')"
+   },
+   "require_module": {
+      "prefix": ["rem"],
+      "body": "const $1 = require('$1')"
+   },
+   "require_partial": {
+      "prefix": ["rep"],
+      "body": "const { $2 } = require('$1')"
+   },
+   "async_function": {
+      "prefix": ["afn"],
+      "body": [
+         "async function $1($2) {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "let": {
+      "prefix": ["let"],
+      "body": "let $1 = $3"
+   },
+   "const": {
+      "prefix": ["con"],
+      "body": "const $1 = $3"
+   },
+   "function": {
+      "prefix": ["fn"],
+      "body": [
+         "function $1($2) {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "arrow_function_compact": {
+      "prefix": ["af"],
+      "body": [
+         "($1) => $2"
+      ]
+   },
+   "arrow_function_full": {
+      "prefix": ["aff"],
+      "body": [
+         "($1) => {",
+         "\t$2",
+         "}"
+      ]
+   },
+   "module.exports": {
+      "prefix": ["me"],
+      "body": "module.exports = { $1 }"
+   }
+}

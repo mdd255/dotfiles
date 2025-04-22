@@ -1,0 +1,150 @@
+#!/bin/sh
+
+# sys envs
+export LANG=en_US.UTF-8
+export LC_ALL="en_US.UTF-8"
+export ARCHFLAGS="-arch x86_64"
+export EDITOR=nvim
+export VISUAL=nvim
+export BROWSER=/usr/bin/brave
+
+# docker
+export DOCKER_BUILDKIT=1
+
+# node
+export NODE_OPTIONS=--max-old-space-size=8192
+
+# ibus envs
+export GTK_IM_MODULE=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
+
+# go envs
+export GOPATH=$HOME/go
+
+# bat envs
+export BAT_THEME="Dracula"
+
+# fzf envs
+export FZF_DEFAULT_OPTS="--preview-window 'right:50%' \
+  --layout reverse \
+  --with-nth=-1 \
+  --margin=1,4 \
+  --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+
+export FZF_DEFAULT_COMMAND='ag -g "" \
+  --hidden --ignore-case \
+  --skip-vcs-ignores \
+  --ignore ".git/*" \
+  --ignore "build/*" \
+  --ignore ".gk/*" \
+  --ignore ".pyenv/*" \
+  --ignore ".ssh/*" \
+  --ignore ".biome/*" \
+  --ignore "yay/*" \
+  --ignore ".electron-gyp/*" \
+  --ignore ".swt/*" \
+  --ignore ".password-store/*" \
+  --ignore ".screenlayout/*" \
+  --ignore ".aws/*" \
+  --ignore ".yarn/*" \
+  --ignore ".vim/*" \
+  --ignore "package-lock.json" \
+  --ignore ".idea/*" \
+  --ignore ".eclipse/*" \
+  --ignore "skypeforlinux/*" \
+  --ignore "MongoDB Compass/*" \
+  --ignore "libreoffice/*" \
+  --ignore "Postman/*" \
+  --ignore ".npm/*" \
+  --ignore "virtualenvs/*" \
+  --ignore "BraveSoftware" \
+  --ignore ".gem" \
+  --ignore ".mypy_cache/*" \
+  --ignore "node_modules/*" \
+  --ignore ".oh-my-zsh/plugins" \
+  --ignore ".memestra/*" \
+  --ignore "node_modules/*"'
+
+export FZF_CONTROL_T_COMMAND='fd . $HOME'
+export FZF_ALT_C_COMMAND='fdfind -t d . $HOME'
+
+# zsh envs
+export ZSH=$HOME/.oh-my-zsh
+
+# cargo envs
+case ":${PATH}:" in
+   *:"$HOME/.cargo/bin":*)
+      ;;
+   *)
+      export PATH="$HOME/.cargo/bin:$PATH"
+      ;;
+esac
+
+# pip envs
+case ":${PATH}:" in
+   *:"$HOME/.local/bin":*)
+      ;;
+   *)
+      export PATH="$HOME/.local/bin:$PATH"
+      ;;
+esac
+
+# bun envs
+case ":${PATH}:" in
+   *:"$HOME/.bun":*)
+      ;;
+   *)
+      export BUN_INSTALL="$HOME/.bun"
+      export PATH="$BUN_INSTALL/bin:$PATH"
+      ;;
+esac
+
+# pnpm envs
+case ":${PATH}:" in
+   *:"$HOME/.local/share/pnpm":*)
+      ;;
+   *)
+      export PNPM_HOME="$HOME/.local/share/pnpm"
+      export PATH="$PNPM_HOME:$PATH"
+      ;;
+esac
+
+# fnm envs
+case ":${PATH}:" in
+   *:"$HOME/.fnm":*)
+      ;;
+   *)
+      export PATH=~/.local/share/fnm:$PATH
+      eval "`fnm --version-file-strategy=recursive --log-level=quiet env --use-on-cd`"
+      ;;
+esac
+
+# yarn envs
+case ":${PATH}:" in
+   *:"$HOME/.yarn/bin":*)
+      ;;
+   *)
+      export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+      ;;
+esac
+
+# go envs
+case ":${PATH}:" in
+   *:"$HOME/go/bin":*)
+      ;;
+   *)
+      export PATH="$HOME/go/bin:$PATH"
+      ;;
+esac
+
+# pyenv
+case ":${PATH}:" in
+   *:"$HOME/.pyenv/bin":*)
+      ;;
+   *)
+      export PATH="$HOME/.pyenv/bin:$PATH"
+      eval "$(pyenv init -)"
+      eval "$(pyenv virtualenv-init -)"
+      ;;
+esac

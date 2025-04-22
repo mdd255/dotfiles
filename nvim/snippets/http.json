@@ -1,0 +1,60 @@
+{
+   "API.get": {
+      "prefix": ["ge"],
+      "body": [
+         "# $1",
+         "GET ${2:localhost}:$3",
+         ""
+      ]
+   },
+   "API.post": {
+      "prefix": ["po"],
+      "body": [
+         "# $1",
+         "POST ${2:localhost}:$3",
+         ""
+      ]
+   },
+   "API.put": {
+      "prefix": ["pu"],
+      "body": [
+         "# $1",
+         "PUT ${2:localhost}:$3",
+         ""
+      ]
+   },
+   "API.patch": {
+      "prefix": ["pa"],
+      "body": [
+         "# $1",
+         "PATCH ${2:localhost}:$3",
+         ""
+      ]
+   },
+   "API.delete": {
+      "prefix": ["de"],
+      "body": [
+         "# $1",
+         "DELETE ${2:localhost}:$3",
+         ""
+      ]
+   },
+   "environment_variable": {
+      "prefix": ["ev"],
+      "body": "{{$1}}"
+   },
+   "Content-Type: application/json": {
+      "prefix": ["bd"],
+      "body": [
+         "Content-Type: application/json",
+         "",
+         "{",
+         "\t\"$1\": \"$2\"",
+         "}"
+      ]
+   },
+   "JSON key-value": {
+      "prefix": ["kv"],
+      "body" :"\"$1\": \"$2\""
+   }
+}

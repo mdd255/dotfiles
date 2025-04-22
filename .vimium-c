@@ -1,0 +1,26 @@
+mapKey n j
+mapKey e k
+mapKey i l
+mapKey q x
+mapKey m d
+mapKey M u
+unmap >>
+unmap <<
+
+map fb Vomnibar.activateBookmarks
+map ft Vomnibar.activateTabs
+map fh Vomnibar.activateHistory
+map fw LinkHints.activateFocus
+map ff LinkHints.activate
+map <c-space> LinkHints.activate
+map fs LinkHints.activateSelect
+
+map yt LinkHints.activateCopyLinkText
+map yf LinkHints.activateCopyLinkUrl
+
+map z LinkHints.activateOpenVomnibar
+map T duplicateTab
+map <c-space:i> LinkHints.activate
+map a Vomnibar.activateEditUrl
+map > moveTabRight
+map < moveTabLeft

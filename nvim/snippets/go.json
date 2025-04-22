@@ -1,0 +1,129 @@
+{
+   "shebang": {
+      "prefix": ["sb"],
+      "body": "#!/usr/bin/go\n\n"
+   },
+   "init_main": {
+      "prefix": ["init"],
+      "body": [
+         "package main",
+         "",
+         "func main() {",
+         "   $1",
+         "}"
+      ]
+   },
+   "range": {
+      "prefix": ["ran"],
+      "body": [
+         "for ${1:i}, ${2:val} := range(${3:arr}) {",
+         "   $4",
+         "}",
+         "$0"
+      ]
+   },
+   "slim_print": {
+      "prefix": ["cl"],
+      "body": "fmt.Println($0)"
+   },
+   "pretty_print": {
+      "prefix": ["co"],
+      "body": "fmt.Println(\"$1$2\", $1)"
+   },
+   "var": {
+      "prefix": ["va"],
+      "body": "var $1 $2 = $3"
+   },
+   "array": {
+      "prefix": ["ar"],
+      "body": "var ${1:name} = []${2:type}{${3:...values}}"
+   },
+   "var_uint8": {
+      "prefix": [".u"],
+      "body": "var $1 uint8 = $2"
+   },
+   "var_uint16": {
+      "prefix": [".uu"],
+      "body": "var $1 uint16 = $2"
+   },
+   "var_uint32": {
+      "prefix": [".2u", ".uuu"],
+      "body": "var $1 uint32 = $2"
+   },
+   "var_uint64": {
+      "prefix": [".3u"],
+      "body": "var $1 uint64 = $2"
+   },
+   "var_int8": {
+      "prefix": [".i"],
+      "body": "var $1 int8 = $2"
+   },
+   "var_int16": {
+      "prefix": [".ii"],
+      "body": "var $1 int16 = $2"
+   },
+   "var_int32": {
+      "prefix": [".2i", ".iii"],
+      "body": "var $1 int32 = $2"
+   },
+   "var_int64": {
+      "prefix": [".3i"],
+      "body": "var $1 int64 = $2"
+   },
+   "var_float32": {
+      "prefix": [".f"],
+      "body": "var $1 float32 = $2"
+   },
+   "var_float64": {
+      "prefix": [".ff"],
+      "body": "var $1 float64 = $2"
+   },
+   "var_bool": {
+      "prefix": [".b"],
+      "body": "var $1 bool = $2"
+   },
+   "var_str": {
+      "prefix": [".b"],
+      "body": "var $1 string = \"$2\""
+   },
+   "int8": {
+      "prefix": ["i"],
+      "body": "int8"
+   },
+   "int16": {
+      "prefix": ["ii"],
+      "body": "int16"
+   },
+   "int32": {
+      "prefix": ["2i", "iii"],
+      "body": "int32"
+   },
+   "int64": {
+      "prefix": ["3i"],
+      "body": "int64"
+   },
+   "uint8": {
+      "prefix": ["u"],
+      "body": "int8"
+   },
+   "uint16": {
+      "prefix": ["2u"],
+      "body": "int16"
+   },
+   "uint32": {
+      "prefix": ["3u"],
+      "body": "int32"
+   },
+   "uint64": {
+      "prefix": ["4u"],
+      "body": "int64"
+   },
+   "float32": {
+      "prefix": ["f"],
+      "body": "float32"
+   },
+   "float64": {
+      "prefix": ["ff"],
+      "body": "float64"
+   }
+}

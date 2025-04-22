@@ -1,0 +1,116 @@
+install:
+		make clean.pre
+		make install.deps
+		make links
+		make install.zsh
+		make install.qtile
+		make clean.post
+
+clean.pre:
+	sudo ln -fs ~/.config/dotfiles/10-disable-touch.conf /etc/X11/xorg.conf.d/10-disable-touch.conf
+	sudo ln -fs ~/.config/dotfiles/20-keyboard-layout.conf /etc/X11/xorg.conf.d/20-keyboard-layout.conf
+	sudo ln -fs ~/.config/dotfiles/30-touchpad-touch.conf /etc/X11/xorg.conf.d/30-touchpad-touch.conf
+
+clean.post:
+	rm -rf ~/.config/qtile/qtile
+	rm -rf ~/.config/zsh/zsh
+	rm -rf ~/.config/rofi/rofi
+
+install.zsh:
+	rm -rf ~/.oh-my-zsh
+	rm -f ~/.zshrc
+	sudo pacman -S --noconfirm zsh
+	curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
+	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k
+	sudo ln -sf ~/.config/dotfiles/zsh/.zshrc ~/.zshrc
+	mkdir -p ~/.cargo
+	sudo ln -sf ~/.config/dotfiles/zsh/.zshenv ~/.cargo/env
+	sudo ln -sf ~/.config/dotfiles/zsh/.p10k.zsh ~/.p10k.zsh
+
+install.deps:
+	make deps.misc
+	make deps.fnm
+	make deps.dco
+	make deps.screenshot
+	make deps.media
+	make deps.docker
+
+deps.fnm:
+	rm -rf ~/.fnm
+	rm -rf ~/.local/share/fnm
+	sudo pacman -S --noconfirm unzip
+	curl -fsSL https://fnm.vercel.app/install | bash
+	source ~/.bashrc
+	fnm install 20
+	npm i -g @commitlint/{cli,config-conventional}
+	echo "module.exports = {extends: ['@commitlint/config-conventional']}" > ~/commitlint.config.js
+
+deps.dco:
+	mkdir -p ~/Apps
+	rm -rf ~/Apps/docker-color-output
+	git clone https://github.com/devemio/docker-color-output.git ~/Apps/docker-color-output
+	make build -C ~/Apps/docker-color-output
+	sudo ln -fs ~/Apps/docker-color-output/bin/docker-color-output /usr/bin/docker-color-output
+
+deps.screenshot:
+	sudo pacman -S --noconfirm maim python-pip
+	sudo ln -fs ${HOME}/.config/qtile/.init-scripts/screenshot.sh /usr/bin/screenshot
+	sudo ln -fs ${HOME}/.config/qtile/.init-scripts/screenshot-all.sh /usr/bin/screenshot-all
+
+deps.media:
+	sudo pacman -S --noconfirm pavucontrol bluez bluez-utils blueman 
+	sudo systemctl enable bluetooth.service
+	sudo systemctl restart bluetooth.service
+
+deps.misc:
+	sudo pacman -S --noconfirm xclip git-delta eza jq postgresql-libs
+	sudo pacman -S --noconfirm btop xfce4-power-manager ibus vscode go xorg-xev zip
+	sudo pacman -S --noconfirm fzf fd the_silver_searcher ripgrep bat dunst ttf-firacode-nerd
+	yay -S --noconfirm xbanish wezterm pyenv python-virtualenv
+
+deps.docker:
+	sudo pacman -S --noconfirm docker docker-compose
+	sudo systemctl enable docker.service
+	sudo systemctl enable containerd.service
+	sudo systemctl restart docker.service
+	sudo systemctl restart containerd.service
+	sudo groupadd -f docker
+	sudo usermod -aG docker dh
+
+install.qtile:
+	make qtile.deps
+
+qtile.deps:
+	sudo pacman -S --noconfirm rofi qtile python-iwlib python-psutil 
+	sudo rm -rf ~/.config/qtile
+
+install.nvim:
+	make nvim.packer
+	make nvim.coc
+	make nvim.deps
+
+nvim.coc:
+	sudo pacman -S --noconfirm python-black python-jedi python-pylint python-rope
+	npm i -g graphql-language-service-cli sql-language-server
+
+nvim.deps:
+	sudo pacman -S --noconfirm deno neovim ruby python-pynvim
+	sudo ln -fs ~/.local/share/gem/ruby/3.0.0/bin/neovim-ruby-host /usr/bin/neovim-ruby-host
+	sudo ln -fs /usr/bin/nvim /usr/bin/vi
+
+links:
+	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
+	sudo ln -fs ~/.config/dotfiles/zsh ~/.config/zsh
+	sudo ln -fs ~/.config/dotfiles/xmodmap ~/.config/xmodmap
+	sudo ln -fs ~/.config/dotfiles/nvim ~/.config/nvim
+	sudo ln -fs ~/.config/dotfiles/qtile ~/.config/qtile
+	sudo ln -fs ~/.config/dotfiles/rofi ~/.config/rofi
+	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
+	sudo ln -fs ~/.config/dotfiles/Code/User/settings.json ~/.config/Code/User/settings.json
+	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
+	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets
+	sudo ln -fs ~/.config/dotfiles/us /usr/share/X11/xkb/symbols/us
+	sudo ln -fs ~/.config/dotfiles/karabiner.json ~/.config/karabiner/karabiner.json
+	sudo ln -fs ~/.config/dotfiles/Code/vscode-nvim ~/.config/nvim

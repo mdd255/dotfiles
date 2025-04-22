@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+import subprocess
+
+cmd = subprocess.run('setxkbmap -query', shell=True,capture_output=True,text=True)
+variant='colemak'
+
+if variant in cmd.stdout:
+    variant='intl'
+
+subprocess.Popen(['setxkbmap', '-variant', variant])

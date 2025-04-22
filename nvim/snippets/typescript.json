@@ -1,0 +1,176 @@
+{
+   "$or": {
+      "prefix": ["or"],
+      "body": "|| "
+   },
+   "$and": {
+      "prefix": ["an"],
+      "body": "&& "
+   },
+   "import_module": {
+      "prefix": ["rem"],
+      "body": "import $1 from '$1'"
+   },
+   "import_partial": {
+      "prefix": ["rep"],
+      "body": "import { $2 } from '$1'"
+   },
+   "function": {
+      "prefix": ["fn"],
+      "body": [
+         "function $1(): $2 {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "async_function": {
+      "prefix": ["afn"],
+      "body": [
+         "async function $1(): $2 {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "arrow_function_compact": {
+      "prefix": ["af"],
+      "body": [
+         "($1): $2 => $3"
+      ]
+   },
+   "arrow_function_full": {
+      "prefix": ["aff"],
+      "body": [
+         "($1): $2 => {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "console.log": {
+      "prefix": ["cl"],
+      "body": "console.log($1)"
+   },
+   "console.log_object": {
+      "prefix": ["co"],
+      "body": "console.log({ $1 })"
+   },
+   "JSON.stringify": {
+      "prefix": ["js"],
+      "body": "JSON.stringify($1)"
+   },
+   "JSON.stringify(pretty)": {
+      "prefix": ["jsp"],
+      "body": "JSON.stringify($1, null, 3)"
+   },
+   "JSON.parse": {
+      "prefix": ["jp"],
+      "body": "JSON.parse($1)"
+   },
+   "Object.keys": {
+      "prefix": ["obk"],
+      "body": "Object.keys($1)"
+   },
+   "Object.values": {
+      "prefix": ["obv"],
+      "body": "Object.values($1)"
+   },
+   "$eq": {
+      "prefix": ["eq"],
+      "body": "=== "
+   },
+   "$ne": {
+      "prefix": ["ne"],
+      "body": "!== "
+   },
+   "new_Date": {
+      "prefix": ["nd"],
+      "body": "new Date($1)"
+   },
+   "let": {
+      "prefix": ["let"],
+      "body": "let $1: $2 = $3"
+   },
+   "const": {
+      "prefix": ["con"],
+      "body": "const $1: $2 = $3"
+   },
+   "Date.now": {
+      "prefix": ["dn"],
+      "body": "Date.now()"
+   },
+   "typeStringObject": {
+      "prefix": ["tS"],
+      "body": "String"
+   },
+   "typeNumberObject": {
+      "prefix": ["tN"],
+      "body": "Number"
+   },
+   "typeBooleanObject": {
+      "prefix": ["tB"],
+      "body": "Boolean"
+   },
+   "typeString": {
+      "prefix": ["ts"],
+      "body": "string"
+   },
+   "typeNumber": {
+      "prefix": ["tn"],
+      "body": "number"
+   },
+   "typeBoolean": {
+      "prefix": ["tb"],
+      "body": "boolean"
+   },
+   "typeVoid": {
+      "prefix": ["tv"],
+      "body": "void"
+   },
+   "typePromise": {
+      "prefix": ["tp"],
+      "body": "Promise"
+   },
+   "parseInt": {
+      "prefix": ["pi"],
+      "body": "parseInt($1, 10)"
+   },
+   "parseFloat": {
+      "prefix": ["pf"],
+      "body": "parseFloat($1)"
+   },
+   "parseBoolean": {
+      "prefix": ["pb"],
+      "body": "Boolean($1)"
+   },
+   "parseNmber": {
+      "prefix": ["pn"],
+      "body": "Number($1)"
+   },
+   "parseStr": {
+      "prefix": ["ps"],
+      "body": "String($1)"
+   },
+   "process.env": {
+      "prefix": ["pe"],
+      "body": "process.env."
+   },
+   "destructuringObj": {
+      "prefix": ["dso"],
+      "body": "const { $2 } = $1"
+   },
+   "destructuringArr": {
+      "prefix": ["dsa"],
+      "body": "const [$2] = $1"
+   },
+   "process.env.number": {
+      "prefix": ["pen"],
+      "body": "Number(process.env.$1 || '${2:unknown}')"
+   },
+   "process.env.array": {
+      "prefix": ["pea"],
+      "body": "process.env.$1 || '${2:[]}'"
+   },
+   "process.env.string": {
+      "prefix": ["pes"],
+      "body": "process.env.$1 || '${2:unknown}'"
+   }
+}

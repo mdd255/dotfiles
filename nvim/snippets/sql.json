@@ -1,0 +1,357 @@
+{
+   "add": {
+      "prefix": [
+         "ADD"
+      ],
+      "body": "ADD "
+   },
+   "constraint": {
+      "prefix": [
+         "CONSTRAINT"
+      ],
+      "body": "CONSTRAINT "
+   },
+   "alter": {
+      "prefix": [
+         "ALTER"
+      ],
+      "body": "ALTER "
+   },
+   "column": {
+      "prefix": [
+         "COLUMN"
+      ],
+      "body": "COLUMN "
+   },
+   "table": {
+      "prefix": [
+         "TABLE"
+      ],
+      "body": "TABLE "
+   },
+   "all": {
+      "prefix": [
+         "ALL"
+      ],
+      "body": "ALL "
+   },
+   "and": {
+      "prefix": [
+         "AND"
+      ],
+      "body": "AND "
+   },
+   "any": {
+      "prefix": [
+         "ANY"
+      ],
+      "body": "ANY "
+   },
+   "as": {
+      "prefix": [
+         "AS"
+      ],
+      "body": "AS "
+   },
+   "asc": {
+      "prefix": [
+         "ASC"
+      ],
+      "body": "ASC "
+   },
+   "backup": {
+      "prefix": [
+         "BACKUP"
+      ],
+      "body": "BACKUP "
+   },
+   "database": {
+      "prefix": [
+         "DATABASE"
+      ],
+      "body": "DATABASE "
+   },
+   "between": {
+      "prefix": [
+         "BETWEEN"
+      ],
+      "body": "BETWEEN "
+   },
+   "case": {
+      "prefix": [
+         "CASE"
+      ],
+      "body": "CASE "
+   },
+   "check": {
+      "prefix": [
+         "CHECK"
+      ],
+      "body": "CHECK "
+   },
+   "create": {
+      "prefix": [
+         "CREATE"
+      ],
+      "body": "CREATE "
+   },
+   "index": {
+      "prefix": [
+         "INDEX"
+      ],
+      "body": "INDEX "
+   },
+   "or": {
+      "prefix": [
+         "OR"
+      ],
+      "body": "OR "
+   },
+   "replace": {
+      "prefix": [
+         "REPLACE"
+      ],
+      "body": "REPLACE "
+   },
+   "view": {
+      "prefix": [
+         "VIEW"
+      ],
+      "body": "VIEW "
+   },
+   "procedure": {
+      "prefix": [
+         "PROCEDURE"
+      ],
+      "body": "PROCEDURE "
+   },
+   "unique": {
+      "prefix": [
+         "UNIQUE"
+      ],
+      "body": "UNIQUE "
+   },
+   "default": {
+      "prefix": [
+         "DEFAULT"
+      ],
+      "body": "DEFAULT "
+   },
+   "drop": {
+      "prefix": [
+         "DROP"
+      ],
+      "body": "DROP "
+   },
+   "exec": {
+      "prefix": [
+         "EXEC"
+      ],
+      "body": "EXEC "
+   },
+   "exists": {
+      "prefix": [
+         "EXISTS"
+      ],
+      "body": "EXISTS "
+   },
+   "key": {
+      "prefix": [
+         "KEY"
+      ],
+      "body": "KEY "
+   },
+   "foreign": {
+      "prefix": [
+         "FOREIGN"
+      ],
+      "body": "FOREIGN "
+   },
+   "from": {
+      "prefix": [
+         "FROM"
+      ],
+      "body": "FROM "
+   },
+   "full": {
+      "prefix": [
+         "FULL"
+      ],
+      "body": "FULL "
+   },
+   "outer": {
+      "prefix": [
+         "OUTER"
+      ],
+      "body": "OUTER "
+   },
+   "join": {
+      "prefix": [
+         "JOIN"
+      ],
+      "body": "JOIN "
+   },
+   "group": {
+      "prefix": [
+         "GROUP"
+      ],
+      "body": "GROUP "
+   },
+   "by": {
+      "prefix": [
+         "BY"
+      ],
+      "body": "BY "
+   },
+   "having": {
+      "prefix": [
+         "HAVING"
+      ],
+      "body": "HAVING "
+   },
+   "in": {
+      "prefix": [
+         "IN"
+      ],
+      "body": "IN "
+   },
+   "inner": {
+      "prefix": [
+         "INNER"
+      ],
+      "body": "INNER "
+   },
+   "into": {
+      "prefix": [
+         "INTO"
+      ],
+      "body": "INTO "
+   },
+   "is": {
+      "prefix": [
+         "IS"
+      ],
+      "body": "IS "
+   },
+   "null": {
+      "prefix": [
+         "NULL"
+      ],
+      "body": "NULL "
+   },
+   "not": {
+      "prefix": [
+         "NOT"
+      ],
+      "body": "NOT "
+   },
+   "left": {
+      "prefix": [
+         "LEFT"
+      ],
+      "body": "LEFT "
+   },
+   "like": {
+      "prefix": [
+         "LIKE"
+      ],
+      "body": "LIKE "
+   },
+   "limit": {
+      "prefix": [
+         "LIMIT"
+      ],
+      "body": "LIMIT "
+   },
+   "order": {
+      "prefix": [
+         "ORDER"
+      ],
+      "body": "ORDER "
+   },
+   "primary": {
+      "prefix": [
+         "PRIMARY"
+      ],
+      "body": "PRIMARY "
+   },
+   "right": {
+      "prefix": [
+         "RIGHT"
+      ],
+      "body": "RIGHT "
+   },
+   "rownum": {
+      "prefix": [
+         "ROWNUM"
+      ],
+      "body": "ROWNUM "
+   },
+   "distinct": {
+      "prefix": [
+         "DISTINCT"
+      ],
+      "body": "DISTINCT "
+   },
+   "top": {
+      "prefix": [
+         "TOP"
+      ],
+      "body": "TOP "
+   },
+   "truncate": {
+      "prefix": [
+         "TRUNCATE"
+      ],
+      "body": "TRUNCATE "
+   },
+   "update": {
+      "prefix": [
+         "UPDATE"
+      ],
+      "body": "UPDATE "
+   },
+   "values": {
+      "prefix": [
+         "VALUES"
+      ],
+      "body": "VALUES "
+   },
+   "where": {
+      "prefix": [
+         "WHERE"
+      ],
+      "body": "WHERE "
+   },
+   "min": {
+      "prefix": [
+         "MIN"
+      ],
+      "body": "MIN "
+   },
+   "max": {
+      "prefix": [
+         "MAX"
+      ],
+      "body": "MAX "
+   },
+   "avg": {
+      "prefix": [
+         "AVG"
+      ],
+      "body": "AVG "
+   },
+   "count": {
+      "prefix": [
+         "COUNT"
+      ],
+      "body": "COUNT "
+   },
+   "select": {
+      "prefix": [
+         "SELECT"
+      ],
+      "body": "SELECT "
+   }
+}
+

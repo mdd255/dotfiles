@@ -1,0 +1,209 @@
+{
+	"middle_click_paste": false,
+	"base_keymap": "VSCode",
+	"theme": "One Dark Pro",
+	"vim_mode": true,
+	"ui_font_size": 16,
+	"buffer_font_size": 15.5,
+	"buffer_font_family": "FiraCode Nerd Font Mono",
+	"ui_font_family": "FiraCode Nerd Font Mono",
+	"autosave": "on_window_change",
+	"cursor_blink": false,
+	"hover_popover_enabled": false,
+	"always_treat_brackets_as_autoclosed": true,
+	"private_files": [".env"],
+	"expand_excerpt_lines": 3,
+	"current_line_highlight": "gutter",
+	"pane_split_direction_horizontal": "down",
+	"pane_split_direction_vertical": "right",
+	"auto_signature_help": false,
+	"preview_tabs": {
+		"enabled": true,
+		"enable_preview_from_code_navigation": true,
+		"enable_preview_from_file_finder": true
+	},
+	"code_actions_on_format": {
+		"source.fixAll.biome": true,
+		"source.orgranizeImports.biome": true
+	},
+	"scrollbar": {
+		"show": "auto",
+		"cursors": false,
+		"selected_symbol": false
+	},
+	"assistant": {
+		"button": false,
+		"default_model": {
+			"provider": "copilot_chat",
+			"model": "gpt-4"
+		},
+		"dock": "right",
+		"version": "2"
+	},
+	"outline_panel": {
+		"button": false,
+		"dock": "right"
+	},
+	"collaboration_panel": {
+		"button": false,
+		"dock": "right"
+	},
+	"notification_panel": {
+		"button": false
+	},
+	"chat_panel": {
+		"button": false
+	},
+	"terminal": {
+		"blinking": "off",
+		"button": false,
+		"dock": "right",
+		"copy_on_select": true,
+		"toolbar": {
+			"title": false
+		}
+	},
+	"gutter": {
+		"line_numbers": true,
+		"code_actions": false,
+		"runnables": false,
+		"folds": false
+	},
+	"telemetry": {
+		"metrics": false,
+		"diagnostics": false
+	},
+	"tab_bar": {
+		"show": true,
+		"show_nav_history_buttons": false
+	},
+	"toolbar": {
+		"breadcrumbs": true,
+		"quick_actions": false,
+		"selections_menu": false
+	},
+	"indent_guides": {
+		"enabled": true,
+		"coloring": "indent_aware"
+	},
+	"inlay_hints": {
+		"enabled": false,
+		"show_type_hints": false,
+		"show_parameter_hints": true,
+		"show_other_hints": true,
+		"edit_debounce_ms": 700,
+		"scroll_debounce_ms": 50,
+		"telemetry": {
+			"diagnostics": false,
+			"metrics": false
+		}
+	},
+	"inline_completions": {
+		"disabled_globs": []
+	},
+	"project_panel": {
+		"button": false,
+		"default_width": 250
+	},
+	"relative_line_numbers": true,
+	"tabs": {
+		"git_status": true,
+		"file_icons": false
+	},
+	"vim:": {
+		"highlight_on_yank_duration": 100,
+		"use_smartcase_find": true,
+		"use_multiline_find": true,
+		"use_system_clipboard": true,
+		"toggle_relative_line_numbers": true
+	},
+	"file_finder": {
+		"file_icons": false,
+		"modal_max_width": "medium"
+	},
+	"tab_size": 2,
+	"file_types": {
+		"Shell Script": ["env", ".sh"]
+	},
+	"languages": {
+		"TypeScript": {
+			"language_servers": [
+				"vtsls",
+				"biome",
+				"!eslint",
+				"!typescript-language-server"
+			]
+		}
+	},
+	"lsp": {
+		"pyright": {
+			"python": {
+				"pythonPath": ""
+			}
+		},
+		"vtsls": {
+			"settings": {
+				"typescript": {
+					"experimental": {
+						"entriesLimit": 10
+					},
+					"suggest": {
+						"autoImports": true
+					},
+					"tsserver": {
+						"nodePath": "~/.local/share/zed/node/node-v21.6.2-linux-x64-pointer-compression/bin/node",
+						"maxTsServerMemory": 10000,
+						"logVerbosity": "off"
+					},
+					"preferences": {
+						"includeCompletionsForModuleExports": true,
+						"autoImportFileExcludePatterns": ["dist/*", "src/@generated/*"]
+					}
+				}
+			}
+		}
+	},
+	"experimental.theme_overrides": {
+		"editor.document_highlight.bracket_background": "#252525",
+		"editor.active_line.background": "#252525",
+		"editor.background": "#0e0e0e",
+		"background": "#0e0e0e",
+		"panel.background": "#0e0e0e",
+		"editor.gutter.background": "#0e0e0e",
+		"toolbar.background": "#0e0e0e",
+		"status_bar.background": "#0e0e0e",
+		"search.match_background": "#0c3c6c",
+		"tab_bar.background": "#0e0e0e",
+		"tab.active_background": "#303030",
+		"tab.inactive_background": "#0e0e0e",
+		"title_bar.background": "#0e0e0e",
+		"title_bar.inactive_background": "#0e0e0e",
+		"editor.active_line_number": "#ffffff",
+		"elevated_surface.background": "#0e0e0e",
+		"terminal.background": "#0e0e0e",
+		"scrollbar.track.background": "#0e0e0e",
+		"scrollbar.thumb.background": "#252525",
+		"ghost_element.background": "#0e0e0e",
+		"ghost_element.active": "#0e0e0e",
+		"syntax": {
+			"punctuation": {
+				"color": "#d19a66"
+			},
+			"punctuation.bracket": {
+				"color": "#d19a66"
+			},
+			"punctuation.delimiter": {
+				"color": "#d19a66"
+			},
+			"boolean": {
+				"color": "#d19a66"
+			},
+			"attribute": {
+				"color": "#d19a66"
+			},
+			"operator": {
+				"color": "#d19a66"
+			}
+		}
+	}
+}

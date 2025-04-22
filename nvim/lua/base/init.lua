@@ -1,0 +1,5 @@
+require('base.configs')
+require('base.mappings')
+require('base.autocmd')
+require('base.lazy')
+require('base.post_hook')
