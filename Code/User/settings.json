@@ -35,7 +35,7 @@
 	"editor.tabSize": 2,
 	"editor.fontSize": 14,
 	"editor.lineHeight": 1.2,
-	"editor.codeActionsOnSave": { },
+	"editor.codeActionsOnSave": {},
 	"editor.fontFamily": "FiraCode Nerd Font Mono",
 	"editor.insertSpaces": false,
 	"editor.formatOnSave": true,
@@ -71,7 +71,7 @@
 	"gitlens.telemetry.enabled": false,
 	"gitlens.statusBar.enabled": false,
 	"github.copilot.editor.enableCodeActions": false,
-	"github.copilot.editor.enableAutoCompletions": true,
+	"github.copilot.enableAutoCompletions": true,
 	"gitlens.codeLens.recentChange.enabled": false,
 	"gitlens.codeLens.authors.enabled": false,
 	"go.formatTool": "gofmt",
@@ -131,8 +131,8 @@
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
 	},
-	"vscode-neovim.ctrlKeysForInsertMode": [ ],
-	"vscode-neovim.ctrlKeysForNormalMode": [ ],
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
@@ -164,6 +164,14 @@
 	"rest-client.enableSendRequestCodeLens": false,
 	"rest-client.previewResponseInUntitledDocument": true,
 	"rest-client.showResponseInDifferentTab": true,
+	"split-configs.excludedFileNames": [
+		"macos_remove.json",
+		"macos_bind.json"
+	],
+	"split-configs.keybindingsPartialPath": "~/.config/dotfiles/Code/User/partials/keybindings",
+	"split-configs.settingsPartialPath": "~/.config/dotfiles/Code/User/partials/settings",
+	"split-configs.keybindingsPath": "~/.config/dotfiles/Code/User/keybindings.json",
+	"split-configs.settingsPath": "~/.config/dotfiles/Code/User/settings.json",
 	"[sql]": {
 		"editor.defaultFormatter": "cweijan.vscode-database-client2"
 	},
@@ -782,8 +790,6 @@
 	"workbench.activityBar.location": "hidden",
 	"workbench.editor.showTabs": "multiple",
 	"workbench.layoutControl.type": "menu",
-	"workbench.editor.limit.enabled": true,
-	"workbench.editor.limit.value": 5,
 	"workbench.editor.tabActionCloseVisibility": false,
 	"workbench.editor.tabActionUnpinVisibility": false,
 	"workbench.editor.splitOnDragAndDrop": false,

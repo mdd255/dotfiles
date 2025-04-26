@@ -15,7 +15,7 @@
 	"gitlens.telemetry.enabled": false,
 	"gitlens.statusBar.enabled": false,
 	"github.copilot.editor.enableCodeActions": false,
-	"github.copilot.editor.enableAutoCompletions": true,
+	"github.copilot.enableAutoCompletions": true,
 	"gitlens.codeLens.recentChange.enabled": false,
 	"gitlens.codeLens.authors.enabled": false
 }

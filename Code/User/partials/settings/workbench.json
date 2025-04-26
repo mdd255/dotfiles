@@ -24,8 +24,6 @@
 	"workbench.activityBar.location": "hidden",
 	"workbench.editor.showTabs": "multiple",
 	"workbench.layoutControl.type": "menu",
-	"workbench.editor.limit.enabled": true,
-	"workbench.editor.limit.value": 5,
 	"workbench.editor.tabActionCloseVisibility": false,
 	"workbench.editor.tabActionUnpinVisibility": false,
 	"workbench.editor.splitOnDragAndDrop": false,

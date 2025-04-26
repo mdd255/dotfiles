@@ -48,10 +48,6 @@
 		"when": "suggestWidgetVisible && editorTextFocus && neovim.mode == insert"
 	},
 	{
-		"key": "ctrl+cmd+f",
-		"command": "workbench.action.toggleFullScreen"
-	},
-	{
 		"key": "ctrl+a",
 		"command": "notifications.clearAll",
 		"when": "editorTextFocus && neovim.mode != insert"

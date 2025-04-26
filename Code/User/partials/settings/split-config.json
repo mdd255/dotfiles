@@ -1,0 +1,11 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"split-configs.excludedFileNames": [
+		"macos_remove.json",
+		"macos_bind.json"
+	],
+	"split-configs.keybindingsPartialPath": "~/.config/dotfiles/Code/User/partials/keybindings",
+	"split-configs.settingsPartialPath": "~/.config/dotfiles/Code/User/partials/settings",
+	"split-configs.keybindingsPath": "~/.config/dotfiles/Code/User/keybindings.json",
+	"split-configs.settingsPath": "~/.config/dotfiles/Code/User/settings.json"
+}
