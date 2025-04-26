@@ -1,0 +1,42 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"whichkey.bindings": [
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "o",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		}
+	]
+}

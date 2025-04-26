@@ -1,0 +1,7 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter"
+	},
+	"python.analysis.reportExtraTelemetry": false
+}

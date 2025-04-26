@@ -1,0 +1,122 @@
+:root {
+	--font-size: 12px;
+	--color-green: rgb(14, 248, 80);
+	--color-orange: rgb(239, 164, 43);
+}
+
+/* hide elements config */
+.codicon-toolbar-more,
+div#be5invis\.vscode-custom-css,
+.codicon-panel-close,
+.codicon-search-details,
+.codicon-preserve-case,
+.codicon-whole-word,
+.editor-actions,
+.title-actions .action-item,
+.global-actions,
+.interactive-session .interactive-input-part .interactive-input-followups .interactive-session-followups .monaco-button,
+.monaco-diff-editor .gutter .gutterItem .buttons,
+.settings-clear-widget,
+.codicon-panel-maximize {
+	display: none !important;
+}
+
+/* font config */
+.monaco-workbench {
+	font-size: var(--font-size);
+	color: var(--color-green);
+}
+
+.monaco-workbench .part>.content {
+	font-size: var(--font-size);
+}
+
+.monaco-workbench .part.editor>.content .editor-group-container>.title .tabs-container>.tab .tab-label a,
+.monaco-workbench .part.editor>.content .editor-group-container>.title .title-label a {
+	font-size: var(--font-size);
+}
+
+.monaco-workbench.linux {
+	font-family: 'FiraCode Nerd Font Mono', FiraCode, monospace;
+	font-size: var(--font-size);
+}
+
+/* statusbar config */
+.statusbar {
+	display: flex !important;
+	flex-direction: row;
+}
+
+#status\.scm\.0 {
+	order: 3;
+}
+
+#status\.scm\.1 {
+	order: 4;
+}
+
+#status\.problems {
+	order: 5;
+}
+
+#asvetliakov\.vscode-neovim\.vscode-neovim-status {
+	order: 7;
+}
+#status\.problems,
+#status\.editor\.selection {
+	color: var(--color-orange);
+}
+
+#GitHub\.vscode-pull-request-github\.github\.pullrequest\.status {
+	order: 6;
+}
+
+#status\.progress {
+	order: 8;
+}
+
+#status\.scm\.0,
+#status\.scm\.1,
+#status\.progress,
+#GitHub\.vscode-pull-request-github\.github\.pullrequest\.status,
+#status\.notifications,
+#status\.languageStatus,
+#status\.editor\.mode,
+#asvetliakov\.vscode-neovim\.vscode-neovim-status {
+	color: var(--color-green);
+}
+
+/* Extension: pretty ts error */
+
+/* Allow copying */
+.codicon-none {
+	user-select: text !important;
+	-webkit-user-select: text !important;
+}
+
+/* Hide errors */
+div.monaco-hover-content:has(.codicon-none)>.hover-row:first-child {
+	display: none !important;
+}
+
+div.monaco-hover-content:has([style="color:#f96363;"])>.hover-row:first-child {
+	display: none !important
+}
+
+/* Change order */
+.monaco-hover .monaco-hover-content {
+	display: flex;
+	flex-direction: column;
+}
+
+.monaco-hover .monaco-hover-content .hover-row {
+	order: 2;
+}
+
+.monaco-hover .monaco-hover-content .hover-row:has(.codicon-none) {
+	order: 1;
+}
+
+.monaco-hover .monaco-hover-content .hover-row:has([style="color:#f96363;"]) {
+	order: 1;
+}

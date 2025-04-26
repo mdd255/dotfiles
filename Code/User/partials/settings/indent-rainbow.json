@@ -1,0 +1,12 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"indentRainbow.indicatorStyle": "light",
+	"indentRainbow.colorOnWhiteSpaceOnly": true,
+	"indentRainbow.lightIndicatorStyleLineWidth": 1,
+	"indentRainbow.colors": [
+		"rgba(255,255,64,0.07)",
+		"rgba(127,255,127,0.07)",
+		"rgba(255,127,255,0.07)",
+		"rgba(79,236,236,0.07)"
+	]
+}

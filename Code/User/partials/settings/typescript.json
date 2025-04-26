@@ -1,0 +1,19 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"javascript.suggest.autoImports": true,
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"typescript.suggest.autoImports": true,
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.tsserver.log": "off",
+	"typescript.inlayHints.parameterNames.enabled": "all",
+	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+	"typescript.tsserver.maxTsServerMemory": 8096,
+	"typescript.suggest.completeFunctionCalls": true,
+	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
+	"typescript.autoClosingTags": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
+}

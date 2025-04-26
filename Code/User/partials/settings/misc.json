@@ -1,0 +1,36 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"keyboard.dispatch": "keyCode",
+	"telemetry.telemetryLevel": "all",
+	"search.smartCase": true,
+	"search.showLineNumbers": true,
+	"search.useIgnoreFiles": false,
+	"update.showReleaseNotes": false,
+	"notebook.gotoSymbols.showAllSymbols": false,
+	"breadcrumbs.enabled": false,
+	"breadcrumbs.symbolSortOrder": "type",
+	"security.workspace.trust.untrustedFiles": "open",
+	"makefile.configureOnOpen": true,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"extensions.experimental.deferredStartupFinishedActivation": true,
+	"extensions.experimental.affinity": {
+		"asvetliakov.vscode-neovim": 1
+	},
+	"files.enableTrash": false,
+	"security.workspace.trust.startupPrompt": "never",
+	"security.workspace.trust.enabled": false,
+	"files.hotExit": "onExitAndWindowClose",
+	"extensions.ignoreRecommendations": true,
+	"files.exclude": {
+		"**/dist": true,
+		"**/node_modules": true,
+		"**/logs": true,
+		"yarn.lock": true,
+		"package-lock.json": true,
+		"pnpm-lock.yaml": true
+	},
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim"
+}

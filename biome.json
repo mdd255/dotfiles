@@ -21,8 +21,12 @@
 			}
 		}
 	},
+	"formatter": {
+		"enabled": false
+	},
 	"javascript": {
 		"formatter": {
+			"enabled": false,
 			"semicolons": "asNeeded",
 			"indentStyle": "space",
 			"quoteStyle": "single",

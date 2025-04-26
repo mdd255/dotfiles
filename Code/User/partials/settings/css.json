@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	}
+}

@@ -1,0 +1,5 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"color-highlight.markerType": "underline",
+	"color-highlight.markRuler": false
+}

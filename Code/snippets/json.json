@@ -1,0 +1,29 @@
+{
+	"keybinding": {
+		"prefix": "key",
+		"body": [
+			"{",
+			"\"key\": \"$1\",",
+			"\"command\": \"$2\",",
+			"\"when\": \"$3\"",
+			"}"
+		]
+
+	},
+	"run command": {
+		"prefix": "cmd",
+		"body": [
+			"{",
+			"\"key\": \"$1\",",
+			"\"command\": \"runCommands\",",
+			"\"args\": {",
+				"\"commands\": [",
+					"\"$2\"",
+				"]",
+			"},",
+			"\"when\": \"$3\"",
+			"}"
+		
+		]
+	}
+}

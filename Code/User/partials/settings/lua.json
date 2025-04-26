@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"[lua]": {
+		"editor.defaultFormatter": "sumneko.lua"
+	}
+}

@@ -1,0 +1,7 @@
+{
+  "Comment.nvim": { "branch": "master", "commit": "e30b7f2008e52442154b66f7c519bfd2f1e32acb" },
+  "hop.nvim": { "branch": "master", "commit": "9c6a1dd9afb53a112b128877ccd583a1faa0b8b6" },
+  "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
+  "nvim-recorder": { "branch": "main", "commit": "acced0860bcc4396ff5c7b0ef55c2364df8226b0" },
+  "todo-comments.nvim": { "branch": "main", "commit": "304a8d204ee787d2544d8bc23cd38d2f929e7cc5" }
+}

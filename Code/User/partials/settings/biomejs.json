@@ -1,0 +1,5 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"biome.enabled": true,
+	"biome.rename": true
+}

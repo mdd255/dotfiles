@@ -1,0 +1,37 @@
+[
+	{
+		"key": "Shift+t",
+		"command": "workbench.action.closeSidebar",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "a",
+		"command": "explorer.newFile",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "d",
+		"command": "deleteFile",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "r",
+		"command": "renameFile",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "x",
+		"command": "filesExplorer.cut",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "y",
+		"command": "filesExplorer.copy",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "p",
+		"command": "filesExplorer.paste",
+		"when": "filesExplorerFocus && !inputFocus"
+	}
+]

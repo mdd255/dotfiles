@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"[graphql]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
+}

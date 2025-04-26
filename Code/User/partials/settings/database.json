@@ -1,0 +1,8 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"database-client.highlightSQLBlock": true,
+	"database-client.capitalizeKeywordsWhenFormatting": true,
+	"database-client.queryWithSchema": true,
+	"database-client.enableEditorCodeLens": false,
+	"database-client.autoSync": true
+}

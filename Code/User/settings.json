@@ -1,0 +1,793 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"animations.Install-Method": "Custom CSS and JS",
+	"animations.Enabled": true,
+	"animations.Scrolling": "Fade",
+	"animations.Tabs": "Slide",
+	"animations.CursorAnimationOptions": {
+		"Color": "#569cd6",
+		"CursorStyle": "block",
+		"TrailLength": 6
+	},
+	"animations.CursorAnimation": true,
+	"vscode_custom_css.imports": [
+		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
+		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
+	],
+	"biome.enabled": true,
+	"biome.rename": true,
+	"color-highlight.markerType": "underline",
+	"color-highlight.markRuler": false,
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	},
+	"database-client.highlightSQLBlock": true,
+	"database-client.capitalizeKeywordsWhenFormatting": true,
+	"database-client.queryWithSchema": true,
+	"database-client.enableEditorCodeLens": false,
+	"database-client.autoSync": true,
+	"editor.fastScrollSensitivity": 5,
+	"editor.smoothScrolling": true,
+	"editor.inlineSuggest.enabled": true,
+	"editor.cursorSmoothCaretAnimation": "on",
+	"editor.inlayHints.enabled": "off",
+	"editor.formatOnPaste": true,
+	"editor.tabSize": 2,
+	"editor.fontSize": 14,
+	"editor.lineHeight": 1.2,
+	"editor.codeActionsOnSave": { },
+	"editor.fontFamily": "FiraCode Nerd Font Mono",
+	"editor.insertSpaces": false,
+	"editor.formatOnSave": true,
+	"editor.lineNumbers": "relative",
+	"editor.inlineSuggest.suppressSuggestions": false,
+	"editor.minimap.enabled": false,
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.cursorBlinking": "smooth",
+	"editor.stickyScroll.enabled": false,
+	"editor.matchBrackets": "always",
+	"editor.guides.bracketPairs": "active",
+	"editor.scrollbar.horizontalScrollbarSize": 0,
+	"editor.scrollbar.verticalScrollbarSize": 5,
+	"editor.showFoldingControls": "never",
+	"editor.lightbulb.enabled": "off",
+	"editor.experimental.treeSitterTelemetry": false,
+	"editor.formatOnSaveMode": "modificationsIfAvailable",
+	"editor.inlineSuggest.syntaxHighlightingEnabled": true,
+	"editor.codeLens": false,
+	"editor.suggest.preview": true,
+	"git.autofetch": true,
+	"git.enableSmartCommit": true,
+	"git.openRepositoryInParentFolders": "always",
+	"git.confirmSync": false,
+	"gitlens.advanced.externalDiffTool": "delta",
+	"githubPullRequests.pullBranch": "never",
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	},
+	"gitlens.telemetry.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"github.copilot.editor.enableCodeActions": false,
+	"github.copilot.editor.enableAutoCompletions": true,
+	"gitlens.codeLens.recentChange.enabled": false,
+	"gitlens.codeLens.authors.enabled": false,
+	"go.formatTool": "gofmt",
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	},
+	"go.toolsManagement.autoUpdate": true,
+	"[graphql]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"indentRainbow.indicatorStyle": "light",
+	"indentRainbow.colorOnWhiteSpaceOnly": true,
+	"indentRainbow.lightIndicatorStyleLineWidth": 1,
+	"indentRainbow.colors": [
+		"rgba(255,255,64,0.07)",
+		"rgba(127,255,127,0.07)",
+		"rgba(255,127,255,0.07)",
+		"rgba(79,236,236,0.07)"
+	],
+	"json.format.keepLines": true,
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[lua]": {
+		"editor.defaultFormatter": "sumneko.lua"
+	},
+	"keyboard.dispatch": "keyCode",
+	"telemetry.telemetryLevel": "all",
+	"search.smartCase": true,
+	"search.showLineNumbers": true,
+	"search.useIgnoreFiles": false,
+	"update.showReleaseNotes": false,
+	"notebook.gotoSymbols.showAllSymbols": false,
+	"breadcrumbs.enabled": false,
+	"breadcrumbs.symbolSortOrder": "type",
+	"security.workspace.trust.untrustedFiles": "open",
+	"makefile.configureOnOpen": true,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"extensions.experimental.deferredStartupFinishedActivation": true,
+	"extensions.experimental.affinity": {
+		"asvetliakov.vscode-neovim": 1
+	},
+	"files.enableTrash": false,
+	"security.workspace.trust.startupPrompt": "never",
+	"security.workspace.trust.enabled": false,
+	"files.hotExit": "onExitAndWindowClose",
+	"extensions.ignoreRecommendations": true,
+	"files.exclude": {
+		"**/dist": true,
+		"**/node_modules": true,
+		"**/logs": true,
+		"yarn.lock": true,
+		"package-lock.json": true,
+		"pnpm-lock.yaml": true
+	},
+	"vscode-neovim.ctrlKeysForInsertMode": [ ],
+	"vscode-neovim.ctrlKeysForNormalMode": [ ],
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"outline.showArrays": false,
+	"outline.showBooleans": false,
+	"outline.showConstants": false,
+	"outline.showConstructors": false,
+	"outline.showEnumMembers": false,
+	"outline.showEnums": false,
+	"outline.showEvents": false,
+	"outline.showFields": false,
+	"outline.showFiles": false,
+	"outline.showKeys": false,
+	"outline.showNull": false,
+	"outline.showNumbers": false,
+	"outline.showObjects": false,
+	"outline.showOperators": false,
+	"outline.showPackages": false,
+	"outline.showStrings": false,
+	"outline.showVariables": false,
+	"outline.showTypeParameters": false,
+	"outline.showProperties": false,
+	"prisma.showPrismaDataPlatformNotification": false,
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter"
+	},
+	"python.analysis.reportExtraTelemetry": false,
+	"rest-client.requestNameAsResponseTabTitle": true,
+	"rest-client.disableHighlightResonseBodyForLargeResponse": true,
+	"rest-client.enableTelemetry": false,
+	"rest-client.enableSendRequestCodeLens": false,
+	"rest-client.previewResponseInUntitledDocument": true,
+	"rest-client.showResponseInDifferentTab": true,
+	"[sql]": {
+		"editor.defaultFormatter": "cweijan.vscode-database-client2"
+	},
+	"terminal.integrated.copyOnSelection": true,
+	"terminal.integrated.cursorBlinking": true,
+	"terminal.explorerKind": "external",
+	"terminal.external.linuxExec": "",
+	"terminal.integrated.smoothScrolling": true,
+	"terminal.integrated.gpuAcceleration": "on",
+	"terminal.integrated.defaultLocation": "editor",
+	"terminal.integrated.tabs.title": "${workspaceFolderName}",
+	"javascript.suggest.autoImports": true,
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"typescript.suggest.autoImports": true,
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.tsserver.log": "off",
+	"typescript.inlayHints.parameterNames.enabled": "all",
+	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+	"typescript.tsserver.maxTsServerMemory": 8096,
+	"typescript.suggest.completeFunctionCalls": true,
+	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
+	"typescript.autoClosingTags": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"whichkey.bindings": [
+		{
+			"key": "s",
+			"name": "Editors",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Split down",
+					"type": "command",
+					"command": "workbench.action.splitEditorDown"
+				},
+				{
+					"key": "e",
+					"name": "Vsplit right",
+					"type": "command",
+					"command": "workbench.action.splitEditorRight"
+				},
+				{
+					"key": "y",
+					"name": "Copy current file path",
+					"type": "command",
+					"command": "copyRelativeFilePath"
+				},
+				{
+					"key": "N",
+					"name": "New",
+					"type": "command",
+					"command": "workbench.action.files.newUntitledFile"
+				},
+				{
+					"key": "r",
+					"name": "Restore",
+					"type": "command",
+					"command": "workbench.action.reopenClosedEditor"
+				},
+				{
+					"key": "s",
+					"name": "Save",
+					"type": "command",
+					"command": "workbench.action.files.save"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				},
+				{
+					"key": " ",
+					"name": "Find any",
+					"type": "command",
+					"command": "runCommands",
+					"args": {
+						"commands": [
+							{
+								"command": "type",
+								"args": {
+									"text": " "
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": " "
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": "/"
+								}
+							}
+						]
+					}
+				},
+				{
+					"key": "l",
+					"name": "Goto line",
+					"type": "command",
+					"command": "runCommands",
+					"args": {
+						"commands": [
+							{
+								"command": "type",
+								"args": {
+									"text": " "
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": " "
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": " "
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": "b"
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": "d"
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": "j"
+								}
+							},
+							{
+								"command": "type",
+								"args": {
+									"text": "k"
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "o",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		}
+	],
+	"window.density.editorTabHeight": "compact",
+	"window.title": "${folderName}",
+	"window.customTitleBarVisibility": "auto",
+	"window.menuBarVisibility": "hidden",
+	"window.commandCenter": false,
+	"window.titleBarStyle": "native",
+	"window.zoomLevel": 1,
+	"window.confirmSaveUntitledWorkspace": false,
+	"workbench.tips.enabled": false,
+	"workbench.startupEditor": "newUntitledFile",
+	"workbench.layoutControl.enabled": false,
+	"workbench.editor.mouseBackForwardToNavigate": false,
+	"workbench.editor.preventPinnedEditorClose": "keyboard",
+	"workbench.editor.untitled.labelFormat": "name",
+	"workbench.editor.labelFormat": "short",
+	"workbench.editor.enablePreview": false,
+	"workbench.colorCustomizations": {
+		"[Default Dark Modern]": {
+			"editor.background": "#0c0c0c",
+			"tab.activeBackground": "#0c0c0c",
+			"terminal.background": "#0c0c0c",
+			"quickInput.background": "#0c0c0c",
+			"menu.background": "#0c0c0c",
+			"sideBar.background": "#0c0c0c",
+			"statusBar.background": "#0c0c0c",
+			"panel.background": "#0c0c0c",
+			"input.background": "#0c0c0c"
+		}
+	},
+	"workbench.activityBar.location": "hidden",
+	"workbench.editor.showTabs": "multiple",
+	"workbench.layoutControl.type": "menu",
+	"workbench.editor.limit.enabled": true,
+	"workbench.editor.limit.value": 5,
+	"workbench.editor.tabActionCloseVisibility": false,
+	"workbench.editor.tabActionUnpinVisibility": false,
+	"workbench.editor.splitOnDragAndDrop": false,
+	"workbench.welcomePage.walkthroughs.openOnInstall": false,
+	"workbench.tree.indent": 15,
+	"workbench.editor.closeOnFileDelete": true
+}

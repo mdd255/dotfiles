@@ -1,0 +1,60 @@
+[
+	{
+		"key": "ctrl+n",
+		"command": "editor.action.insertSnippet",
+
+		"args": {
+			"snippet": "($1)"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+e",
+		"command": "editor.action.insertSnippet",
+
+		"args": {
+			"snippet": "[$1]"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+i",
+		"command": "editor.action.insertSnippet",
+		"args": {
+			"snippet": "{$1}"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+h",
+		"command": "editor.action.insertSnippet",
+		"args": {
+			"snippet": "<$1>"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+o",
+		"command": "editor.action.insertSnippet",
+		"args": {
+			"snippet": "'$1'"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+a",
+		"command": "editor.action.insertSnippet",
+		"args": {
+			"snippet": "\"$1\""
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+r",
+		"command": "editor.action.insertSnippet",
+		"args": {
+			"snippet": "`$1`"
+		},
+		"when": "editorFocus && neovim.mode == insert"
+	}
+]

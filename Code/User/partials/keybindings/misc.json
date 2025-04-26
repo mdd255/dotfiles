@@ -1,0 +1,69 @@
+[
+	{
+		"key": "tab",
+		"command": "runCommands",
+		"args": {
+			"commands": ["workbench.action.focusSideBar", "list.focusDown"]
+		},
+		"when": "textCompareEditorVisible && neovim.mode == normal && editorFocus"
+	},
+	{
+		"key": "tab",
+		"command": "selectNextSuggestion",
+		"when": "editorTextFocus && !editorReadonly && suggestWidgetVisible"
+	},
+	{
+		"key": "tab",
+		"command": "widgetNavigation.focusNext",
+		"when": "inputFocus && navigableContainerFocused || navigableContainerFocused && treestickyScrollFocused || navigableContainerFocused && !listFocus || navigableContainerFocused && listScrollAtBoundary == 'both' || navigableContainerFocused && listScrollAtBoundary == 'bottom'"
+	},
+	{
+		"key": "shift+tab",
+		"command": "widgetNavigation.focusPrev",
+		"when": "inputFocus && navigableContainerFocused || navigableContainerFocused && treestickyScrollFocused || navigableContainerFocused && !listFocus || navigableContainerFocused && listScrollAtBoundary == 'both' || navigableContainerFocused && listScrollAtBoundary == 'bottom'"
+	},
+	{
+		"key": "shift+tab",
+		"command": "selectPrevSuggestion",
+		"when": "editorTextFocus && !editorReadonly && suggestWidgetVisible"
+	},
+	{
+		"key": "enter",
+		"command": "acceptSelectedSuggestion",
+		"when": "editorTextFocus && !editorReadonly && suggestWidgetVisible"
+	},
+	{
+		"key": "tab",
+		"command": "selectNextCodeAction",
+		"when": "codeActionMenuVisible"
+	},
+	{
+		"key": "shift+tab",
+		"command": "selectPrevCodeAction",
+		"when": "codeActionMenuVisible"
+	},
+	{
+		"key": "ctrl+q",
+		"command": "hideSuggestWidget",
+		"when": "suggestWidgetVisible && editorTextFocus && neovim.mode == insert"
+	},
+	{
+		"key": "ctrl+cmd+f",
+		"command": "workbench.action.toggleFullScreen"
+	},
+	{
+		"key": "ctrl+a",
+		"command": "notifications.clearAll",
+		"when": "editorTextFocus && neovim.mode != insert"
+	},
+	{
+		"key": "ctrl+h",
+		"command": "rest-client.request",
+		"when": "editorLangId == http && editorTextFocus && neovim.mode == normal"
+	},
+	{
+		"key": "ctrl+h",
+		"command": "mysql.runSQL",
+		"when": "editorLangId == sql && editorTextFocus && neovim.mode == normal"
+	}
+]

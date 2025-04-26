@@ -1,0 +1,21 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"git.autofetch": true,
+	"git.enableSmartCommit": true,
+	"git.openRepositoryInParentFolders": "always",
+	"git.confirmSync": false,
+	"gitlens.advanced.externalDiffTool": "delta",
+	"githubPullRequests.pullBranch": "never",
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	},
+	"gitlens.telemetry.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"github.copilot.editor.enableCodeActions": false,
+	"github.copilot.editor.enableAutoCompletions": true,
+	"gitlens.codeLens.recentChange.enabled": false,
+	"gitlens.codeLens.authors.enabled": false
+}
