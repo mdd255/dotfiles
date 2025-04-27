@@ -35,7 +35,7 @@
 	"editor.tabSize": 2,
 	"editor.fontSize": 14,
 	"editor.lineHeight": 1.2,
-	"editor.codeActionsOnSave": {},
+	"editor.codeActionsOnSave": { },
 	"editor.fontFamily": "FiraCode Nerd Font Mono",
 	"editor.insertSpaces": false,
 	"editor.formatOnSave": true,
@@ -131,8 +131,8 @@
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
 	},
-	"vscode-neovim.ctrlKeysForInsertMode": [],
-	"vscode-neovim.ctrlKeysForNormalMode": [],
+	"vscode-neovim.ctrlKeysForInsertMode": [ ],
+	"vscode-neovim.ctrlKeysForNormalMode": [ ],
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
@@ -761,7 +761,6 @@
 	"window.density.editorTabHeight": "compact",
 	"window.title": "${folderName}",
 	"window.customTitleBarVisibility": "auto",
-	"window.menuBarVisibility": "hidden",
 	"window.commandCenter": false,
 	"window.titleBarStyle": "native",
 	"window.zoomLevel": 1,
@@ -795,5 +794,7 @@
 	"workbench.editor.splitOnDragAndDrop": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true
+	"workbench.editor.closeOnFileDelete": true,
+	"workbench.statusBar.visible": false,
+	"window.menuBarVisibility": "toggle"
 }

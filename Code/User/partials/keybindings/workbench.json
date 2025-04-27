@@ -60,6 +60,11 @@
 		"when": "sideBarVisible"
 	},
 	{
+		"key": "ctrl+h",
+		"command": "workbench.action.closeSidebar",
+		"when": "sideBarVisible"
+	},
+	{
 		"key": "ctrl+o",
 		"command": "workbench.action.closeSidebar",
 		"when": "sideBarVisible"
@@ -80,7 +85,7 @@
 		"when": "textCompareEditorVisible && neovim.mode != insert && editorFocus"
 	},
 	{
-		"key": "ctrl+t",
+		"key": "ctrl+h",
 		"command": "workbench.view.explorer",
 		"when": "editorFocus"
 	},
@@ -133,5 +138,20 @@
 		"key": "ctrl+enter",
 		"command": "workbench.action.terminal.focus",
 		"when": "editorTextFocus && neovim.mode == normal"
+	},
+	{
+		"key": "alt+v",
+		"command": "workbench.action.terminal.paste",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "ctrl+l",
+		"command": "workbench.action.terminal.clear",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "alt+c",
+		"command": "workbench.action.terminal.copyAndClearSelection",
+		"when": "terminalFocus"
 	}
 ]

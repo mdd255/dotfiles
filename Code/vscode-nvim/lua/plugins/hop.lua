@@ -10,7 +10,7 @@ return {
          uppercase_labels = false,
          keys             = 'neio\'arstdhqwfpluy;zxcvbkm,.',
       })
-      
+
       ---@param brackets table
       ---@return string
       local function pair_regex(brackets)
@@ -65,15 +65,20 @@ return {
          local current_char = current_line:sub(current_idx, current_idx)
 
          if pcall(hint_pairs) then
+            local new_pos = vim.api.nvim_win_get_cursor(0)
             current_line = vim.api.nvim_get_current_line()
             current_idx = vim.api.nvim_win_get_cursor(0)[2] + 1
             current_char = current_line:sub(current_idx, current_idx)
             local _cmd = action .. current_char
-            vim.api.nvim_feedkeys(_cmd, 'n', false)
-            if preserve_pos then
-               vim.defer_fn(function()
-                  vim.api.nvim_win_set_cursor(0, old_pos)
-               end, 50)
+
+            if vim.deep_equal(old_pos, new_pos) == false then
+               vim.api.nvim_feedkeys(_cmd, 'n', false)
+
+               if preserve_pos then
+                  vim.defer_fn(function()
+                     vim.api.nvim_win_set_cursor(0, old_pos)
+                  end, 50)
+               end
             end
          end
       end
@@ -93,12 +98,12 @@ return {
       map('n', 'cn', function() hop_modify('ci') end)
       map('n', 'dn', function() hop_modify('di', true) end)
       map('n', 'yn', function() hop_modify('yi', true) end)
-      map('n', 'vn', function() hop_modify('vi') end)
+      map('n', 'zn', function() hop_modify('vi') end)
 
       map('n', 'ce', function() hop_modify('ca') end)
       map('n', 'de', function() hop_modify('da', true) end)
       map('n', 'ye', function() hop_modify('ya', true) end)
-      map('n', 've', function() hop_modify('va') end)
+      map('n', 'ze', function() hop_modify('va') end)
 
       map('n', 'w', hop_word(true))
       map('n', 'b', hop_word(false))
