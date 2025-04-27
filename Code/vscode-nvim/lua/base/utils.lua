@@ -82,7 +82,7 @@ M.higroup = {
 local function get_clipboard_cmd()
   local cmd = {
     Darwin  = 'pbpaste',
-    Linux   = 'xclip -o',
+    Linux   = 'xclip -selection clipboard -o',
     Windows = 'powershell.exe Get-Clipboard'
   }
 
@@ -113,8 +113,8 @@ local function get_clipboard_line_count()
   if handle ~= nil then
     local content = handle:read('*a')
     handle:close()
-
     local lines = {}
+
     for line in content:gmatch('([^\n]*)\n?') do
       table.insert(lines, line)
     end
