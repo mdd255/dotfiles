@@ -761,6 +761,7 @@
 	"window.density.editorTabHeight": "compact",
 	"window.title": "${folderName}",
 	"window.customTitleBarVisibility": "auto",
+	"window.menuBarVisibility": "hidden",
 	"window.commandCenter": false,
 	"window.titleBarStyle": "native",
 	"window.zoomLevel": 1,
@@ -794,7 +795,5 @@
 	"workbench.editor.splitOnDragAndDrop": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true,
-	"workbench.statusBar.visible": false,
-	"window.menuBarVisibility": "toggle"
+	"workbench.editor.closeOnFileDelete": true
 }
