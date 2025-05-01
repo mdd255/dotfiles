@@ -20,7 +20,6 @@ config.exit_behavior                = 'Close'
 config.warn_about_missing_glyphs    = false
 config.scrollback_lines             = 10000
 config.native_macos_fullscreen_mode = true
-config.default_prog                 = { 'zsh' }
 
 ---@diagnostic disable-next-line: unused-local
 local function format_win_tile(tab, pane, tabs, panes, conf)
