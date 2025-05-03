@@ -108,6 +108,7 @@ end
 ---@param bgcolor string
 ---@param act string
 function M.pre_highlight(select, bgcolor, act)
+  vscode.update_config('animations.CursorAnimation', false, 'global')
   M.update_vscode_config_table('workbench.colorCustomizations', 'editor.selectionBackground', bgcolor)
   local count = vim.v.count
   vim.api.nvim_feedkeys(select, 'n', false)
@@ -117,6 +118,7 @@ function M.pre_highlight(select, bgcolor, act)
   vim.defer_fn(function()
     vim.cmd('normal! ' .. act)
     if act == 'c' then vim.api.nvim_feedkeys('a', 'n', false) end
+    vscode.update_config('animations.CursorAnimation', true, 'global')
     M.update_vscode_config_table('workbench.colorCustomizations', 'editor.selectionBackground', 'default')
   end, event_delay_ms)
 end

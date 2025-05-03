@@ -9,7 +9,7 @@
 		"CursorStyle": "block",
 		"TrailLength": 6
 	},
-	"animations.CursorAnimation": false,
+	"animations.CursorAnimation": true,
 	"vscode_custom_css.imports": [
 		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
 		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
