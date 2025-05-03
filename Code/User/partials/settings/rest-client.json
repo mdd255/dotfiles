@@ -5,5 +5,5 @@
 	"rest-client.enableTelemetry": false,
 	"rest-client.enableSendRequestCodeLens": false,
 	"rest-client.previewResponseInUntitledDocument": true,
-	"rest-client.showResponseInDifferentTab": true
+	"rest-client.showResponseInDifferentTab": false
 }

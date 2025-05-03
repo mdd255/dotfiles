@@ -9,7 +9,7 @@
 		"CursorStyle": "block",
 		"TrailLength": 6
 	},
-	"animations.CursorAnimation": true,
+	"animations.CursorAnimation": false,
 	"vscode_custom_css.imports": [
 		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
 		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
@@ -34,6 +34,7 @@
 	"editor.formatOnPaste": true,
 	"editor.tabSize": 2,
 	"editor.fontSize": 14,
+	"editor.renderWhitespace": "trailing",
 	"editor.lineHeight": 1.2,
 	"editor.codeActionsOnSave": { },
 	"editor.fontFamily": "FiraCode Nerd Font Mono",
@@ -125,6 +126,8 @@
 	"extensions.ignoreRecommendations": true,
 	"files.exclude": {
 		"**/dist": true,
+		"**/.next": true,
+		"**/assets": true,
 		"**/node_modules": true,
 		"**/logs": true,
 		"yarn.lock": true,
@@ -163,7 +166,7 @@
 	"rest-client.enableTelemetry": false,
 	"rest-client.enableSendRequestCodeLens": false,
 	"rest-client.previewResponseInUntitledDocument": true,
-	"rest-client.showResponseInDifferentTab": true,
+	"rest-client.showResponseInDifferentTab": false,
 	"split-configs.excludedFileNames": [
 		"macos_remove.json",
 		"macos_bind.json"
@@ -279,86 +282,6 @@
 					"name": "Projects",
 					"type": "command",
 					"command": "workbench.action.openRecent"
-				},
-				{
-					"key": " ",
-					"name": "Find any",
-					"type": "command",
-					"command": "runCommands",
-					"args": {
-						"commands": [
-							{
-								"command": "type",
-								"args": {
-									"text": " "
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": " "
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": "/"
-								}
-							}
-						]
-					}
-				},
-				{
-					"key": "l",
-					"name": "Goto line",
-					"type": "command",
-					"command": "runCommands",
-					"args": {
-						"commands": [
-							{
-								"command": "type",
-								"args": {
-									"text": " "
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": " "
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": " "
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": "b"
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": "d"
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": "j"
-								}
-							},
-							{
-								"command": "type",
-								"args": {
-									"text": "k"
-								}
-							}
-						]
-					}
 				}
 			]
 		},
@@ -775,16 +698,17 @@
 	"workbench.editor.labelFormat": "short",
 	"workbench.editor.enablePreview": false,
 	"workbench.colorCustomizations": {
+		"editor.selectionBackground": "default",
 		"[Default Dark Modern]": {
-			"editor.background": "#0c0c0c",
-			"tab.activeBackground": "#0c0c0c",
-			"terminal.background": "#0c0c0c",
-			"quickInput.background": "#0c0c0c",
-			"menu.background": "#0c0c0c",
-			"sideBar.background": "#0c0c0c",
+			"input.background": "#0c0c0c",
 			"statusBar.background": "#0c0c0c",
+			"sideBar.background": "#0c0c0c",
+			"tab.activeBackground": "#0c0c0c",
+			"quickInput.background": "#0c0c0c",
 			"panel.background": "#0c0c0c",
-			"input.background": "#0c0c0c"
+			"terminal.background": "#0c0c0c",
+			"menu.background": "#0c0c0c",
+			"editor.background": "#0c0c0c"
 		}
 	},
 	"workbench.activityBar.location": "hidden",
@@ -795,5 +719,6 @@
 	"workbench.editor.splitOnDragAndDrop": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true
+	"workbench.editor.closeOnFileDelete": true,
+	"editor.occurrencesHighlight": "singleFile"
 }

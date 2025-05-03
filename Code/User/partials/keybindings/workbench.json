@@ -62,7 +62,7 @@
 	{
 		"key": "shift+t",
 		"command": "workbench.action.closeSidebar",
-		"when": "sideBarVisible"
+		"when": "sideBarFocus"
 	},
 	{
 		"key": "ctrl+o",
@@ -87,7 +87,7 @@
 	{
 		"key": "shift+t",
 		"command": "workbench.view.explorer",
-		"when": "editorFocus"
+		"when": "editorFocus && neovim.mode != insert"
 	},
 	{
 		"key": "ctrl+enter",

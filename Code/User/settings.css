@@ -20,13 +20,16 @@ div#be5invis\.vscode-custom-css,
 .codicon-panel-maximize {
 	display: none !important;
 }
+/* line number config */
+.margin-view-overlays {
+	right: 10px;
+}
 
 /* font config */
 .monaco-workbench {
 	font-size: var(--font-size);
 	color: var(--color-green);
 }
-
 .monaco-workbench .part>.content {
 	font-size: var(--font-size);
 }

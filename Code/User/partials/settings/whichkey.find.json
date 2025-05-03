@@ -37,36 +37,6 @@
 					"name": "Projects",
 					"type": "command",
 					"command": "workbench.action.openRecent"
-				},
-				{
-					"key": " ",
-					"name": "Find any",
-					"type": "command",
-					"command": "runCommands",
-					"args": {
-						"commands": [
-							{ "command": "type", "args": { "text": " " } },
-							{ "command": "type", "args": { "text": " " } },
-							{ "command": "type", "args": { "text": "/" } }
-						]
-					}
-				},
-				{
-					"key": "l",
-					"name": "Goto line",
-					"type": "command",
-					"command": "runCommands",
-					"args": {
-						"commands": [
-							{ "command": "type", "args": { "text": " " } },
-							{ "command": "type", "args": { "text": " " } },
-							{ "command": "type", "args": { "text": " " } },
-							{ "command": "type", "args": { "text": "b" } },
-							{ "command": "type", "args": { "text": "d" } },
-							{ "command": "type", "args": { "text": "j" } },
-							{ "command": "type", "args": { "text": "k" } }
-						]
-					}
 				}
 			]
 		}

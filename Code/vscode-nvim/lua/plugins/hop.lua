@@ -2,6 +2,9 @@ return {
    'smoka7/hop.nvim',
    config = function()
       local hop = require('hop')
+      local vscode = vim.g.vscode and require('vscode')
+
+      if vim.g.vscode then vscode = require('vscode') end
       local directions = require('hop.hint').HintDirection
       local map = require('base.utils').map
 
@@ -64,6 +67,9 @@ return {
          local current_idx = vim.api.nvim_win_get_cursor(0)[2] + 1
          local current_char = current_line:sub(current_idx, current_idx)
 
+         if vscode then
+            vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
+         end
          if pcall(hint_pairs) then
             local new_pos = vim.api.nvim_win_get_cursor(0)
             current_line = vim.api.nvim_get_current_line()
@@ -80,6 +86,9 @@ return {
                   end, 50)
                end
             end
+            if vscode then
+               vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
+            end
          end
       end
 
@@ -88,10 +97,16 @@ return {
          local direction = forward and directions.AFTER_CURSOR or directions.BEFORE_CURSOR
 
          return function()
+            if vscode then
+               vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
+            end
             hop.hint_words({
                multi_windows = false,
                direction = direction
             })
+            if vscode then
+               vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
+            end
          end
       end
 

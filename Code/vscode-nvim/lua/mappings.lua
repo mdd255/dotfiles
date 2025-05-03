@@ -35,7 +35,7 @@ map('n', '<Space>n', action('workbench.action.navigateDown'))
 -- misc
 map('n', '<Cr>', action('workbench.action.showCommands'))
 map('n', '/', action('actions.find'))
-map('n', '<Space>q', action('workbench.action.closeActiveEditor'))
+map('n', '<Space>q', action('workbench.action.revertAndCloseActiveEditor'))
 map('n', 'U', '<C-r>')
 map('v', 'W', 'w')
 map('v', 'w', 'e')

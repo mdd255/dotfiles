@@ -24,6 +24,8 @@
 	"extensions.ignoreRecommendations": true,
 	"files.exclude": {
 		"**/dist": true,
+		"**/.next": true,
+		"**/assets": true,
 		"**/node_modules": true,
 		"**/logs": true,
 		"yarn.lock": true,

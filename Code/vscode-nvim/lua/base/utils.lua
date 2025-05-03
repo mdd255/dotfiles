@@ -1,14 +1,8 @@
 local M = {}
 
-local vscode = {
-  call = function(_, _) end,
-  action = function(_) end
-}
+local vscode = vim.g.vscode and require('vscode')
 
-if vim.g.vscode then
-  vscode = require('vscode')
-  vim.notify = vscode.notify
-end
+vim.notify = vscode and vscode.notify
 
 function M.map(mode_str, lhs, rhs, is_silent)
   local modes = {}
@@ -78,62 +72,30 @@ M.higroup = {
   hop_next_key2 = 'HopNextKey2',
 }
 
----@return string
-local function get_clipboard_cmd()
-  local cmd = {
-    Darwin  = 'pbpaste',
-    Linux   = 'xclip -selection clipboard -o',
-    Windows = 'powershell.exe Get-Clipboard'
-  }
-
-  local handle = io.popen('uname -s')
-
-  if handle == nil then
-    return 'unknown'
-  end
-
-  local os_type = handle:read('*a')
-  handle:close()
-
-  os_type = os_type:gsub('%s+', '')
-
-  if cmd[os_type] == nil then
-    error('Unsupported OS: ' .. os_type)
-  end
-
-  return cmd[os_type]
-end
-
----@return number
-local function get_clipboard_line_count()
-  local clipboard_cmd = get_clipboard_cmd()
-
-  local handle = io.popen(clipboard_cmd)
-
-  if handle ~= nil then
-    local content = handle:read('*a')
-    handle:close()
-    local lines = {}
-
-    for line in content:gmatch('([^\n]*)\n?') do
-      table.insert(lines, line)
-    end
-
-    return #lines - 1
-  end
-
-  return 0
+---@param table_key string
+---@param key string
+---@param value string
+function M.update_vscode_config_table(table_key, key, value)
+  local table_value = vscode.get_config(table_key)
+  table_value[key] = value
+  vscode.update_config({ table_key }, { table_value }, 'global')
 end
 
 -- post paste highlight events
-function M.post_paste()
-  local count = get_clipboard_line_count()
-  vim.cmd('normal! p')
+function M.post_paste(reverse)
+  local cmd = reverse and 'normal! P' or 'normal! p'
+  vim.cmd(cmd)
   local ns = vim.api.nvim_create_namespace('post_paste')
-  local line = vim.fn.line('.') - 1
+  local start_line = vim.fn.line('.') - 1
+  local clipboard_content = vim.fn.getreg('"')
+  local pasted_lines = vim.split(clipboard_content, '\n', { plain = true })
 
-  for i = 0, count - 1 do
-    vim.api.nvim_buf_add_highlight(0, ns, M.higroup.paste_post, line + i, 0, -1)
+  for i, line_content in ipairs(pasted_lines) do
+    local line_index = start_line + i - 1
+
+    if line_content and #line_content > 0 then
+      vim.api.nvim_buf_add_highlight(0, ns, M.higroup.paste_post, line_index, 0, -1)
+    end
   end
 
   vim.defer_fn(function()
@@ -142,22 +104,20 @@ function M.post_paste()
 end
 
 -- pre highlight events
----@param event string
----@param higroup string
----@param extra_cmd? string
-function M.pre_highlight(event, higroup, extra_cmd)
-  local line = vim.fn.line('.') - 1
-  local count = vim.v.count1
-  local ns = vim.api.nvim_create_namespace('pre_' .. event)
-
-  for i = 0, count - 1 do
-    vim.api.nvim_buf_add_highlight(0, ns, higroup, line + i, 0, -1)
+---@param select string
+---@param bgcolor string
+---@param act string
+function M.pre_highlight(select, bgcolor, act)
+  M.update_vscode_config_table('workbench.colorCustomizations', 'editor.selectionBackground', bgcolor)
+  local count = vim.v.count
+  vim.api.nvim_feedkeys(select, 'n', false)
+  for i = 2, count do
+    vim.api.nvim_feedkeys('j', 'x', false)
   end
-
   vim.defer_fn(function()
-    vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
-    vim.cmd('normal! ' .. count .. event)
-    if extra_cmd then vim.cmd(extra_cmd) end
+    vim.cmd('normal! ' .. act)
+    if act == 'c' then vim.api.nvim_feedkeys('a', 'n', false) end
+    M.update_vscode_config_table('workbench.colorCustomizations', 'editor.selectionBackground', 'default')
   end, event_delay_ms)
 end
 
