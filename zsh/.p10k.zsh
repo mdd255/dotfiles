@@ -27,19 +27,19 @@
   # Left prompt segments.
   typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
     dir                       # current directory
-    vcs                       # git status
-    go_version
-    node_version
+    command_execution_time    # previous command duration
     prompt_char               # prompt symbol
   )
 
   # Right prompt segments.
   typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
-    context                   # user@host
+    vcs                       # git status
+    go_version
+    node_version
     virtualenv                # python virtual environment
+    context                   # user@host
     battery
     time                      # current time
-    command_execution_time    # previous command duration
   )
 
   typeset -g POWERLEVEL9K_NODE_VERSION_PREFIX=$'󰎙\u200A'
@@ -60,7 +60,7 @@
   typeset -g POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
 
   # Magenta prompt symbol if the last command succeeded.
-  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$magenta
+  typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_{VIINS,VICMD,VIVIS}_FOREGROUND=$green
   # Red prompt symbol if the last command failed.
   typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_{VIINS,VICMD,VIVIS}_FOREGROUND=$red
   # Default prompt symbol.
@@ -85,7 +85,7 @@
   # Context format when root: user@host. The first part white, the rest grey.
   typeset -g POWERLEVEL9K_CONTEXT_ROOT_TEMPLATE="%F{$white}%n%f%F{$grey}"
   # Context format when not root: user@host. The whole thing grey.
-  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$grey}%n"
+  typeset -g POWERLEVEL9K_CONTEXT_TEMPLATE="%F{$blue}%n"
   # Don't show context unless root or in SSH.
   # typeset -g POWERLEVEL9K_CONTEXT_{DEFAULT,SUDO}_CONTENT_EXPANSION=
 
