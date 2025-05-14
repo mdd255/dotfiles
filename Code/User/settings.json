@@ -693,21 +693,21 @@
   "window.zoomLevel": 1,
   "workbench.activityBar.location": "hidden",
   "workbench.colorCustomizations": {
+    "editor.selectionBackground": "default",
     "[Default Dark Modern]": {
       "menu.background": "#0c0c0c",
-      "sideBar.background": "#0c0c0c",
-      "editor.background": "#0c0c0c",
       "input.background": "#0c0c0c",
-      "tab.activeBackground": "#0c0c0c",
-      "statusBar.background": "#0c0c0c",
-      "panel.background": "#0c0c0c",
       "searchEditor.findMatchBackground": "#ff0000",
       "quickInput.background": "#0c0c0c",
-      "editor.findMatchForeground": "#0c0c0c",
+      "terminal.background": "#0c0c0c",
       "editor.findMatchBackground": "#ff0000",
-      "terminal.background": "#0c0c0c"
-    },
-    "editor.selectionBackground": "default"
+      "editor.background": "#0c0c0c",
+      "panel.background": "#0c0c0c",
+      "tab.activeBackground": "#0c0c0c",
+      "statusBar.background": "#0c0c0c",
+      "sideBar.background": "#0c0c0c",
+      "editor.findMatchForeground": "#0c0c0c"
+    }
   },
   "workbench.editor.closeOnFileDelete": true,
   "workbench.editor.enablePreview": false,
