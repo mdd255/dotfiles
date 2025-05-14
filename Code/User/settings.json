@@ -694,17 +694,17 @@
   "workbench.activityBar.location": "hidden",
   "workbench.colorCustomizations": {
     "[Default Dark Modern]": {
-      "editor.background": "#0c0c0c",
-      "editor.findMatchBackground": "#ff0000",
-      "editor.findMatchForeground": "#0c0c0c",
-      "input.background": "#0c0c0c",
       "menu.background": "#0c0c0c",
-      "panel.background": "#0c0c0c",
-      "quickInput.background": "#0c0c0c",
-      "searchEditor.findMatchBackground": "#ff0000",
       "sideBar.background": "#0c0c0c",
-      "statusBar.background": "#0c0c0c",
+      "editor.background": "#0c0c0c",
+      "input.background": "#0c0c0c",
       "tab.activeBackground": "#0c0c0c",
+      "statusBar.background": "#0c0c0c",
+      "panel.background": "#0c0c0c",
+      "searchEditor.findMatchBackground": "#ff0000",
+      "quickInput.background": "#0c0c0c",
+      "editor.findMatchForeground": "#0c0c0c",
+      "editor.findMatchBackground": "#ff0000",
       "terminal.background": "#0c0c0c"
     },
     "editor.selectionBackground": "default"
