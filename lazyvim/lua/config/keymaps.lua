@@ -74,6 +74,10 @@ local function del_map(lhs, modes)
     modes = { "n" }
   end
 
+  if type(modes) ~= "table" then
+    modes = { modes }
+  end
+
   vim.keymap.del(modes, lhs)
 end
 
@@ -93,7 +97,10 @@ del_map("<space>-")
 -- misc
 del_map("<space>E")
 del_map("<space>K")
-del_map("<space>K")
+
+-- blink
+del_map("<c-n>", "i")
+del_map("<c-e>", "i")
 
 -- search
 del_map("<space>sG")
