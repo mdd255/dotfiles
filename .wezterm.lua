@@ -6,10 +6,9 @@ local ctrl = "CTRL"
 local ctrl_cmd = "CTRL|CMD"
 local alt = "ALT"
 
-config.default_prog = { 'zsh' }
 config.color_scheme = "AdventureTime"
 config.font = wezterm.font("FiraCode Nerd Font")
-config.font_size = 16
+config.font_size = 17
 config.cell_width = 1
 config.line_height = 1
 config.enable_wayland = false

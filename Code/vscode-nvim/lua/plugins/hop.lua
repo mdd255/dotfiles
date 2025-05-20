@@ -2,10 +2,12 @@ return {
    'smoka7/hop.nvim',
    config = function()
       local hop = require('hop')
+      local utils  = require('base.utils')
+      local color  = utils.color
+      local hi     = utils.hi
       local vscode = vim.g.vscode and require('vscode')
 
       if vim.g.vscode then vscode = require('vscode') end
-      local directions = require('hop.hint').HintDirection
       local map = require('base.utils').map
 
       hop.setup({
@@ -92,24 +94,12 @@ return {
          end
       end
 
-      ---@param forward? boolean
-      local function hop_word(forward)
-         local direction = forward and directions.AFTER_CURSOR or directions.BEFORE_CURSOR
+      -- highlight groups
+      hi('HopNextKey', { fg = color.red })
+      hi('HopNextKey1', { fg = color.red })
+      hi('HopNextKey2', { fg = color.blue })
 
-         return function()
-            if vscode then
-               vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-            end
-            hop.hint_words({
-               multi_windows = false,
-               direction = direction
-            })
-            if vscode then
-               vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-            end
-         end
-      end
-
+      -- keymaps
       map('n', 'cn', function() hop_modify('ci') end)
       map('n', 'dn', function() hop_modify('di', true) end)
       map('n', 'yn', function() hop_modify('yi', true) end)
@@ -119,8 +109,5 @@ return {
       map('n', 'de', function() hop_modify('da', true) end)
       map('n', 'ye', function() hop_modify('ya', true) end)
       map('n', 'ze', function() hop_modify('va') end)
-
-      map('n', 'w', hop_word(true))
-      map('n', 'b', hop_word(false))
    end
 }
