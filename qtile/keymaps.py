@@ -46,56 +46,48 @@ keys = [
     Key(
         [ALT],
         "Return",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn(TERM),
         desc="Launch default terminal",
     ),
     Key(
         [ALT],
         "Escape",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn(HOME + "/.config/rofi/scripts/menu.sh"),
         desc="Rofi show running applications",
     ),
     Key(
         [CONTROL],
         "Escape",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn(HOME + "/.config/rofi/scripts/cmd.sh"),
         desc="Rofi show running applications",
     ),
     Key(
         [ALT],
         "Tab",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn(HOME + "/.config/rofi/scripts/index.sh"),
         desc="Rofi show running applications",
     ),
     Key(
         [ALT],
         "b",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn("brave"),
         desc="Start web browser",
     ),
     Key(
         [ALT],
         "f",
-        lazy.spawn(SOUND_CMD),
         lazy.next_layout(),
         desc="Toggle through layouts",
     ),
     Key(
         [ALT, SHIFT],
         "o",
-        lazy.spawn(SOUND_CMD),
         lazy.window.kill(),
         desc="Kill active window",
     ),
     Key(
         [ALT],
         "q",
-        lazy.spawn(SOUND_CMD),
         lazy.window.kill(),
         desc="Kill active window",
     ),
@@ -109,7 +101,6 @@ keys = [
     Key(
         [ALT, SHIFT],
         "q",
-        lazy.spawn(SOUND_CMD),
         lazy.shutdown(),
         desc="Shutdown Qtile",
     ),
@@ -117,7 +108,6 @@ keys = [
     Key(
         [ALT],
         "o",
-        lazy.spawn(SOUND_CMD),
         lazy.next_screen(),
         desc="Move focus to next monitor",
     ),
@@ -125,70 +115,60 @@ keys = [
     Key(
         [ALT],
         "h",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.right(),
         desc="Move focus right in current stack pane",
     ),
     Key(
         [ALT],
         "e",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.down(),
         desc="Move focus down in current stack pane",
     ),
     Key(
         [ALT],
         "n",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.up(),
         desc="Move focus up in current stack pane",
     ),
     Key(
         [ALT, SHIFT],
         "h",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.swap_left(),
         desc="Move windows left in current stack",
     ),
     Key(
         [ALT, SHIFT],
         "i",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.swap_right(),
         desc="Move windows right in current stack",
     ),
     Key(
         [ALT, SHIFT],
         "n",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.shuffle_down(),
         desc="Move windows down in current stack",
     ),
     Key(
         [ALT, SHIFT],
         "e",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.shuffle_up(),
         desc="Move windows up in current stack",
     ),
     Key(
         [ALT, SHIFT],
         "period",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.increase_nmaster(),
         desc="increase number in master pane (Tile)",
     ),
     Key(
         [ALT, SHIFT],
         "comma",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.decrease_nmaster(),
         desc="decrease number in master pane (Tile)",
     ),
     Key(
         [ALT],
         "period",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.grow(),
         lazy.layout.increase_ratio(),
         desc="increase number in master pane (Tile)",
@@ -196,7 +176,6 @@ keys = [
     Key(
         [ALT],
         "comma",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.shrink(),
         lazy.layout.decrease_ratio(),
         desc="decrease number in master pane (Tile)",
@@ -204,21 +183,18 @@ keys = [
     Key(
         [ALT],
         "k",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.normalize(),
         desc="normalize window size ratios",
     ),
     Key(
         [ALT],
         "m",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.maximize(),
         desc="toggle window between minimum and maximum sizes",
     ),
     Key(
         [WIN, CONTROL],
         "m",
-        lazy.spawn(SOUND_CMD),
         lazy.window.toggle_fullscreen(),
         desc="toggle fullscreen",
     ),
@@ -226,14 +202,12 @@ keys = [
     Key(
         [WIN],
         "tab",
-        lazy.spawn(SOUND_CMD),
         lazy.screen.next_group(),
         desc="navigate to next group",
     ),
     Key(
         [WIN, SHIFT],
         "tab",
-        lazy.spawn(SOUND_CMD),
         lazy.screen.prev_group(),
         desc="navigate to previous group",
     ),
@@ -241,14 +215,12 @@ keys = [
     Key(
         [ALT, SHIFT],
         "space",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.flip(),
         desc="Switch which side main pane occupies (XmonadTall)",
     ),
     Key(
         [ALT, CONTROL],
         "Return",
-        lazy.spawn(SOUND_CMD),
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
@@ -340,14 +312,12 @@ keys = [
     Key(
         [WIN],
         "q",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn("dm-tool lock"),
         desc="Lock screen",
     ),
     Key(
         [WIN],
         "Escape",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2.sh"),
         desc="Power management",
     ),
@@ -355,14 +325,12 @@ keys = [
     Key(
         [ALT],
         "semicolon",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn("xdotool click 1"),
         desc="Move left click",
     ),
     Key(
         [ALT, CONTROL],
         "semicolon",
-        lazy.spawn(SOUND_CMD),
         lazy.spawn("xdotool click 3"),
         desc="Move right click",
     ),
@@ -381,7 +349,6 @@ for i, (group_name, kwargs) in enumerate(group_names, 1):
         Key(
             [WIN],
             group_keys[str(i)],
-            lazy.spawn(SOUND_CMD),
             lazy.group[group_name].toscreen(),
         )
     )
@@ -390,7 +357,6 @@ for i, (group_name, kwargs) in enumerate(group_names, 1):
         Key(
             [WIN, CONTROL],
             group_keys[str(i)],
-            lazy.spawn(SOUND_CMD),
             lazy.window.togroup(group_name),
         )
     )
