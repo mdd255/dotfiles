@@ -72,6 +72,23 @@ return {
          if vscode then
             vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
          end
+         -- auto apply action on open brackets
+         local keys = { '(', '[', '{', '<', '\'', '"' }
+         for _, key in pairs(keys) do
+            if current_char == key then
+               local _cmd = 'normal ' .. action .. current_char
+               vim.cmd(_cmd)
+
+               if startinsert then
+                  vim.cmd('startinsert')
+               end
+
+               if vscode then
+                  vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
+               end
+               return
+            end
+         end
          if pcall(hint_pairs) then
             local new_pos = vim.api.nvim_win_get_cursor(0)
             current_line = vim.api.nvim_get_current_line()

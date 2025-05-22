@@ -7,7 +7,7 @@
 			"type": "transient",
 			"bindings": [
 				{
-					"key": "o",
+					"key": "-",
 					"name": "Toggle current",
 					"type": "command",
 					"command": "editor.toggleFold"

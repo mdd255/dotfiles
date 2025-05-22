@@ -4,7 +4,7 @@ local vscode = vim.g.vscode and require('vscode')
 
 vim.notify = vscode and vscode.notify
 
-function M.map(mode_str, lhs, rhs, is_silent)
+function M.map(mode_str, lhs, rhs, current_buffer_only)
   local modes = {}
 
   for i = 1, #mode_str do
@@ -14,7 +14,8 @@ function M.map(mode_str, lhs, rhs, is_silent)
 
   local opts = {
     noremap = true,
-    silent  = is_silent == nil or is_silent == true,
+    silent  = true,
+    buffer  = current_buffer_only == true,
     nowait  = true,
   }
 

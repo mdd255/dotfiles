@@ -30,17 +30,23 @@ vim.api.nvim_create_autocmd(
    {
       pattern = '*.http',
       callback = function()
-         map('n', '<C-h>', action('rest-client.request'))
+         map('n', '<C-h>', action('rest-client.request'), true)
       end
    }
 )
 
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+   pattern = 'untitled:Untitled-1',
+   callback = function()
+      map('n', '<Space>q', action('workbench.action.revertAndCloseActiveEditor'), true)
+   end,
+})
 vim.api.nvim_create_autocmd(
    'BufEnter',
    {
       pattern = '*.sql',
       callback = function()
-         map('n', '<C-h>', action('mysql.runSQL'))
+         map('n', '<C-h>', action('mysql.runSQL'), true)
       end
    }
 )
