@@ -13,6 +13,27 @@
 					"command": "workbench.action.quickOpen"
 				},
 				{
+					"key": "a",
+					"name": "Flash any",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-a>"
+				},
+				{
+					"key": "w",
+					"name": "Flash current word",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-w>"
+				},
+				{
+					"key": "t",
+					"name": "Flash select treesitter",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-t>"
+				},
+				{
 					"key": "s",
 					"name": "Search",
 					"type": "command",

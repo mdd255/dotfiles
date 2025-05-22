@@ -1,14 +1,12 @@
 return {
    'smoka7/hop.nvim',
    config = function()
-      local hop = require('hop')
+      local hop    = require('hop')
       local utils  = require('base.utils')
       local color  = utils.color
       local hi     = utils.hi
       local vscode = vim.g.vscode and require('vscode')
-
-      if vim.g.vscode then vscode = require('vscode') end
-      local map = require('base.utils').map
+      local map    = require('base.utils').map
 
       hop.setup({
          multi_windows    = true,

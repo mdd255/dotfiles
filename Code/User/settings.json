@@ -258,6 +258,2197 @@
 					"command": "workbench.action.quickOpen"
 				},
 				{
+					"key": "a",
+					"name": "Flash any",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-a>"
+				},
+				{
+					"key": "w",
+					"name": "Flash current word",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-c>"
+				},
+				{
+					"key": "t",
+					"name": "Flash select treesitter",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": "<C-t>"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "-",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "-",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "-",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "-",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
+					"key": "s",
+					"name": "Search",
+					"type": "command",
+					"command": "workbench.view.search"
+				},
+				{
+					"key": "o",
+					"name": "Symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "@:"
+				},
+				{
+					"key": "O",
+					"name": "Workspace symbols",
+					"type": "command",
+					"command": "workbench.action.quickOpen",
+					"args": "#"
+				},
+				{
+					"key": "p",
+					"name": "Projects",
+					"type": "command",
+					"command": "workbench.action.openRecent"
+				}
+			]
+		},
+		{
+			"key": "z",
+			"name": "Fold",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "-",
+					"name": "Toggle current",
+					"type": "command",
+					"command": "editor.toggleFold"
+				},
+				{
+					"key": "n",
+					"name": "Next fold",
+					"type": "command",
+					"command": "editor.gotoNextFold"
+				},
+				{
+					"key": "e",
+					"name": "Prev fold",
+					"type": "command",
+					"command": "editor.gotoPreviousFold"
+				},
+				{
+					"key": "h",
+					"name": "Fold all",
+					"type": "command",
+					"command": "editor.foldAll"
+				},
+				{
+					"key": "i",
+					"name": "Unfold all",
+					"type": "command",
+					"command": "editor.unfoldAll"
+				}
+			]
+		},
+		{
+			"key": "g",
+			"name": "Git",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "b",
+					"name": "*Branch",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "c",
+							"name": "Checkout",
+							"type": "command",
+							"command": "git.checkout"
+						},
+						{
+							"key": "n",
+							"name": "New",
+							"type": "command",
+							"command": "git.branch"
+						},
+						{
+							"key": "d",
+							"name": "Delete",
+							"type": "command",
+							"command": "git.deleteBranch"
+						},
+						{
+							"key": "r",
+							"name": "Rename",
+							"type": "command",
+							"command": "git.renameBranch"
+						}
+					]
+				},
+				{
+					"key": "f",
+					"name": "*Files",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "u",
+							"name": "Unstage",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "S",
+							"name": "Stage all",
+							"type": "commands",
+							"commands": [
+								"git.stageAll",
+								"workbench.view.scm"
+							]
+						},
+						{
+							"key": "s",
+							"name": "Stage",
+							"type": "command",
+							"command": "git.stage"
+						},
+						{
+							"key": "o",
+							"name": "Open",
+							"type": "command",
+							"command": "gitlens.openOnlyChangedFiles"
+						},
+						{
+							"key": "d",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.viewChanges"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "*Changes",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "q",
+							"name": "Revert",
+							"type": "command",
+							"command": "git.revertSelectedRanges"
+						},
+						{
+							"key": "Q",
+							"name": "Clean",
+							"type": "command",
+							"command": "git.clean"
+						},
+						{
+							"key": "n",
+							"name": "Next",
+							"type": "command",
+							"command": "workbench.action.editor.nextChange"
+						},
+						{
+							"key": "e",
+							"name": "Prev",
+							"type": "command",
+							"command": "workbench.action.editor.previousChange"
+						},
+						{
+							"key": "c",
+							"name": "Diff",
+							"type": "command",
+							"command": "git.openChange"
+						}
+					]
+				},
+				{
+					"key": "m",
+					"name": "*Conflict",
+					"type": "transient",
+					"bindings": [
+						{
+							"key": "b",
+							"name": "Accept both",
+							"type": "command",
+							"command": "merge-conflict.accept.both"
+						},
+						{
+							"key": "c",
+							"name": "Accept current",
+							"type": "command",
+							"command": "merge-conflict.accept.current"
+						},
+						{
+							"key": "i",
+							"name": "Accept incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.incoming"
+						},
+						{
+							"key": "B",
+							"name": "Accept all both",
+							"type": "command",
+							"command": "merge-conflict.accept.all-both"
+						},
+						{
+							"key": "C",
+							"name": "Accept all current",
+							"type": "command",
+							"command": "merge-conflict.accept.all-current"
+						},
+						{
+							"key": "I",
+							"name": "Accept all incoming",
+							"type": "command",
+							"command": "merge-conflict.accept.all-incoming"
+						},
+						{
+							"key": "enter",
+							"name": "Compare current conflict",
+							"type": "command",
+							"command": "merge-conflict.compare"
+						},
+						{
+							"key": "n",
+							"name": "Next Conflict",
+							"type": "command",
+							"command": "merge-conflict.next"
+						},
+						{
+							"key": "e",
+							"name": "Previous Conflict",
+							"type": "command",
+							"command": "merge-conflict.previous"
+						}
+					]
+				},
+				{
+					"key": "o",
+					"name": "Commit",
+					"type": "command",
+					"command": "git.commit"
+				},
+				{
+					"key": "i",
+					"name": "Init",
+					"type": "command",
+					"command": "git.init"
+				},
+				{
+					"key": "x",
+					"name": "Merge",
+					"type": "command",
+					"command": "git.merge"
+				},
+				{
+					"key": "l",
+					"name": "Pull",
+					"type": "command",
+					"command": "git.pull"
+				},
+				{
+					"key": "p",
+					"name": "Push",
+					"type": "command",
+					"command": "git.push"
+				},
+				{
+					"key": "s",
+					"name": "Status",
+					"type": "command",
+					"command": "workbench.view.scm"
+				},
+				{
+					"key": "g",
+					"name": "Goto top",
+					"type": "command",
+					"command": "cursorTop"
+				},
+				{
+					"key": "n",
+					"name": "Next change",
+					"type": "command",
+					"command": "workbench.action.editor.nextChange"
+				},
+				{
+					"key": "e",
+					"name": "Prev change",
+					"type": "command",
+					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "'",
+					"name": "Go to bracket",
+					"type": "command",
+					"command": "editor.action.jumpToBracket"
+				}
+			]
+		},
+		{
+			"key": "t",
+			"name": "LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": "Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": "Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": "Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": "File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": "Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": "Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": "Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		},
+		{
+			"key": "w",
+			"name": "Window",
+			"type": "transient",
+			"bindings": [
+				{
+					"key": "h",
+					"name": "Descrease view size",
+					"type": "command",
+					"command": "workbench.action.decreaseViewSize"
+				},
+				{
+					"key": "i",
+					"name": "Increase view size",
+					"type": "command",
+					"command": "workbench.action.increaseViewSize"
+				},
+				{
+					"key": "H",
+					"name": "Move editor group left",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupLeft"
+				},
+				{
+					"key": "N",
+					"name": "Move editor group down",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupDown"
+				},
+				{
+					"key": "E",
+					"name": "Move editor group up",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupUp"
+				},
+				{
+					"key": "I",
+					"name": "Move editor group right",
+					"type": "command",
+					"command": "workbench.action.moveActiveEditorGroupRight"
+				}
+			]
+		},
+		{
+			"key": "f",
+			"name": "Find",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "f",
+					"name": "Files",
+					"type": "command",
+					"command": "workbench.action.quickOpen"
+				},
+				{
 					"key": "s",
 					"name": "Search",
 					"type": "command",
@@ -719,6 +2910,5 @@
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
 	"workbench.editor.closeOnFileDelete": true,
-	"editor.occurrencesHighlight": "singleFile",
-	"workbench.statusBar.visible": false
+	"editor.occurrencesHighlight": "off"
 }
