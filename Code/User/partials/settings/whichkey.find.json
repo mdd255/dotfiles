@@ -13,6 +13,13 @@
 					"command": "workbench.action.quickOpen"
 				},
 				{
+					"key": "l",
+					"name": "Goto line",
+					"type": "key",
+					"command": "vscode-neovim.send",
+					"args": ":"
+				},
+				{
 					"key": "a",
 					"name": "Flash any",
 					"type": "key",
@@ -24,7 +31,7 @@
 					"name": "Flash current word",
 					"type": "key",
 					"command": "vscode-neovim.send",
-					"args": "<C-w>"
+					"args": "<C-c>"
 				},
 				{
 					"key": "t",

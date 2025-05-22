@@ -6,7 +6,10 @@ return {
 		labels = 'neioharstdqwfpluy;zxcvkm,.',
 		modes = {
 			char = {
-				keys = { "," },
+				keys = {
+					["f"] = "<tab>",
+					["F"] = "<s-tab>"
+				},
 			}
 		}
 	},
@@ -23,12 +26,6 @@ return {
 			mode = { "n", "x", "o" },
 			function() require("flash").jump({ pattern = vim.fn.expand("<cword>") }) end,
 			desc = "Flash current word"
-		},
-		{
-			"<C-t>",
-			mode = { "n", "x", "o" },
-			function() require("flash").treesitter() end,
-			desc = "Flash Treesitter"
 		},
 	},
 }
