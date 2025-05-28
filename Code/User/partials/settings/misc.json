@@ -37,6 +37,5 @@
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"whichkey.delay": 0,
 	"whichkey.showIcons": true,
-	"whichkey.useFullWidthCharacters": true,
 	"clock.dateFormat": "HH:MM dd/mm"
 }

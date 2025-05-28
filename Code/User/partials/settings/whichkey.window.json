@@ -3,42 +3,42 @@
 	"whichkey.bindings": [
 		{
 			"key": "w",
-			"name": "Window",
+			"name": "󰃌 Window",
 			"type": "transient",
 			"bindings": [
 				{
 					"key": "h",
-					"name": "Descrease view size",
+					"name": " Descrease view size",
 					"type": "command",
 					"command": "workbench.action.decreaseViewSize"
 				},
 				{
 					"key": "i",
-					"name": "Increase view size",
+					"name": " Increase view size",
 					"type": "command",
 					"command": "workbench.action.increaseViewSize"
 				},
 				{
 					"key": "H",
-					"name": "Move editor group left",
+					"name": " Move editor left",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupLeft"
 				},
 				{
 					"key": "N",
-					"name": "Move editor group down",
+					"name": " Move editor down",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupDown"
 				},
 				{
 					"key": "E",
-					"name": "Move editor group up",
+					"name": " Move editor up",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupUp"
 				},
 				{
 					"key": "I",
-					"name": "Move editor group right",
+					"name": " Move editor right",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupRight"
 				}

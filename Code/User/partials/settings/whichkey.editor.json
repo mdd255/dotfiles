@@ -3,42 +3,42 @@
 	"whichkey.bindings": [
 		{
 			"key": "s",
-			"name": "Editors",
+			"name": " Editors",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "n",
-					"name": "Split down",
+					"name": " Split down",
 					"type": "command",
 					"command": "workbench.action.splitEditorDown"
 				},
 				{
 					"key": "e",
-					"name": "Vsplit right",
+					"name": " Vsplit right",
 					"type": "command",
 					"command": "workbench.action.splitEditorRight"
 				},
 				{
 					"key": "y",
-					"name": "Copy current file path",
+					"name": " Copy current file path",
 					"type": "command",
 					"command": "copyRelativeFilePath"
 				},
 				{
 					"key": "N",
-					"name": "New",
+					"name": " New",
 					"type": "command",
 					"command": "workbench.action.files.newUntitledFile"
 				},
 				{
 					"key": "r",
-					"name": "Restore",
+					"name": " Restore",
 					"type": "command",
 					"command": "workbench.action.reopenClosedEditor"
 				},
 				{
 					"key": "s",
-					"name": "Save",
+					"name": " Save",
 					"type": "command",
 					"command": "workbench.action.files.save"
 				}

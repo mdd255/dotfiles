@@ -36,7 +36,7 @@
 	"editor.fontSize": 14,
 	"editor.renderWhitespace": "trailing",
 	"editor.lineHeight": 1.2,
-	"editor.codeActionsOnSave": { },
+	"editor.codeActionsOnSave": {},
 	"editor.fontFamily": "FiraCode Nerd Font",
 	"editor.insertSpaces": false,
 	"editor.formatOnSave": true,
@@ -134,12 +134,11 @@
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
 	},
-	"vscode-neovim.ctrlKeysForInsertMode": [ ],
-	"vscode-neovim.ctrlKeysForNormalMode": [ ],
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"whichkey.delay": 0,
 	"whichkey.showIcons": true,
-	"whichkey.useFullWidthCharacters": true,
 	"clock.dateFormat": "HH:MM dd/mm",
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
@@ -211,42 +210,42 @@
 	"whichkey.bindings": [
 		{
 			"key": "s",
-			"name": "Editors",
+			"name": " Editors",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "n",
-					"name": "Split down",
+					"name": " Split down",
 					"type": "command",
 					"command": "workbench.action.splitEditorDown"
 				},
 				{
 					"key": "e",
-					"name": "Vsplit right",
+					"name": " Vsplit right",
 					"type": "command",
 					"command": "workbench.action.splitEditorRight"
 				},
 				{
 					"key": "y",
-					"name": "Copy current file path",
+					"name": " Copy current file path",
 					"type": "command",
 					"command": "copyRelativeFilePath"
 				},
 				{
 					"key": "N",
-					"name": "New",
+					"name": " New",
 					"type": "command",
 					"command": "workbench.action.files.newUntitledFile"
 				},
 				{
 					"key": "r",
-					"name": "Restore",
+					"name": " Restore",
 					"type": "command",
 					"command": "workbench.action.reopenClosedEditor"
 				},
 				{
 					"key": "s",
-					"name": "Save",
+					"name": " Save",
 					"type": "command",
 					"command": "workbench.action.files.save"
 				}
@@ -254,90 +253,90 @@
 		},
 		{
 			"key": "f",
-			"name": "Find",
+			"name": " Find",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "f",
-					"name": "Files",
+					"name": " Files",
 					"type": "command",
 					"command": "workbench.action.quickOpen"
 				},
 				{
 					"key": "l",
-					"name": "Goto line",
+					"name": "󰞷 Goto line",
 					"type": "key",
 					"command": "vscode-neovim.send",
 					"args": ":"
 				},
 				{
 					"key": "a",
-					"name": "Flash any",
+					"name": " Flash any",
 					"type": "key",
 					"command": "vscode-neovim.send",
 					"args": "<C-a>"
 				},
 				{
 					"key": "w",
-					"name": "Flash current word",
+					"name": "󰉁 Flash current word",
 					"type": "key",
 					"command": "vscode-neovim.send",
 					"args": "<C-c>"
 				},
 				{
 					"key": "t",
-					"name": "Flash select treesitter",
+					"name": "󰹩 Flash select treesitter",
 					"type": "key",
 					"command": "vscode-neovim.send",
 					"args": "<C-t>"
 				},
 				{
 					"key": "s",
-					"name": "Search",
+					"name": " Search",
 					"type": "command",
 					"command": "workbench.view.search"
 				},
 				{
 					"key": "o",
-					"name": "Symbols",
+					"name": " Symbols",
 					"type": "command",
 					"command": "workbench.action.quickOpen",
 					"args": "@:"
 				},
 				{
 					"key": "O",
-					"name": "Workspace symbols",
+					"name": " Workspace symbols",
 					"type": "command",
 					"command": "workbench.action.quickOpen",
 					"args": "#"
 				},
 				{
 					"key": "p",
-					"name": "Projects",
+					"name": " Projects",
 					"type": "command",
 					"command": "workbench.action.openRecent"
 				},
 				{
 					"key": "-",
-					"name": "Toggle bookmark",
+					"name": "󱋸 Toggle bookmark",
 					"type": "command",
 					"command": "bookmarks.toggle"
 				},
 				{
 					"key": "'",
-					"name": "All bookmarks",
+					"name": "󱉷 All bookmarks",
 					"type": "command",
 					"command": "bookmarks.listFromAllFiles"
 				},
 				{
 					"key": "n",
-					"name": "Next bookmark",
+					"name": "󱋞 Next bookmark",
 					"type": "command",
 					"command": "bookmarks.jumpToNext"
 				},
 				{
 					"key": "e",
-					"name": "Prev bookmark",
+					"name": "󱋝 Prev bookmark",
 					"type": "command",
 					"command": "bookmarks.jumpToPrevious"
 				}
@@ -345,36 +344,36 @@
 		},
 		{
 			"key": "z",
-			"name": "Fold",
+			"name": " Fold",
 			"type": "transient",
 			"bindings": [
 				{
 					"key": "-",
-					"name": "Toggle current",
+					"name": " Toggle current",
 					"type": "command",
 					"command": "editor.toggleFold"
 				},
 				{
 					"key": "n",
-					"name": "Next fold",
+					"name": " Next fold",
 					"type": "command",
 					"command": "editor.gotoNextFold"
 				},
 				{
 					"key": "e",
-					"name": "Prev fold",
+					"name": " Prev fold",
 					"type": "command",
 					"command": "editor.gotoPreviousFold"
 				},
 				{
 					"key": "h",
-					"name": "Fold all",
+					"name": " Fold all",
 					"type": "command",
 					"command": "editor.foldAll"
 				},
 				{
 					"key": "i",
-					"name": "Unfold all",
+					"name": " Unfold all",
 					"type": "command",
 					"command": "editor.unfoldAll"
 				}
@@ -392,7 +391,7 @@
 					"bindings": [
 						{
 							"key": "c",
-							"name": "Checkout",
+							"name": "󱓍 Checkout",
 							"type": "command",
 							"command": "git.checkout"
 						},
@@ -404,13 +403,13 @@
 						},
 						{
 							"key": "d",
-							"name": "Delete",
+							"name": "󱓋 Delete",
 							"type": "command",
 							"command": "git.deleteBranch"
 						},
 						{
 							"key": "r",
-							"name": "Rename",
+							"name": "󱓎 Rename",
 							"type": "command",
 							"command": "git.renameBranch"
 						}
@@ -418,18 +417,18 @@
 				},
 				{
 					"key": "f",
-					"name": "*Files",
+					"name": "󱓊 Files",
 					"type": "bindings",
 					"bindings": [
 						{
 							"key": "u",
-							"name": "Unstage",
+							"name": "󱓌 Unstage",
 							"type": "command",
 							"command": "git.unstage"
 						},
 						{
 							"key": "S",
-							"name": "Stage all",
+							"name": "󱓏 Stage all",
 							"type": "commands",
 							"commands": [
 								"git.stageAll",
@@ -438,19 +437,19 @@
 						},
 						{
 							"key": "s",
-							"name": "Stage",
+							"name": "󱓏 Stage",
 							"type": "command",
 							"command": "git.stage"
 						},
 						{
 							"key": "o",
-							"name": "Open",
+							"name": "󱓊 Open",
 							"type": "command",
 							"command": "gitlens.openOnlyChangedFiles"
 						},
 						{
 							"key": "d",
-							"name": "Diff",
+							"name": "󱓎 Diff",
 							"type": "command",
 							"command": "git.viewChanges"
 						}
@@ -458,36 +457,36 @@
 				},
 				{
 					"key": "c",
-					"name": "*Changes",
+					"name": " Changes",
 					"type": "transient",
 					"bindings": [
 						{
 							"key": "q",
-							"name": "Revert",
+							"name": "󱓍 Revert",
 							"type": "command",
 							"command": "git.revertSelectedRanges"
 						},
 						{
 							"key": "Q",
-							"name": "Clean",
+							"name": "󱓎 Clean",
 							"type": "command",
 							"command": "git.clean"
 						},
 						{
 							"key": "n",
-							"name": "Next",
+							"name": " Next",
 							"type": "command",
 							"command": "workbench.action.editor.nextChange"
 						},
 						{
 							"key": "e",
-							"name": "Prev",
+							"name": " Prev",
 							"type": "command",
 							"command": "workbench.action.editor.previousChange"
 						},
 						{
 							"key": "c",
-							"name": "Diff",
+							"name": " Diff",
 							"type": "command",
 							"command": "git.openChange"
 						}
@@ -495,24 +494,24 @@
 				},
 				{
 					"key": "m",
-					"name": "*Conflict",
+					"name": " Conflict",
 					"type": "transient",
 					"bindings": [
 						{
 							"key": "b",
-							"name": "Accept both",
+							"name": " Accept both",
 							"type": "command",
 							"command": "merge-conflict.accept.both"
 						},
 						{
 							"key": "c",
-							"name": "Accept current",
+							"name": " Accept current",
 							"type": "command",
 							"command": "merge-conflict.accept.current"
 						},
 						{
 							"key": "i",
-							"name": "Accept incoming",
+							"name": " Accept incoming",
 							"type": "command",
 							"command": "merge-conflict.accept.incoming"
 						},
@@ -524,31 +523,31 @@
 						},
 						{
 							"key": "C",
-							"name": "Accept all current",
+							"name": " Accept all current",
 							"type": "command",
 							"command": "merge-conflict.accept.all-current"
 						},
 						{
 							"key": "I",
-							"name": "Accept all incoming",
+							"name": " Accept all incoming",
 							"type": "command",
 							"command": "merge-conflict.accept.all-incoming"
 						},
 						{
 							"key": "enter",
-							"name": "Compare current conflict",
+							"name": " Compare current conflict",
 							"type": "command",
 							"command": "merge-conflict.compare"
 						},
 						{
 							"key": "n",
-							"name": "Next Conflict",
+							"name": " Next Conflict",
 							"type": "command",
 							"command": "merge-conflict.next"
 						},
 						{
 							"key": "e",
-							"name": "Previous Conflict",
+							"name": " Previous Conflict",
 							"type": "command",
 							"command": "merge-conflict.previous"
 						}
@@ -556,61 +555,61 @@
 				},
 				{
 					"key": "o",
-					"name": "Commit",
+					"name": " Commit",
 					"type": "command",
 					"command": "git.commit"
 				},
 				{
 					"key": "i",
-					"name": "Init",
+					"name": " Init",
 					"type": "command",
 					"command": "git.init"
 				},
 				{
 					"key": "x",
-					"name": "Merge",
+					"name": " Merge",
 					"type": "command",
 					"command": "git.merge"
 				},
 				{
 					"key": "l",
-					"name": "Pull",
+					"name": " Pull",
 					"type": "command",
 					"command": "git.pull"
 				},
 				{
 					"key": "p",
-					"name": "Push",
+					"name": " Push",
 					"type": "command",
 					"command": "git.push"
 				},
 				{
 					"key": "s",
-					"name": "Status",
+					"name": " Status",
 					"type": "command",
 					"command": "workbench.view.scm"
 				},
 				{
 					"key": "g",
-					"name": "Goto top",
+					"name": " Goto top",
 					"type": "command",
 					"command": "cursorTop"
 				},
 				{
 					"key": "n",
-					"name": "Next change",
+					"name": " Next change",
 					"type": "command",
 					"command": "workbench.action.editor.nextChange"
 				},
 				{
 					"key": "e",
-					"name": "Prev change",
+					"name": " Prev change",
 					"type": "command",
 					"command": "workbench.action.editor.previousChange"
 				},
 				{
 					"key": "'",
-					"name": "Go to bracket",
+					"name": " Go to bracket",
 					"type": "command",
 					"command": "editor.action.jumpToBracket"
 				}
@@ -618,78 +617,78 @@
 		},
 		{
 			"key": "t",
-			"name": "LSP",
+			"name": "󰨞 LSP",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "n",
-					"name": "Next error",
+					"name": " Next error",
 					"type": "command",
 					"command": "editor.action.marker.next"
 				},
 				{
 					"key": "e",
-					"name": "Prev error",
+					"name": " Prev error",
 					"type": "command",
 					"command": "editor.action.marker.prev"
 				},
 				{
 					"key": "t",
-					"name": "Definition",
+					"name": "󰏭 Definition",
 					"type": "command",
 					"command": "editor.action.revealDefinition"
 				},
 				{
 					"key": "f",
-					"name": "References",
+					"name": "󱅅 References",
 					"type": "command",
 					"command": "editor.action.revealDefinition"
 				},
 				{
 					"key": "h",
-					"name": "Hover",
+					"name": "󰘥 Hover",
 					"type": "command",
 					"command": "editor.action.showHover"
 				},
 				{
 					"key": "d",
-					"name": "Fix",
+					"name": "󰁨 Fix",
 					"type": "command",
 					"command": "editor.action.quickFix"
 				},
 				{
 					"key": "r",
-					"name": "Rename",
+					"name": "󰙏 Rename",
 					"type": "command",
 					"command": "editor.action.rename"
 				},
 				{
 					"key": "o",
-					"name": "Remove bracket",
+					"name": " Remove bracket",
 					"type": "command",
 					"command": "editor.action.removeBrackets"
 				},
 				{
 					"key": "a",
-					"name": "File errors",
+					"name": " File errors",
 					"type": "command",
 					"command": "workbench.actions.view.problems"
 				},
 				{
 					"key": "l",
-					"name": "Lower case",
+					"name": " Lower case",
 					"type": "command",
 					"command": "editor.action.transformToLowercase"
 				},
 				{
 					"key": "u",
-					"name": "Upper case",
+					"name": " Upper case",
 					"type": "command",
 					"command": "editor.action.transformToUppercase"
 				},
 				{
 					"key": "i",
-					"name": "Organize Imports",
+					"name": " Organize Imports",
 					"type": "command",
 					"command": "editor.action.organizeImports"
 				}
@@ -697,42 +696,42 @@
 		},
 		{
 			"key": "w",
-			"name": "Window",
+			"name": "󰃌 Window",
 			"type": "transient",
 			"bindings": [
 				{
 					"key": "h",
-					"name": "Descrease view size",
+					"name": " Descrease view size",
 					"type": "command",
 					"command": "workbench.action.decreaseViewSize"
 				},
 				{
 					"key": "i",
-					"name": "Increase view size",
+					"name": " Increase view size",
 					"type": "command",
 					"command": "workbench.action.increaseViewSize"
 				},
 				{
 					"key": "H",
-					"name": "Move editor group left",
+					"name": " Move editor left",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupLeft"
 				},
 				{
 					"key": "N",
-					"name": "Move editor group down",
+					"name": " Move editor down",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupDown"
 				},
 				{
 					"key": "E",
-					"name": "Move editor group up",
+					"name": " Move editor up",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupUp"
 				},
 				{
 					"key": "I",
-					"name": "Move editor group right",
+					"name": " Move editor right",
 					"type": "command",
 					"command": "workbench.action.moveActiveEditorGroupRight"
 				}
