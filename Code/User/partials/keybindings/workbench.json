@@ -90,6 +90,11 @@
 		"when": "editorFocus && neovim.mode != insert"
 	},
 	{
+		"key": "ctrl+m",
+		"command": "workbench.action.toggleFullScreen",
+		"when": "editorFocus && neovim.mode != insert"
+	},
+	{
 		"key": "ctrl+enter",
 		"command": "workbench.action.focusFirstEditorGroup",
 		"when": "!editorFocus"

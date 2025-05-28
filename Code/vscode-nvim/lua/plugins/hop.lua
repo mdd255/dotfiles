@@ -6,7 +6,7 @@ return {
       local color  = utils.color
       local hi     = utils.hi
       local vscode = vim.g.vscode and require('vscode')
-      local map    = require('base.utils').map
+      local map    = utils.map
 
       hop.setup({
          multi_windows    = true,
@@ -115,14 +115,14 @@ return {
       hi('HopNextKey2', { fg = color.blue })
 
       -- keymaps
-      map('n', 'cn', function() hop_modify('ci') end)
-      map('n', 'dn', function() hop_modify('di', true) end)
-      map('n', 'yn', function() hop_modify('yi', true) end)
-      map('n', 'zn', function() hop_modify('vi') end)
-
-      map('n', 'ce', function() hop_modify('ca') end)
-      map('n', 'de', function() hop_modify('da', true) end)
-      map('n', 'ye', function() hop_modify('ya', true) end)
-      map('n', 'ze', function() hop_modify('va') end)
+      -- map('n', 'cn', function() hop_modify('ci') end)
+      -- map('n', 'dn', function() hop_modify('di', true) end)
+      -- map('n', 'yn', function() hop_modify('yi', true) end)
+      -- map('n', 'zn', function() hop_modify('vi') end)
+      --
+      -- map('n', 'ce', function() hop_modify('ca') end)
+      -- map('n', 'de', function() hop_modify('da', true) end)
+      -- map('n', 'ye', function() hop_modify('ya', true) end)
+      -- map('n', 'ze', function() hop_modify('va') end)
    end
 }

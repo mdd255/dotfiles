@@ -4,6 +4,8 @@
 	"[javascript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"typescript.preferences.useAliasesForRenames": false,
 	"typescript.suggest.autoImports": true,
 	"typescript.preferences.quoteStyle": "single",
 	"typescript.tsserver.log": "off",

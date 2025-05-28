@@ -3,35 +3,35 @@
 	"whichkey.bindings": [
 		{
 			"key": "g",
-			"name": "Git",
+			"name": " Git",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "b",
-					"name": "*Branch",
+					"name": "󰘬 Branch",
 					"type": "bindings",
 					"bindings": [
 						{
 							"key": "c",
-							"name": "Checkout",
+							"name": "󱓍 Checkout",
 							"type": "command",
 							"command": "git.checkout"
 						},
 						{
 							"key": "n",
-							"name": "New",
+							"name": "󱓊 New",
 							"type": "command",
 							"command": "git.branch"
 						},
 						{
 							"key": "d",
-							"name": "Delete",
+							"name": "󱓋 Delete",
 							"type": "command",
 							"command": "git.deleteBranch"
 						},
 						{
 							"key": "r",
-							"name": "Rename",
+							"name": "󱓎 Rename",
 							"type": "command",
 							"command": "git.renameBranch"
 						}
@@ -39,36 +39,36 @@
 				},
 				{
 					"key": "f",
-					"name": "*Files",
+					"name": "󱓊 Files",
 					"type": "bindings",
 					"bindings": [
 						{
 							"key": "u",
-							"name": "Unstage",
+							"name": "󱓌 Unstage",
 							"type": "command",
 							"command": "git.unstage"
 						},
 						{
 							"key": "S",
-							"name": "Stage all",
+							"name": "󱓏 Stage all",
 							"type": "commands",
 							"commands": ["git.stageAll", "workbench.view.scm"]
 						},
 						{
 							"key": "s",
-							"name": "Stage",
+							"name": "󱓏 Stage",
 							"type": "command",
 							"command": "git.stage"
 						},
 						{
 							"key": "o",
-							"name": "Open",
+							"name": "󱓊 Open",
 							"type": "command",
 							"command": "gitlens.openOnlyChangedFiles"
 						},
 						{
 							"key": "d",
-							"name": "Diff",
+							"name": "󱓎 Diff",
 							"type": "command",
 							"command": "git.viewChanges"
 						}
@@ -76,36 +76,36 @@
 				},
 				{
 					"key": "c",
-					"name": "*Changes",
+					"name": " Changes",
 					"type": "transient",
 					"bindings": [
 						{
 							"key": "q",
-							"name": "Revert",
+							"name": "󱓍 Revert",
 							"type": "command",
 							"command": "git.revertSelectedRanges"
 						},
 						{
 							"key": "Q",
-							"name": "Clean",
+							"name": "󱓎 Clean",
 							"type": "command",
 							"command": "git.clean"
 						},
 						{
 							"key": "n",
-							"name": "Next",
+							"name": " Next",
 							"type": "command",
 							"command": "workbench.action.editor.nextChange"
 						},
 						{
 							"key": "e",
-							"name": "Prev",
+							"name": " Prev",
 							"type": "command",
 							"command": "workbench.action.editor.previousChange"
 						},
 						{
 							"key": "c",
-							"name": "Diff",
+							"name": " Diff",
 							"type": "command",
 							"command": "git.openChange"
 						}
@@ -113,24 +113,24 @@
 				},
 				{
 					"key": "m",
-					"name": "*Conflict",
+					"name": " Conflict",
 					"type": "transient",
 					"bindings": [
 						{
 							"key": "b",
-							"name": "Accept both",
+							"name": " Accept both",
 							"type": "command",
 							"command": "merge-conflict.accept.both"
 						},
 						{
 							"key": "c",
-							"name": "Accept current",
+							"name": " Accept current",
 							"type": "command",
 							"command": "merge-conflict.accept.current"
 						},
 						{
 							"key": "i",
-							"name": "Accept incoming",
+							"name": " Accept incoming",
 							"type": "command",
 							"command": "merge-conflict.accept.incoming"
 						},
@@ -142,31 +142,31 @@
 						},
 						{
 							"key": "C",
-							"name": "Accept all current",
+							"name": " Accept all current",
 							"type": "command",
 							"command": "merge-conflict.accept.all-current"
 						},
 						{
 							"key": "I",
-							"name": "Accept all incoming",
+							"name": " Accept all incoming",
 							"type": "command",
 							"command": "merge-conflict.accept.all-incoming"
 						},
 						{
 							"key": "enter",
-							"name": "Compare current conflict",
+							"name": " Compare current conflict",
 							"type": "command",
 							"command": "merge-conflict.compare"
 						},
 						{
 							"key": "n",
-							"name": "Next Conflict",
+							"name": " Next Conflict",
 							"type": "command",
 							"command": "merge-conflict.next"
 						},
 						{
 							"key": "e",
-							"name": "Previous Conflict",
+							"name": " Previous Conflict",
 							"type": "command",
 							"command": "merge-conflict.previous"
 						}
@@ -174,61 +174,61 @@
 				},
 				{
 					"key": "o",
-					"name": "Commit",
+					"name": " Commit",
 					"type": "command",
 					"command": "git.commit"
 				},
 				{
 					"key": "i",
-					"name": "Init",
+					"name": " Init",
 					"type": "command",
 					"command": "git.init"
 				},
 				{
 					"key": "x",
-					"name": "Merge",
+					"name": " Merge",
 					"type": "command",
 					"command": "git.merge"
 				},
 				{
 					"key": "l",
-					"name": "Pull",
+					"name": " Pull",
 					"type": "command",
 					"command": "git.pull"
 				},
 				{
 					"key": "p",
-					"name": "Push",
+					"name": " Push",
 					"type": "command",
 					"command": "git.push"
 				},
 				{
 					"key": "s",
-					"name": "Status",
+					"name": " Status",
 					"type": "command",
 					"command": "workbench.view.scm"
 				},
 				{
 					"key": "g",
-					"name": "Goto top",
+					"name": " Goto top",
 					"type": "command",
 					"command": "cursorTop"
 				},
 				{
 					"key": "n",
-					"name": "Next change",
+					"name": " Next change",
 					"type": "command",
 					"command": "workbench.action.editor.nextChange"
 				},
 				{
 					"key": "e",
-					"name": "Prev change",
+					"name": " Prev change",
 					"type": "command",
 					"command": "workbench.action.editor.previousChange"
 				},
 				{
 					"key": "'",
-					"name": "Go to bracket",
+					"name": " Go to bracket",
 					"type": "command",
 					"command": "editor.action.jumpToBracket"
 				}

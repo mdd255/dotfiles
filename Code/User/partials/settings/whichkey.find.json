@@ -65,6 +65,30 @@
 					"name": "Projects",
 					"type": "command",
 					"command": "workbench.action.openRecent"
+				},
+				{
+					"key": "-",
+					"name": "Toggle bookmark",
+					"type": "command",
+					"command": "bookmarks.toggle"
+				},
+				{
+					"key": "'",
+					"name": "All bookmarks",
+					"type": "command",
+					"command": "bookmarks.listFromAllFiles"
+				},
+				{
+					"key": "n",
+					"name": "Next bookmark",
+					"type": "command",
+					"command": "bookmarks.jumpToNext"
+				},
+				{
+					"key": "e",
+					"name": "Prev bookmark",
+					"type": "command",
+					"command": "bookmarks.jumpToPrevious"
 				}
 			]
 		}

@@ -11,7 +11,7 @@
 	"editor.renderWhitespace": "trailing",
 	"editor.lineHeight": 1.2,
 	"editor.codeActionsOnSave": {},
-	"editor.fontFamily": "FiraCode Nerd Font Mono",
+	"editor.fontFamily": "FiraCode Nerd Font",
 	"editor.insertSpaces": false,
 	"editor.formatOnSave": true,
 	"editor.lineNumbers": "relative",

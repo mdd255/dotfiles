@@ -3,78 +3,78 @@
 	"whichkey.bindings": [
 		{
 			"key": "t",
-			"name": "LSP",
+			"name": "󰨞 LSP",
 			"type": "bindings",
 			"bindings": [
 				{
 					"key": "n",
-					"name": "Next error",
+					"name": " Next error",
 					"type": "command",
 					"command": "editor.action.marker.next"
 				},
 				{
 					"key": "e",
-					"name": "Prev error",
+					"name": " Prev error",
 					"type": "command",
 					"command": "editor.action.marker.prev"
 				},
 				{
 					"key": "t",
-					"name": "Definition",
+					"name": "󰏭 Definition",
 					"type": "command",
 					"command": "editor.action.revealDefinition"
 				},
 				{
 					"key": "f",
-					"name": "References",
+					"name": "󱅅 References",
 					"type": "command",
 					"command": "editor.action.revealDefinition"
 				},
 				{
 					"key": "h",
-					"name": "Hover",
+					"name": "󰘥 Hover",
 					"type": "command",
 					"command": "editor.action.showHover"
 				},
 				{
 					"key": "d",
-					"name": "Fix",
+					"name": "󰁨 Fix",
 					"type": "command",
 					"command": "editor.action.quickFix"
 				},
 				{
 					"key": "r",
-					"name": "Rename",
+					"name": "󰙏 Rename",
 					"type": "command",
 					"command": "editor.action.rename"
 				},
 				{
 					"key": "o",
-					"name": "Remove bracket",
+					"name": " Remove bracket",
 					"type": "command",
 					"command": "editor.action.removeBrackets"
 				},
 				{
 					"key": "a",
-					"name": "File errors",
+					"name": " File errors",
 					"type": "command",
 					"command": "workbench.actions.view.problems"
 				},
 				{
 					"key": "l",
-					"name": "Lower case",
+					"name": " Lower case",
 					"type": "command",
 					"command": "editor.action.transformToLowercase"
 				},
 				{
 					"key": "u",
-					"name": "Upper case",
+					"name": " Upper case",
 					"type": "command",
 					"command": "editor.action.transformToUppercase"
 				},
 				{
 					"key": "i",
-					"name": "Organize Imports",
+					"name": " Organize Imports",
 					"type": "command",
 					"command": "editor.action.organizeImports"
 				}

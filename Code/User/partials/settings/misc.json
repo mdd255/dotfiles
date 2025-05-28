@@ -7,7 +7,7 @@
 	"search.useIgnoreFiles": false,
 	"update.showReleaseNotes": false,
 	"notebook.gotoSymbols.showAllSymbols": false,
-	"breadcrumbs.enabled": false,
+	"breadcrumbs.enabled": true,
 	"breadcrumbs.symbolSortOrder": "type",
 	"security.workspace.trust.untrustedFiles": "open",
 	"makefile.configureOnOpen": true,
@@ -34,5 +34,9 @@
 	},
 	"vscode-neovim.ctrlKeysForInsertMode": [],
 	"vscode-neovim.ctrlKeysForNormalMode": [],
-	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim"
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"whichkey.delay": 0,
+	"whichkey.showIcons": true,
+	"whichkey.useFullWidthCharacters": true,
+	"clock.dateFormat": "HH:MM dd/mm"
 }

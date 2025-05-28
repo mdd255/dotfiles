@@ -1,2 +1,2 @@
-require('base.unmaps')
 require('base.lazy')
+require('base.unmaps')

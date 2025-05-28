@@ -20,7 +20,7 @@ map('nv', 'M', '<C-u>')
 
 -- whichkey
 map('n', 's', whichKey('s'))
-map('n', 'f', whichKey('f'))
+map('nvo', 'f', whichKey('f'))
 map('n', 'g', whichKey('g'))
 map('n', 't', whichKey('t'))
 map('n', '-', whichKey('z'))
@@ -38,10 +38,6 @@ map('n', '/', action('actions.find'))
 map('n', '<Space>q', action('workbench.action.closeActiveEditor'))
 map('n', '<Space>Q', action('workbench.action.closeOtherEditors'))
 map('n', 'U', '<C-r>')
-map('v', 'W', 'w')
-map('v', 'w', 'e')
-map('n', 'W', 'w')
-map('n', 'B', 'b')
 map('nv', ';', action('editor.action.commentLine', 'n'))
 
 -- custom select cmds

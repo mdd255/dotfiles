@@ -40,7 +40,7 @@ div#be5invis\.vscode-custom-css,
 }
 
 .monaco-workbench.linux {
-	font-family: 'FiraCode Nerd Font Mono', FiraCode, monospace;
+	font-family: 'FiraCode Nerd Font', FiraCode, monospace;
 	font-size: var(--font-size);
 }
 
@@ -66,6 +66,7 @@ div#be5invis\.vscode-custom-css,
 	order: 7;
 }
 #status\.problems,
+#Compulim\.vscode-clock,
 #status\.editor\.selection {
 	color: var(--color-orange);
 }
