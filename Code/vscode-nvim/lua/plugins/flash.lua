@@ -8,7 +8,8 @@ return {
 			}
 		},
 		label = {
-			before = true
+			before = true,
+			after = false,
 		}
 	},
 	keys = {
