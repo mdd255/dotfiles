@@ -19,7 +19,7 @@ clean.post:
 install.zsh:
 	rm -rf ~/.oh-my-zsh
 	rm -f ~/.zshrc
-	sudo pacman -S --noconfirm zsh
+	sudo pacman -S --needed --noconfirm zsh
 	curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | bash
 	git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
@@ -40,7 +40,7 @@ install.deps:
 deps.fnm:
 	rm -rf ~/.fnm
 	rm -rf ~/.local/share/fnm
-	sudo pacman -S --noconfirm unzip
+	sudo pacman -S --needed --noconfirm unzip
 	curl -fsSL https://fnm.vercel.app/install | bash
 	source ~/.bashrc
 	fnm install 20
@@ -56,23 +56,23 @@ deps.dco:
 	sudo ln -fs ~/Apps/docker-color-output/bin/docker-color-output /usr/bin/docker-color-output
 
 deps.screenshot:
-	sudo pacman -S --noconfirm maim python-pip
+	sudo pacman -S --needed --noconfirm maim python-pip
 	sudo ln -fs ${HOME}/.config/qtile/.init-scripts/screenshot.sh /usr/bin/screenshot
 	sudo ln -fs ${HOME}/.config/qtile/.init-scripts/screenshot-all.sh /usr/bin/screenshot-all
 
 deps.media:
-	sudo pacman -S --noconfirm pavucontrol bluez bluez-utils blueman 
+	sudo pacman -S --needed --noconfirm pavucontrol bluez bluez-utils blueman 
 	sudo systemctl enable bluetooth.service
 	sudo systemctl restart bluetooth.service
 
 deps.misc:
-	sudo pacman -S --noconfirm xclip git-delta eza jq postgresql-libs
-	sudo pacman -S --noconfirm btop ibus vscode go xorg-xev zip
-	sudo pacman -S --noconfirm fzf fd bat dunst ttf-firacode-nerd
-	yay -S --noconfirm xbanish wezterm pyenv python-virtualenv
+	sudo pacman -S --needed --noconfirm xclip git-delta eza jq postgresql-libs
+	sudo pacman -S --needed --noconfirm btop ibus vscode go xorg-xev zip
+	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd
+	yay -S --needed --noconfirm xbanish wezterm pyenv python-virtualenv
 
 deps.docker:
-	sudo pacman -S --noconfirm docker docker-compose
+	sudo pacman -S --needed --noconfirm docker docker-compose
 	sudo systemctl enable docker.service
 	sudo systemctl enable containerd.service
 	sudo systemctl restart docker.service
@@ -84,14 +84,14 @@ install.qtile:
 	make qtile.deps
 
 qtile.deps:
-	sudo pacman -S --noconfirm rofi qtile python-iwlib python-psutil 
+	sudo pacman -S --needed --noconfirm rofi qtile python-iwlib python-psutil 
 	sudo rm -rf ~/.config/qtile
 
 install.nvim:
 	make nvim.deps
 
 nvim.deps:
-	sudo pacman -S --noconfirm neovim ruby python-pynvim
+	sudo pacman -S --needed --noconfirm neovim ruby python-pynvim
 	sudo ln -fs ~/.local/share/gem/ruby/3.0.0/bin/neovim-ruby-host /usr/bin/neovim-ruby-host
 
 links:
