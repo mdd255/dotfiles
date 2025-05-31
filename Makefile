@@ -66,8 +66,8 @@ deps.media:
 
 deps.misc:
 	sudo pacman -S --noconfirm xclip git-delta eza jq postgresql-libs
-	sudo pacman -S --noconfirm btop xfce4-power-manager ibus vscode go xorg-xev zip
-	sudo pacman -S --noconfirm fzf fd the_silver_searcher ripgrep bat dunst ttf-firacode-nerd
+	sudo pacman -S --noconfirm btop ibus vscode go xorg-xev zip
+	sudo pacman -S --noconfirm fzf fd bat dunst ttf-firacode-nerd
 	yay -S --noconfirm xbanish wezterm pyenv python-virtualenv
 
 deps.docker:
@@ -87,24 +87,15 @@ qtile.deps:
 	sudo rm -rf ~/.config/qtile
 
 install.nvim:
-	make nvim.packer
-	make nvim.coc
 	make nvim.deps
 
-nvim.coc:
-	sudo pacman -S --noconfirm python-black python-jedi python-pylint python-rope
-	npm i -g graphql-language-service-cli sql-language-server
-
 nvim.deps:
-	sudo pacman -S --noconfirm deno neovim ruby python-pynvim
+	sudo pacman -S --noconfirm neovim ruby python-pynvim
 	sudo ln -fs ~/.local/share/gem/ruby/3.0.0/bin/neovim-ruby-host /usr/bin/neovim-ruby-host
-	sudo ln -fs /usr/bin/nvim /usr/bin/vi
 
 links:
 	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
 	sudo ln -fs ~/.config/dotfiles/zsh ~/.config/zsh
-	sudo ln -fs ~/.config/dotfiles/xmodmap ~/.config/xmodmap
-	sudo ln -fs ~/.config/dotfiles/nvim ~/.config/nvim
 	sudo ln -fs ~/.config/dotfiles/qtile ~/.config/qtile
 	sudo ln -fs ~/.config/dotfiles/rofi ~/.config/rofi
 	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
@@ -112,5 +103,4 @@ links:
 	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
 	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets
 	sudo ln -fs ~/.config/dotfiles/us /usr/share/X11/xkb/symbols/us
-	sudo ln -fs ~/.config/dotfiles/karabiner.json ~/.config/karabiner/karabiner.json
 	sudo ln -fs ~/.config/dotfiles/Code/vscode-nvim ~/.config/nvim

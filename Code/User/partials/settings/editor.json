@@ -12,6 +12,7 @@
 	"editor.lineHeight": 1.2,
 	"editor.codeActionsOnSave": {},
 	"editor.fontFamily": "FiraCode Nerd Font",
+	"editor.fontLigatures": true,
 	"editor.insertSpaces": false,
 	"editor.formatOnSave": true,
 	"editor.lineNumbers": "relative",
