@@ -1,9 +1,10 @@
 install:
 		make clean.pre
 		make install.deps
-		make links
 		make install.zsh
 		make install.qtile
+		make install.nvim
+		make links
 		make clean.post
 
 clean.pre:
@@ -69,7 +70,7 @@ deps.misc:
 	sudo pacman -S --needed --noconfirm xclip git-delta eza jq postgresql-libs
 	sudo pacman -S --needed --noconfirm btop ibus go xorg-xev zip
 	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd
-	yay -S --needed --noconfirm xbanish wezterm pyenv python-virtualenv visual-studio-code-bin
+	yay -S --needed --noconfirm xbanish wezterm pyenv pyenv-virtualenv visual-studio-code-bin
 
 deps.docker:
 	sudo pacman -S --needed --noconfirm docker docker-compose
