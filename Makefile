@@ -45,6 +45,7 @@ deps.fnm:
 	source ~/.bashrc
 	fnm install 20
 	npm i -g @commitlint/{cli,config-conventional}
+	npm install -g yarn pnpm tsx
 	echo "module.exports = {extends: ['@commitlint/config-conventional']}" > ~/commitlint.config.js
 
 deps.dco:
@@ -99,6 +100,7 @@ links:
 	sudo ln -fs ~/.config/dotfiles/qtile ~/.config/qtile
 	sudo ln -fs ~/.config/dotfiles/rofi ~/.config/rofi
 	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
+	tsx ~/.config/dotfiles/Code/vscode-split-configs/src/sync.ts
 	sudo ln -fs ~/.config/dotfiles/Code/User/settings.json ~/.config/Code/User/settings.json
 	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
 	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets
