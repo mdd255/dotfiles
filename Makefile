@@ -100,7 +100,7 @@ links:
 	sudo ln -fs ~/.config/dotfiles/qtile ~/.config/qtile
 	sudo ln -fs ~/.config/dotfiles/rofi ~/.config/rofi
 	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
-	tsx ~/.config/dotfiles/Code/split-configs/src/sync.ts
+	tsx ~/.config/dotfiles/Code/split-configs/sync.ts
 	sudo ln -fs ~/.config/dotfiles/Code/User/settings.json ~/.config/Code/User/settings.json
 	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
 	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets
