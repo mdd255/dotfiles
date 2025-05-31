@@ -68,8 +68,8 @@ deps.media:
 deps.misc:
 	sudo pacman -S --needed --noconfirm xclip git-delta eza jq postgresql-libs
 	sudo pacman -S --needed --noconfirm btop ibus go xorg-xev zip
-	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd visual-studio-code-bin
-	yay -S --needed --noconfirm xbanish wezterm pyenv python-virtualenv
+	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd
+	yay -S --needed --noconfirm xbanish wezterm pyenv python-virtualenv visual-studio-code-bin
 
 deps.docker:
 	sudo pacman -S --needed --noconfirm docker docker-compose
