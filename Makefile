@@ -67,8 +67,8 @@ deps.media:
 
 deps.misc:
 	sudo pacman -S --needed --noconfirm xclip git-delta eza jq postgresql-libs
-	sudo pacman -S --needed --noconfirm btop ibus vscode go xorg-xev zip
-	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd
+	sudo pacman -S --needed --noconfirm btop ibus go xorg-xev zip
+	sudo pacman -S --needed --noconfirm fzf fd bat dunst ttf-firacode-nerd visual-studio-code-bin
 	yay -S --needed --noconfirm xbanish wezterm pyenv python-virtualenv
 
 deps.docker:
@@ -100,7 +100,7 @@ links:
 	sudo ln -fs ~/.config/dotfiles/qtile ~/.config/qtile
 	sudo ln -fs ~/.config/dotfiles/rofi ~/.config/rofi
 	sudo ln -fs ~/.config/dotfiles/.wezterm.lua ~/.wezterm.lua
-	tsx ~/.config/dotfiles/Code/vscode-split-configs/src/sync.ts
+	tsx ~/.config/dotfiles/Code/vscode-split-configs/sync.ts
 	sudo ln -fs ~/.config/dotfiles/Code/User/settings.json ~/.config/Code/User/settings.json
 	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
 	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets

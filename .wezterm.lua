@@ -9,7 +9,6 @@ local alt = "ALT"
 config.color_scheme = "AdventureTime"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
 config.font_size = 14
-config.default_prog = { 'zsh' }
 config.cell_width = 1
 config.line_height = 1
 config.enable_wayland = false
