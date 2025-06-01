@@ -7,13 +7,23 @@ alias "h"="history | fzf --preview=''"
 
 # applications
 alias vi="nvim $@"
-alias lg="lazygit $@"
 alias ls="eza --long"
 alias top="btop $@"
 alias wifi="nmcli dev wifi $@"
 
 # git aliases
-alias gst="git status"
+# status
+alias gs="git status"
+
+# branch
+alias gbd="git branch -d"
+alias gbr="git branch -m"
+alias gbn="git checkout -b $@"
+alias gbl="git branch -a"
+alias gbms="git merge"
+
+# reset/revert
+
 alias gbr="git branch"
 alias gb="gbr -a | fzf --no-preview"
 alias gad="git add ."
@@ -60,9 +70,6 @@ alias dcd="docker compose down $@"
 alias dvl="docker volume ls $@"
 alias dvp="docker volume prune $@"
 
-# fan aliases
-alias fan="sudo bash ~/.config/qtile/.init-scripts/fan-speed.sh"
-
 # pipenv aliases
 alias pir="pipenv run $@"
 alias pii="pipenv install $@"
@@ -85,15 +92,6 @@ function git_ultimate {
 
 alias ggu="noglob git_ultimate"
 
-function git_ultimate_v2 {
-  git add .
-  git restore --staged src/main.ts src/common/interceptors/current-user.interceptor.ts src/modules/prisma/prisma.service.ts
-  git commit -n -m "$*"
-  git push
-}
-
-alias gu="noglob git_ultimate_v2"
-
 # zipped file aliases
 function ztac {
    zcat $1 | tac
@@ -103,5 +101,4 @@ alias ztail="zcat $1 | tail"
 alias zhead="zcat $1 | head"
 
 # misc
-alias ks="kitty +kitten ssh"
 alias psn="sudo pacman -Suy --noconfirm ; yay --noconfirm ; cd /home/$(whoami)/.config/dotfiles ; ggu \"feat: automate commit\" ; cd ~ ; omz update"

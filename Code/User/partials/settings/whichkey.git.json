@@ -203,7 +203,7 @@
 					"command": "git.push"
 				},
 				{
-					"key": "s",
+					"key": "st",
 					"name": " Status",
 					"type": "command",
 					"command": "workbench.view.scm"
