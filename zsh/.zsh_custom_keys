@@ -52,73 +52,66 @@ fd_extra_args="
 	--exclude .eclipse\
 	"
 
-jira() {
-  echo -n "Jira ticket ID: "
-  read -r ticket_id
-  typeset -u ticket_id="$ticket_id"
-  ticket_id=${ticket_id// /-}
-
-  echo -n "Commit type: "
-  read -r commit_type
-
-  echo -n "Commit scope: "
-  IFS= read -r commit_scope
-  commit_scope=${commit_scope// /-}
-
-  echo -n "Commit message: "
-  IFS= read -r commit_message
-  dashed_commit_message="${commit_message// /-}"
-
-  git pull
-  git checkout -b ${commit_type}/${ticket_id}-${dashed_commit_message}
-  git add .
-  git commit --no-verify -m "${commit_type}(${commit_scope}): [${ticket_id}] ${commit_message}"
-  git push
+get_branch_name() {
+	git branch -a \
+	| sed 's#remotes/origin/##' \
+	| sed 's/* //' \
+	| fzf --no-preview \
+	| xargs
 }
 
-fzf-gbr() {
-  branch="$(gbr -a | sed 's/remotes\/origin\///' | sort -fnr | uniq | fzf --no-preview)"
-  branch="${branch/remotes\/origin\//}"
-  branch="${branch/\*/}"
-  branch="${branch// /}"
-	LBUFFER="$LBUFFER git checkout ${branch}"
-  zle accept-line
+get_commit_hash() {
+	git log --oneline -n 500 \
+	| sed 's/ /_/g' \
+	| fzf --no-preview \
+	| awk -F_ '{print $1}'
 }
-zle -N fzf-gbr
-bindkey "\eb" fzf-gbr
 
-# fzf edit file
-fzf-vi() {
-	LBUFFER="$LBUFFER vi $(fd --type f $(echo $fd_extra_args) $HOME | fzf)"
-  zle accept-line
+get_dir_path() {
+	fd --type d $(echo $fd_extra_args) $HOME \
+	| fzf --no-preview --with-nth=-1 \
+	| xargs
 }
-zle -N fzf-vi
-bindkey "\e;" fzf-vi
 
-# fzf auto cd
-fzf-cd () {
-  dir="$(fd --type d $(echo $fd_extra_args) $HOME | fzf --preview '' --with-nth=-1)"
-  dir="${dir// /}"
-  dir_len="${#dir}"
+get_file_path() {
+	fd --type f $(echo $fd_extra_args) $HOME \
+	| fzf \
+	| xargs
+}
 
-  if (($dir_len > 0)); then
-    LBUFFER="$LBUFFER cd ${dir}"
-    zle accept-line
+fzf_gbr() {
+	local branch="$(get_branch_name)"
+	[[ -n branch ]] && LBUFFER="git checkout ${branch}" && zle accept-line
+}
+zle -N fzf_gbr
+bindkey "\eb" fzf_gbr
+
+fzf-gcm() {
+	local commit="$(get_commit_hash)"
+}
+
+# fzf cd
+fzf_cd () {
+  dir="$(get_dir_path)"
+
+  if ((#dir > 0)); then
+    LBUFFER="cd ${dir}" && zle accept-line
   fi
 }
-zle -N fzf-cd
-bindkey "\e " fzf-cd
+zle -N fzf_cd
+bindkey "\e " fzf_cd
 
-# fzf-get file's path
-fzf-file(){
-  LBUFFER="$LBUFFER $(fd --type f $(echo $fd_extra_args) $HOME | fzf)"
-}
-zle -N fzf-file
-bindkey "\ef" fzf-file
+# fzf file picker
+fzf_file_picker() { LBUFFER+="$(get_file_path)" }
+zle -N fzf_file_picker
+bindkey "\ef" fzf_file_picker
 
-# fzf-get dir's path
-fzf-dir(){
-  LBUFFER="$LBUFFER $(fd --type d $(echo $fd_extra_args) $HOME | fzf --preview '')"
-}
-zle -N fzf-dir
-bindkey "\ed" fzf-dir
+# fzf dir picker
+fzf_dir_picker() { LBUFFER+="$(get_dir_path)" }
+zle -N fzf_dir_picker
+bindkey "\ed" fzf_dir_picker
+
+# fzf commit picker
+fzf_commit_picker() { LBUFFER+="$(get_commit_hash)" }
+zle -N fzf_commit_picker
+bindkey "\ea" fzf_commit_picker

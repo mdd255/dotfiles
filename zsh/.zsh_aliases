@@ -13,34 +13,36 @@ alias wifi="nmcli dev wifi $@"
 
 # git aliases
 # status
-alias gs="git status"
-
+alias gss="git status"
 # branch
-alias gbd="git branch -d"
-alias gbr="git branch -m"
+alias gbd="git branch -d $@"
+alias gbr="git branch -m $@"
 alias gbn="git checkout -b $@"
-alias gbl="git branch -a"
-alias gbms="git merge"
-
 # reset/revert
-
-alias gbr="git branch"
-alias gb="gbr -a | fzf --no-preview"
-alias gad="git add ."
-alias ga="git add $@"
+alias grs="git reset --soft $@"
+alias grh="git reset --hard $@"
+alias grv="git revert $@"
+# add
+alias gaa="git add ."
+alias gad="git add $@"
+# commit
+alias gcm="git commit -m "$@""
 alias gco="git commit"
+alias gca="git commit --amend"
+# push/pull
+alias gpl="git pull $@"
 alias gpu="git push $@"
-alias gpl="git pull"
+# misc
 alias gdi="git diff $@"
 alias glo="git log"
 alias gbl="git blame"
-alias gck="git checkout $@"
-alias gsi="git stash"
-alias gso="git stash pop"
-alias gsc="git stash drop"
+# stash
+alias gss="git stash"
+alias gsp="git stash pop"
+alias gsd="git stash drop"
+# cherry pick
 alias gcp="git cherry-pick $@"
-alias gcc="git cherry-pick --abort"
-alias grb="git rebase -i HEAD~$@"
+alias gcd="git cherry-pick --abort"
 
 # docker aliases
 alias dp="docker ps -a | docker-color-output"
