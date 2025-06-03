@@ -777,6 +777,5 @@
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
 	"workbench.editor.closeOnFileDelete": true,
-	"biome.suggestInstallingGlobally": false,
-	"workbench.statusBar.visible": false
+	"biome.suggestInstallingGlobally": false
 }
