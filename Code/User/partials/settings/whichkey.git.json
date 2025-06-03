@@ -38,83 +38,183 @@
 					]
 				},
 				{
-					"key": "f",
-					"name": "󱓊 Files",
+					"key": "r",
+					"name": "󰘬 Reset/Revert",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "s",
+							"name": "󱓍 Reset soft",
+							"type": "command",
+							"command": "gitlens.gitCommands.reset"
+						},
+						{
+							"key": "h",
+							"name": "󱓍 Reset hard",
+							"type": "command",
+							"command": "git.cleanAll"
+						},
+						{
+							"key": "v",
+							"name": "󱓊 Revert",
+							"type": "command",
+							"command": "gitlens.gitCommands.revert"
+						}
+					]
+				},
+				{
+					"key": "p",
+					"name": "󱓊 Pull/Push",
 					"type": "bindings",
 					"bindings": [
 						{
 							"key": "u",
-							"name": "󱓌 Unstage",
+							"name": "󱓍 Push",
 							"type": "command",
-							"command": "git.unstage"
+							"command": "git.push"
 						},
 						{
-							"key": "S",
-							"name": "󱓏 Stage all",
-							"type": "commands",
-							"commands": ["git.stageAll", "workbench.view.scm"]
-						},
+							"key": "l",
+							"name": "󱓍 Pull",
+							"type": "command",
+							"command": "git.pull"
+						}
+					]
+				},
+				{
+					"key": "a",
+					"name": "󱓊 Stage/Unstage",
+					"type": "bindings",
+					"bindings": [
 						{
-							"key": "s",
-							"name": "󱓏 Stage",
+							"key": "f",
+							"name": "󱓍 +Current file",
 							"type": "command",
 							"command": "git.stage"
 						},
 						{
-							"key": "o",
-							"name": "󱓊 Open",
+							"key": "a",
+							"name": "󱓍 +All files",
 							"type": "command",
-							"command": "gitlens.openOnlyChangedFiles"
+							"command": "git.stageAll"
 						},
 						{
 							"key": "d",
-							"name": "󱓎 Diff",
+							"name": "󱓊 -Current file",
+							"type": "command",
+							"command": "git.unstage"
+						},
+						{
+							"key": "q",
+							"name": "󱓊 -All files",
+							"type": "command",
+							"command": "git.unstageAll"
+						}
+					]
+				},
+				{
+					"key": "c",
+					"name": "󱓊 Commit/Cherry pick",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "a",
+							"name": "󱓍 Amend all",
+							"type": "command",
+							"command": "git.commitAllAmend"
+						},
+						{
+							"key": "o",
+							"name": "󱓍 Commit all",
+							"type": "command",
+							"command": "git.commitAll"
+						},
+						{
+							"key": "A",
+							"name": "󱓍 Amend",
+							"type": "command",
+							"command": "git.commitAmend"
+						},
+						{
+							"key": "O",
+							"name": "󱓍 Commit",
+							"type": "command",
+							"command": "git.commit"
+						},
+						{
+							"key": "p",
+							"name": "󱓍 Cherrypick",
+							"type": "command",
+							"command": "git.cherryPick"
+						},
+						{
+							"key": "l",
+							"name": "󱓍 Commits",
+							"type": "command",
+							"command": "gitlens.showCommitSearch"
+						}
+					]
+				},
+				{
+					"key": "s",
+					"name": "󱓊 Status/Stash",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "t",
+							"name": "󱓊 Status",
+							"type": "command",
+							"command": "workbench.view.scm"
+						},
+						{
+							"key": "s",
+							"name": "󱓎 Stash",
+							"type": "command",
+							"command": "git.stash"
+						},
+						{
+							"key": "l",
+							"name": "󱓎 Stash peek",
+							"type": "command",
+							"command": "git.stashView"
+						},
+						{
+							"key": "p",
+							"name": "󱓎 Stash pop",
+							"type": "command",
+							"command": "git.stashPopLatest"
+						},
+						{
+							"key": "d",
+							"name": "󱓎 Stash drop",
+							"type": "command",
+							"command": "git.stashDropAll"
+						}
+					]
+				},
+				{
+					"key": "d",
+					"name": " Diff",
+					"type": "bindings",
+					"bindings": [
+						{
+							"key": "f",
+							"name": " File",
+							"type": "command",
+							"command": "git.openChange"
+						},
+						{
+							"key": "i",
+							"name": " All",
 							"type": "command",
 							"command": "git.viewChanges"
 						}
 					]
 				},
 				{
-					"key": "c",
-					"name": " Changes",
-					"type": "transient",
-					"bindings": [
-						{
-							"key": "q",
-							"name": "󱓍 Revert",
-							"type": "command",
-							"command": "git.revertSelectedRanges"
-						},
-						{
-							"key": "Q",
-							"name": "󱓎 Clean",
-							"type": "command",
-							"command": "git.clean"
-						},
-						{
-							"key": "n",
-							"name": " Next",
-							"type": "command",
-							"command": "workbench.action.editor.nextChange"
-						},
-						{
-							"key": "e",
-							"name": " Prev",
-							"type": "command",
-							"command": "workbench.action.editor.previousChange"
-						},
-						{
-							"key": "c",
-							"name": " Diff",
-							"type": "command",
-							"command": "git.openChange"
-						}
-					]
-				},
-				{
-					"key": "m",
+					"key": "x",
 					"name": " Conflict",
-					"type": "transient",
+					"type": "bindings",
 					"bindings": [
 						{
 							"key": "b",
@@ -173,40 +273,16 @@
 					]
 				},
 				{
-					"key": "o",
-					"name": " Commit",
-					"type": "command",
-					"command": "git.commit"
-				},
-				{
 					"key": "i",
 					"name": " Init",
 					"type": "command",
 					"command": "git.init"
 				},
 				{
-					"key": "x",
+					"key": "m",
 					"name": " Merge",
 					"type": "command",
 					"command": "git.merge"
-				},
-				{
-					"key": "l",
-					"name": " Pull",
-					"type": "command",
-					"command": "git.pull"
-				},
-				{
-					"key": "p",
-					"name": " Push",
-					"type": "command",
-					"command": "git.push"
-				},
-				{
-					"key": "st",
-					"name": " Status",
-					"type": "command",
-					"command": "workbench.view.scm"
 				},
 				{
 					"key": "g",
@@ -225,6 +301,18 @@
 					"name": " Prev change",
 					"type": "command",
 					"command": "workbench.action.editor.previousChange"
+				},
+				{
+					"key": "d",
+					"name": "󱓍 Revert",
+					"type": "command",
+					"command": "git.revertSelectedRanges"
+				},
+				{
+					"key": "q",
+					"name": "󱓎 Clean",
+					"type": "command",
+					"command": "git.clean"
 				},
 				{
 					"key": "'",
