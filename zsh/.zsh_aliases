@@ -13,7 +13,7 @@ alias wifi="nmcli dev wifi $@"
 
 # git aliases
 # status
-alias gss="git status"
+alias gst="git status"
 # branch
 alias gbd="git branch -d $@"
 alias gbr="git branch -m $@"
@@ -103,4 +103,10 @@ alias ztail="zcat $1 | tail"
 alias zhead="zcat $1 | head"
 
 # misc
-alias psn="sudo pacman -Suy --noconfirm ; yay --noconfirm ; cd /home/$(whoami)/.config/dotfiles ; ggu \"feat: automate commit\" ; cd ~ ; omz update"
+alias psn="
+   sudo pacman -Suy --noconfirm;
+   yay --noconfirm;
+   cd /home/$(whoami)/.config/dotfiles;
+   ggu \"feat: automate commit\" ;
+   cd ~ ; omz update
+"
