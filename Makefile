@@ -85,7 +85,7 @@ install.qtile:
 	make qtile.deps
 
 qtile.deps:
-	sudo pacman -S --needed --noconfirm rofi qtile python-iwlib python-psutil 
+	sudo pacman -S --needed --noconfirm rofi qtile python-iwlib python-psutil i3lock
 	sudo rm -rf ~/.config/qtile
 
 install.nvim:

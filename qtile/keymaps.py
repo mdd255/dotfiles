@@ -229,8 +229,8 @@ keys = [
         [WIN],
         "c",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn('pactl set-sink-mute @DEFAULT_SINK@ toggle'),
-        lazy.spawn(notify_cmd('Toggle mute')),
+        lazy.spawn("pactl set-sink-mute @DEFAULT_SINK@ toggle"),
+        lazy.spawn(notify_cmd("Toggle mute")),
         desc="Toggle mute/unmute",
     ),
     Key(
@@ -312,7 +312,7 @@ keys = [
     Key(
         [WIN],
         "q",
-        lazy.spawn("dm-tool lock"),
+        lazy.spawn("i3lock -c 000000"),
         desc="Lock screen",
     ),
     Key(

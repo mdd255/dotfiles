@@ -111,6 +111,7 @@ alias psn="
    sudo pacman -Suy --noconfirm;
    yay --noconfirm;
    cd /home/$(whoami)/.config/dotfiles;
+   code --list-extensions>Code/User/extensions;
    ggu \"feat: automate commit\" ;
    cd ~; omz update
 "
