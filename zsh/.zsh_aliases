@@ -50,7 +50,7 @@ alias gsd="git stash drop"
 
 # docker aliases
 alias dp="docker ps -a | docker-color-output"
-alias dP="docker ps | docker-color-output"
+a, FachaiClientlias dP="docker ps | docker-color-output"
 alias dl="docker logs -f $@"
 alias dL="docker logs $@"
 alias dpl="docker pull $@"
