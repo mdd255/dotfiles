@@ -79,7 +79,7 @@ deps.docker:
 	sudo systemctl restart docker.service
 	sudo systemctl restart containerd.service
 	sudo groupadd -f docker
-	sudo usermod -aG docker dh
+	sudo usermod -aG docker $user
 
 install.qtile:
 	make qtile.deps

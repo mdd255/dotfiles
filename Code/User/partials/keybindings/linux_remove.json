@@ -5307,5 +5307,159 @@
 		"key": "ctrl+space",
 		"command": "-editor.action.triggerSuggest",
 		"when": "editorHasCompletionItemProvider && textInputFocus && !editorReadonly && !suggestWidgetVisible"
+	},
+	{
+		"key": "ctrl+shift+i",
+		"command": "-extension.addPHPComment",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "shift+alt+l",
+		"command": "-bookmarks.expandSelectionToNext",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "shift+alt+j",
+		"command": "-bookmarks.expandSelectionToPrevious",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "shift+alt+k",
+		"command": "-bookmarks.shrinkSelection",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "ctrl+alt+l",
+		"command": "-bookmarks.jumpToNext",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "ctrl+alt+j",
+		"command": "-bookmarks.jumpToPrevious",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "ctrl+alt+k",
+		"command": "-bookmarks.toggle",
+		"when": "editorTextFocus"
+	},
+	{
+		"key": "ctrl+w -",
+		"command": "-workbench.action.decreaseViewHeight",
+		"when": "!editorTextFocus && !isAuxiliaryWindowFocusedContext && !terminalFocus && neovim.mode != 'cmdline'"
+	},
+	{
+		"key": "ctrl+w unknown",
+		"command": "-workbench.action.decreaseViewWidth",
+		"when": "!editorTextFocus && !isAuxiliaryWindowFocusedContext && !terminalFocus && neovim.mode != 'cmdline'"
+	},
+	{
+		"key": "ctrl+k ctrl+k",
+		"command": "-editor.action.defineKeybinding",
+		"when": "resource == 'vscode-userdata:/home/dung.thai/.config/Code/User/keybindings.json'"
+	},
+	{
+		"key": "shift+alt+b",
+		"command": "-java.workspace.compile"
+	},
+	{
+		"key": "ctrl+o",
+		"command": "-java.action.showExtendedOutline",
+		"when": "inQuickOpen && javaLSReady"
+	},
+	{
+		"key": "ctrl+shift+v",
+		"command": "-java.action.filesExplorerPasteAction",
+		"when": "config.editor.pasteAs.enabled && explorerViewletFocus"
+	},
+	{
+		"key": "ctrl+shift+alt+s",
+		"command": "-java.action.doCleanup",
+		"when": "javaLSReady && editorLangId == 'java'"
+	},
+	{
+		"key": "shift+alt+u",
+		"command": "-java.projectConfiguration.update",
+		"when": "editorFocus"
+	},
+	{
+		"key": "ctrl+f",
+		"command": "-editor.action.pageDownHover",
+		"when": "editorHoverFocused"
+	},
+	{
+		"key": "ctrl+d",
+		"command": "-editor.action.pageDownHover",
+		"when": "editorHoverFocused"
+	},
+	{
+		"key": "ctrl+b",
+		"command": "-editor.action.pageUpHover",
+		"when": "editorHoverFocused"
+	},
+	{
+		"key": "ctrl+u",
+		"command": "-editor.action.pageUpHover",
+		"when": "editorHoverFocused"
+	},
+	{
+		"key": "shift+k",
+		"command": "-editor.action.showHover",
+		"when": "editorHoverVisible && editorTextFocus && neovim.init && neovim.mode == 'normal'"
+	},
+	{
+		"key": "ctrl+f",
+		"command": "-keybindings.editor.searchKeybindings",
+		"when": "inKeybindings"
+	},
+	{
+		"key": "alt+p",
+		"command": "-keybindings.editor.toggleSortByPrecedence",
+		"when": "inKeybindings"
+	},
+	{
+		"key": "left",
+		"command": "-cursorLeft",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "right",
+		"command": "-cursorRight",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "home",
+		"command": "-cursorHome",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "shift+end",
+		"command": "-cursorEndSelect",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "shift+home",
+		"command": "-cursorHomeSelect",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "shift+down",
+		"command": "-cursorDownSelect",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "down",
+		"command": "-cursorDown",
+		"when": "textInputFocus"
+	},
+	{
+		"key": "shift+up",
+		"command": "-cursorColumnSelectUp",
+		"when": "editorColumnSelection && textInputFocus"
+	},
+	{
+		"key": "ctrl+right",
+		"command": "-editor.action.inlineSuggest.acceptNextWord",
+		"when": "inlineSuggestionVisible && !accessibilityModeEnabled && !editorReadonly"
 	}
 ]
