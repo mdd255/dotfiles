@@ -28,7 +28,6 @@ ms-python.debugpy
 ms-python.python
 ms-python.vscode-pylance
 ms-vscode-remote.remote-containers
-ms-vscode.makefile-tools
 naumovs.color-highlight
 oderwat.indent-rainbow
 prisma.prisma
