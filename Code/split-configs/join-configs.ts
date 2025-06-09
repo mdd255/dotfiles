@@ -18,8 +18,16 @@ function getPartialConfig(
   )
 
   for (const filename of filenames) {
-    process.stdout.write(`Processing file: ${filename}\n`)
-    const partialConfigs = require(`${dir}/${filename}`)
+    let partialConfigs
+
+    try {
+        partialConfigs = require(`${dir}/${filename}`)
+    } catch (error) {
+      process.stdout.write(
+        `Error reading file ${filename}: ${error.message}\n`,
+      )
+      throw error
+    }
 
     if (Array.isArray(configs)) {
       configs.push(...partialConfigs)

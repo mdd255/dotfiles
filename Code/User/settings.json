@@ -36,7 +36,7 @@
 	"editor.fontSize": 14,
 	"editor.renderWhitespace": "trailing",
 	"editor.lineHeight": 1.2,
-	"editor.codeActionsOnSave": { },
+	"editor.codeActionsOnSave": {},
 	"editor.fontFamily": "FiraCode Nerd Font",
 	"editor.fontLigatures": true,
 	"editor.insertSpaces": false,
@@ -135,8 +135,8 @@
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
 	},
-	"vscode-neovim.ctrlKeysForInsertMode": [ ],
-	"vscode-neovim.ctrlKeysForNormalMode": [ ],
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"whichkey.delay": 0,
 	"whichkey.showIcons": true,
@@ -864,6 +864,5 @@
 	"workbench.editor.splitOnDragAndDrop": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true,
-	"editor.occurrencesHighlight": "singleFile"
+	"workbench.editor.closeOnFileDelete": true
 }
