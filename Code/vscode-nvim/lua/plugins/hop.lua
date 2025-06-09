@@ -8,6 +8,7 @@ return {
       local vscode = vim.g.vscode and require('vscode')
       local map    = utils.map
 
+      local vscode_config = utils.vscode_config
       hop.setup({
          multi_windows    = true,
          uppercase_labels = false,
@@ -67,9 +68,7 @@ return {
          local current_idx = vim.api.nvim_win_get_cursor(0)[2] + 1
          local current_char = current_line:sub(current_idx, current_idx)
 
-         if vscode then
-            vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-         end
+         vscode_config('editor.occurrencesHighlight', 'off')
          -- auto apply action on open brackets
          local keys = { '(', '[', '{', '<', '\'', '"' }
          for _, key in pairs(keys) do
@@ -81,9 +80,7 @@ return {
                   vim.cmd('startinsert')
                end
 
-               if vscode then
-                  vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-               end
+               vscode_config('editor.occurrencesHighlight', 'singleFile')
                return
             end
          end
@@ -103,9 +100,7 @@ return {
                   end, 50)
                end
             end
-            if vscode then
-               vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-            end
+            vscode_config('editor.occurrencesHighlight', 'singleFile')
          end
       end
 
@@ -115,14 +110,14 @@ return {
       hi('HopNextKey2', { fg = color.blue })
 
       -- keymaps
-      -- map('n', 'cn', function() hop_modify('ci') end)
-      -- map('n', 'dn', function() hop_modify('di', true) end)
-      -- map('n', 'yn', function() hop_modify('yi', true) end)
-      -- map('n', 'zn', function() hop_modify('vi') end)
-      --
-      -- map('n', 'ce', function() hop_modify('ca') end)
-      -- map('n', 'de', function() hop_modify('da', true) end)
-      -- map('n', 'ye', function() hop_modify('ya', true) end)
-      -- map('n', 'ze', function() hop_modify('va') end)
+      map('n', 'cn', function() hop_modify('ci') end)
+      map('n', 'dn', function() hop_modify('di', true) end)
+      map('n', 'yn', function() hop_modify('yi', true) end)
+      map('n', 'zn', function() hop_modify('vi') end)
+
+      map('n', 'ce', function() hop_modify('ca') end)
+      map('n', 'de', function() hop_modify('da', true) end)
+      map('n', 'ye', function() hop_modify('ya', true) end)
+      map('n', 'ze', function() hop_modify('va') end)
    end
 }

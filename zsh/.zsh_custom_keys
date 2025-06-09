@@ -9,6 +9,9 @@ bindkey "^[m" forward-delete-word
 bindkey "^[b" backward-word
 bindkey "^[q" kill-line
 
+# disable ctrl+r
+bindkey -r "^R"
+
 # fzf custom keys
 fd_extra_args="
   --hidden .\

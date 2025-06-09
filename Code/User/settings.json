@@ -865,5 +865,5 @@
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
 	"workbench.editor.closeOnFileDelete": true,
-	"biome.suggestInstallingGlobally": false
+	"editor.occurrencesHighlight": "singleFile"
 }

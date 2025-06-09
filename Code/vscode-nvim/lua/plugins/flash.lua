@@ -1,3 +1,4 @@
+local utils = require('base.utils')
 return {
 	'folke/flash.nvim',
 	opts = {
@@ -17,15 +18,9 @@ return {
 			'<C-a>',
 			mode = { 'n', 'v', 'o' },
 			function()
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-				end
-
+				utils.vscode_config('editor.occurrencesHighlight', 'off')
 				require('flash').jump()
-
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-				end
+				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
 			end,
 			desc = 'Flash all'
 		},
@@ -33,15 +28,9 @@ return {
 			'<C-c>',
 			mode = { 'n', 'x', 'o' },
 			function()
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-				end
-
+				utils.vscode_config('editor.occurrencesHighlight', 'off')
 				require('flash').jump({ pattern = vim.fn.expand('<cword>') })
-
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-				end
+				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
 			end,
 			desc = 'Flash current word'
 		},
@@ -49,9 +38,7 @@ return {
 			'<C-t>',
 			mode = { 'n', 'x', 'o' },
 			function()
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-				end
+				utils.vscode_config('editor.occurrencesHighlight', 'off')
 
 				require('flash').jump({
 					search = {
@@ -61,32 +48,9 @@ return {
 					label = { after = false, before = true },
 				})
 
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-				end
+				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
 			end,
 			desc = 'Flash open bracket'
-		},
-		{
-			'<tab>',
-			mode = { 'n', 'x', 'o' },
-			function()
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'off', 'global')
-				end
-
-				require('flash').jump({
-					search = {
-						mode = 'search',
-						max_length = 2,
-					},
-				})
-
-				if vscode then
-					vscode.update_config('editor.occurrencesHighlight', 'singleFile', 'global')
-				end
-			end,
-			desc = 'Flash pair'
 		},
 	},
 }

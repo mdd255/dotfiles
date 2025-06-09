@@ -63,4 +63,11 @@ M.color = {
   select = '#264f78'
 }
 
+function M.vscode_config(key, value, scope)
+  if scope == nil then scope = 'global' end
+
+  if vscode then
+    vscode.update_config(key, value, scope)
+  end
+end
 return M

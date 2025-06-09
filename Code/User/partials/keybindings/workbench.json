@@ -135,7 +135,7 @@
 		"when": "terminalFocus"
 	},
 	{
-		"key": "shift+r",
+		"key": "ctrl+'",
 		"command": "workbench.action.terminal.rename",
 		"when": "terminalFocus"
 	},

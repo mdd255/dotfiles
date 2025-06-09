@@ -2,10 +2,14 @@
     "diagnostics.globals": [
         "vim",
         "ngx",
-        "Snacks"
+        "Snacks",
+        "vscode"
     ],
     "runtime.version": "LuaJIT",
     "workspace.library": [
         "${3rd}/OpenResty/library"
+    ],
+    "diagnostics.disable": [
+        "undefined-global"
     ]
 }
