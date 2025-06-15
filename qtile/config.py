@@ -51,7 +51,7 @@ dgroups_app_rules: List[Any] = []
 main = None
 follow_mouse_focus = False
 bring_front_click = True
-cursor_warp = True
+cursor_wrap = False
 
 floating_layout = layout.Floating(
     float_rules=[
