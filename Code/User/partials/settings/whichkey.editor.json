@@ -21,8 +21,15 @@
 				{
 					"key": "y",
 					"name": " Copy current file path",
-					"type": "command",
-					"command": "copyRelativeFilePath"
+					"type": "commands",
+					"commands": [
+						"copyRelativeFilePath",
+						"vscode-neovim.send"
+					],
+					"args": [
+						null,
+						":lua vim.notify('Copied: ' .. vim.fn.getreg('+'))<CR>"
+					]
 				},
 				{
 					"key": "N",

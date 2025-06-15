@@ -1,6 +1,6 @@
 local utils = require('base.utils')
 local map = utils.map
-local action = utils.action
+local action = utils.vscodeAction
 
 vim.api.nvim_create_autocmd(
    'InsertEnter',

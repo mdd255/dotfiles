@@ -44,6 +44,12 @@
 					"key": "s",
 					"name": " Search",
 					"type": "command",
+					"command": "search.action.openEditor"
+				},
+				{
+					"key": "r",
+					"name": " Search & replace",
+					"type": "command",
 					"command": "workbench.view.search"
 				},
 				{

@@ -5,6 +5,8 @@
 }
 
 /* hide elements config */
+/* text search buttons */
+.text-search-provider-messages .message .pointer,
 .codicon-toolbar-more,
 div#be5invis\.vscode-custom-css,
 .codicon-panel-close,

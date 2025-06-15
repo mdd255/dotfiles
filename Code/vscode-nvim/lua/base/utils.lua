@@ -24,16 +24,17 @@ end
 
 ---@param action string
 ---@param keys? string
-function M.action(action, keys)
+function M.vscodeAction(action, keys)
+  if not vim.g.vscode then return end
   if keys == nil then
     return function() vscode.action(action) end
-  else
-    return function()
-      vscode.call(action)
-      vim.defer_fn(function()
-        vim.cmd('normal ' .. keys)
-      end, 5)
-    end
+  end
+
+  return function()
+    vscode.call(action)
+    vim.defer_fn(function()
+      vim.cmd('normal ' .. keys)
+    end, 5)
   end
 end
 

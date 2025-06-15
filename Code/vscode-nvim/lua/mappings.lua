@@ -1,8 +1,10 @@
 local utils = require('base.utils')
 local map = utils.map
-local action = utils.action
+local action = utils.vscodeAction
 local whichKey = utils.which_key
 
+-- avoid visual paste overwrite register
+map('vx', 'p', '"_dP')
 -- colemak bindings
 map('nv', 'k', 'i')
 map('nv', 'K', 'I')

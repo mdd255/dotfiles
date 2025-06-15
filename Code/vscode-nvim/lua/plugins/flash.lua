@@ -2,35 +2,45 @@ local utils = require('base.utils')
 return {
 	'folke/flash.nvim',
 	opts = {
-		labels = 'neioharstdqwfpluy;zxcvkm,.',
+		labels = 'neioharstdqwfpluy;zxcvkm',
 		modes = {
 			char = {
 				keys = {}
 			}
 		},
 		label = {
+			uppercase = false,
+			current = true,
 			before = true,
 			after = false,
 		}
 	},
 	keys = {
 		{
-			'<C-a>',
+			'w',
+			mode = { 'n', 'v' },
+			function()
+				require('flash').jump({
+					multi_windows = false,
+					search = { mode = "search", max_length = 0 },
+					pattern = [[\<]],
+				})
+			end,
+			desc = 'Flash to beginning of word'
+		},
+		{
+			"'",
 			mode = { 'n', 'v', 'o' },
 			function()
-				utils.vscode_config('editor.occurrencesHighlight', 'off')
-				require('flash').jump()
-				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
+				require('flash').jump({ multi_windows = false })
 			end,
-			desc = 'Flash all'
+			desc = 'Flash to any'
 		},
 		{
 			'<C-c>',
 			mode = { 'n', 'x', 'o' },
 			function()
-				utils.vscode_config('editor.occurrencesHighlight', 'off')
 				require('flash').jump({ pattern = vim.fn.expand('<cword>') })
-				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
 			end,
 			desc = 'Flash current word'
 		},
@@ -38,17 +48,10 @@ return {
 			'<C-t>',
 			mode = { 'n', 'x', 'o' },
 			function()
-				utils.vscode_config('editor.occurrencesHighlight', 'off')
-
 				require('flash').jump({
-					search = {
-						max_length = 0,
-					},
-					pattern = "(",
+					pattern = "[(\\[{<]", -- matches all open brackets: (, [, {, <
 					label = { after = false, before = true },
 				})
-
-				utils.vscode_config('editor.occurrencesHighlight', 'singleFile')
 			end,
 			desc = 'Flash open bracket'
 		},
