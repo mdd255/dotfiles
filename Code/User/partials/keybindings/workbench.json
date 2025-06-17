@@ -87,7 +87,7 @@
 	{
 		"key": "shift+t",
 		"command": "workbench.view.explorer",
-		"when": "editorFocus && neovim.mode != insert"
+		"when": "editorFocus && neovim.mode != insert && !inputFocus"
 	},
 	{
 		"key": "ctrl+m",
