@@ -25,7 +25,7 @@ map('n', 's', whichKey('s'))
 map('nvo', 'f', whichKey('f'))
 map('n', 'g', whichKey('g'))
 map('n', 't', whichKey('t'))
-map('n', '-', whichKey('z'))
+map('n', 'z', whichKey('z'))
 map('n', '_', whichKey('w'))
 
 -- window navs

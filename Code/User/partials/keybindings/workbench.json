@@ -60,7 +60,7 @@
 		"when": "sideBarVisible"
 	},
 	{
-		"key": "shift+t",
+		"key": "-",
 		"command": "workbench.action.closeSidebar",
 		"when": "sideBarFocus"
 	},
@@ -85,7 +85,7 @@
 		"when": "textCompareEditorVisible && neovim.mode != insert && editorFocus"
 	},
 	{
-		"key": "shift+t",
+		"key": "-",
 		"command": "workbench.view.explorer",
 		"when": "editorFocus && neovim.mode != insert && !inputFocus"
 	},

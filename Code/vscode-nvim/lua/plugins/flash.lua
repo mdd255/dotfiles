@@ -1,4 +1,3 @@
-local utils = require('base.utils')
 return {
 	'folke/flash.nvim',
 	opts = {
