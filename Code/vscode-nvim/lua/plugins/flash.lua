@@ -17,13 +17,25 @@ return {
 	},
 	keys = {
 		{
-			'w',
-			mode = { 'n', 'v' },
+			'W',
+			mode = { 'n', 'v', 'o' },
 			function()
 				require('flash').jump({
 					multi_windows = false,
 					search = { mode = "search", max_length = 0 },
 					pattern = [[\<]],
+				})
+			end,
+			desc = 'Flash to beginning of word'
+		},
+		{
+			'B',
+			mode = { 'n', 'v', 'o' },
+			function()
+				require('flash').jump({
+					multi_windows = false,
+					search = { mode = "search", max_length = 0 },
+					pattern = [[\>]],
 				})
 			end,
 			desc = 'Flash to beginning of word'
