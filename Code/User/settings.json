@@ -141,6 +141,13 @@
 	"whichkey.delay": 0,
 	"whichkey.showIcons": true,
 	"clock.dateFormat": "HH:MM dd/mm",
+	"redhat.telemetry.enabled": false,
+	"github.copilot.chat.agent.thinkingTool": true,
+	"github.copilot.chat.codesearch.enabled": true,
+	"github.copilot.advanced": {
+		"useLanguageServer": true
+	},
+	"diffEditor.ignoreTrimWhitespace": false,
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
 	"outline.showConstants": false,
