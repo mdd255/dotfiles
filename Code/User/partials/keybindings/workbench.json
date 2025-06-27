@@ -62,7 +62,7 @@
 	{
 		"key": "-",
 		"command": "workbench.action.closeSidebar",
-		"when": "sideBarFocus"
+		"when": "sideBarFocus && !inputFocus"
 	},
 	{
 		"key": "ctrl+o",
