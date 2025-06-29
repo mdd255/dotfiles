@@ -1,0 +1,4 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"redhat.telemetry.enabled": false
+}

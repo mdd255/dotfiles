@@ -1,0 +1,17 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.enableTrash": false,
+	"files.hotExit": "onExitAndWindowClose",
+	"files.exclude": {
+		"**/dist": true,
+		"**/.next": true,
+		"**/assets": true,
+		"**/node_modules": true,
+		"**/logs": true,
+		"yarn.lock": true,
+		"package-lock.json": true,
+		"pnpm-lock.yaml": true
+	}
+}

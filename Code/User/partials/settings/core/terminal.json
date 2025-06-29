@@ -1,0 +1,11 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"terminal.integrated.copyOnSelection": true,
+	"terminal.integrated.cursorBlinking": true,
+	"terminal.explorerKind": "external",
+	"terminal.external.linuxExec": "",
+	"terminal.integrated.smoothScrolling": true,
+	"terminal.integrated.gpuAcceleration": "on",
+	"terminal.integrated.defaultLocation": "editor",
+	"terminal.integrated.tabs.title": "${workspaceFolderName}"
+}

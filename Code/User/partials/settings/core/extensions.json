@@ -1,0 +1,8 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"extensions.experimental.deferredStartupFinishedActivation": true,
+	"extensions.experimental.affinity": {
+		"asvetliakov.vscode-neovim": 1
+	},
+	"extensions.ignoreRecommendations": true
+}

@@ -1,0 +1,12 @@
+[
+	{
+		"key": "escape",
+		"command": "workbench.action.closePanel",
+		"when": "panelFocus && !textInputFocus"
+	},
+	{
+		"key": "ctrl+space",
+		"command": "workbench.action.toggleMaximizedPanel",
+		"when": "panelFocus"
+	}
+]

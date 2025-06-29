@@ -1,0 +1,32 @@
+[
+	{
+		"key": "ctrl+enter",
+		"command": "workbench.action.togglePanel",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "ctrl+'",
+		"command": "workbench.action.terminal.rename",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "ctrl+enter",
+		"command": "workbench.action.terminal.focus",
+		"when": "editorTextFocus && neovim.mode == normal"
+	},
+	{
+		"key": "alt+v",
+		"command": "workbench.action.terminal.paste",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "ctrl+l",
+		"command": "workbench.action.terminal.clear",
+		"when": "terminalFocus"
+	},
+	{
+		"key": "alt+c",
+		"command": "workbench.action.terminal.copyAndClearSelection",
+		"when": "terminalFocus"
+	}
+]

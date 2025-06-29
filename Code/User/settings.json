@@ -65,14 +65,6 @@
 	"security.workspace.trust.untrustedFiles": "open",
 	"security.workspace.trust.startupPrompt": "never",
 	"security.workspace.trust.enabled": false,
-	"split-configs.excludedFileNames": [
-		"macos_remove.json",
-		"macos_bind.json"
-	],
-	"split-configs.keybindingsPartialPath": "~/.config/dotfiles/Code/User/partials/keybindings",
-	"split-configs.settingsPartialPath": "~/.config/dotfiles/Code/User/partials/settings",
-	"split-configs.keybindingsPath": "~/.config/dotfiles/Code/User/keybindings.json",
-	"split-configs.settingsPath": "~/.config/dotfiles/Code/User/settings.json",
 	"terminal.integrated.copyOnSelection": true,
 	"terminal.integrated.cursorBlinking": true,
 	"terminal.explorerKind": "external",
@@ -266,27 +258,6 @@
 					"args": ":"
 				},
 				{
-					"key": "a",
-					"name": " Flash any",
-					"type": "key",
-					"command": "vscode-neovim.send",
-					"args": "<C-a>"
-				},
-				{
-					"key": "w",
-					"name": "󰉁 Flash current word",
-					"type": "key",
-					"command": "vscode-neovim.send",
-					"args": "<C-c>"
-				},
-				{
-					"key": "t",
-					"name": "󰹩 Flash select treesitter",
-					"type": "key",
-					"command": "vscode-neovim.send",
-					"args": "<C-t>"
-				},
-				{
 					"key": "s",
 					"name": " Search",
 					"type": "command",
@@ -350,7 +321,7 @@
 			"type": "transient",
 			"bindings": [
 				{
-					"key": "-",
+					"key": "z",
 					"name": " Toggle current",
 					"type": "command",
 					"command": "editor.toggleFold"
@@ -692,13 +663,13 @@
 					"command": "workbench.action.editor.previousChange"
 				},
 				{
-					"key": "d",
+					"key": "q",
 					"name": "󱓍 Revert",
 					"type": "command",
 					"command": "git.revertSelectedRanges"
 				},
 				{
-					"key": "q",
+					"key": "Q",
 					"name": "󱓎 Clean",
 					"type": "command",
 					"command": "git.clean"

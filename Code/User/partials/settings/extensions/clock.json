@@ -1,0 +1,4 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"clock.dateFormat": "HH:MM dd/mm"
+}

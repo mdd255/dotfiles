@@ -1,0 +1,16 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"github.copilot.chat.agent.thinkingTool": true,
+	"github.copilot.chat.codesearch.enabled": true,
+	"github.copilot.advanced": {
+		"useLanguageServer": true
+	},
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	},
+	"github.copilot.editor.enableCodeActions": false,
+	"github.copilot.enableAutoCompletions": true
+}

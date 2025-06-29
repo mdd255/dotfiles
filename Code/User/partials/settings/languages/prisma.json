@@ -1,0 +1,4 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"prisma.showPrismaDataPlatformNotification": false
+}

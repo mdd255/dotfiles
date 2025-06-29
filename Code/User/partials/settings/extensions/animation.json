@@ -1,0 +1,17 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"animations.Install-Method": "Custom CSS and JS",
+	"animations.Enabled": true,
+	"animations.Scrolling": "Fade",
+	"animations.Tabs": "Slide",
+	"animations.CursorAnimationOptions": {
+		"Color": "#569cd6",
+		"CursorStyle": "block",
+		"TrailLength": 6
+	},
+	"animations.CursorAnimation": true,
+	"vscode_custom_css.imports": [
+		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
+		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
+	]
+}

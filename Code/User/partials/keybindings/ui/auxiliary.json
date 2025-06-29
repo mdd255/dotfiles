@@ -1,0 +1,17 @@
+[
+	{
+		"key": "ctrl+e",
+		"command": "workbench.action.focusAuxiliaryBar",
+		"when": "!auxiliaryBarVisible && neovim.mode != insert && !inQuickOpen"
+	},
+	{
+		"key": "ctrl+e",
+		"command": "workbench.action.closeAuxiliaryBar",
+		"when": "auxiliaryBarVisible && neovim.mode != insert"
+	},
+	{
+		"key": "escape",
+		"command": "workbench.action.closeAuxiliaryBar",
+		"when": "auxiliaryBarFocus"
+	}
+]

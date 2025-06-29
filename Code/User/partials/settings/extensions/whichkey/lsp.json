@@ -1,0 +1,84 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"whichkey.bindings": [
+		{
+			"key": "t",
+			"name": "󰨞 LSP",
+			"type": "bindings",
+			"bindings": [
+				{
+					"key": "n",
+					"name": " Next error",
+					"type": "command",
+					"command": "editor.action.marker.next"
+				},
+				{
+					"key": "e",
+					"name": " Prev error",
+					"type": "command",
+					"command": "editor.action.marker.prev"
+				},
+				{
+					"key": "t",
+					"name": "󰏭 Definition",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "f",
+					"name": "󱅅 References",
+					"type": "command",
+					"command": "editor.action.revealDefinition"
+				},
+				{
+					"key": "h",
+					"name": "󰘥 Hover",
+					"type": "command",
+					"command": "editor.action.showHover"
+				},
+				{
+					"key": "d",
+					"name": "󰁨 Fix",
+					"type": "command",
+					"command": "editor.action.quickFix"
+				},
+				{
+					"key": "r",
+					"name": "󰙏 Rename",
+					"type": "command",
+					"command": "editor.action.rename"
+				},
+				{
+					"key": "o",
+					"name": " Remove bracket",
+					"type": "command",
+					"command": "editor.action.removeBrackets"
+				},
+				{
+					"key": "a",
+					"name": " File errors",
+					"type": "command",
+					"command": "workbench.actions.view.problems"
+				},
+				{
+					"key": "l",
+					"name": " Lower case",
+					"type": "command",
+					"command": "editor.action.transformToLowercase"
+				},
+				{
+					"key": "u",
+					"name": " Upper case",
+					"type": "command",
+					"command": "editor.action.transformToUppercase"
+				},
+				{
+					"key": "i",
+					"name": " Organize Imports",
+					"type": "command",
+					"command": "editor.action.organizeImports"
+				}
+			]
+		}
+	]
+}

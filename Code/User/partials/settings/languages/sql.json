@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"[sql]": {
+		"editor.defaultFormatter": "cweijan.vscode-database-client2"
+	}
+}

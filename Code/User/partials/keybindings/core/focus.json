@@ -1,0 +1,22 @@
+[
+	{
+		"key": "ctrl+enter",
+		"command": "workbench.action.focusFirstEditorGroup",
+		"when": "!editorFocus"
+	},
+	{
+		"key": "ctrl+space",
+		"command": "workbench.action.toggleMaximizeEditorGroup",
+		"when": "!panelFocus"
+	},
+	{
+		"key": "ctrl+q",
+		"command": "workbench.action.closeActiveEditor",
+		"when": "!terminalFocus && !editorTextFocus"
+	},
+	{
+		"key": "ctrl+m",
+		"command": "workbench.action.toggleFullScreen",
+		"when": "editorFocus && neovim.mode != insert"
+	}
+]

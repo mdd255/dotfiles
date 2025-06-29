@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim"
+}

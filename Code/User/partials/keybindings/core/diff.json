@@ -1,0 +1,12 @@
+[
+	{
+		"key": "ctrl+n",
+		"command": "workbench.action.compareEditor.nextChange",
+		"when": "textCompareEditorVisible && neovim.mode == normal && editorFocus"
+	},
+	{
+		"key": "ctrl+e",
+		"command": "workbench.action.compareEditor.previousChange",
+		"when": "textCompareEditorVisible && neovim.mode != insert && editorFocus"
+	}
+]

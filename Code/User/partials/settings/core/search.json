@@ -1,0 +1,6 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"search.smartCase": true,
+	"search.showLineNumbers": true,
+	"search.useIgnoreFiles": false
+}

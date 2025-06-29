@@ -1,0 +1,5 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"whichkey.delay": 0,
+	"whichkey.showIcons": true
+}

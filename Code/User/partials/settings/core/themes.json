@@ -1,0 +1,16 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"workbench.colorCustomizations": {
+		"[Default Dark Modern]": {
+			"editor.background": "#0c0c0c",
+			"tab.activeBackground": "#0c0c0c",
+			"terminal.background": "#0c0c0c",
+			"quickInput.background": "#0c0c0c",
+			"menu.background": "#0c0c0c",
+			"sideBar.background": "#0c0c0c",
+			"statusBar.background": "#0c0c0c",
+			"panel.background": "#0c0c0c",
+			"input.background": "#0c0c0c"
+		}
+	}
+}

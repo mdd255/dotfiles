@@ -1,0 +1,7 @@
+[
+	{
+		"key": "ctrl+enter",
+		"command": "codelens.showLensesInCurrentLine",
+		"when": "editorFocus && neovim.mode == normal && editorLangId != 'sql'"
+	}
+]

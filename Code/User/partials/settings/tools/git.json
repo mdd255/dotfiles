@@ -1,0 +1,13 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"git.autofetch": true,
+	"git.enableSmartCommit": true,
+	"git.openRepositoryInParentFolders": "always",
+	"git.confirmSync": false,
+	"gitlens.advanced.externalDiffTool": "delta",
+	"githubPullRequests.pullBranch": "never",
+	"gitlens.telemetry.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"gitlens.codeLens.recentChange.enabled": false,
+	"gitlens.codeLens.authors.enabled": false
+}
