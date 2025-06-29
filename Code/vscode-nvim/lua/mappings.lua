@@ -16,6 +16,9 @@ map('nv', 'i', 'l')
 map('n', 'N', action('workbench.action.previousEditorInGroup'))
 map('n', 'E', action('workbench.action.nextEditorInGroup'))
 
+-- file explorer
+map('n', '-', action('workbench.view.explorer'))
+
 -- scroll cmds
 map('nv', 'm', '<C-d>')
 map('nv', 'M', '<C-u>')

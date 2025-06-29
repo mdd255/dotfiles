@@ -2,7 +2,7 @@
 	{
 		"key": "ctrl+enter",
 		"command": "workbench.action.focusFirstEditorGroup",
-		"when": "!editorFocus"
+		"when": "!editorFocus && !chatIsEnabled"
 	},
 	{
 		"key": "ctrl+space",
@@ -10,7 +10,7 @@
 		"when": "!panelFocus"
 	},
 	{
-		"key": "ctrl+q",
+		"key": "escape",
 		"command": "workbench.action.closeActiveEditor",
 		"when": "!terminalFocus && !editorTextFocus"
 	},

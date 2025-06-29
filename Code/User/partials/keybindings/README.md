@@ -28,6 +28,7 @@ keybindings/
 │   ├── linux_remove.json      # Linux keybinding removals (5,465 bindings)
 │   ├── macos.json             # macOS-specific bindings (5 bindings)
 │   └── macos_remove.json      # macOS keybinding removals (3,216 bindings)
+├── features/                   # Feature-specific bindings (empty)
 └── misc.json                   # Miscellaneous/complex bindings (65 bindings)
 
 ## ✨ Naming Philosophy: Context-Aware Clean Names
@@ -122,12 +123,13 @@ The recursive processing in `join-configs.ts` now handles:
 - **Input methods**: `brackets.json`, `colemak.json`
 - **Platform bindings**: `macos.json` (removals kept with descriptive names)
 
-### **3. Context-Aware Structure**
+### **5. Context-Aware Structure**
 - **`core/`** = Essential VS Code keybindings
 - **`ui/`** = Interface-specific bindings
 - **`terminal/`** = Terminal operations
 - **`extensions/`** = Extension-related bindings
 - **`input-methods/`** = Alternative input systems
+- **`features/`** = Feature-specific bindings (reserved for future use)
 - **`platform/`** = Platform-specific configurations
 
 ## 📊 Benefits of Clean Organization
@@ -170,9 +172,9 @@ vim platform/macos.json
 
 ## 🚀 Final Statistics
 
-### **File Organization:**
-- **Total files**: 17 clean, focused keybinding files (excluding removals)
-- **Directory structure**: 5 logical categories
+### **Final Statistics:**
+- **Total files**: 19 clean, focused keybinding files
+- **Directory structure**: 6 logical categories
 - **Naming consistency**: 100% context-aware, zero redundancy
 
 ### **Category Breakdown:**
@@ -181,7 +183,8 @@ vim platform/macos.json
 - **Terminal** (1 file): Terminal-specific operations
 - **Extensions** (2 files): Extension-related bindings
 - **Input Methods** (2 files): Alternative input systems
-- **Platform** (1 file): Platform-specific bindings (+ removal files)
+- **Platform** (3 files): Platform-specific bindings + removals
+- **Features** (0 files): Reserved for future feature-specific bindings
 - **Misc** (1 file): Complex/multi-category bindings
 
 This organization creates a **professional, scalable keybinding system** that makes configuration management effortless! 🌟
