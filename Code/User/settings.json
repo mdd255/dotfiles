@@ -1,31 +1,5 @@
 {
 	"$schema": "vscode://schemas/settings/default",
-	"animations.Install-Method": "Custom CSS and JS",
-	"animations.Enabled": true,
-	"animations.Scrolling": "Fade",
-	"animations.Tabs": "Slide",
-	"animations.CursorAnimationOptions": {
-		"Color": "#569cd6",
-		"CursorStyle": "block",
-		"TrailLength": 6
-	},
-	"animations.CursorAnimation": true,
-	"vscode_custom_css.imports": [
-		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
-		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
-	],
-	"biome.enabled": true,
-	"biome.rename": true,
-	"color-highlight.markerType": "underline",
-	"color-highlight.markRuler": false,
-	"[css]": {
-		"editor.defaultFormatter": "vscode.css-language-features"
-	},
-	"database-client.highlightSQLBlock": true,
-	"database-client.capitalizeKeywordsWhenFormatting": true,
-	"database-client.queryWithSchema": true,
-	"database-client.enableEditorCodeLens": false,
-	"database-client.autoSync": true,
 	"editor.fastScrollSensitivity": 5,
 	"editor.smoothScrolling": true,
 	"editor.inlineSuggest.enabled": true,
@@ -58,73 +32,15 @@
 	"editor.inlineSuggest.syntaxHighlightingEnabled": true,
 	"editor.codeLens": false,
 	"editor.suggest.preview": true,
-	"git.autofetch": true,
-	"git.enableSmartCommit": true,
-	"git.openRepositoryInParentFolders": "always",
-	"git.confirmSync": false,
-	"gitlens.advanced.externalDiffTool": "delta",
-	"githubPullRequests.pullBranch": "never",
-	"github.copilot.enable": {
-		"*": true,
-		"plaintext": false,
-		"markdown": false,
-		"scminput": false
-	},
-	"gitlens.telemetry.enabled": false,
-	"gitlens.statusBar.enabled": false,
-	"github.copilot.editor.enableCodeActions": false,
-	"github.copilot.enableAutoCompletions": true,
-	"gitlens.codeLens.recentChange.enabled": false,
-	"gitlens.codeLens.authors.enabled": false,
-	"go.formatTool": "gofmt",
-	"[go]": {
-		"editor.defaultFormatter": "golang.go"
-	},
-	"go.toolsManagement.autoUpdate": true,
-	"[graphql]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"indentRainbow.indicatorStyle": "light",
-	"indentRainbow.colorOnWhiteSpaceOnly": true,
-	"indentRainbow.lightIndicatorStyleLineWidth": 1,
-	"indentRainbow.colors": [
-		"rgba(255,255,64,0.07)",
-		"rgba(127,255,127,0.07)",
-		"rgba(255,127,255,0.07)",
-		"rgba(79,236,236,0.07)"
-	],
-	"json.format.keepLines": true,
-	"[json]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"[jsonc]": {
-		"editor.defaultFormatter": "vscode.json-language-features"
-	},
-	"[lua]": {
-		"editor.defaultFormatter": "sumneko.lua"
-	},
-	"keyboard.dispatch": "keyCode",
-	"telemetry.telemetryLevel": "all",
-	"search.smartCase": true,
-	"search.showLineNumbers": true,
-	"search.useIgnoreFiles": false,
-	"update.showReleaseNotes": false,
-	"notebook.gotoSymbols.showAllSymbols": false,
-	"breadcrumbs.enabled": true,
-	"breadcrumbs.symbolSortOrder": "type",
-	"security.workspace.trust.untrustedFiles": "open",
-	"makefile.configureOnOpen": true,
-	"explorer.confirmDelete": false,
-	"explorer.confirmDragAndDrop": false,
 	"extensions.experimental.deferredStartupFinishedActivation": true,
 	"extensions.experimental.affinity": {
 		"asvetliakov.vscode-neovim": 1
 	},
-	"files.enableTrash": false,
-	"security.workspace.trust.startupPrompt": "never",
-	"security.workspace.trust.enabled": false,
-	"files.hotExit": "onExitAndWindowClose",
 	"extensions.ignoreRecommendations": true,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.enableTrash": false,
+	"files.hotExit": "onExitAndWindowClose",
 	"files.exclude": {
 		"**/dist": true,
 		"**/.next": true,
@@ -135,19 +51,123 @@
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
 	},
-	"vscode-neovim.ctrlKeysForInsertMode": [],
-	"vscode-neovim.ctrlKeysForNormalMode": [],
-	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
-	"whichkey.delay": 0,
-	"whichkey.showIcons": true,
+	"keyboard.dispatch": "keyCode",
+	"telemetry.telemetryLevel": "all",
+	"update.showReleaseNotes": false,
+	"notebook.gotoSymbols.showAllSymbols": false,
+	"breadcrumbs.enabled": true,
+	"breadcrumbs.symbolSortOrder": "type",
+	"makefile.configureOnOpen": true,
+	"diffEditor.ignoreTrimWhitespace": false,
+	"search.smartCase": true,
+	"search.showLineNumbers": true,
+	"search.useIgnoreFiles": false,
+	"security.workspace.trust.untrustedFiles": "open",
+	"security.workspace.trust.startupPrompt": "never",
+	"security.workspace.trust.enabled": false,
+	"split-configs.excludedFileNames": [
+		"macos_remove.json",
+		"macos_bind.json"
+	],
+	"split-configs.keybindingsPartialPath": "~/.config/dotfiles/Code/User/partials/keybindings",
+	"split-configs.settingsPartialPath": "~/.config/dotfiles/Code/User/partials/settings",
+	"split-configs.keybindingsPath": "~/.config/dotfiles/Code/User/keybindings.json",
+	"split-configs.settingsPath": "~/.config/dotfiles/Code/User/settings.json",
+	"terminal.integrated.copyOnSelection": true,
+	"terminal.integrated.cursorBlinking": true,
+	"terminal.explorerKind": "external",
+	"terminal.external.linuxExec": "",
+	"terminal.integrated.smoothScrolling": true,
+	"terminal.integrated.gpuAcceleration": "on",
+	"terminal.integrated.defaultLocation": "editor",
+	"terminal.integrated.tabs.title": "${workspaceFolderName}",
+	"workbench.colorCustomizations": {
+		"[Default Dark Modern]": {
+			"editor.background": "#0c0c0c",
+			"tab.activeBackground": "#0c0c0c",
+			"terminal.background": "#0c0c0c",
+			"quickInput.background": "#0c0c0c",
+			"menu.background": "#0c0c0c",
+			"sideBar.background": "#0c0c0c",
+			"statusBar.background": "#0c0c0c",
+			"panel.background": "#0c0c0c",
+			"input.background": "#0c0c0c"
+		}
+	},
+	"window.density.editorTabHeight": "compact",
+	"window.title": "${folderName}",
+	"window.customTitleBarVisibility": "auto",
+	"window.menuBarVisibility": "hidden",
+	"window.commandCenter": false,
+	"window.titleBarStyle": "native",
+	"window.zoomLevel": 1,
+	"window.confirmSaveUntitledWorkspace": false,
+	"workbench.tips.enabled": false,
+	"workbench.startupEditor": "newUntitledFile",
+	"workbench.layoutControl.enabled": false,
+	"workbench.editor.mouseBackForwardToNavigate": false,
+	"workbench.editor.preventPinnedEditorClose": "keyboard",
+	"workbench.editor.untitled.labelFormat": "name",
+	"workbench.editor.labelFormat": "short",
+	"workbench.editor.enablePreview": false,
+	"workbench.activityBar.location": "hidden",
+	"workbench.editor.showTabs": "multiple",
+	"workbench.layoutControl.type": "menu",
+	"workbench.editor.tabActionCloseVisibility": false,
+	"workbench.editor.tabActionUnpinVisibility": false,
+	"workbench.editor.splitOnDragAndDrop": false,
+	"workbench.welcomePage.walkthroughs.openOnInstall": false,
+	"workbench.tree.indent": 15,
+	"workbench.editor.closeOnFileDelete": true,
+	"animations.Install-Method": "Custom CSS and JS",
+	"animations.Enabled": true,
+	"animations.Scrolling": "Fade",
+	"animations.Tabs": "Slide",
+	"animations.CursorAnimationOptions": {
+		"Color": "#569cd6",
+		"CursorStyle": "block",
+		"TrailLength": 6
+	},
+	"animations.CursorAnimation": true,
+	"vscode_custom_css.imports": [
+		"file://${userHome}/.vscode/extensions/brandonkirbyson.vscode-animations-2.0.7/dist/updateHandler.js",
+		"file://${userHome}/.config/dotfiles/Code/User/settings.css"
+	],
+	"biome.enabled": true,
+	"biome.rename": true,
 	"clock.dateFormat": "HH:MM dd/mm",
-	"redhat.telemetry.enabled": false,
+	"color-highlight.markerType": "underline",
+	"color-highlight.markRuler": false,
 	"github.copilot.chat.agent.thinkingTool": true,
 	"github.copilot.chat.codesearch.enabled": true,
 	"github.copilot.advanced": {
 		"useLanguageServer": true
 	},
-	"diffEditor.ignoreTrimWhitespace": false,
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	},
+	"github.copilot.editor.enableCodeActions": false,
+	"github.copilot.enableAutoCompletions": true,
+	"database-client.highlightSQLBlock": true,
+	"database-client.capitalizeKeywordsWhenFormatting": true,
+	"database-client.queryWithSchema": true,
+	"database-client.enableEditorCodeLens": false,
+	"database-client.autoSync": true,
+	"indentRainbow.indicatorStyle": "light",
+	"indentRainbow.colorOnWhiteSpaceOnly": true,
+	"indentRainbow.lightIndicatorStyleLineWidth": 1,
+	"indentRainbow.colors": [
+		"rgba(255,255,64,0.07)",
+		"rgba(127,255,127,0.07)",
+		"rgba(255,127,255,0.07)",
+		"rgba(79,236,236,0.07)"
+	],
+	"vscode-neovim.ctrlKeysForInsertMode": [],
+	"vscode-neovim.ctrlKeysForNormalMode": [],
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
 	"outline.showConstants": false,
@@ -167,54 +187,15 @@
 	"outline.showVariables": false,
 	"outline.showTypeParameters": false,
 	"outline.showProperties": false,
-	"prisma.showPrismaDataPlatformNotification": false,
-	"[python]": {
-		"editor.defaultFormatter": "ms-python.black-formatter"
-	},
-	"python.analysis.reportExtraTelemetry": false,
+	"redhat.telemetry.enabled": false,
 	"rest-client.requestNameAsResponseTabTitle": true,
 	"rest-client.disableHighlightResonseBodyForLargeResponse": true,
 	"rest-client.enableTelemetry": false,
 	"rest-client.enableSendRequestCodeLens": false,
 	"rest-client.previewResponseInUntitledDocument": true,
 	"rest-client.showResponseInDifferentTab": false,
-	"split-configs.excludedFileNames": [
-		"macos_remove.json",
-		"macos_bind.json"
-	],
-	"split-configs.keybindingsPartialPath": "~/.config/dotfiles/Code/User/partials/keybindings",
-	"split-configs.settingsPartialPath": "~/.config/dotfiles/Code/User/partials/settings",
-	"split-configs.keybindingsPath": "~/.config/dotfiles/Code/User/keybindings.json",
-	"split-configs.settingsPath": "~/.config/dotfiles/Code/User/settings.json",
-	"[sql]": {
-		"editor.defaultFormatter": "cweijan.vscode-database-client2"
-	},
-	"terminal.integrated.copyOnSelection": true,
-	"terminal.integrated.cursorBlinking": true,
-	"terminal.explorerKind": "external",
-	"terminal.external.linuxExec": "",
-	"terminal.integrated.smoothScrolling": true,
-	"terminal.integrated.gpuAcceleration": "on",
-	"terminal.integrated.defaultLocation": "editor",
-	"terminal.integrated.tabs.title": "${workspaceFolderName}",
-	"javascript.suggest.autoImports": true,
-	"[javascript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
-	"typescript.updateImportsOnFileMove.enabled": "always",
-	"typescript.preferences.useAliasesForRenames": false,
-	"typescript.suggest.autoImports": true,
-	"typescript.preferences.quoteStyle": "single",
-	"typescript.tsserver.log": "off",
-	"typescript.inlayHints.parameterNames.enabled": "all",
-	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-	"typescript.tsserver.maxTsServerMemory": 8096,
-	"typescript.suggest.completeFunctionCalls": true,
-	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
-	"typescript.autoClosingTags": true,
-	"[typescript]": {
-		"editor.defaultFormatter": "biomejs.biome"
-	},
+	"whichkey.delay": 0,
+	"whichkey.showIcons": true,
 	"whichkey.bindings": [
 		{
 			"key": "s",
@@ -853,42 +834,61 @@
 			]
 		}
 	],
-	"window.density.editorTabHeight": "compact",
-	"window.title": "${folderName}",
-	"window.customTitleBarVisibility": "auto",
-	"window.menuBarVisibility": "hidden",
-	"window.commandCenter": false,
-	"window.titleBarStyle": "native",
-	"window.zoomLevel": 1,
-	"window.confirmSaveUntitledWorkspace": false,
-	"workbench.tips.enabled": false,
-	"workbench.startupEditor": "newUntitledFile",
-	"workbench.layoutControl.enabled": false,
-	"workbench.editor.mouseBackForwardToNavigate": false,
-	"workbench.editor.preventPinnedEditorClose": "keyboard",
-	"workbench.editor.untitled.labelFormat": "name",
-	"workbench.editor.labelFormat": "short",
-	"workbench.editor.enablePreview": false,
-	"workbench.colorCustomizations": {
-		"[Default Dark Modern]": {
-			"editor.background": "#0c0c0c",
-			"tab.activeBackground": "#0c0c0c",
-			"terminal.background": "#0c0c0c",
-			"quickInput.background": "#0c0c0c",
-			"menu.background": "#0c0c0c",
-			"sideBar.background": "#0c0c0c",
-			"statusBar.background": "#0c0c0c",
-			"panel.background": "#0c0c0c",
-			"input.background": "#0c0c0c"
-		}
+	"[css]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
 	},
-	"workbench.activityBar.location": "hidden",
-	"workbench.editor.showTabs": "multiple",
-	"workbench.layoutControl.type": "menu",
-	"workbench.editor.tabActionCloseVisibility": false,
-	"workbench.editor.tabActionUnpinVisibility": false,
-	"workbench.editor.splitOnDragAndDrop": false,
-	"workbench.welcomePage.walkthroughs.openOnInstall": false,
-	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true
+	"go.formatTool": "gofmt",
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
+	},
+	"go.toolsManagement.autoUpdate": true,
+	"[graphql]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"json.format.keepLines": true,
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"[lua]": {
+		"editor.defaultFormatter": "sumneko.lua"
+	},
+	"prisma.showPrismaDataPlatformNotification": false,
+	"[python]": {
+		"editor.defaultFormatter": "ms-python.black-formatter"
+	},
+	"python.analysis.reportExtraTelemetry": false,
+	"[sql]": {
+		"editor.defaultFormatter": "cweijan.vscode-database-client2"
+	},
+	"javascript.suggest.autoImports": true,
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"typescript.preferences.useAliasesForRenames": false,
+	"typescript.suggest.autoImports": true,
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.tsserver.log": "off",
+	"typescript.inlayHints.parameterNames.enabled": "all",
+	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+	"typescript.tsserver.maxTsServerMemory": 8096,
+	"typescript.suggest.completeFunctionCalls": true,
+	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
+	"typescript.autoClosingTags": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"git.autofetch": true,
+	"git.enableSmartCommit": true,
+	"git.openRepositoryInParentFolders": "always",
+	"git.confirmSync": false,
+	"gitlens.advanced.externalDiffTool": "delta",
+	"githubPullRequests.pullBranch": "never",
+	"gitlens.telemetry.enabled": false,
+	"gitlens.statusBar.enabled": false,
+	"gitlens.codeLens.recentChange.enabled": false,
+	"gitlens.codeLens.authors.enabled": false
 }

@@ -19,12 +19,9 @@ graphql.vscode-graphql
 graphql.vscode-graphql-execution
 graphql.vscode-graphql-syntax
 humao.rest-client
-mducdung255.split-configs
 mikestead.dotenv
 ms-azuretools.vscode-containers
 ms-azuretools.vscode-docker
-ms-python.black-formatter
-ms-python.debugpy
 ms-python.python
 ms-python.vscode-pylance
 ms-vscode-remote.remote-containers
