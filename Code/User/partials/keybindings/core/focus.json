@@ -12,7 +12,7 @@
 	{
 		"key": "escape",
 		"command": "workbench.action.closeActiveEditor",
-		"when": "!terminalFocus && !editorTextFocus"
+		"when": "!terminalFocus && !editorTextFocus && !inputFocus"
 	},
 	{
 		"key": "ctrl+m",
