@@ -2,12 +2,12 @@
 	{
 		"key": "escape",
 		"command": "workbench.action.closeSidebar",
-		"when": "sideBarFocus"
+		"when": "sideBarFocus && !inputFocus"
 	},
 	{
 		"key": "ctrl+n",
 		"command": "workbench.action.focusSideBar",
-		"when": "!sideBarVisible && neovim.mode != insert && !inQuickOpen"
+		"when": "!sideBarVisible && neovim.mode != insert"
 	},
 	{
 		"key": "ctrl+n",
@@ -22,6 +22,6 @@
 	{
 		"key": "ctrl+o",
 		"command": "workbench.action.closeSidebar",
-		"when": "sideBarVisible"
+		"when": "sideBarVisible && !inputFocus && neovim.mode != insert"
 	}
 ]

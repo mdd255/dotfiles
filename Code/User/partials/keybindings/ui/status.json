@@ -7,6 +7,6 @@
 	{
 		"key": "ctrl+i",
 		"command": "workbench.action.toggleStatusbarVisibility",
-		"when": "!statusbarFocus && neovim.mode != insert"
+		"when": "!statusbarFocus && neovim.mode != insert && !inputFocus"
 	}
 ]

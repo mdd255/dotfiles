@@ -22,6 +22,6 @@
 	{
 		"key": "Escape",
 		"command": "workbench.action.closeQuickOpen",
-		"when": "inputFocus && quickOpenVisible"
+		"when": "inQuickOpen"
 	}
 ]

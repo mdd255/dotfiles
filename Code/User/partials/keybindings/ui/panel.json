@@ -2,7 +2,7 @@
 	{
 		"key": "escape",
 		"command": "workbench.action.closePanel",
-		"when": "panelFocus && !textInputFocus"
+		"when": "panelFocus"
 	},
 	{
 		"key": "ctrl+space",

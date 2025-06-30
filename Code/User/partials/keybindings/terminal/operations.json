@@ -23,10 +23,5 @@
 		"key": "ctrl+l",
 		"command": "workbench.action.terminal.clear",
 		"when": "terminalFocus"
-	},
-	{
-		"key": "alt+c",
-		"command": "workbench.action.terminal.copyAndClearSelection",
-		"when": "terminalFocus"
 	}
 ]

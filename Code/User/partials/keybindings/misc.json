@@ -1,14 +1,6 @@
 [
 	{
 		"key": "tab",
-		"command": "runCommands",
-		"args": {
-			"commands": ["workbench.action.focusSideBar", "list.focusDown"]
-		},
-		"when": "textCompareEditorVisible && neovim.mode == normal && editorFocus"
-	},
-	{
-		"key": "tab",
 		"command": "selectNextSuggestion",
 		"when": "editorTextFocus && !editorReadonly && suggestWidgetVisible"
 	},

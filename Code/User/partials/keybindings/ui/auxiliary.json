@@ -2,7 +2,7 @@
 	{
 		"key": "ctrl+e",
 		"command": "workbench.action.focusAuxiliaryBar",
-		"when": "!auxiliaryBarVisible && neovim.mode != insert && !inQuickOpen"
+		"when": "!auxiliaryBarVisible && neovim.mode != insert"
 	},
 	{
 		"key": "ctrl+e",
