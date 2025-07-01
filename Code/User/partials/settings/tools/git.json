@@ -9,5 +9,10 @@
 	"gitlens.telemetry.enabled": false,
 	"gitlens.statusBar.enabled": false,
 	"gitlens.codeLens.recentChange.enabled": false,
-	"gitlens.codeLens.authors.enabled": false
+	"gitlens.codeLens.authors.enabled": false,
+	"git.decorations.enabled": true,
+	"git.timeline.showAuthor": false,
+	"git.timeline.showUncommitted": false,
+	"diffEditor.renderSideBySide": true,
+	"merge-conflict.autoNavigateNextConflict.enabled": true
 }

@@ -1,12 +1,12 @@
 [
 	{
-		"key": "ctrl+shift+i",
+		"key": "ctrl+h",
 		"command": "workbench.action.focusStatusBar",
 		"when": "!statusbarFocus"
 	},
 	{
 		"key": "ctrl+i",
 		"command": "workbench.action.toggleStatusbarVisibility",
-		"when": "!statusbarFocus && neovim.mode != insert && !inputFocus"
+		"when": "!statusbarFocus && neovim.mode != insert"
 	}
 ]

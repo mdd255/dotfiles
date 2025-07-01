@@ -2,5 +2,32 @@
 	"$schema": "vscode://schemas/settings/default",
 	"search.smartCase": true,
 	"search.showLineNumbers": true,
-	"search.useIgnoreFiles": false
+	"search.useIgnoreFiles": false,
+	"search.searchOnType": false,
+	"search.followSymlinks": false,
+	"search.maxResults": 1000,
+	"search.searchEditor.defaultNumberOfContextLines": 1,
+	"search.searchEditor.reusePriorSearchConfiguration": true,
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/bower_components": true,
+		"**/coverage": true,
+		"**/dist": true,
+		"**/build": true,
+		"**/.git": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/*.min.js": true,
+		"**/*.min.css": true,
+		"**/logs": true,
+		"**/tmp": true,
+		"**/temp": true,
+		"**/.cache": true,
+		"**/CachedData": true,
+		"**/Cache": true,
+		"**/History": true,
+		"**/SharedStorage": true,
+		"**/blob_storage": true,
+		"**/*.lock": true
+	}
 }

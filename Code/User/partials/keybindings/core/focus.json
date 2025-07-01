@@ -12,11 +12,34 @@
 	{
 		"key": "escape",
 		"command": "workbench.action.closeActiveEditor",
-		"when": "!terminalFocus && !editorTextFocus && !inputFocus"
+		"when": "!terminalFocus && !editorTextFocus && !inputFocus && !statusBarFocused && !referenceSearchVisible"
 	},
 	{
 		"key": "ctrl+m",
 		"command": "workbench.action.toggleFullScreen",
 		"when": "editorFocus && neovim.mode != insert"
+	},
+	{
+		"key": "enter",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				{
+					"command": "vscode-neovim.send",
+					"args": "<BS>"
+				},
+				"search.action.focusNextSearchResult",
+				{
+					"command": "vscode-neovim.send",
+					"args": "<Esc>"
+				}
+			]
+		},
+		"when": "inSearchEditor && searchInputBoxFocus"
+	},
+	{
+		"key": "ctrl+o",
+		"command": "search.action.focusQueryEditorWidget",
+		"when": "inSearchEditor && !searchInputBoxFocus"
 	}
 ]

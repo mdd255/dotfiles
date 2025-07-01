@@ -15,9 +15,14 @@
 		"when": "sideBarVisible && neovim.mode != insert"
 	},
 	{
+		"key": "ctrl+o",
+		"command": "workbench.action.closeSidebar",
+		"when": "sideBarVisible && neovim.mode != insert"
+	},
+	{
 		"key": "-",
 		"command": "workbench.action.closeSidebar",
-		"when": "sideBarFocus && !inputFocus"
+		"when": "explorerViewletFocus && !inputFocus"
 	},
 	{
 		"key": "ctrl+o",

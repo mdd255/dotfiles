@@ -16,5 +16,7 @@
 	"workbench.editor.splitOnDragAndDrop": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
 	"workbench.tree.indent": 15,
-	"workbench.editor.closeOnFileDelete": true
+	"workbench.editor.closeOnFileDelete": true,
+	"workbench.editor.limit.enabled": true,
+	"workbench.editor.limit.value": 10
 }

@@ -31,5 +31,22 @@
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
 	"editor.inlineSuggest.syntaxHighlightingEnabled": true,
 	"editor.codeLens": false,
-	"editor.suggest.preview": true
+	"editor.suggest.preview": true,
+	"editor.acceptSuggestionOnCommitCharacter": false,
+	"editor.acceptSuggestionOnEnter": "smart",
+	"editor.suggestOnTriggerCharacters": true,
+	"editor.wordBasedSuggestions": "off",
+	"editor.parameterHints.enabled": false,
+	"editor.unicodeHighlight.ambiguousCharacters": false,
+	"editor.unicodeHighlight.invisibleCharacters": false,
+	"editor.accessibilitySupport": "off",
+	"editor.find.autoFindInSelection": "multiline",
+	"editor.gotoLocation.multipleReferences": "goto",
+	"editor.gotoLocation.multipleDefinitions": "goto",
+	"editor.hover.delay": 300,
+	"editor.quickSuggestions": {
+		"other": "on",
+		"comments": "off",
+		"strings": "off"
+	}
 }

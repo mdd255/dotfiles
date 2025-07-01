@@ -13,5 +13,16 @@
 		"yarn.lock": true,
 		"package-lock.json": true,
 		"pnpm-lock.yaml": true
+	},
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/node_modules/**": true,
+		"**/tmp/**": true,
+		"**/dist/**": true,
+		"**/.next/**": true,
+		"**/target/**": true,
+		"**/.gradle/**": true,
+		"**/build/**": true
 	}
 }
