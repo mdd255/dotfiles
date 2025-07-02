@@ -23,5 +23,10 @@
 		"key": "Escape",
 		"command": "workbench.action.closeQuickOpen",
 		"when": "inQuickOpen"
+	},
+	{
+		"key": "ctrl+p",
+		"command": "workbench.action.quickOpen",
+		"when": "!terminalFocus"
 	}
 ]

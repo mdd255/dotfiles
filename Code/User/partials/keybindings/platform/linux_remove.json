@@ -2,5 +2,9 @@
 	{
 		"key": "ctrl+q",
 		"command": "-workbench.action.quit"
+	},
+	{
+		"key": "ctrl+p",
+		"command": "-workbench.action.quickOpen"
 	}
 ]
