@@ -2,7 +2,7 @@
 	{
 		"key": "ctrl+h",
 		"command": "workbench.action.focusStatusBar",
-		"when": "!statusbarFocus"
+		"when": "!statusbarFocus && editorLangId != http && editorLangId != sql "
 	},
 	{
 		"key": "ctrl+i",
