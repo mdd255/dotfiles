@@ -2,5 +2,6 @@
 	"$schema": "vscode://schemas/settings/default",
 	"security.workspace.trust.untrustedFiles": "open",
 	"security.workspace.trust.startupPrompt": "never",
-	"security.workspace.trust.enabled": false
+	"security.workspace.trust.enabled": false,
+	"security.workspace.trust.banner": "never"
 }

@@ -4,6 +4,7 @@
 	"explorer.confirmDragAndDrop": false,
 	"files.enableTrash": false,
 	"files.hotExit": "onExitAndWindowClose",
+	"files.simpleDialog.enable": true,
 	"files.exclude": {
 		"**/dist": true,
 		"**/.next": true,

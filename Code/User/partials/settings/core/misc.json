@@ -1,11 +1,12 @@
 {
 	"$schema": "vscode://schemas/settings/default",
 	"keyboard.dispatch": "keyCode",
-	"telemetry.telemetryLevel": "all",
+	"telemetry.telemetryLevel": "off",
 	"update.showReleaseNotes": false,
 	"notebook.gotoSymbols.showAllSymbols": false,
 	"breadcrumbs.enabled": true,
 	"breadcrumbs.symbolSortOrder": "type",
+	"outline.icons": false,
 	"makefile.configureOnOpen": true,
 	"diffEditor.ignoreTrimWhitespace": false
 }

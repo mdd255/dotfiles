@@ -13,6 +13,10 @@
 	"git.decorations.enabled": true,
 	"git.timeline.showAuthor": false,
 	"git.timeline.showUncommitted": false,
+	"gitlens.mode.statusBar.enabled": false,
+	"gitlens.graph.statusBar.enabled": false,
+	"gitlens.codeLens.enabled": false,
+	"gitlens.hovers.enabled": false,
 	"diffEditor.renderSideBySide": true,
 	"merge-conflict.autoNavigateNextConflict.enabled": true
 }
