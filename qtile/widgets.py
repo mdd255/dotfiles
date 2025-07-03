@@ -184,7 +184,7 @@ def init_widgets_screen2():
 
 
 def init_widgets_screen3():
-    """Status bar for screen #2."""
+    """Status bar for screen #3."""
     widgets = init_widgets_list()
     return widgets
 
@@ -199,6 +199,6 @@ def init_screens():
             top=bar.Bar(widgets=init_widgets_screen2(), opacity=1.0, size=BAR_HEIGHT),
         ),
         Screen(
-            top=bar.Bar(widgets=init_widgets_screen2(), opacity=1.0, size=BAR_HEIGHT),
+            top=bar.Bar(widgets=init_widgets_screen3(), opacity=1.0, size=BAR_HEIGHT),
         ),
     ]
