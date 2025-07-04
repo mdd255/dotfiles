@@ -6,7 +6,16 @@
 	},
 	{
 		"key": "d",
-		"command": "deleteFile",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"deleteFile",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Deleted')<CR>"
+				}
+			]
+		},
 		"when": "filesExplorerFocus && !inputFocus"
 	},
 	{
@@ -16,17 +25,44 @@
 	},
 	{
 		"key": "x",
-		"command": "filesExplorer.cut",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"filesExplorer.cut",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Cut')<CR>"
+				}
+			]
+		},
 		"when": "filesExplorerFocus && !inputFocus"
 	},
 	{
 		"key": "y",
-		"command": "filesExplorer.copy",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"filesExplorer.copy",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Copied')<CR>"
+				}
+			]
+		},
 		"when": "filesExplorerFocus && !inputFocus"
 	},
 	{
 		"key": "p",
-		"command": "filesExplorer.paste",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"filesExplorer.paste",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Pasted')<CR>"
+				}
+			]
+		},
 		"when": "filesExplorerFocus && !inputFocus"
 	}
 ]
