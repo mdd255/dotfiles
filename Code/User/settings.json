@@ -64,6 +64,8 @@
 	"explorer.decorations.colors": true,
 	"explorer.confirmDelete": false,
 	"explorer.confirmDragAndDrop": false,
+	"files.enableTrash": false,
+	"files.confirmDelete": false,
 	"extensions.experimental.deferredStartupFinishedActivation": true,
 	"extensions.experimental.affinity": {
 		"asvetliakov.vscode-neovim": 1
@@ -71,7 +73,6 @@
 	"extensions.ignoreRecommendations": true,
 	"extensions.autoCheckUpdates": true,
 	"extensions.autoUpdate": true,
-	"files.enableTrash": false,
 	"files.hotExit": "onExitAndWindowClose",
 	"files.simpleDialog.enable": true,
 	"files.exclude": {

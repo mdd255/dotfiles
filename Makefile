@@ -104,6 +104,6 @@ links:
 	tsx ~/.config/dotfiles/Code/split-configs/sync.ts
 	sudo ln -fs ~/.config/dotfiles/Code/User/settings.json ~/.config/Code/User/settings.json
 	sudo ln -fs ~/.config/dotfiles/Code/User/keybindings.json ~/.config/Code/User/keybindings.json
-	sudo ln -fs ~/.config/dotfiles/Code/snippets ~/.config/Code/User/snippets
+	sudo ln -fs ~/.config/dotfiles/Code/User/snippets ~/.config/Code/User/snippets
 	sudo ln -fs ~/.config/dotfiles/us /usr/share/X11/xkb/symbols/us
 	sudo ln -fs ~/.config/dotfiles/Code/vscode-nvim ~/.config/nvim

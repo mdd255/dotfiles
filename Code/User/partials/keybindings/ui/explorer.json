@@ -64,5 +64,54 @@
 			]
 		},
 		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "A",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"explorer.newFolder",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('New folder created')<CR>"
+				}
+			]
+		},
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "shift+d",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"filesExplorer.copy",
+				"filesExplorer.paste",
+				"renameFile",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Duplicated')<CR>"
+				}
+			]
+		},
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "o",
+		"command": "revealFileInOS",
+		"when": "filesExplorerFocus && !inputFocus"
+	},
+	{
+		"key": "shift+r",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"workbench.files.action.refreshFilesExplorer",
+				{
+					"command": "vscode-neovim.send",
+					"args": ":lua vim.notify('Explorer refreshed')<CR>"
+				}
+			]
+		},
+		"when": "filesExplorerFocus && !inputFocus"
 	}
 ]
