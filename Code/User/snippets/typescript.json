@@ -141,7 +141,7 @@
       "prefix": ["pb"],
       "body": "Boolean($1)"
    },
-   "parseNmber": {
+   "parseNumber": {
       "prefix": ["pn"],
       "body": "Number($1)"
    },
@@ -172,6 +172,332 @@
    "process.env.string": {
       "prefix": ["pes"],
       "body": "process.env.$1 || '${2:unknown}'"
+   },
+   "interface": {
+      "prefix": ["int"],
+      "body": [
+         "interface ${1:InterfaceName} {",
+         "\t$2: $3",
+         "}"
+      ]
+   },
+   "type_alias": {
+      "prefix": ["ta"],
+      "body": "type ${1:TypeName} = $2"
+   },
+   "optional_chaining": {
+      "prefix": ["oc"],
+      "body": "$1?.$2"
+   },
+   "nullish_coalescing": {
+      "prefix": ["nc"],
+      "body": "$1 ?? $2"
+   },
+   "template_literal": {
+      "prefix": ["tl"],
+      "body": "`${1:${$2}}`"
+   },
+   "async_await": {
+      "prefix": ["aw"],
+      "body": "await $1"
+   },
+   "try_catch": {
+      "prefix": ["tc"],
+      "body": [
+         "try {",
+         "\t$1",
+         "} catch (error) {",
+         "\tconsole.error($2, error)",
+         "}"
+      ]
+   },
+   "promise_then": {
+      "prefix": ["pt"],
+      "body": [
+         "$1.then(($2) => {",
+         "\t$3",
+         "})"
+      ]
+   },
+   "promise_catch": {
+      "prefix": ["pc"],
+      "body": [
+         "$1.catch((error) => {",
+         "\tconsole.error($2, error)",
+         "})"
+      ]
+   },
+   "array_map": {
+      "prefix": ["am"],
+      "body": "$1.map(($2) => $3)"
+   },
+   "array_filter": {
+      "prefix": ["afi"],
+      "body": "$1.filter(($2) => $3)"
+   },
+   "array_reduce": {
+      "prefix": ["ar"],
+      "body": "$1.reduce(($2, $3) => $4, $5)"
+   },
+   "array_find": {
+      "prefix": ["afn"],
+      "body": "$1.find(($2) => $3)"
+   },
+   "array_some": {
+      "prefix": ["as"],
+      "body": "$1.some(($2) => $3)"
+   },
+   "array_every": {
+      "prefix": ["ae"],
+      "body": "$1.every(($2) => $3)"
+   },
+   "export_default": {
+      "prefix": ["exd"],
+      "body": "export default $1"
+   },
+   "export_named": {
+      "prefix": ["ex"],
+      "body": "export { $1 }"
+   },
+   "export_const": {
+      "prefix": ["exc"],
+      "body": "export const $1 = $2"
+   },
+   "import_type": {
+      "prefix": ["ret"],
+      "body": "import type { $2 } from '$1'"
+   },
+   "generic_function": {
+      "prefix": ["gfn"],
+      "body": [
+         "function $1<$2>($3: $2): $4 {",
+         "\t$5",
+         "}"
+      ]
+   },
+   "generic_arrow": {
+      "prefix": ["gaf"],
+      "body": "<$1>($2: $1): $3 => $4"
+   },
+   "typeof_check": {
+      "prefix": ["tof"],
+      "body": "typeof $1 === '$2'"
+   },
+   "instanceof_check": {
+      "prefix": ["iof"],
+      "body": "$1 instanceof $2"
+   },
+   "readonly_array": {
+      "prefix": ["ra"],
+      "body": "readonly $1[]"
+   },
+   "partial_type": {
+      "prefix": ["par"],
+      "body": "Partial<$1>"
+   },
+   "required_type": {
+      "prefix": ["req"],
+      "body": "Required<$1>"
+   },
+   "pick_type": {
+      "prefix": ["pic"],
+      "body": "Pick<$1, '$2'>"
+   },
+   "omit_type": {
+      "prefix": ["omi"],
+      "body": "Omit<$1, '$2'>"
+   },
+   "record_type": {
+      "prefix": ["rec"],
+      "body": "Record<$1, $2>"
+   },
+   "union_type": {
+      "prefix": ["uni"],
+      "body": "$1 | $2"
+   },
+   "intersection_type": {
+      "prefix": ["int"],
+      "body": "$1 & $2"
+   },
+   "class": {
+      "prefix": ["cls"],
+      "body": [
+         "class ${1:ClassName} {",
+         "\tconstructor($2) {",
+         "\t\t$3",
+         "\t}",
+         "",
+         "\t$4",
+         "}"
+      ]
+   },
+   "constructor": {
+      "prefix": ["ctor"],
+      "body": [
+         "constructor($1) {",
+         "\t$2",
+         "}"
+      ]
+   },
+   "public_method": {
+      "prefix": ["pm"],
+      "body": [
+         "public $1($2): $3 {",
+         "\t$4",
+         "}"
+      ]
+   },
+   "private_method": {
+      "prefix": ["prm"],
+      "body": [
+         "private $1($2): $3 {",
+         "\t$4",
+         "}"
+      ]
+   },
+   "getter": {
+      "prefix": ["get"],
+      "body": [
+         "get $1(): $2 {",
+         "\treturn $3",
+         "}"
+      ]
+   },
+   "setter": {
+      "prefix": ["set"],
+      "body": [
+         "set $1(value: $2) {",
+         "\t$3",
+         "}"
+      ]
+   },
+   "enum": {
+      "prefix": ["en"],
+      "body": [
+         "enum ${1:EnumName} {",
+         "\t${2:VALUE} = '$3',",
+         "}"
+      ]
+   },
+   "const_assertion": {
+      "prefix": ["ca"],
+      "body": "$1 as const"
+   },
+   "type_assertion": {
+      "prefix": ["ast"],
+      "body": "$1 as $2"
+   },
+   "satisfies": {
+      "prefix": ["sat"],
+      "body": "$1 satisfies $2"
+   },
+   "express_route": {
+      "prefix": ["route"],
+      "body": [
+         "app.$1('$2', async (req, res) => {",
+         "\ttry {",
+         "\t\t$3",
+         "\t\tres.json({ success: true })",
+         "\t} catch (error) {",
+         "\t\tres.status(500).json({ error: error.message })",
+         "\t}",
+         "})"
+      ]
+   },
+   "middleware": {
+      "prefix": ["mw"],
+      "body": [
+         "const $1 = (req: Request, res: Response, next: NextFunction) => {",
+         "\t$2",
+         "\tnext()",
+         "}"
+      ]
+   },
+   "async_handler": {
+      "prefix": ["ah"],
+      "body": [
+         "const $1 = async (req: Request, res: Response) => {",
+         "\ttry {",
+         "\t\t$2",
+         "\t} catch (error) {",
+         "\t\tres.status(500).json({ error: error.message })",
+         "\t}",
+         "}"
+      ]
+   },
+   "api_response": {
+      "prefix": ["api"],
+      "body": [
+         "res.status($1).json({",
+         "\tsuccess: $2,",
+         "\tdata: $3,",
+         "\tmessage: '$4'",
+         "})"
+      ]
+   },
+   "error_response": {
+      "prefix": ["err"],
+      "body": [
+         "res.status($1).json({",
+         "\tsuccess: false,",
+         "\terror: '$2'",
+         "})"
+      ]
+   },
+   "mongodb_find": {
+      "prefix": ["mfind"],
+      "body": "await $1.find($2)"
+   },
+   "mongodb_findone": {
+      "prefix": ["mfindone"],
+      "body": "await $1.findOne($2)"
+   },
+   "mongodb_create": {
+      "prefix": ["mcreate"],
+      "body": "await $1.create($2)"
+   },
+   "mongodb_update": {
+      "prefix": ["mupdate"],
+      "body": "await $1.findByIdAndUpdate($2, $3, { new: true })"
+   },
+   "mongodb_delete": {
+      "prefix": ["mdelete"],
+      "body": "await $1.findByIdAndDelete($2)"
+   },
+   "validation_schema": {
+      "prefix": ["schema"],
+      "body": [
+         "const $1Schema = z.object({",
+         "\t$2: z.string(),",
+         "})"
+      ]
+   },
+   "jwt_sign": {
+      "prefix": ["jwts"],
+      "body": "jwt.sign({ $1 }, process.env.JWT_SECRET, { expiresIn: '$2' })"
+   },
+   "jwt_verify": {
+      "prefix": ["jwtv"],
+      "body": "jwt.verify($1, process.env.JWT_SECRET)"
+   },
+   "bcrypt_hash": {
+      "prefix": ["hash"],
+      "body": "await bcrypt.hash($1, 10)"
+   },
+   "bcrypt_compare": {
+      "prefix": ["compare"],
+      "body": "await bcrypt.compare($1, $2)"
+   },
+   "env_config": {
+      "prefix": ["env"],
+      "body": [
+         "const config = {",
+         "\tport: Number(process.env.PORT) || 3000,",
+         "\tdatabase: process.env.DATABASE_URL || '',",
+         "\tjwtSecret: process.env.JWT_SECRET || '',",
+         "\t$1",
+         "}"
+      ]
    }
 }
 
