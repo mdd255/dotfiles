@@ -185,22 +185,6 @@
       "prefix": ["ta"],
       "body": "type ${1:TypeName} = $2"
    },
-   "optional_chaining": {
-      "prefix": ["oc"],
-      "body": "$1?.$2"
-   },
-   "nullish_coalescing": {
-      "prefix": ["nc"],
-      "body": "$1 ?? $2"
-   },
-   "template_literal": {
-      "prefix": ["tl"],
-      "body": "`${1:${$2}}`"
-   },
-   "async_await": {
-      "prefix": ["aw"],
-      "body": "await $1"
-   },
    "try_catch": {
       "prefix": ["tc"],
       "body": [
@@ -284,39 +268,39 @@
       "body": "typeof $1 === '$2'"
    },
    "instanceof_check": {
-      "prefix": ["iof"],
+      "prefix": ["toi"],
       "body": "$1 instanceof $2"
    },
    "readonly_array": {
-      "prefix": ["ra"],
-      "body": "readonly $1[]"
+      "prefix": ["tro"],
+      "body": "readonly $1"
    },
    "partial_type": {
-      "prefix": ["par"],
+      "prefix": ["tpa"],
       "body": "Partial<$1>"
    },
    "required_type": {
-      "prefix": ["req"],
+      "prefix": ["tre"],
       "body": "Required<$1>"
    },
    "pick_type": {
-      "prefix": ["pic"],
+      "prefix": ["tpi"],
       "body": "Pick<$1, '$2'>"
    },
    "omit_type": {
-      "prefix": ["omi"],
+      "prefix": ["tom"],
       "body": "Omit<$1, '$2'>"
    },
    "record_type": {
-      "prefix": ["rec"],
+      "prefix": ["tor"],
       "body": "Record<$1, $2>"
    },
    "union_type": {
-      "prefix": ["uni"],
+      "prefix": ["tun"],
       "body": "$1 | $2"
    },
    "intersection_type": {
-      "prefix": ["int"],
+      "prefix": ["tin"],
       "body": "$1 & $2"
    },
    "class": {
@@ -388,7 +372,7 @@
       "body": "$1 as $2"
    },
    "satisfies": {
-      "prefix": ["sat"],
+      "prefix": ["tsa"],
       "body": "$1 satisfies $2"
    },
    "express_route": {
@@ -444,59 +428,12 @@
          "})"
       ]
    },
-   "mongodb_find": {
-      "prefix": ["mfind"],
-      "body": "await $1.find($2)"
-   },
-   "mongodb_findone": {
-      "prefix": ["mfindone"],
-      "body": "await $1.findOne($2)"
-   },
-   "mongodb_create": {
-      "prefix": ["mcreate"],
-      "body": "await $1.create($2)"
-   },
-   "mongodb_update": {
-      "prefix": ["mupdate"],
-      "body": "await $1.findByIdAndUpdate($2, $3, { new: true })"
-   },
-   "mongodb_delete": {
-      "prefix": ["mdelete"],
-      "body": "await $1.findByIdAndDelete($2)"
-   },
    "validation_schema": {
       "prefix": ["schema"],
       "body": [
          "const $1Schema = z.object({",
          "\t$2: z.string(),",
          "})"
-      ]
-   },
-   "jwt_sign": {
-      "prefix": ["jwts"],
-      "body": "jwt.sign({ $1 }, process.env.JWT_SECRET, { expiresIn: '$2' })"
-   },
-   "jwt_verify": {
-      "prefix": ["jwtv"],
-      "body": "jwt.verify($1, process.env.JWT_SECRET)"
-   },
-   "bcrypt_hash": {
-      "prefix": ["hash"],
-      "body": "await bcrypt.hash($1, 10)"
-   },
-   "bcrypt_compare": {
-      "prefix": ["compare"],
-      "body": "await bcrypt.compare($1, $2)"
-   },
-   "env_config": {
-      "prefix": ["env"],
-      "body": [
-         "const config = {",
-         "\tport: Number(process.env.PORT) || 3000,",
-         "\tdatabase: process.env.DATABASE_URL || '',",
-         "\tjwtSecret: process.env.JWT_SECRET || '',",
-         "\t$1",
-         "}"
       ]
    }
 }
