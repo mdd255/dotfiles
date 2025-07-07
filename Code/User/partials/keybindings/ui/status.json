@@ -2,7 +2,7 @@
 	{
 		"key": "ctrl+h",
 		"command": "workbench.action.focusStatusBar",
-		"when": "!statusbarFocus && editorLangId != http && editorLangId != sql "
+		"when": "!statusbarFocus && editorLangId != http && editorLangId != sql && neovim.mode != insert"
 	},
 	{
 		"key": "ctrl+i",
