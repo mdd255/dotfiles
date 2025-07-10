@@ -57,3 +57,6 @@ map('v', 'l', 'u')
 -- mru file nav cmds
 map('n', 'I', action('workbench.action.navigateForward'))
 map('n', 'H', action('workbench.action.navigateBack'))
+
+-- extensions
+map('n', '<Space>d', action('github.cweijan.mysql.focus'))
