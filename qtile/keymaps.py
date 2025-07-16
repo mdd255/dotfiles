@@ -312,8 +312,7 @@ keys = [
     Key(
         [WIN],
         "q",
-        lazy.spawn("xset dpms force off"),
-        lazy.spawn("i3lock -c 000000"),
+        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/lock.sh"),
         desc="Lock screen",
     ),
     Key(
