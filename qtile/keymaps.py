@@ -312,6 +312,7 @@ keys = [
     Key(
         [WIN],
         "q",
+        lazy.spawn("xset dpms force off"),
         lazy.spawn("i3lock -c 000000"),
         desc="Lock screen",
     ),

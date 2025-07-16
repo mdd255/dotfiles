@@ -33,5 +33,10 @@
 		"key": "m",
 		"command": "list.focusPageDown",
 		"when": "listFocus && !inputFocus"
+	},
+	{
+		"key": "a",
+		"command": "explorer.newFile",
+		"when": "listFocus && !inputFocus"
 	}
 ]
