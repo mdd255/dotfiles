@@ -188,6 +188,8 @@ create-links: ## Create all configuration symlinks
 	tsx $(DOTFILES_DIR)/Code/split-configs/sync.ts
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/settings.json,~/.config/Code/User/settings.json)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/keybindings.json,~/.config/Code/User/keybindings.json)
+	$(call create_symlink,$(DOTFILES_DIR)/Code/User/settings.json,~/.config/Cursor/User/settings.json)
+	$(call create_symlink,$(DOTFILES_DIR)/Code/User/keybindings.json,~/.config/Cursor/User/keybindings.json)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/snippets,~/.config/Code/User)
 	$(call create_sudo_symlink,$(DOTFILES_DIR)/us,/usr/share/X11/xkb/symbols/us)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)

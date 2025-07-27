@@ -30,9 +30,6 @@
 	"editor.overviewRulerBorder": false,
 	"editor.glyphMargin": false,
 	"editor.showFoldingControls": "never",
-	"editor.rulers": [
-		120
-	],
 	"editor.lightbulb.enabled": "off",
 	"editor.experimental.treeSitterTelemetry": false,
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
@@ -910,7 +907,7 @@
 	},
 	"prisma.showPrismaDataPlatformNotification": false,
 	"[python]": {
-		"editor.defaultFormatter": "ms-python.black-formatter"
+		"editor.defaultFormatter": "ms-python.python"
 	},
 	"python.analysis.reportExtraTelemetry": false,
 	"[sql]": {
@@ -932,7 +929,7 @@
 	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
 	"typescript.autoClosingTags": true,
 	"typescript.disableAutomaticTypeAcquisition": true,
-	"typescript.tsserver.useSeparateSyntaxServer": true,
+	"typescript.tsserver.useSyntaxServer": "always",
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},

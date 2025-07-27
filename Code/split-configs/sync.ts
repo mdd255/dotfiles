@@ -1,6 +1,7 @@
 import { joinConfigs } from './join-configs'
 
 const basePath = `${process.env.HOME}/.config/dotfiles/Code/User`
+const cursorPath = `${process.env.HOME}/.config/Cursor/User`
 
 joinConfigs({
   keybindingsPartialPath: `${basePath}/partials/keybindings/`,
