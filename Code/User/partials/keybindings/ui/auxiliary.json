@@ -6,7 +6,7 @@
 	},
 	{
 		"key": "ctrl+e",
-		"command": "workbench.action.closeAuxiliaryBar",
+		"command": "workbench.action.toggleAuxiliaryBar",
 		"when": "auxiliaryBarVisible && neovim.mode != insert"
 	},
 	{

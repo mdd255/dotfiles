@@ -16,7 +16,7 @@
 	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
 	"typescript.autoClosingTags": true,
 	"typescript.disableAutomaticTypeAcquisition": true,
-	"typescript.tsserver.useSeparateSyntaxServer": true,
+	"typescript.tsserver.useSyntaxServer": "always",
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	}

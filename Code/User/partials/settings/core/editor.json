@@ -30,7 +30,6 @@
 	"editor.overviewRulerBorder": false,
 	"editor.glyphMargin": false,
 	"editor.showFoldingControls": "never",
-	"editor.rulers": [120],
 	"editor.lightbulb.enabled": "off",
 	"editor.experimental.treeSitterTelemetry": false,
 	"editor.formatOnSaveMode": "modificationsIfAvailable",
