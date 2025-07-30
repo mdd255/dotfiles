@@ -936,7 +936,7 @@
 	"typescript.suggest.includeAutomaticOptionalChainCompletions": true,
 	"typescript.autoClosingTags": true,
 	"typescript.disableAutomaticTypeAcquisition": true,
-	"typescript.tsserver.useSyntaxServer": "always",
+	"typescript.tsserver.useSyntaxServer": "auto",
 	"typescript.format.insertSpaceAfterConstructor": true,
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": true,
 	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis": true,
