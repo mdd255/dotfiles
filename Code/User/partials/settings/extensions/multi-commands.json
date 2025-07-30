@@ -1,0 +1,25 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"multiCommand.commands": [
+		{
+			"command": "multiCommand.focusDownFive",
+			"sequence": [
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown"
+			]
+		},
+		{
+			"command": "multiCommand.focusUpFive",
+			"sequence": [
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp"
+			]
+		}
+	]
+}

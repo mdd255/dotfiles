@@ -38,5 +38,15 @@
 		"key": "a",
 		"command": "explorer.newFile",
 		"when": "listFocus && !inputFocus"
+	},
+	{
+		"key": "shift+n",
+		"command": "multiCommand.focusDownFive",
+		"when": "listFocus && !inputFocus"
+	},
+	{
+		"key": "shift+e",
+		"command": "multiCommand.focusUpFive",
+		"when": "listFocus && !inputFocus"
 	}
 ]

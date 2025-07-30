@@ -237,6 +237,28 @@
 		"rgba(255,127,255,0.07)",
 		"rgba(79,236,236,0.07)"
 	],
+	"multiCommand.commands": [
+		{
+			"command": "multiCommand.focusDownFive",
+			"sequence": [
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown"
+			]
+		},
+		{
+			"command": "multiCommand.focusUpFive",
+			"sequence": [
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp"
+			]
+		}
+	],
 	"vscode-neovim.ctrlKeysForInsertMode": [],
 	"vscode-neovim.ctrlKeysForNormalMode": [],
 	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
