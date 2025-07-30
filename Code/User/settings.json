@@ -56,6 +56,13 @@
 		"comments": "off",
 		"strings": "off"
 	},
+	"explorer.openEditors.visible": 1,
+	"explorer.decorations.badges": false,
+	"explorer.decorations.colors": true,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.enableTrash": false,
+	"files.confirmDelete": false,
 	"extensions.experimental.deferredStartupFinishedActivation": true,
 	"extensions.experimental.affinity": {
 		"asvetliakov.vscode-neovim": 1
@@ -63,9 +70,6 @@
 	"extensions.ignoreRecommendations": true,
 	"extensions.autoCheckUpdates": true,
 	"extensions.autoUpdate": true,
-	"explorer.confirmDelete": false,
-	"explorer.confirmDragAndDrop": false,
-	"files.enableTrash": false,
 	"files.hotExit": "onExitAndWindowClose",
 	"files.simpleDialog.enable": true,
 	"files.exclude": {
@@ -158,7 +162,10 @@
 			"sideBar.background": "#0c0c0c",
 			"statusBar.background": "#0c0c0c",
 			"panel.background": "#0c0c0c",
-			"input.background": "#0c0c0c"
+			"input.background": "#0c0c0c",
+			"editorError.background": "#0c0c0c00",
+			"editorWarning.background": "#0c0c0c00",
+			"editorInfo.background": "#0c0c0c00"
 		}
 	},
 	"window.density.editorTabHeight": "compact",
@@ -210,6 +217,8 @@
 	"clock.dateFormat": "HH:MM dd/mm",
 	"color-highlight.markerType": "underline",
 	"color-highlight.markRuler": false,
+	"errorLens.messageTemplate": "[$source] $code - $message",
+	"errorLens.messageBackgroundMode": "none",
 	"github.copilot.chat.agent.thinkingTool": true,
 	"github.copilot.chat.codesearch.enabled": true,
 	"github.copilot.advanced": {
@@ -236,28 +245,6 @@
 		"rgba(127,255,127,0.07)",
 		"rgba(255,127,255,0.07)",
 		"rgba(79,236,236,0.07)"
-	],
-	"multiCommand.commands": [
-		{
-			"command": "multiCommand.focusDownFive",
-			"sequence": [
-				"list.focusDown",
-				"list.focusDown",
-				"list.focusDown",
-				"list.focusDown",
-				"list.focusDown"
-			]
-		},
-		{
-			"command": "multiCommand.focusUpFive",
-			"sequence": [
-				"list.focusUp",
-				"list.focusUp",
-				"list.focusUp",
-				"list.focusUp",
-				"list.focusUp"
-			]
-		}
 	],
 	"vscode-neovim.ctrlKeysForInsertMode": [],
 	"vscode-neovim.ctrlKeysForNormalMode": [],
@@ -950,7 +937,7 @@
 	"typescript.preferences.useAliasesForRenames": false,
 	"typescript.suggest.autoImports": true,
 	"typescript.preferences.quoteStyle": "single",
-	"typescript.tsserver.log": "terse",
+	"typescript.tsserver.log": "off",
 	"typescript.inlayHints.parameterNames.enabled": "all",
 	"typescript.inlayHints.propertyDeclarationTypes.enabled": true,
 	"typescript.tsserver.maxTsServerMemory": 8096,
@@ -967,6 +954,45 @@
 	"[typescript]": {
 		"editor.defaultFormatter": "biomejs.biome"
 	},
+	"cursor.chat.alwaysSearchWeb": false,
+	"cursor.chat.showSuggestedQuestions": true,
+	"cursor.chat.maxCompletionTokens": 4000,
+	"cursor.chat.contextLength": 8000,
+	"cursor.cpp.enablePartialAccepts": true,
+	"cursor.cpp.partialAcceptThreshold": 0.5,
+	"cursor.cpp.disabledLanguages": [],
+	"cursor.cpp.maxPrefixLengthForSingleLine": 100,
+	"cursor.cpp.maxSuffixLengthForSingleLine": 100,
+	"cursor.cpp.enablePartialAcceptsInSnippetMode": true,
+	"cursor.general.enableModelSelection": true,
+	"cursor.general.defaultModel": "claude-4-sonet",
+	"cursor.general.fastModel": "gpt-4o-mini",
+	"cursor.privacy.anonymizedTelemetry": true,
+	"cursor.privacy.enableTelemetry": false,
+	"cursor.general.enableIndexing": true,
+	"cursor.general.enableDocs": true,
+	"cursor.general.enableShadowWorkspace": true,
+	"cursor.general.enableAutoSaveBeforeChat": true,
+	"cursor.general.enableCodeLens": true,
+	"cursor.chat.showChatWelcomeMessage": false,
+	"cursor.general.enableInlineChat": true,
+	"cursor.general.enableComposer": true,
+	"cursor.general.showComposerInSidebar": true,
+	"cursor.general.enableDiff": true,
+	"cursor.general.enableSyntaxHighlighting": true,
+	"cursor.general.enableAutoApply": false,
+	"cursor.general.enableSmartSelection": true,
+	"cursor.general.enableCursorless": false,
+	"cursor.general.enableMultipleProviders": true,
+	"cursor.general.enableCustomInstructions": true,
+	"cursor.general.enableWorkspaceContext": true,
+	"cursor.general.enableGitContext": true,
+	"cursor.general.enableFileContext": true,
+	"cursor.general.maxFileContextLength": 20000,
+	"cursor.general.requestTimeout": 120000,
+	"cursor.general.disableTimeouts": true,
+	"cursor.general.maxRequestDuration": 300000,
+	"cursor.cpp.requestTimeout": 120000,
 	"git.autofetch": true,
 	"git.enableSmartCommit": true,
 	"git.openRepositoryInParentFolders": "always",

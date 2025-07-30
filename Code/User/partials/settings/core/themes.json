@@ -10,7 +10,10 @@
 			"sideBar.background": "#0c0c0c",
 			"statusBar.background": "#0c0c0c",
 			"panel.background": "#0c0c0c",
-			"input.background": "#0c0c0c"
+			"input.background": "#0c0c0c",
+			"editorError.background": "#0c0c0c00",
+			"editorWarning.background": "#0c0c0c00",
+			"editorInfo.background": "#0c0c0c00"
 		}
 	}
 }

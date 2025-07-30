@@ -26,12 +26,30 @@
 	},
 	{
 		"key": "shift+m",
-		"command": "list.focusPageUp",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp",
+				"list.focusUp"
+			]
+		},
 		"when": "listFocus && !inputFocus"
 	},
 	{
 		"key": "m",
-		"command": "list.focusPageDown",
+		"command": "runCommands",
+		"args": {
+			"commands": [
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown",
+				"list.focusDown"
+			]
+		},
 		"when": "listFocus && !inputFocus"
 	},
 	{
