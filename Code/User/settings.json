@@ -217,7 +217,7 @@
 	"clock.dateFormat": "HH:MM dd/mm",
 	"color-highlight.markerType": "underline",
 	"color-highlight.markRuler": false,
-	"errorLens.messageTemplate": "[$source] $code - $message",
+	"errorLens.messageTemplate": "$message [$source:$code]",
 	"errorLens.messageBackgroundMode": "none",
 	"github.copilot.chat.agent.thinkingTool": true,
 	"github.copilot.chat.codesearch.enabled": true,

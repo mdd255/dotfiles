@@ -2,6 +2,5 @@
 	"$schema": "vscode://schemas/settings/default",
 	"color-highlight.markerType": "underline",
 	"color-highlight.markRuler": false,
-	"errorLens.messageTemplate": "[$source] $code - $message",
 	"errorLens.messageBackgroundMode": "none"
 }

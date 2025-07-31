@@ -1,0 +1,10 @@
+{
+	"$schema": "vscode://schemas/settings/default",
+	"explorer.openEditors.visible": 1,
+	"explorer.decorations.badges": false,
+	"explorer.decorations.colors": true,
+	"explorer.confirmDelete": false,
+	"explorer.confirmDragAndDrop": false,
+	"files.enableTrash": true,
+	"files.confirmDelete": false
+}
