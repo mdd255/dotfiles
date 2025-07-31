@@ -19,7 +19,6 @@ graphql.vscode-graphql
 graphql.vscode-graphql-execution
 graphql.vscode-graphql-syntax
 humao.rest-client
-kilocode.kilo-code
 mikestead.dotenv
 ms-azuretools.vscode-containers
 ms-azuretools.vscode-docker
@@ -32,7 +31,6 @@ oderwat.indent-rainbow
 prisma.prisma
 redhat.java
 rexshi.phpdoc-comment-vscode-plugin
-saoudrizwan.claude-dev
 streetsidesoftware.avro
 streetsidesoftware.code-spell-checker
 sumneko.lua
