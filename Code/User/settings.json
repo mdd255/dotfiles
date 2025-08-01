@@ -1011,5 +1011,8 @@
 	"gitlens.codeLens.enabled": false,
 	"gitlens.hovers.enabled": false,
 	"diffEditor.renderSideBySide": true,
-	"merge-conflict.autoNavigateNextConflict.enabled": true
+	"merge-conflict.autoNavigateNextConflict.enabled": true,
+	"[php]": {
+		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+	}
 }

@@ -33,7 +33,6 @@ return {
 		labeler = function(matches, state)
 			local labels = state:labels()
 			local label_count = #labels
-			local match_count = #matches
 
 			for m, match in ipairs(matches) do
 				if m <= label_count then
