@@ -44,29 +44,29 @@ return {
 				end
 			end
 		end,
-		action = function(match, state)
-			if match.label1 and match.label2 then
-				state:hide()
-				require("flash").jump({
-					search = { max_length = 0 },
-					highlight = { matches = false },
-					matcher = function(win)
-						return vim.tbl_filter(function(m)
-							return m.label1 == match.label1 and m.win == win
-						end, state.results)
-					end,
-					labeler = function(matches)
-						for _, m in ipairs(matches) do
-							m.label = m.label2
-							m.label1 = nil
-							m.label2 = nil
-						end
-					end,
-				})
-			else
-				state:jump(match)
-			end
-		end,
+		-- action = function(match, state)
+		-- if match.label1 and match.label2 then
+		-- state:hide()
+		-- require("flash").jump({
+		-- search = { max_length = 0 },
+		-- highlight = { matches = false },
+		-- matcher = function(win)
+		-- return vim.tbl_filter(function(m)
+		-- return m.label1 == match.label1 and m.win == win
+		-- end, state.results)
+		-- end,
+		-- labeler = function(matches)
+		-- for _, m in ipairs(matches) do
+		-- m.label = m.label2
+		-- m.label1 = nil
+		-- m.label2 = nil
+		-- end
+		-- end,
+		-- })
+		-- else
+		-- state:jump(match)
+		-- end
+		-- end,
 	},
 	keys = {
 		{
