@@ -170,14 +170,14 @@ keys = [
         [ALT],
         "period",
         lazy.layout.grow(),
-        lazy.layout.increase_ratio(),
+        lazy.layout.increase_ratio().when(layout=["Tile"]),
         desc="increase number in master pane (Tile)",
     ),
     Key(
         [ALT],
         "comma",
         lazy.layout.shrink(),
-        lazy.layout.decrease_ratio(),
+        lazy.layout.decrease_ratio().when(layout=["Tile"]),
         desc="decrease number in master pane (Tile)",
     ),
     Key(
@@ -320,19 +320,6 @@ keys = [
         "Escape",
         lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2.sh"),
         desc="Power management",
-    ),
-    # Mouse control
-    Key(
-        [ALT],
-        "semicolon",
-        lazy.spawn("xdotool click 1"),
-        desc="Move left click",
-    ),
-    Key(
-        [ALT, CONTROL],
-        "semicolon",
-        lazy.spawn("xdotool click 3"),
-        desc="Move right click",
     ),
     # Keyboard layout control
     Key(
