@@ -26,12 +26,12 @@ function getPartialConfigRecursive(
 				const stat = statSync(itemPath);
 
 				if (stat.isDirectory()) {
-					process.stdout.write(`${indent}📁 Processing directory: ${item}\n`);
+					process.stdout.write(`\n${indent}📁${item}\n`);
 					processDirectory(itemPath, depth + 1);
 				} else if (stat.isFile()) {
 					const ft = item.split(".").slice(-1)[0];
 					if (!excludedFilenames.includes(item) && fts.includes(ft)) {
-						process.stdout.write(`${indent}📄 Processing file: ${item}\n`);
+						process.stdout.write(`${indent}📄${item}\n`);
 
 						try {
 							const partialConfigs = require(itemPath);
@@ -50,9 +50,6 @@ function getPartialConfigRecursive(
 
 							if (Array.isArray(configs)) {
 								configs.push(...partialConfigs);
-								process.stdout.write(
-									`${indent}✅ Loaded ${partialConfigs.length} keybindings from ${item}\n`,
-								);
 							} else {
 								// Handle object merging for settings
 								for (const key in partialConfigs) {
@@ -62,9 +59,6 @@ function getPartialConfigRecursive(
 										configs[key] = partialConfigs[key];
 									}
 								}
-								process.stdout.write(
-									`${indent}✅ Merged settings from ${item}\n`,
-								);
 							}
 						} catch (error) {
 							process.stdout.write(
@@ -86,7 +80,7 @@ function getPartialConfigRecursive(
 	process.stdout.write(`🚀 Starting recursive processing of: ${dir}\n`);
 	processDirectory(dir);
 	process.stdout.write(
-		`✨ Recursive processing complete. Total items: ${Array.isArray(configs) ? configs.length : Object.keys(configs).length}\n`,
+		`\n✨ Recursive processing complete. Total items: ${Array.isArray(configs) ? configs.length : Object.keys(configs).length}\n`,
 	);
 
 	return configs;
@@ -146,10 +140,6 @@ function gatherVsCodeConfig(opts: {
 	const configs = getPartialConfig(partialDir, isArray, fts, excludedFilenames);
 	isArray && Array.isArray(configs) && removeDuplicatedConfigs(configs);
 	writeFileSync(configPath, JSON.stringify(configs, null, "\t"));
-
-	process.stdout.write(
-		`Wrote ${Array.isArray(configs) ? configs.length : 1} configs to ${configPath}\n`,
-	);
 }
 
 export function formatPath(rawPath: string | undefined) {
