@@ -12,7 +12,7 @@ colors = ["#0a0a0a", "#61afef", "#e5c07b", "#abb2bf", "#ef596f"]
 
 # DEFAULT WIDGET SETTINGS #####
 widget_defaults = {
-    "font": "FiraCode Nerd Font Mono 12",
+    "font": "FiraCode Nerd Font Mono",
     "fontsize": TEXT_FONT_SIZE,
     "padding": 5,
     "background": colors[0],

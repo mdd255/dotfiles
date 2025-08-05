@@ -1,4 +1,5 @@
 {
 	"$schema": "vscode://schemas/settings/default",
-	"errorLens.messageTemplate": "[$source] $code - $message"
+	"errorLens.messageBackgroundMode": "none",
+	"errorLens.messageTemplate": "$message [$source:$code]"
 }

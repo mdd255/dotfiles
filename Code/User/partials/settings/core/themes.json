@@ -13,7 +13,8 @@
 			"input.background": "#0c0c0c",
 			"editorError.background": "#0c0c0c00",
 			"editorWarning.background": "#0c0c0c00",
-			"editorInfo.background": "#0c0c0c00"
+			"editorInfo.background": "#0c0c0c00",
+			"editor.lineHighlightBackground": "#1d1d1d"
 		}
 	}
 }
