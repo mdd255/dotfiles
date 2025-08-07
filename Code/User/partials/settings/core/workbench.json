@@ -21,5 +21,6 @@
 	"workbench.tree.indent": 15,
 	"workbench.editor.closeOnFileDelete": true,
 	"workbench.editor.limit.enabled": true,
+	"workbench.activityBar.orientation": "vertical",
 	"workbench.editor.limit.value": 10
 }
