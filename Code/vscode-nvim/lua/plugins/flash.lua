@@ -2,7 +2,7 @@ return {
 	"folke/flash.nvim",
 	config = function(_, opts)
 		local utils = require("base.utils")
-		utils.hi("FlashLabel", { fg = utils.color.red, bg = "none" })
+		utils.hi("FlashLabel", { fg = utils.color.blue, bg = "none" })
 		utils.hi("FlashMatch", { fg = utils.color.gray, bg = "none" })
 		utils.hi("FlashBackdrop", { fg = utils.color.gray, bg = "none" })
 		utils.hi("FlashCurrent", { fg = utils.color.blue, bg = "none" })

@@ -60,7 +60,7 @@ M.color = {
   blue   = '#61afef',
   red    = '#ff667c',
   green  = '#89ca78',
-  gray   = '#777777',
+  gray   = '#666666',
   select = '#264f78'
 }
 
