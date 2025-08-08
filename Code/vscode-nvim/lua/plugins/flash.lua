@@ -9,7 +9,7 @@ return {
 		require("flash").setup(opts)
 	end,
 	opts = {
-		labels = "neioharstdqwfpluyzxcvkmNEIOHARSTDQWFPLUYZXCVKM1234567890@#$%^&*()_+",
+		labels = "neioharstdqwfpluyzxcvkmbgj;NEIOHARSTDQWFPLUYZXCVKMBGJ1234567890!@#$%^&*()_+=.,",
 		modes = {
 			char = {
 				keys = {},

@@ -1,0 +1,89 @@
+[global]
+    monitor = 0
+    follow = mouse
+
+    # Geometry
+    width = 300
+    height = 180
+    origin = bottom-right
+    offset = 5x10
+
+    # Appearance
+    corner_radius = 8
+    frame_width = 2
+    gap_size = 5
+
+    # Typography
+    font = FiraCode Nerd Font Mono 10
+    line_height = 3
+    markup = full
+    format = "<b>%s</b>\n%b"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 60
+    ellipsize = middle
+    ignore_newline = no
+    stack_duplicates = true
+    hide_duplicate_count = false
+    show_indicators = yes
+
+    # Icons
+    enable_recursive_icon_lookup = true
+    icon_theme = Adwaita
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 48
+    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+
+    # History
+    sticky_history = yes
+    history_length = 20
+
+    # Interaction
+    dmenu = /usr/bin/dmenu -p dunst:
+    browser = /usr/bin/xdg-open
+    always_run_script = true
+    title = Dunst
+    class = Dunst
+
+    # Mouse
+    mouse_left_click = close_current
+    mouse_middle_click = do_action, close_current
+    mouse_right_click = close_all
+
+[experimental]
+    per_monitor_dpi = false
+
+[urgency_low]
+    background = "#0a0a0a"
+    foreground = "#abb2bf"
+    frame_color = "#98c379"
+    timeout = 5
+    default_icon = /usr/share/icons/gnome/32x32/status/dialog-information.png
+
+[urgency_normal]
+    background = "#0a0a0a"
+    foreground = "#61afef"
+    frame_color = "#61afef"
+    timeout = 8
+    default_icon = /usr/share/icons/gnome/32x32/status/dialog-information.png
+
+[urgency_critical]
+    background = "#0a0a0a"
+    foreground = "#ef596f"
+    frame_color = "#ef596f"
+    timeout = 0
+    default_icon = /usr/share/icons/gnome/32x32/status/dialog-warning.png
+
+# Custom rules
+[spotify]
+    appname = "Spotify"
+    format = "<b>󰓇 %s</b>\n%b"
+
+[volume]
+    summary = "Volume*"
+    format = "<b>󰂚 Volume</b>\n%b"
+
+[brightness]
+    summary = "Brightness*"
+    format = "<b>󰃠 Brightness</b>\n%b"

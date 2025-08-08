@@ -74,7 +74,7 @@ install: check-deps clean-pre install-deps install-zsh install-qtile install-nvi
 
 uninstall: ## Remove installed configurations (keeps packages)
 	rm -rf ~/.oh-my-zsh ~/.zshrc ~/.fnm ~/.local/share/fnm
-	rm -rf ~/.config/{qtile,zsh,rofi}/{qtile,zsh,rofi}
+	rm -rf ~/.config/{qtile,zsh,rofi,dunst}
 	rm -f ~/.{wezterm.lua,p10k.zsh} ~/.cargo/env
 	@echo "✅ Configurations removed"
 
@@ -97,7 +97,7 @@ clean-pre: ## Setup X11 configurations
 	$(call create_sudo_symlink,$(DOTFILES_DIR)/30-touchpad-touch.conf,$(XORG_CONF_DIR)/30-touchpad-touch.conf)
 
 clean-post: ## Remove temporary directories
-	rm -rf ~/.config/qtile/qtile ~/.config/zsh/zsh ~/.config/rofi/rofi
+	rm -rf ~/.config/qtile/qtile ~/.config/zsh/zsh ~/.config/rofi/rofi ~/.config/dunst/dunst
 
 # =============================================================================
 # Dependencies Installation
@@ -185,6 +185,7 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/zsh,~/.config/zsh)
 	$(call create_symlink,$(DOTFILES_DIR)/qtile,~/.config/qtile)
 	$(call create_symlink,$(DOTFILES_DIR)/rofi,~/.config/rofi)
+	$(call create_symlink,$(DOTFILES_DIR)/dunst,~/.config/dunst)
 	tsx $(DOTFILES_DIR)/Code/split-configs/sync.ts
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/settings.json,~/.config/Code/User/settings.json)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/keybindings.json,~/.config/Code/User/keybindings.json)
