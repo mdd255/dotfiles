@@ -94,6 +94,16 @@ def init_widgets_list():
             parse_text=shorten_window_name,
             highlight_method="block",
         ),
+        widget.Clipboard(
+            font=FONT,
+            foreground=colors[1],
+            background=colors[0],
+            max_width=None,
+            max_chars=100,
+            fmt="󰙏 [{}]",
+            timeout=5,
+            padding=10
+        )
     ]
 
     right_widgets = [
@@ -135,23 +145,6 @@ def init_widgets_list():
             foreground=colors[1],
             background=colors[0],
             padding=10,
-        ),
-        widget.KeyboardLayout(
-            fontsize=LARGE_ICON_SIZE,
-            configured_keyboards=[
-                "us colemak",
-                "us intl",
-            ],
-            display_map={
-                "us colemak": "",
-                "us intl": "",
-            },
-            mouse_callbacks={"Button1": lambda: None},
-        ),
-        widget.Sep(
-            padding=10,
-            background=colors[0],
-            foreground=colors[0],
         ),
     ]
 
