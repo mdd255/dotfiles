@@ -20,9 +20,9 @@ map('n', 'E', action('workbench.action.nextEditorInGroup'))
 -- file explorer
 map('n', '-', action('workbench.view.explorer'))
 
--- scroll cmds
-map('nv', 'm', '<C-d>')
-map('nv', 'M', '<C-u>')
+-- scroll cmds (18 lines with centering)
+map('nv', 'm', '15j')
+map('nv', 'M', '15k')
 
 -- whichkey
 map('n', 's', whichKey('s'))
