@@ -108,8 +108,14 @@ keys = [
     Key(
         [ALT],
         "o",
-        lazy.next_screen(),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch.sh next"),
         desc="Move focus to next monitor",
+    ),
+    Key(
+        [ALT, SHIFT],
+        "o",
+        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch.sh prev"),
+        desc="Move focus to previous monitor",
     ),
     # Window controls
     Key(
