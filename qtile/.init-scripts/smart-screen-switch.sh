@@ -21,8 +21,8 @@ find_current_screen() {
     local screen_index=0
 
     while IFS=' ' read -r width height x_offset y_offset; do
-        if (( pointer_x >= x_offset && pointer_x < x_offset + width && 
-              pointer_y >= y_offset && pointer_y < y_offset + height )); then
+        if (( pointer_x >= x_offset && pointer_x < x_offset + width &&
+                pointer_y >= y_offset && pointer_y < y_offset + height )); then
             echo $screen_index
             return
         fi

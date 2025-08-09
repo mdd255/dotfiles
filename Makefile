@@ -14,9 +14,9 @@ PACMAN_CORE := xclip git-delta eza jq postgresql-libs btop ibus go xorg-xev zip
 PACMAN_TOOLS := fzf fd bat dunst ttf-firacode-nerd unzip maim python-pip
 PACMAN_MEDIA := pavucontrol bluez bluez-utils blueman
 PACMAN_DOCKER := docker docker-compose
-PACMAN_QTILE := rofi qtile python-iwlib python-psutil i3lock
+PACMAN_QTILE := rofi qtile python-iwlib python-psutil i3lock xdotool
 PACMAN_NVIM := neovim ruby python-pynvim
-YAY_PACKAGES := xbanish wezterm pyenv pyenv-virtualenv visual-studio-code-bin biome
+YAY_PACKAGES := xbanish wezterm pyenv pyenv-virtualenv visual-studio-code-bin biome cursor-bin
 
 # URLs
 OMZ_INSTALL_URL := https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
