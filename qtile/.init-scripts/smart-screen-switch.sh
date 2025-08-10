@@ -3,16 +3,26 @@
 # Smart screen switching that preserves relative pointer position
 # Usage: smart-screen-switch.sh [next|prev|0|1|2]
 
-get_pointer_info() {
-    xdotool getmouselocation --shell
+declare -a SCREEN_DATA
+declare SCREEN_COUNT
+
+cache_screen_data() {
+    local geometry_output
+    geometry_output=$(xrandr --query | grep " connected")
+
+    SCREEN_DATA=()
+    SCREEN_COUNT=0
+
+    while read -r line; do
+        if [[ $line =~ ([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+) ]]; then
+            SCREEN_DATA[SCREEN_COUNT]="${BASH_REMATCH[1]} ${BASH_REMATCH[2]} ${BASH_REMATCH[3]} ${BASH_REMATCH[4]}"
+            ((SCREEN_COUNT++))
+        fi
+    done <<< "$geometry_output"
 }
 
-get_screen_geometry() {
-    xrandr --query | grep " connected" | while read -r line; do
-        if [[ $line =~ ([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+) ]]; then
-            echo "${BASH_REMATCH[1]} ${BASH_REMATCH[2]} ${BASH_REMATCH[3]} ${BASH_REMATCH[4]}"
-        fi
-    done
+get_pointer_info() {
+    xdotool getmouselocation --shell
 }
 
 find_current_screen() {
@@ -20,20 +30,21 @@ find_current_screen() {
     local pointer_y=$2
     local screen_index=0
 
-    while IFS=' ' read -r width height x_offset y_offset; do
+    for ((i=0; i<SCREEN_COUNT; i++)); do
+        local screen_info=(${SCREEN_DATA[i]})
+        local width=${screen_info[0]}
+        local height=${screen_info[1]}
+        local x_offset=${screen_info[2]}
+        local y_offset=${screen_info[3]}
+
         if (( pointer_x >= x_offset && pointer_x < x_offset + width &&
                 pointer_y >= y_offset && pointer_y < y_offset + height )); then
-            echo $screen_index
+            echo $i
             return
         fi
-        ((screen_index++))
-    done < <(get_screen_geometry)
+    done
 
     echo 0
-}
-
-get_screen_count() {
-    get_screen_geometry | wc -l
 }
 
 switch_to_screen() {
@@ -44,15 +55,14 @@ switch_to_screen() {
     local current_y=$Y
 
     local current_screen=$(find_current_screen $current_x $current_y)
-    local screen_count=$(get_screen_count)
 
     if [[ "$target_screen" == "next" ]]; then
-        target_screen=$(( (current_screen + 1) % screen_count ))
+        target_screen=$(( (current_screen + 1) % SCREEN_COUNT ))
     elif [[ "$target_screen" == "prev" ]]; then
-        target_screen=$(( (current_screen - 1 + screen_count) % screen_count ))
+        target_screen=$(( (current_screen - 1 + SCREEN_COUNT) % SCREEN_COUNT ))
     fi
 
-    if (( target_screen >= screen_count )); then
+    if (( target_screen >= SCREEN_COUNT )); then
         target_screen=0
     fi
 
@@ -60,19 +70,19 @@ switch_to_screen() {
         return
     fi
 
-    local screen_info=($(get_screen_geometry | sed -n "$((target_screen + 1))p"))
-    local current_info=($(get_screen_geometry | sed -n "$((current_screen + 1))p"))
+    local current_info=(${SCREEN_DATA[current_screen]})
+    local target_info=(${SCREEN_DATA[target_screen]})
 
-    if [[ ${#screen_info[@]} -eq 4 && ${#current_info[@]} -eq 4 ]]; then
+    if [[ ${#current_info[@]} -eq 4 && ${#target_info[@]} -eq 4 ]]; then
         local current_width=${current_info[0]}
         local current_height=${current_info[1]}
         local current_x_offset=${current_info[2]}
         local current_y_offset=${current_info[3]}
 
-        local target_width=${screen_info[0]}
-        local target_height=${screen_info[1]}
-        local target_x_offset=${screen_info[2]}
-        local target_y_offset=${screen_info[3]}
+        local target_width=${target_info[0]}
+        local target_height=${target_info[1]}
+        local target_x_offset=${target_info[2]}
+        local target_y_offset=${target_info[3]}
 
         local rel_x=$(( (current_x - current_x_offset) * 100 / current_width ))
         local rel_y=$(( (current_y - current_y_offset) * 100 / current_height ))
@@ -86,6 +96,8 @@ switch_to_screen() {
         qtile cmd-obj -o cmd -f next_screen
     fi
 }
+
+cache_screen_data
 
 case "${1:-next}" in
     next|prev|[0-9])
