@@ -10,6 +10,7 @@ declare global {
     };
     map(key: string, target: string, domain?: string): void;
     unmap(key: string, domain?: string): void;
+    unmapAllExcept(keys: string[], domain?: RegExp)
     addSearchAlias(alias: string, name: string, url: string, suggestion?: string): void;
     removeSearchAlias(alias: string): void;
   }

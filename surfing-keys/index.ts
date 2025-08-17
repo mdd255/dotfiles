@@ -1,4 +1,6 @@
 /// <reference path="./types.d.ts" />
 
-import "./bindings";
+import { buildBindings } from "./bindings";
 import "./theme";
+
+buildBindings();
