@@ -57,7 +57,7 @@ endef
 # Main Targets
 # =============================================================================
 
-.PHONY: help install uninstall clean check-deps
+.PHONY: help install uninstall clean check-deps surfing-keys
 .PHONY: install-deps install-zsh install-qtile install-nvim create-links
 .PHONY: deps-core deps-fnm deps-dco deps-screenshot deps-media deps-docker
 .PHONY: clean-pre clean-post
@@ -193,4 +193,10 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/keybindings.json,~/.config/Cursor/User/keybindings.json)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/snippets,~/.config/Code/User)
 	$(call create_sudo_symlink,$(DOTFILES_DIR)/us,/usr/share/X11/xkb/symbols/us)
-	$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)
+		$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)
+
+surfing-keys: ## Build SurfingKeys configuration
+	@echo "🔨 Building SurfingKeys configuration..."
+	@cd $(DOTFILES_DIR)/surfing-keys && make build
+
+# =============================================================================

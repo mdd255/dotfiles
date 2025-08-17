@@ -287,3 +287,5 @@ settings.theme = `
 }
 
 `;
+
+export {}; // Make this a module

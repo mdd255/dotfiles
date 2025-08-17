@@ -1,0 +1,16 @@
+{
+  "name": "surfing-keys-config",
+  "version": "1.0.0",
+  "description": "SurfingKeys configuration built from TypeScript",
+  "main": "config.js",
+  "scripts": {
+    "build": "esbuild index.ts --bundle --outfile=config.js --format=iife --platform=browser --target=es2020",
+    "watch": "esbuild index.ts --bundle --outfile=config.js --format=iife --platform=browser --target=es2020 --watch",
+    "dev": "npm run watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0",
+    "typescript": "^5.0.0"
+  },
+  "type": "module"
+}
