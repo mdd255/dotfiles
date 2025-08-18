@@ -1,33 +1,6 @@
-
+"use strict";
 (() => {
-  // bindings.ts
-  var customBindings = {
-    // default bindings
-    choose_tab: "T",
-    reload_page: "r",
-    open_link_shift_flip: "f",
-    scroll_left: "h",
-    scroll_to_top: "gg",
-    scroll_to_bottom: "G",
-    open_bookmark: "b",
-    find_current_page: "/",
-    toggle_visual_mode: "v",
-    next_found_text: "m",
-    previous_found_text: "M",
-    // custom bindings
-    display_hints_scrollable: "w",
-    scroll_half_page_up: "e",
-    scroll_half_page_down: "n",
-    // scroll_right: 'i',
-    go_edit_box: "o",
-    go_edit_box_vim: "O",
-    move_tab_left: "<",
-    move_tab_right: ">",
-    go_back_history: "H",
-    go_forward_history: "I",
-    close_current_tab: "q",
-    copy_current_url: "yy"
-  };
+  // types.d.ts
   var Bindings = {
     // Help
     toggle_surfingkeys: "alt+s",
@@ -49,7 +22,7 @@
     go_edit_box_vim: "I",
     enter_regional_hints: "L",
     open_detected_links: "O",
-    open_link_shift_flip: "f",
+    open_link: "f",
     open_link_active_new_tab: "af",
     open_link_non_active_new_tab_alt: "C",
     mouse_over_elements: "ctrl+h",
@@ -276,15 +249,29 @@
     forward_cycle_input_history: "ctrl+n",
     backward_cycle_input_history: "ctrl+p"
   };
+
+  // bindings.ts
+  var customBindings = {
+    next_found_text: "m",
+    previous_found_text: "M",
+    display_hints_scrollable: "w",
+    scroll_half_page_up: "e",
+    scroll_half_page_down: "n",
+    // scroll_right: 'i',
+    go_edit_box: "o",
+    go_edit_box_vim: "O",
+    move_tab_left: "<",
+    move_tab_right: ">",
+    go_back_history: "H",
+    go_forward_history: "I",
+    close_current_tab: "q",
+    copy_current_url: "yy"
+  };
   function buildBindings() {
-    const enabledKeys = [];
     for (const [key, customBindKey] of Object.entries(customBindings)) {
       const defaultBindKey = Bindings[key];
       api.map(customBindKey, defaultBindKey);
-      enabledKeys.push(defaultBindKey);
-      enabledKeys.push(customBindKey);
     }
-    api.unmapAllExcept(enabledKeys, /.*/);
   }
 
   // theme.ts
