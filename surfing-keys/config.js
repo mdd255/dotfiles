@@ -1,4 +1,4 @@
-"use strict";
+
 (() => {
   // bindings.ts
   var customBindings = {
