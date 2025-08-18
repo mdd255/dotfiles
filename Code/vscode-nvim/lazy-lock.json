@@ -3,6 +3,6 @@
   "flash.nvim": { "branch": "main", "commit": "3c942666f115e2811e959eabbdd361a025db8b63" },
   "lazy.nvim": { "branch": "main", "commit": "6c3bda4aca61a13a9c63f1c1d1b16b9d3be90d7a" },
   "numb.nvim": { "branch": "master", "commit": "7f564e638d3ba367abf1ec91181965b9882dd509" },
-  "nvim-recorder": { "branch": "main", "commit": "de49a181672a280b5ed42e193cc74af517218108" },
+  "nvim-recorder": { "branch": "main", "commit": "dfa7665c31310adcd7dbcd33875bad461e157bd2" },
   "todo-comments.nvim": { "branch": "main", "commit": "304a8d204ee787d2544d8bc23cd38d2f929e7cc5" }
 }
