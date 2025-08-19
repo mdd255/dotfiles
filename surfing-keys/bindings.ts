@@ -7,11 +7,12 @@ const passThroughBindings: (keyof typeof Bindings)[] = [
   'scroll_to_bottom',
   'reload_page',
   'copy_current_url',
-  'find_current_page'
+  'find_current_page',
+  'toggle_visual_mode',
 ]
 
 const customBindings: Partial<Record<keyof typeof Bindings, string>> = {
-  choose_tab: 't',
+  choose_tab: '<Space>',
   next_found_text: 'm',
   previous_found_text: 'M',
   display_hints_scrollable: 'w',
@@ -28,7 +29,7 @@ const customBindings: Partial<Record<keyof typeof Bindings, string>> = {
   duplicate_current_tab: 'd',
   copy_link_url: 'yf',
   yank_text_element: 'yt',
-  open_url: 'a',
+  open_url: '<Enter>',
 };
 
 export function buildBindings(): void {

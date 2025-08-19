@@ -15,9 +15,25 @@ declare global {
     removeSearchAlias(alias: string): void;
   }
 
+  type Position = 'left' | 'right' | 'top' | 'bottom';
+  type Mode = 'Normal' | 'Insert' | 'Visual';
+
   interface SurfingKeysSettings {
+    onLoad: () => void;
     theme: string;
-    [key: string]: any;
+    hintAlign: Position;
+    defaultSearchEngine: string;
+    omnibarPosition: Position;
+    focusFirstCandidate: boolean;
+    focusAfterClosed: 'first' | 'last';
+    scrollStepSize: number;
+    tabsThreshold: number;
+    modeAfterYank: Mode;
+    smoothScroll: boolean;
+    showModeStatus: boolean;
+    omnibarSuggestion: boolean;
+    verticalTabs: boolean;
+    newTabPosition: 'left' | 'right' | 'first' | 'last';
   }
 
   const api: SurfingKeysAPI;

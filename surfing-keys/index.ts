@@ -2,5 +2,6 @@
 
 import { buildBindings } from "./bindings";
 import "./theme";
+import "./settings";
 
 buildBindings();
