@@ -295,6 +295,12 @@
       api.unmap(defaultBindKey);
     }
     api.unmapAllExcept(enabledKeys, /.+/);
+    api.vmap("n", "j");
+    api.vmap("e", "k");
+    api.vmap("i", "l");
+    api.aceVimMap("n", "j");
+    api.aceVimMap("e", "k");
+    api.aceVimMap("i", "l");
   }
 
   // theme.ts
@@ -593,6 +599,8 @@
   settings.omnibarSuggestion = true;
   settings.focusFirstCandidate = true;
   settings.newTabPosition = "right";
+  settings.tabsMRUOrder = true;
+  api.Hints.setCharacters("neioarstdhqwfpluy;gjzxcvm,.bk");
 
   // index.ts
   buildBindings();

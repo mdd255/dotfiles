@@ -1,44 +1,47 @@
 // TypeScript declarations for SurfingKeys API
 
+interface SurfingKeysAPI {
+  Hints: {
+    style(css: string, mode?: string): void;
+    setCharacters(chars: string): void;
+  };
+  Visual: {
+    style(element: string, css: string): void;
+  };
+  map(key: string, target: string, domain?: string): void;
+  vmap(key: string, target: string, domain?: string): void;
+  unmap(key: string, domain?: string): void;
+  unmapAllExcept(keys: string[], domain?: RegExp)
+  addSearchAlias(alias: string, name: string, url: string, suggestion?: string): void;
+  removeSearchAlias(alias: string): void;
+  aceVimMap(key: string, target: string, domain?: string): void;
+};
+
+type Position = 'left' | 'right' | 'top' | 'bottom';
+type Mode = 'Normal' | 'Insert' | 'Visual';
+
+interface SurfingKeysSettings {
+  onLoad: () => void;
+  theme: string;
+  hintAlign: Position;
+  defaultSearchEngine: string;
+  omnibarPosition: Position;
+  focusFirstCandidate: boolean;
+  focusAfterClosed: 'first' | 'last';
+  scrollStepSize: number;
+  tabsThreshold: number;
+  modeAfterYank: Mode;
+  smoothScroll: boolean;
+  showModeStatus: boolean;
+  omnibarSuggestion: boolean;
+  verticalTabs: boolean;
+  newTabPosition: 'left' | 'right' | 'first' | 'last';
+  tabsMRUOrder: boolean;
+};
+
 declare global {
-  interface SurfingKeysAPI {
-    Hints: {
-      style(css: string, mode?: string): void;
-    };
-    Visual: {
-      style(element: string, css: string): void;
-    };
-    map(key: string, target: string, domain?: string): void;
-    unmap(key: string, domain?: string): void;
-    unmapAllExcept(keys: string[], domain?: RegExp)
-    addSearchAlias(alias: string, name: string, url: string, suggestion?: string): void;
-    removeSearchAlias(alias: string): void;
-  }
-
-  type Position = 'left' | 'right' | 'top' | 'bottom';
-  type Mode = 'Normal' | 'Insert' | 'Visual';
-
-  interface SurfingKeysSettings {
-    onLoad: () => void;
-    theme: string;
-    hintAlign: Position;
-    defaultSearchEngine: string;
-    omnibarPosition: Position;
-    focusFirstCandidate: boolean;
-    focusAfterClosed: 'first' | 'last';
-    scrollStepSize: number;
-    tabsThreshold: number;
-    modeAfterYank: Mode;
-    smoothScroll: boolean;
-    showModeStatus: boolean;
-    omnibarSuggestion: boolean;
-    verticalTabs: boolean;
-    newTabPosition: 'left' | 'right' | 'first' | 'last';
-  }
-
   const api: SurfingKeysAPI;
   const settings: SurfingKeysSettings;
-
 }
 
 export const Bindings = {

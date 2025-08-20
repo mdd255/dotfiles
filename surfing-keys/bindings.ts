@@ -47,5 +47,16 @@ export function buildBindings(): void {
     enabledKeys.push(customBindKey);
     api.unmap(defaultBindKey)
 	}
+
   api.unmapAllExcept(enabledKeys, /.+/);
+
+  // Visual Mode bindings
+  api.vmap('n', 'j');
+  api.vmap('e', 'k');
+  api.vmap('i', 'l');
+
+  // Ace Vim bindings
+  api.aceVimMap('n', 'j');
+  api.aceVimMap('e', 'k');
+  api.aceVimMap('i', 'l');
 };
