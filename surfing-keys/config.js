@@ -1,10 +1,10 @@
 "use strict";
 (() => {
   // types.d.ts
-  var Bindings = {
+  var NormalBindings = {
     // Help
-    toggle_surfingkeys: "alt+s",
-    enter_passthrough_mode: "alt+i",
+    toggle_surfingkeys: "<Alt-s>",
+    enter_passthrough_mode: "<Alt-i>",
     enter_ephemeral_mode: "p",
     show_usage: "?",
     show_last_action: ";ql",
@@ -25,9 +25,9 @@
     open_link: "f",
     open_link_active_new_tab: "af",
     open_link_non_active_new_tab_alt: "C",
-    mouse_over_elements: "ctrl+h",
-    mouse_out_elements: "ctrl+j",
-    go_edit_box_vim_alt: "ctrl+i",
+    mouse_over_elements: "<Ctrl-h>",
+    mouse_out_elements: "<Ctrl-j>",
+    go_edit_box_vim_alt: "<Ctrl-i>",
     click_image_button: "q",
     // Scroll Page / Element
     scroll_all_left: "0",
@@ -59,7 +59,7 @@
     edit_url_vim_reload: ";U",
     go_tab_history_back: "B",
     go_tab_history_forward: "F",
-    go_last_used_tab: "ctrl+6",
+    go_last_used_tab: "<Ctrl-6>",
     go_back_history: "S",
     go_forward_history: "D",
     reload_page: "r",
@@ -81,8 +81,8 @@
     zoom_reset: "zr",
     zoom_in: "zi",
     zoom_out: "zo",
-    pin_unpin_tab: "alt+p",
-    mute_unmute_tab: "alt+m",
+    pin_unpin_tab: "<Alt-p>",
+    mute_unmute_tab: "<Alt-m>",
     open_new_tab: "on",
     close_current_tab: "x",
     restore_closed_tab: "X",
@@ -143,6 +143,59 @@
     open_llm_chat: "A",
     open_url: "t",
     open_bookmark: "b",
+    // Settings
+    preview_markdown: ";pm",
+    edit_settings: ";e",
+    open_neovim: ";v",
+    // Chrome URLs
+    open_chrome_about: "ga",
+    open_chrome_bookmarks: "gb",
+    open_chrome_cache: "gc",
+    open_chrome_downloads: "gd",
+    open_chrome_history: "gh",
+    open_chrome_cookies: "gk",
+    open_chrome_extensions: "ge",
+    open_chrome_net_internals: "gn",
+    view_page_source: "gs",
+    open_chrome_inspect: "si",
+    close_downloads_shelf: ";j",
+    // Vim-like marks
+    add_current_url_vim_marks: "m",
+    jump_vim_mark: "'",
+    jump_vim_mark_new_tab: "Ctrl-'",
+    // Proxy
+    toggle_proxy_current: "cp",
+    set_proxy_always: ";pa",
+    set_proxy_byhost: ";pb",
+    set_proxy_direct: ";pd",
+    set_proxy_system: ";ps",
+    set_proxy_clear: ";pc",
+    copy_proxy_info: ";cp",
+    apply_proxy_clipboard: ";ap",
+    // Misc
+    read_selected_text_clipboard: "gr",
+    toggle_pdf_viewer: ";s",
+    put_histories_clipboard: ";ph",
+    translate_selected_google_alt: ";t",
+    delete_history_older_30: ";dh",
+    remove_bookmark_current: ";db",
+    yank_histories: ";yh",
+    // Additional functionality from help doc
+    restore_settings_clipboard: ";pj",
+    fill_form_data_yf: ";pf",
+    clear_all_urls_queue: ";cq",
+    show_results_previous: "<Ctrl-,>",
+    copy_selected_item_urls: "<Ctrl-c>",
+    delete_items_bookmark_history: "<Ctrl-d>",
+    resort_history_visit_last: "<Ctrl-r>",
+    close_omnibar: "Esc",
+    create_vim_mark_selected: "<Ctrl-m>",
+    forward_cycle_candidates: "<Tab>",
+    backward_cycle_candidates: "<Shift-Tab>",
+    forward_cycle_input_history: "<Ctrl-n>",
+    backward_cycle_input_history: "<Ctrl-p>"
+  };
+  var VisualBindings = {
     // Visual Mode
     find_current_page: "/",
     enter_visual_mode_select: "zv",
@@ -171,7 +224,7 @@
     go_other_end_highlighted: "o",
     search_word_cursor: "*",
     click_node_cursor: "Enter",
-    click_node_cursor_shift: "Shift+Enter",
+    click_node_cursor_shift: "<Shift-Enter>",
     make_cursor_top_window: "zt",
     make_cursor_center_window: "zz",
     make_cursor_bottom_window: "zb",
@@ -181,105 +234,70 @@
     repeat_latest_f_opposite: ",",
     expand_selection_parent: "p",
     select_word_line_sentence_paragraph: "V",
-    backward_20_lines: "ctrl+u",
-    forward_20_lines: "ctrl+d",
+    backward_20_lines: "<Ctrl-u",
+    forward_20_lines: "<Ctrl-d>",
     translate_selected_google: "t",
-    translate_word_cursor: "q",
-    // Settings
-    preview_markdown: ";pm",
-    edit_settings: ";e",
-    open_neovim: ";v",
-    // Chrome URLs
-    open_chrome_about: "ga",
-    open_chrome_bookmarks: "gb",
-    open_chrome_cache: "gc",
-    open_chrome_downloads: "gd",
-    open_chrome_history: "gh",
-    open_chrome_cookies: "gk",
-    open_chrome_extensions: "ge",
-    open_chrome_net_internals: "gn",
-    view_page_source: "gs",
-    open_chrome_inspect: "si",
-    close_downloads_shelf: ";j",
-    // Vim-like marks
-    add_current_url_vim_marks: "m",
-    jump_vim_mark: "'",
-    jump_vim_mark_new_tab: "ctrl+'",
+    translate_word_cursor: "q"
+  };
+  var InsertBindings = {
     // Insert Mode
-    move_cursor_end_line: "ctrl+e",
-    move_cursor_beginning_line: "ctrl+a",
-    delete_all_entered_before: "ctrl+u",
-    move_cursor_backward_word: "alt+b",
-    move_cursor_forward_word: "alt+f",
-    delete_word_backwards: "alt+w",
-    delete_word_forwards: "alt+d",
+    move_cursor_end_line: "<Ctrl-e>",
+    move_cursor_beginning_line: "<Ctrl-a>",
+    delete_all_entered_before: "<Ctrl-u>",
+    move_cursor_backward_word: "<Alt-b>",
+    move_cursor_forward_word: "<Alt-f>",
+    delete_word_backwards: "<Alt-w>",
+    delete_word_forwards: "<Alt-d>",
     exit_insert_mode: "Esc",
-    toggle_quotes_input: "ctrl+'",
-    open_vim_editor_current: "ctrl+i",
-    open_neovim_current: "ctrl+alt+i",
-    // Proxy
-    toggle_proxy_current: "cp",
-    set_proxy_always: ";pa",
-    set_proxy_byhost: ";pb",
-    set_proxy_direct: ";pd",
-    set_proxy_system: ";ps",
-    set_proxy_clear: ";pc",
-    copy_proxy_info: ";cp",
-    apply_proxy_clipboard: ";ap",
-    // Misc
-    read_selected_text_clipboard: "gr",
-    toggle_pdf_viewer: ";s",
-    put_histories_clipboard: ";ph",
-    translate_selected_google_alt: ";t",
-    delete_history_older_30: ";dh",
-    remove_bookmark_current: ";db",
-    yank_histories: ";yh",
-    // Additional functionality from help doc
-    restore_settings_clipboard: ";pj",
-    fill_form_data_yf: ";pf",
-    clear_all_urls_queue: ";cq",
-    show_results_previous: "ctrl+,",
-    copy_selected_item_urls: "ctrl+c",
-    delete_items_bookmark_history: "ctrl+d",
-    resort_history_visit_last: "ctrl+r",
-    close_omnibar: "Esc",
-    create_vim_mark_selected: "ctrl+m",
-    forward_cycle_candidates: "Tab",
-    backward_cycle_candidates: "Shift+Tab",
-    forward_cycle_input_history: "ctrl+n",
-    backward_cycle_input_history: "ctrl+p"
+    toggle_quotes_input: "Ctrl-'",
+    open_vim_editor_current: "<Ctrl-i>",
+    open_neovim_current: "Ctrl-<Alt-i>"
+  };
+  var Bindings = {
+    Normal: NormalBindings,
+    Insert: InsertBindings,
+    Visual: VisualBindings
   };
 
   // bindings.ts
-  var passThroughBindings = [
-    "show_usage",
-    "open_link",
-    "scroll_to_top",
-    "scroll_to_bottom",
-    "reload_page",
-    "copy_current_url",
-    "find_current_page",
-    "toggle_visual_mode"
-  ];
+  var passThroughBindings = {
+    // 'show_usage',
+    // 'open_link',
+    // 'scroll_to_top',
+    // 'scroll_to_bottom',
+    // 'reload_page',
+    // 'copy_current_url',
+    // 'find_current_page',
+    // 'toggle_visual_mode',
+    Normal: {}
+  };
   var customBindings = {
-    choose_tab: "<Space>",
-    next_found_text: "m",
-    previous_found_text: "M",
-    display_hints_scrollable: "w",
-    scroll_half_page_up: "e",
-    scroll_half_page_down: "n",
-    // scroll_right: 'i',
-    go_edit_box: "o",
-    go_edit_box_vim: "O",
-    move_tab_left: "<",
-    move_tab_right: ">",
-    go_back_history: "H",
-    go_forward_history: "I",
-    close_current_tab: "q",
-    duplicate_current_tab: "d",
-    copy_link_url: "yf",
-    yank_text_element: "yt",
-    open_url: "<Enter>"
+    Normal: {
+      choose_tab: "p",
+      restore_closed_tab: "T",
+      next_found_text: "m",
+      previous_found_text: "M",
+      display_hints_scrollable: "w",
+      scroll_half_page_up: "e",
+      scroll_half_page_down: "n",
+      // scroll_right: 'i',
+      go_edit_box: "o",
+      go_edit_box_vim: "O",
+      move_tab_left: "<",
+      move_tab_right: ">",
+      go_back_history: "H",
+      go_forward_history: "I",
+      close_current_tab: "q",
+      duplicate_current_tab: "d",
+      copy_link_url: "yf",
+      yank_text_element: "yt",
+      open_url: "l",
+      go_last_used_tab: "t",
+      edit_url_vim_reload: "a",
+      edit_url_vim_new: "A",
+      go_one_tab_left: "N",
+      go_one_tab_right: "E"
+    }
   };
   function buildBindings() {
     const enabledKeys = [];
@@ -294,7 +312,6 @@
       enabledKeys.push(customBindKey);
       api.unmap(defaultBindKey);
     }
-    api.unmapAllExcept(enabledKeys, /.+/);
     api.vmap("n", "j");
     api.vmap("e", "k");
     api.vmap("i", "l");
