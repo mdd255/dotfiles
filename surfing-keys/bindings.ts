@@ -46,31 +46,52 @@ const customBindings: CustomBindings = {
 	},
 };
 
-function remap(mode: Mode, bindings: CustomBindings): void {}
+function remap(mode: Mode, customBindings: CustomBindings): string[] {
+	let mapFn: typeof api.map;
+	let unmapFn: typeof api.unmap;
 
-export function buildBindings(): void {
-  const enabledKeys: string[] = [];
+	switch (mode) {
+		case "Insert":
+			mapFn = api.imap;
+			unmapFn = api.iunmap;
+			break;
 
-  for (const mode in passThroughBindings) {
-    const binds =
-					passThroughBindings[mode as keyof typeof passThroughBindings] || [];
-				binds.forEach((key) => enabledKeys.push(key));
-  }
+		case "Visual":
+			mapFn = api.vmap;
+			unmapFn = api.vunmap;
+			break;
 
-	for (const [key, customBindKey] of Object.entries(customBindings)) {
-    const defaultBindKey = Bindings[key as keyof BindingsType]
-    api.unmap(customBindKey)
-    api.map(customBindKey, defaultBindKey)
-    api.unmap(defaultBindKey)
-    enabledKeys.push(customBindKey);
+		default:
+			mapFn = api.map;
+			unmapFn = api.unmap;
 	}
 
-  // api.unmapAllExcept(enabledKeys, /.+/);
+	const modePassThroughKeys: string[] = passThroughBindings[mode] || [];
+	const modeBindings = Bindings[mode] || {};
+	const excludeKeys: string[] = modePassThroughKeys.map(key => modeBindings[key as keyof typeof modeBindings]);
+	const modeCustomBindings = customBindings[mode] || {};
 
-  // Visual Mode bindings
-  // api.vmap('n', 'j');
-  // api.vmap('e', 'k');
-  // api.vmap('i', 'l');
+	for (const [key, customBindKey] of Object.entries(modeCustomBindings)) {
+    const defaultBindKey = modeBindings[key as keyof typeof modeBindings];
+
+		unmapFn(customBindKey);
+		mapFn(customBindKey, defaultBindKey);
+		excludeKeys.push(customBindKey);
+    unmapFn(defaultBindKey);
+	}
+
+	return excludeKeys;
+}
+
+export function buildBindings(): void {
+	const excludedKeys: string[] = [];
+
+	for (const mode in customBindings) {
+		const excludedChunk = remap(mode as Mode, customBindings);
+		excludedKeys.push(...excludedChunk);
+	}
+	
+	api.unmapAllExcept(excludedKeys, /.*/);
 
   // Ace Vim bindings
   api.aceVimMap('n', 'j');

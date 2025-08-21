@@ -249,9 +249,9 @@
     delete_word_backwards: "<Alt-w>",
     delete_word_forwards: "<Alt-d>",
     exit_insert_mode: "Esc",
-    toggle_quotes_input: "Ctrl-'",
+    toggle_quotes_input: "<Ctrl-'>",
     open_vim_editor_current: "<Ctrl-i>",
-    open_neovim_current: "Ctrl-<Alt-i>"
+    open_neovim_current: "<Ctrl-Alt-i>"
   };
   var Bindings = {
     Normal: NormalBindings,
@@ -304,19 +304,42 @@
       forward_character: "i"
     }
   };
+  function remap(mode, customBindings2) {
+    let mapFn;
+    let unmapFn;
+    switch (mode) {
+      case "Insert":
+        mapFn = api.imap;
+        unmapFn = api.iunmap;
+        break;
+      case "Visual":
+        mapFn = api.vmap;
+        unmapFn = api.vunmap;
+        break;
+      default:
+        mapFn = api.map;
+        unmapFn = api.unmap;
+    }
+    const modePassThroughKeys = passThroughBindings[mode] || [];
+    const modeBindings = Bindings[mode] || {};
+    const excludeKeys = modePassThroughKeys.map((key) => modeBindings[key]);
+    const modeCustomBindings = customBindings2[mode] || {};
+    for (const [key, customBindKey] of Object.entries(modeCustomBindings)) {
+      const defaultBindKey = modeBindings[key];
+      unmapFn(customBindKey);
+      mapFn(customBindKey, defaultBindKey);
+      excludeKeys.push(customBindKey);
+      unmapFn(defaultBindKey);
+    }
+    return excludeKeys;
+  }
   function buildBindings() {
-    const enabledKeys = [];
-    for (const mode in passThroughBindings) {
-      const binds = passThroughBindings[mode] || [];
-      binds.forEach((key) => enabledKeys.push(key));
+    const excludedKeys = [];
+    for (const mode in customBindings) {
+      const excludedChunk = remap(mode, customBindings);
+      excludedKeys.push(...excludedChunk);
     }
-    for (const [key, customBindKey] of Object.entries(customBindings)) {
-      const defaultBindKey = Bindings[key];
-      api.unmap(customBindKey);
-      api.map(customBindKey, defaultBindKey);
-      api.unmap(defaultBindKey);
-      enabledKeys.push(customBindKey);
-    }
+    api.unmapAllExcept(excludedKeys, /.*/);
     api.aceVimMap("n", "j");
     api.aceVimMap("e", "k");
     api.aceVimMap("i", "l");

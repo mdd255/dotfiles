@@ -9,9 +9,11 @@ interface SurfingKeysAPI {
     style(element: string, css: string): void;
   };
   map(key: string, target: string, domain?: string): void;
-  vmap(key: string, target: string, domain?: string): void;
   unmap(key: string, domain?: string): void;
+  vmap(key: string, target: string, domain?: string): void;
   vunmap(key: string, domain?: string): void;
+  imap(key: string, target: string, domain?: string): void;
+  iunmap(key: string, domain?: string): void;
   unmapAllExcept(keys: string[], domain?: RegExp)
   addSearchAlias(alias: string, name: string, url: string, suggestion?: string): void;
   removeSearchAlias(alias: string): void;
@@ -303,9 +305,9 @@ const InsertBindings = {
   delete_word_backwards: '<Alt-w>',
   delete_word_forwards: '<Alt-d>',
   exit_insert_mode: 'Esc',
-  toggle_quotes_input: 'Ctrl-\'',
+  toggle_quotes_input: '<Ctrl-\'>',
   open_vim_editor_current: '<Ctrl-i>',
-  open_neovim_current: 'Ctrl-<Alt-i>',
+  open_neovim_current: '<Ctrl-Alt-i>',
 } as const;
 
 declare global {
