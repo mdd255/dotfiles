@@ -269,10 +269,7 @@
       "reload_page",
       "copy_current_url"
     ],
-    Visual: [
-      "find_current_page",
-      "toggle_visual_mode"
-    ]
+    Visual: ["find_current_page", "toggle_visual_mode"]
   };
   var customBindings = {
     Normal: {
@@ -309,9 +306,9 @@
   };
   function buildBindings() {
     const enabledKeys = [];
-    for (const key of passThroughBindings) {
-      const bindKey = Bindings[key];
-      enabledKeys.push(bindKey);
+    for (const mode in passThroughBindings) {
+      const binds = passThroughBindings[mode] || [];
+      binds.forEach((key) => enabledKeys.push(key));
     }
     for (const [key, customBindKey] of Object.entries(customBindings)) {
       const defaultBindKey = Bindings[key];

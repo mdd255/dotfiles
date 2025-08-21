@@ -314,17 +314,18 @@ declare global {
   type BindingsType = typeof Bindings;
   type Mode = 'Normal' | 'Insert' | 'Visual';
 
-  type PassThroughBindings = {
-    Normal: (keyof typeof NormalBindings)[];
-    Visual: (keyof typeof VisualBindings)[];
-    Insert: (keyof typeof InsertBindings)[];
-  };
-
   type CustomBindings = {
-    Normal: Partial<Record<keyof typeof NormalBindings, string>>;
-    Visual: Partial<Record<keyof typeof VisualBindings, string>>;
-    Insert: Partial<Record<keyof typeof InsertBindings, string>>;
-  }
+			Normal?: Partial<Record<keyof typeof NormalBindings, string>>;
+			Visual?: Partial<Record<keyof typeof VisualBindings, string>>;
+			Insert?: Partial<Record<keyof typeof InsertBindings, string>>;
+		};
+
+  type PassThroughBindings = {
+			Normal?: (keyof typeof NormalBindings)[];
+			Visual?: (keyof typeof VisualBindings)[];
+			Insert?: (keyof typeof InsertBindings)[];
+		};
+
 }
 
 export const Bindings = {
