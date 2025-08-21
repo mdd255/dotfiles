@@ -19,7 +19,6 @@ interface SurfingKeysAPI {
 };
 
 type Position = 'left' | 'right' | 'top' | 'bottom';
-type Mode = 'Normal' | 'Insert' | 'Visual';
 
 interface SurfingKeysSettings {
   onLoad: () => void;
@@ -313,6 +312,7 @@ declare global {
   const api: SurfingKeysAPI;
   const settings: SurfingKeysSettings;
   type BindingsType = typeof Bindings;
+  type Mode = 'Normal' | 'Insert' | 'Visual';
 
   type PassThroughBindings = {
     Normal: (keyof typeof NormalBindings)[];
@@ -321,9 +321,9 @@ declare global {
   };
 
   type CustomBindings = {
-    Normal: { [key: typeof NormalBindings]: string };
-    Visual: { [key: typeof VisualBindings]: string };
-    Insert: { [key: typeof InsertBindings]: string };
+    Normal: Partial<Record<keyof typeof NormalBindings, string>>;
+    Visual: Partial<Record<keyof typeof VisualBindings, string>>;
+    Insert: Partial<Record<keyof typeof InsertBindings, string>>;
   }
 }
 

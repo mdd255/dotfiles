@@ -19,8 +19,6 @@ const customBindings: Partial<CustomBindings> = {
   Normal: {
     choose_tab: 'p',
     restore_closed_tab: 'T',
-    next_found_text: 'm',
-    previous_found_text: 'M',
     display_hints_scrollable: 'w',
     scroll_half_page_up: 'e',
     scroll_half_page_down: 'n',
@@ -41,31 +39,45 @@ const customBindings: Partial<CustomBindings> = {
     edit_url_vim_new: 'A',
     go_one_tab_left: 'N',
     go_one_tab_right: 'E',
-  }
+  },
+  Visual: {
+    next_found_text: 'm',
+    previous_found_text: 'M',
+    forward_line: 'n',
+    backward_line: 'e',
+    forward_character: 'i',
+  },
 };
+
+function remap(mode: Mode, newKey: string, oldKey: string): void {
+
+}
 
 export function buildBindings(): void {
   const enabledKeys: string[] = [];
 
-  for (const key of passThroughBindings) {
-    const bindKey = Bindings[key];
+  for (const mode in passThroughBindings) {
+    const binds = passThroughBindings[mode as keyof typeof passThroughBindings];
+    binds.forEach((key) => {
+    const bindKey = binds[key];
     enabledKeys.push(bindKey);
+    }
   }
 
 	for (const [key, customBindKey] of Object.entries(customBindings)) {
     const defaultBindKey = Bindings[key as keyof BindingsType]
     api.unmap(customBindKey)
     api.map(customBindKey, defaultBindKey)
-    enabledKeys.push(customBindKey);
     api.unmap(defaultBindKey)
+    enabledKeys.push(customBindKey);
 	}
 
   // api.unmapAllExcept(enabledKeys, /.+/);
 
   // Visual Mode bindings
-  api.vmap('n', 'j');
-  api.vmap('e', 'k');
-  api.vmap('i', 'l');
+  // api.vmap('n', 'j');
+  // api.vmap('e', 'k');
+  // api.vmap('i', 'l');
 
   // Ace Vim bindings
   api.aceVimMap('n', 'j');

@@ -278,8 +278,6 @@
     Normal: {
       choose_tab: "p",
       restore_closed_tab: "T",
-      next_found_text: "m",
-      previous_found_text: "M",
       display_hints_scrollable: "w",
       scroll_half_page_up: "e",
       scroll_half_page_down: "n",
@@ -300,6 +298,13 @@
       edit_url_vim_new: "A",
       go_one_tab_left: "N",
       go_one_tab_right: "E"
+    },
+    Visual: {
+      next_found_text: "m",
+      previous_found_text: "M",
+      forward_line: "n",
+      backward_line: "e",
+      forward_character: "i"
     }
   };
   function buildBindings() {
@@ -312,12 +317,9 @@
       const defaultBindKey = Bindings[key];
       api.unmap(customBindKey);
       api.map(customBindKey, defaultBindKey);
-      enabledKeys.push(customBindKey);
       api.unmap(defaultBindKey);
+      enabledKeys.push(customBindKey);
     }
-    api.vmap("n", "j");
-    api.vmap("e", "k");
-    api.vmap("i", "l");
     api.aceVimMap("n", "j");
     api.aceVimMap("e", "k");
     api.aceVimMap("i", "l");
