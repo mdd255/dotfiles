@@ -1,18 +1,21 @@
 import { Bindings } from './types.d'
 
-const passThroughBindings: Record<keyof BindingsType, BindingsType[keyof BindingsType]> = {
-  // 'show_usage',
-  // 'open_link',
-  // 'scroll_to_top',
-  // 'scroll_to_bottom',
-  // 'reload_page',
-  // 'copy_current_url',
-  // 'find_current_page',
-  // 'toggle_visual_mode',
-  Normal: {}
+const passThroughBindings: Partial<PassThroughBindings> = {
+  Normal: [
+    'show_usage',
+    'open_link',
+    'scroll_to_top',
+    'scroll_to_bottom',
+    'reload_page',
+    'copy_current_url',
+  ],
+  Visual: [
+    'find_current_page',
+    'toggle_visual_mode',
+  ]
 }
 
-const customBindings: Partial<Record<keyof BindingsType, any>> = {
+const customBindings: Partial<CustomBindings> = {
   Normal: {
     choose_tab: 'p',
     restore_closed_tab: 'T',

@@ -261,15 +261,18 @@
 
   // bindings.ts
   var passThroughBindings = {
-    // 'show_usage',
-    // 'open_link',
-    // 'scroll_to_top',
-    // 'scroll_to_bottom',
-    // 'reload_page',
-    // 'copy_current_url',
-    // 'find_current_page',
-    // 'toggle_visual_mode',
-    Normal: {}
+    Normal: [
+      "show_usage",
+      "open_link",
+      "scroll_to_top",
+      "scroll_to_bottom",
+      "reload_page",
+      "copy_current_url"
+    ],
+    Visual: [
+      "find_current_page",
+      "toggle_visual_mode"
+    ]
   };
   var customBindings = {
     Normal: {

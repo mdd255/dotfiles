@@ -313,6 +313,18 @@ declare global {
   const api: SurfingKeysAPI;
   const settings: SurfingKeysSettings;
   type BindingsType = typeof Bindings;
+
+  type PassThroughBindings = {
+    Normal: (keyof typeof NormalBindings)[];
+    Visual: (keyof typeof VisualBindings)[];
+    Insert: (keyof typeof InsertBindings)[];
+  };
+
+  type CustomBindings = {
+    Normal: { [key: typeof NormalBindings]: string };
+    Visual: { [key: typeof VisualBindings]: string };
+    Insert: { [key: typeof InsertBindings]: string };
+  }
 }
 
 export const Bindings = {
