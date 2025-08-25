@@ -193,7 +193,8 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/keybindings.json,~/.config/Cursor/User/keybindings.json)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/User/snippets,~/.config/Code/User)
 	$(call create_sudo_symlink,$(DOTFILES_DIR)/us,/usr/share/X11/xkb/symbols/us)
-		$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)
+	$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)
+	$(call create_symlink,$(DOTFILES_DIR)/lazyvim,~/.config/lzvim)
 
 surfing-keys: ## Build SurfingKeys configuration
 	@echo "🔨 Building SurfingKeys configuration..."
