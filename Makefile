@@ -39,6 +39,7 @@ endef
 
 define create_symlink
 	@echo "Creating symlink: $(2) -> $(1)"
+	rm -rf $(2)
 	ln -fs $(1) $(2)
 endef
 
