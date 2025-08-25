@@ -36,6 +36,7 @@ const customBindings: CustomBindings = {
 		edit_url_vim_new: "A",
 		go_one_tab_left: "N",
 		go_one_tab_right: "E",
+		open_bookmark: "b",
 	},
 	Visual: {
 		next_found_text: "m",
