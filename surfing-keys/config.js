@@ -248,7 +248,7 @@
     move_cursor_forward_word: "<Alt-f>",
     delete_word_backwards: "<Alt-w>",
     delete_word_forwards: "<Alt-d>",
-    exit_insert_mode: "Esc",
+    exit_insert_mode: "<Esc>",
     toggle_quotes_input: "<Ctrl-'>",
     open_vim_editor_current: "<Ctrl-i>",
     open_neovim_current: "<Ctrl-Alt-i>"
@@ -303,6 +303,9 @@
       forward_line: "n",
       backward_line: "e",
       forward_character: "i"
+    },
+    Insert: {
+      exit_insert_mode: "<Ctrl-Enter>"
     }
   };
   function remap(mode, customBindings2) {

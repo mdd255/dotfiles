@@ -4,8 +4,8 @@
   "description": "SurfingKeys configuration built from TypeScript",
   "main": "config.js",
   "scripts": {
-    "build": "esbuild index.ts --bundle --outfile=config.js --format=iife --platform=browser --target=es2020",
-    "watch": "esbuild index.ts --bundle --outfile=config.js --format=iife --platform=browser --target=es2020 --watch",
+    "build": "esbuild index.ts --bundle --outfile=config.js --target=es2020",
+    "watch": "esbuild index.ts --bundle --outfile=config.js --target=es2020 --watch",
     "dev": "npm run watch"
   },
   "devDependencies": {

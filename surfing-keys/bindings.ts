@@ -45,6 +45,9 @@ const customBindings: CustomBindings = {
 		backward_line: "e",
 		forward_character: "i",
 	},
+	Insert: {
+		exit_insert_mode: "<Ctrl-Enter>",
+	}
 };
 
 function remap(mode: Mode, customBindings: CustomBindings): string[] {

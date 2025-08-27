@@ -304,7 +304,7 @@ const InsertBindings = {
   move_cursor_forward_word: '<Alt-f>',
   delete_word_backwards: '<Alt-w>',
   delete_word_forwards: '<Alt-d>',
-  exit_insert_mode: 'Esc',
+  exit_insert_mode: '<Esc>',
   toggle_quotes_input: '<Ctrl-\'>',
   open_vim_editor_current: '<Ctrl-i>',
   open_neovim_current: '<Ctrl-Alt-i>',
