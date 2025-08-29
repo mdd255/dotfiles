@@ -7,12 +7,9 @@ return {
     },
     modes = {
       char = {
-        keys = { "f", "F", ";", ",", "." },
+        keys = { ";", ",", "." },
       },
     },
   },
-  keys = {
-    { "t", false },
-    { "T", false },
-  },
+  keys = false,
 }

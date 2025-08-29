@@ -97,6 +97,7 @@ return {
   },
   {
     "LazyVim/LazyVim",
+    keys = false,
     opts = {
       colorscheme = "onedark_dark",
     },

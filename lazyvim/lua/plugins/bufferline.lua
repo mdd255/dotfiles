@@ -14,17 +14,5 @@ return {
       separator_style = "slope",
     },
   },
-  keys = {
-    { "<leader>b",  false },
-    { "<leader>bp", false },
-    { "<leader>bP", false },
-    { "<leader>br", false },
-    { "<leader>bl", false },
-    { "[b", false },
-    { "]b", false },
-    { "<H>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
-    { "<I>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-    { "<C-h>", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
-    { "<C-i>", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
-  },
+  keys = false,
 }
