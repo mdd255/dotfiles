@@ -15,6 +15,7 @@ return {
     },
   },
   keys = {
+    { "<leader>b",  false },
     { "<leader>bp", false },
     { "<leader>bP", false },
     { "<leader>br", false },
