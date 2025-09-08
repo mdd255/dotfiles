@@ -1,18 +1,75 @@
 return {
   "snacks.nvim",
-  keys = false,
   opts = {
-    bigfile = { enabled = true },
-    quickfile = { enabled = true },
-    terminal = {
-      win = {
-        keys = {
-          -- nav_h = { "<C-h>", term_nav("h"), desc = "Go to Left Window", expr = true, mode = "t" },
-          -- nav_j = { "<C-j>", term_nav("j"), desc = "Go to Lower Window", expr = true, mode = "t" },
-          -- nav_k = { "<C-k>", term_nav("k"), desc = "Go to Upper Window", expr = true, mode = "t" },
-          -- nav_l = { "<C-l>", term_nav("l"), desc = "Go to Right Window", expr = true, mode = "t" },
-        },
-      },
+    indent = { enabled = true },
+    input = { enabled = true },
+    notifier = { enabled = true },
+    scope = { enabled = true },
+    scroll = { enabled = true },
+    statuscolumn = { enabled = false },
+    toggle = { map = LazyVim.safe_keymap_set },
+    words = { enabled = true },
+  },
+  keys = {
+    {
+      "ff",
+      function()
+        Snacks.picker.files()
+      end,
+    },
+    {
+      "fc",
+      function()
+        Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+      end,
+    },
+    {
+      "fs",
+      function()
+        Snacks.picker.grep()
+      end,
+    },
+    {
+      "fr",
+      function()
+        Snacks.picker.recent()
+      end,
+    },
+    {
+      "fp",
+      function()
+        Snacks.picker.projects()
+      end,
+    },
+    {
+      "-",
+      function()
+        Snacks.picker.explorer()
+      end,
+    },
+    {
+      "<Cr>",
+      function()
+        Snacks.picker.commands()
+      end,
+    },
+    {
+      "fk",
+      function()
+        Snacks.picker.keymaps()
+      end,
+    },
+    {
+      "fm",
+      function()
+        Snacks.picker.marks()
+      end,
+    },
+    {
+      "<Space><Space>",
+      function()
+        Snacks.picker.resume()
+      end,
     },
   },
 }

@@ -7,7 +7,7 @@ alias "h"="history | fzf --preview=''"
 
 # applications
 alias vi="nvim $@"
-alias lv="NVIM_APPNAME=lzvim nvim $@"
+alias lv="NVIM_APPNAME=lazyvim nvim $@"
 alias ls="eza --long"
 alias top="btop $@"
 alias wifi="nmcli dev wifi $@"
