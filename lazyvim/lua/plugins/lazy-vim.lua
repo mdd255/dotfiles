@@ -1,4 +1,8 @@
 return {
-	"LazyVim/LazyVim",
-	keys = false
+  "LazyVim/LazyVim",
+  opts = {
+    defaults = {
+      keymaps = false,
+    },
+  },
 }

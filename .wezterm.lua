@@ -8,7 +8,7 @@ local alt = "ALT"
 
 config.color_scheme = "AdventureTime"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
-config.font_size = 14.5
+config.font_size = 13
 config.cell_width = 1
 config.line_height = 1
 config.enable_wayland = false
@@ -101,12 +101,12 @@ config.keys = {
 		action = action.CloseCurrentTab({ confirm = false }),
 	},
 	{
-		key = "n",
+		key = "N",
 		mods = ctrl,
 		action = action.ScrollByPage(0.5),
 	},
 	{
-		key = "e",
+		key = "E",
 		mods = ctrl,
 		action = action.ScrollByPage(-0.5),
 	},

@@ -1,1 +1,1 @@
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 500
