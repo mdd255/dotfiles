@@ -335,6 +335,14 @@ keys = [
         lazy.spawn(QTILE_DIR + "/.init-scripts/keyboard-layout"),
         desc="Switch keyboard layout",
     ),
+    # Cursor visibility control
+    Key(
+        [WIN],
+        "s",
+        lazy.spawn(SOUND_CMD),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/toggle-xbanish.sh"),
+        desc="Switch cursor visibility",
+    ),
 ]
 
 for i, (group_name, kwargs) in enumerate(group_names, 1):

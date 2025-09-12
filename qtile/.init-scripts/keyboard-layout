@@ -8,3 +8,4 @@ if variant in cmd.stdout:
     variant='intl'
 
 subprocess.Popen(['setxkbmap', '-variant', variant])
+subprocess.Popen(['notify-send', 'Keyboard Layout', f'Switched to {variant}', '-t', '1000'])
