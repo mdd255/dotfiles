@@ -3,7 +3,7 @@ return {
   optional = true,
   opts = {
     options = {
-      modes = "tabs",
+      mode = "tabs",
       numbers = "none",
       close_command = false,
       right_mouse_command = false,

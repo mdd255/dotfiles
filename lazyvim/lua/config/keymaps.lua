@@ -95,6 +95,14 @@ unmap({
   { '"', { "i" } },
 })
 
+local function new_tab()
+  vim.cmd("tabnew")
+  vim.cmd("BufferLineTabRename")
+end
+
+local function toggle_terminal()
+  Snacks.terminal()
+end
 ---------------------------------------------------------------------------------------------------
 map({
   { "H", "<cmd>bprevious<cr>", { desc = "Previous buffer" } },
@@ -103,6 +111,11 @@ map({
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
   { "V", "v$", { desc = "Visual to end of line" } },
   { "<C-n>", "n", { modes = { "n", "x" }, desc = "Next search match" } },
+  {
+    "<C-Cr>",
+    toggle_terminal,
+    { modes = { "t" }, desc = "Toggle terminal" },
+  },
   { "<C-e>", "N", { modes = { "n", "x" }, desc = "Previous search match" } },
   { "m", "<C-d>", { desc = "Scroll down half page" } },
   { "M", "<C-u>", { desc = "Scroll up half page" } },
@@ -119,5 +132,10 @@ map({
   { "se", "<cmd>vsplit<cr>", { desc = "Split Vertically" } },
   { "<Leader>q", "<cmd>q<cr>", { desc = "Quit" } },
   { "ss", "<cmd>w<cr>", { desc = "Save" } },
-  { "<Leader>v", "V", { desc = "Visual line mode" } },
+  { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
+  {
+    "<Leader>t",
+    new_tab,
+    { desc = "Create new tab" },
+  },
 })

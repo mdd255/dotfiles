@@ -12,6 +12,7 @@ return {
     picker = { enabled = true },
   },
   keys = {
+    -- disable default keymaps
     { "<Leader>,", false },
     { "<Leader>/", false },
     { "<Leader>:", false },
@@ -52,6 +53,7 @@ return {
     { "<Leader>sm", false },
     { "<Leader>sq", false },
     { "<Leader>su", false },
+    -- finder keys
     {
       "ff",
       function()
@@ -83,18 +85,6 @@ return {
       end,
     },
     {
-      "-",
-      function()
-        Snacks.picker.explorer()
-      end,
-    },
-    {
-      "<Cr>",
-      function()
-        Snacks.picker.command_history()
-      end,
-    },
-    {
       "fk",
       function()
         Snacks.picker.keymaps()
@@ -107,11 +97,12 @@ return {
       end,
     },
     {
-      "<Space><Space>",
+      "fh",
       function()
-        Snacks.picker.resume()
+        Snacks.picker.highlights()
       end,
     },
+    -- git keymaps
     {
       "gbr",
       function()
@@ -149,9 +140,83 @@ return {
       end,
     },
     {
+      "gbb",
+      function()
+        Snacks.gitbrowse()
+      end,
+    },
+    -- misc keymaps
+    {
       "lg",
       function()
         Snacks.lazygit()
+      end,
+    },
+    {
+      "<C-Cr>",
+      function()
+        Snacks.terminal()
+      end,
+    },
+    {
+      "-",
+      function()
+        Snacks.picker.explorer()
+      end,
+    },
+    {
+      "<Cr>",
+      function()
+        Snacks.picker.command_history()
+      end,
+    },
+    {
+      "/",
+      function()
+        Snacks.picker.grep_buffers()
+      end,
+    },
+    {
+      "<Space><Space>",
+      function()
+        Snacks.picker.resume()
+      end,
+    },
+    -- lsp keymaps
+    {
+      "tt",
+      function()
+        Snacks.picker.lsp_definitions()
+      end,
+    },
+    {
+      "tf",
+      function()
+        Snacks.picker.lsp_references()
+      end,
+    },
+    {
+      "ts",
+      function()
+        Snacks.picker.lsp_symbols()
+      end,
+    },
+    {
+      "tS",
+      function()
+        Snacks.picker.lsp_workspace_symbols()
+      end,
+    },
+    {
+      "ta",
+      function()
+        Snacks.picker.diagnostics_buffer()
+      end,
+    },
+    {
+      "tA",
+      function()
+        Snacks.picker.diagnostics()
       end,
     },
   },
