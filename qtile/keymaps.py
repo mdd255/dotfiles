@@ -2,7 +2,7 @@ from os import path
 from libqtile.lazy import lazy
 from libqtile.config import Key, Group
 
-TERM = "wezterm"
+TERM = "wezterm start --class Code"
 ALT = "mod1"
 HOME = path.expanduser("~")
 QTILE_DIR = HOME + "/.config/qtile"
