@@ -13,6 +13,9 @@ return {
   },
   keys = {
     -- disable default keymaps
+    { "<Leader>E", false },
+    { "<Leader>fe", false },
+    { "<Leader>fE", false },
     { "<Leader>,", false },
     { "<Leader>/", false },
     { "<Leader>:", false },

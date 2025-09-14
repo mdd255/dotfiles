@@ -79,11 +79,11 @@ return {
           FlashBackdrop = { fg = "${gray}" },
         },
         options = {
-          cursorline = true, -- Use cursorline highlighting?
-          transparency = false, -- Use a transparent background?
-          terminal_colors = true, -- Use the theme's colors for Neovim's :terminal?
-          lualine_transparency = false, -- Center bar transparency?
-          highlight_inactive_windows = false, -- When the window is out of focus, change the normal background?
+          cursorline = true,
+          transparency = true,
+          terminal_colors = true,
+          lualine_transparency = true,
+          highlight_inactive_windows = true,
         },
       })
     end,
