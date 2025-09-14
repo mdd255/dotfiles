@@ -167,7 +167,7 @@ return {
     {
       "<Cr>",
       function()
-        Snacks.picker.command_history()
+        Snacks.picker.commands()
       end,
     },
     {

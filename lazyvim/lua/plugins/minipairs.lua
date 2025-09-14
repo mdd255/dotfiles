@@ -9,7 +9,7 @@ return {
       ["<C-h>"] = { action = "open", pair = "<>" },
       ["<C-o>"] = { action = "closeopen", pair = "''" },
       ["<C-k>"] = { action = "closeopen", pair = '""' },
-      ["<C-m>"] = { action = "closeopen", pair = "``" },
+      --["<C-m>"] = { action = "closeopen", pair = "``" },
     },
   },
 }

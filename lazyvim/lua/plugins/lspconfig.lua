@@ -1,6 +1,18 @@
 return {
-  "neovim/nvim-lspconfig",
-  opts = {
+  {
+    "neovim/nvim-lspconfig",
+    opts = {},
   },
-  keys = false,
+  {
+    "mason-org/mason.nvim",
+    opts = {
+      ensure_installed = {
+        "vtsls",
+        "biome",
+        "gopls",
+        "json-lsp",
+        "dockerfile-language-server",
+      },
+    },
+  },
 }

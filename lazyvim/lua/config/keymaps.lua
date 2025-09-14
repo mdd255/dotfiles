@@ -110,6 +110,7 @@ map({
   { "N", "<cmd>tabprevious<cr>", { desc = "Previous tab" } },
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
   { "V", "v$", { desc = "Visual to end of line" } },
+  { "U", "<C-r>", { desc = "Redo" } },
   { "<C-n>", "n", { modes = { "n", "x" }, desc = "Next search match" } },
   {
     "<C-Cr>",

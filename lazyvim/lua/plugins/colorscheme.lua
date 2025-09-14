@@ -71,11 +71,12 @@ return {
           Visual = { bg = "${blue}", fg = "${black}" },
           GitSignsCurrentLineBlame = { bg = "${cursorline}", fg = "${comment}" },
           CursorLineNr = { fg = "${blue}" },
-          CocErrorHighlight = { underline = true, fg = "${red}" },
-          CocWarningHighlight = { underline = true, fg = "${yellow}" },
-          CocHintHighlight = { underline = true, fg = "${blue}" },
           IblWhitespace = { fg = "${cursorline}" },
           WinSeparator = { fg = "${white}" },
+          FlashLabel = { fg = "${blue}" },
+          FlashMatch = { fg = "${gray}" },
+          FlashCurrent = { fg = "${blue}" },
+          FlashBackdrop = { fg = "${gray}" },
         },
         options = {
           cursorline = true, -- Use cursorline highlighting?
