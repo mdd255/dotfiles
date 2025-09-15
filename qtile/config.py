@@ -71,6 +71,6 @@ def start_once():
     """Bootstrap qtile."""
     subprocess.Popen(["/usr/bin/ibus-daemon", "-d"])
     subprocess.Popen(["/usr/bin/xfce4-power-manager", "--daemon"])
-#   subprocess.Popen(["/usr/bin/xbanish", "-a"])
+    subprocess.Popen(["~/.config/qtile/.init-scripts/toggle-xbanish.sh"])
 
 wmname = "LG3D"
