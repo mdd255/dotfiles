@@ -10,7 +10,7 @@ return {
     toggle = { map = LazyVim.safe_keymap_set },
     words = { enabled = true },
     picker = { enabled = true },
-    dashboard = { preset = { keys = false } },
+    dashboard = { enabled = true },
     terminal = {
       enabled = true,
     },
@@ -66,34 +66,35 @@ return {
       function()
         Snacks.picker.files()
       end,
-      { desc = "Find files" },
+      desc = "Find files",
     },
     {
       "fb",
       function()
         Snacks.picker.buffers()
       end,
-      { desc = "Find buffers" },
+      desc = "Find buffers",
     },
     {
       "fc",
       function()
         Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
       end,
-      { desc = "Find config files" },
+      desc = "Find config files",
     },
     {
       "fs",
       function()
-        Snacks.picker.grep()({ desc = "Grep" })
+        Snacks.picker.grep_lines()
       end,
+      desc = "Grep",
     },
     {
       "fr",
       function()
         Snacks.picker.recent()
       end,
-      { desc = "Find recents" },
+      desc = "Find recents",
     },
     {
       "fp",
@@ -107,21 +108,21 @@ return {
       function()
         Snacks.picker.keymaps()
       end,
-      { desc = "Find keymaps" },
+      desc = "Find keymaps",
     },
     {
       "fm",
       function()
         Snacks.picker.marks()
       end,
-      { desc = "Find marks" },
+      desc = "Find marks",
     },
     {
       "fh",
       function()
         Snacks.picker.highlights()
       end,
-      { desc = "Find highlights" },
+      desc = "Find highlights",
     },
     -- git keymaps
     {
@@ -129,92 +130,92 @@ return {
       function()
         Snacks.picker.git_branches()
       end,
-      { desc = "Git branches" },
+      desc = "Git branches",
     },
     {
       "glo",
       function()
         Snacks.picker.git_log()
       end,
-      { desc = "Git log" },
+      desc = "Git log",
     },
     {
       "glf",
       function()
         Snacks.picker.git_log_file()
       end,
-      { desc = "Git log files" },
+      desc = "Git log files",
     },
     {
       "gst",
       function()
         Snacks.picker.git_status()
       end,
-      { desc = "Git status" },
+      desc = "Git status",
     },
     {
       "gdi",
       function()
         Snacks.picker.git_diff()
       end,
-      { desc = "Git diff" },
+      desc = "Git diff",
     },
     {
       "gss",
       function()
         Snacks.picker.git_stash()
       end,
-      { desc = "Git stash" },
+      desc = "Git stash",
     },
     {
       "gbb",
       function()
         Snacks.gitbrowse()
       end,
-      { desc = "Git open file in browser" },
+      desc = "Git open file in browser",
     },
     -- misc keymaps
     {
-      "lg",
+      "g<Cr>",
       function()
         Snacks.lazygit()
       end,
-      { desc = "Open Lazygit" },
+      desc = "Open Lazygit",
     },
     {
       "<C-Cr>",
       function()
         Snacks.terminal()
       end,
-      { desc = "Toggle terminal" },
+      desc = "Toggle terminal",
     },
     {
       "-",
       function()
         Snacks.picker.explorer()
       end,
-      { desc = "Toggle explorer" },
+      desc = "Toggle explorer",
     },
     {
       "<Cr>",
       function()
         Snacks.picker.commands()
       end,
-      { desc = "Find commands" },
+      desc = "Find commands",
     },
     {
       "/",
       function()
         Snacks.picker.grep_buffers()
       end,
-      { desc = "Grep buffer" },
+      desc = "Grep buffer",
     },
     {
       "<Space><Space>",
       function()
         Snacks.picker.resume()
       end,
-      { desc = "Resume last picker" },
+      desc = "Resume last picker",
     },
     -- lsp keymaps
     {
@@ -222,42 +223,42 @@ return {
       function()
         Snacks.picker.lsp_definitions()
       end,
-      { desc = "Go to definitions" },
+      desc = "Go to definitions",
     },
     {
       "tf",
       function()
         Snacks.picker.lsp_references()
       end,
-      { desc = "Go to references" },
+      desc = "Go to references",
     },
     {
       "ts",
       function()
         Snacks.picker.lsp_symbols()
       end,
-      { desc = "LSP symbols" },
+      desc = "LSP symbols",
     },
     {
       "tS",
       function()
         Snacks.picker.lsp_workspace_symbols()
       end,
-      { desc = "Workspace LSP symbols" },
+      desc = "Workspace LSP symbols",
     },
     {
       "ta",
       function()
         Snacks.picker.diagnostics_buffer()
       end,
-      { desc = "LSP disagnostics" },
+      desc = "LSP disagnostics",
     },
     {
       "tA",
       function()
         Snacks.picker.diagnostics()
       end,
-      { desc = "Workspace LSP disagnostics" },
+      desc = "Workspace LSP disagnostics",
     },
   },
 }

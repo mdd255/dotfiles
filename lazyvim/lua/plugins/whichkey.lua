@@ -5,5 +5,4 @@ return {
     defaults = {},
   },
   keys = false,
-  config = function() end,
 }

@@ -87,9 +87,6 @@ unmap({
   { ")", { "i" } },
   { "]", { "i" } },
   { "}", { "i" } },
-  { "'", { "i" } },
-  { "`", { "i" } },
-  { '"', { "i" } },
 })
 
 local function new_tab()
@@ -126,14 +123,21 @@ map({
   { "<Leader>n", "<C-w>j", { desc = "Move to lower window" } },
   { "<Leader>e", "<C-w>k", { desc = "Move to upper window" } },
   { "<Leader>i", "<C-w>l", { desc = "Move to right window" } },
-  { "sn", "<cmd>split<cr>", { desc = "Split Horizontally" } },
-  { "se", "<cmd>vsplit<cr>", { desc = "Split Vertically" } },
+  { "sn", "<cmd>split<cr>", { desc = "Split horizontally" } },
+  { "se", "<cmd>vsplit<cr>", { desc = "Split vertically" } },
   { "<Leader>q", "<cmd>q<cr>", { desc = "Quit" } },
   { "ss", "<cmd>w<cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   {
-    "<Leader>t",
+    "<Leader><Tab>",
     new_tab,
     { desc = "Create new tab" },
   },
+  { "<C-h>", "<><Left>", { modes = { "i" } } },
+  { "<C-n>", "()<Left>", { modes = { "i" } } },
+  { "<C-e>", "[]<Left>", { modes = { "i" } } },
+  { "<C-i>", "{}<Left>", { modes = { "i" } } },
+  { "<C-o>", "''<Left>", { modes = { "i" } } },
+  { "<C-k>", '""<Left>', { modes = { "i" } } },
+  { "<C-m>", "``<Left>", { modes = { "i" } } },
 })
