@@ -5,7 +5,7 @@ return {
     mappings = {
       ["<C-n>"] = { action = "open", pair = "()" },
       ["<C-e>"] = { action = "open", pair = "[]" },
-      ["<C-i>"] = { action = "open", pair = "{}" },
+      --["<C-i>"] = { action = "open", pair = "{}" },
       ["<C-h>"] = { action = "open", pair = "<>" },
       ["<C-o>"] = { action = "closeopen", pair = "''" },
       ["<C-k>"] = { action = "closeopen", pair = '""' },

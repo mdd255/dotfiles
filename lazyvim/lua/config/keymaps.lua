@@ -102,8 +102,8 @@ local function toggle_terminal()
 end
 ---------------------------------------------------------------------------------------------------
 map({
-  { "H", "<cmd>bprevious<cr>", { desc = "Previous buffer" } },
-  { "I", "<cmd>bnext<cr>", { desc = "Next buffer" } },
+  { "H", "<C-o>", { desc = "Jump backward" } },
+  { "I", "<C-i>", { desc = "Jump forward" } },
   { "N", "<cmd>tabprevious<cr>", { desc = "Previous tab" } },
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
   { "V", "v$", { desc = "Visual to end of line" } },

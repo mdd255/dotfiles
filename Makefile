@@ -15,8 +15,8 @@ PACMAN_TOOLS := fzf fd bat dunst ttf-firacode-nerd unzip maim python-pip
 PACMAN_MEDIA := pavucontrol bluez bluez-utils blueman
 PACMAN_DOCKER := docker docker-compose
 PACMAN_QTILE := rofi qtile python-iwlib python-psutil i3lock xdotool
-PACMAN_NVIM := neovim ruby python-pynvim
-YAY_PACKAGES := xbanish wezterm pyenv pyenv-virtualenv visual-studio-code-bin biome cursor-bin
+PACMAN_NVIM := neovim ruby python-pynvim lazygit
+YAY_PACKAGES := xbanish wezterm pyenv pyenv-virtualenv biome cursor-bin
 
 # URLs
 OMZ_INSTALL_URL := https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
@@ -196,6 +196,7 @@ create-links: ## Create all configuration symlinks
 	$(call create_sudo_symlink,$(DOTFILES_DIR)/us,/usr/share/X11/xkb/symbols/us)
 	$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/nvim)
 	$(call create_symlink,$(DOTFILES_DIR)/lazyvim,~/.config/lzvim)
+	$(call create_symlink,$(DOTFILES_DIR)/lazygit,~/.config/lazygit/config.yml)
 
 surfing-keys: ## Build SurfingKeys configuration
 	@echo "🔨 Building SurfingKeys configuration..."
