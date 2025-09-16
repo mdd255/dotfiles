@@ -99,40 +99,58 @@ local function toggle_terminal()
 end
 ---------------------------------------------------------------------------------------------------
 map({
+  -- Jump
   { "H", "<C-o>", { desc = "Jump backward" } },
   { "I", "<C-i>", { desc = "Jump forward" } },
+
+  -- Tab nav
   { "N", "<cmd>tabprevious<cr>", { desc = "Previous tab" } },
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
-  { "V", "v$", { desc = "Visual to end of line" } },
-  { "U", "<C-r>", { desc = "Redo" } },
-  { "<C-n>", "n", { modes = { "n", "x" }, desc = "Next search match" } },
-  {
-    "<C-Cr>",
-    toggle_terminal,
-    { modes = { "t" }, desc = "Toggle terminal" },
-  },
-  { "<C-e>", "N", { modes = { "n", "x" }, desc = "Previous search match" } },
+
+  -- Scroll
   { "m", "<C-d>", { desc = "Scroll down half page" } },
   { "M", "<C-u>", { desc = "Scroll up half page" } },
+
+  -- Colemak
   { "n", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down" } },
   { "e", "v:count == 0 ? 'gk' : 'k'", { expr = true, desc = "Up" } },
   { "i", "l", { desc = "Right" } },
   { "k", "i", { desc = "Insert mode" } },
   { "K", "I", { desc = "Insert at beginning of line" } },
-  { "<Leader>h", "<C-w>h", { desc = "Move to left window" } },
-  { "<Leader>n", "<C-w>j", { desc = "Move to lower window" } },
-  { "<Leader>e", "<C-w>k", { desc = "Move to upper window" } },
-  { "<Leader>i", "<C-w>l", { desc = "Move to right window" } },
+
+  -- Window nav
+  { "<Leader>h", "<C-w>h", { desc = "To left win" } },
+  { "<Leader>n", "<C-w>j", { desc = "To lower win" } },
+  { "<Leader>e", "<C-w>k", { desc = "To upper win" } },
+  { "<Leader>i", "<C-w>l", { desc = "To right win" } },
+
+  -- Split
   { "sn", "<cmd>split<cr>", { desc = "Split horizontally" } },
   { "se", "<cmd>vsplit<cr>", { desc = "Split vertically" } },
+
+  -- Search nav
+  { "<C-n>", "n", { modes = { "n", "x" }, desc = "Next search match" } },
+  { "<C-e>", "N", { modes = { "n", "x" }, desc = "Previous search match" } },
+
+  -- Misc
+  { "V", "v$", { desc = "Visual to end of line" } },
+  { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<cr>", { desc = "Quit" } },
   { "ss", "<cmd>w<cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
+  { "0", "^" },
+  {
+    "<C-Cr>",
+    toggle_terminal,
+    { modes = { "t" }, desc = "Toggle terminal" },
+  },
   {
     "<Leader><Tab>",
     new_tab,
     { desc = "Create new tab" },
   },
+
+  -- Auto close braces
   { "<C-h>", "<><Left>", { modes = { "i" } } },
   { "<C-n>", "()<Left>", { modes = { "i" } } },
   { "<C-e>", "[]<Left>", { modes = { "i" } } },

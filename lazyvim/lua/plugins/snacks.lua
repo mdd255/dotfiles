@@ -10,7 +10,25 @@ return {
     toggle = { map = LazyVim.safe_keymap_set },
     words = { enabled = true },
     picker = { enabled = true },
-    dashboard = { enabled = true },
+    dashboard = {
+      preset = {
+        header = [[
+                _     _ ___  _____ _____ 
+               | |   | |__ \| ____| ____|
+  _ __ ___   __| | __| |  ) | |__ | |__  
+ | '_ ` _ \ / _` |/ _` | / /|___ \|___ \ 
+ | | | | | | (_| | (_| |/ /_ ___) |___) |
+ |_| |_| |_|\__,_|\__,_|____|____/|____/ 
+                                         
+                                         
+        ]],
+        sections = {
+          { section = "header" },
+          { icon = "", title = "Recent Projects", section = "projects", indent = 3, padding = 1 },
+          { icon = "", title = "Recent Files", section = "recent_files", indent = 3, padding = 1 },
+        },
+      },
+    },
     terminal = {
       enabled = true,
     },
