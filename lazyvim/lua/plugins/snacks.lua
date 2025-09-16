@@ -12,6 +12,17 @@ return {
     picker = { enabled = true },
     dashboard = {
       preset = {
+        keys = {
+          { icon = "", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+          {
+            icon = "",
+            key = "c",
+            desc = "Config",
+            action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+          },
+          { icon = "", key = "s", desc = "Restore Session", section = "session" },
+          { icon = "", key = "q", desc = "Quit", action = ":qa" },
+        },
         header = [[
                 _     _ ___  _____ _____ 
                | |   | |__ \| ____| ____|
@@ -25,8 +36,9 @@ return {
       },
       sections = {
         { section = "header" },
-        { icon = "", title = "Recent Projects", section = "projects", indent = 3, padding = 1 },
-        { icon = "", title = "Recent Files", section = "recent_files", indent = 3, padding = 1 },
+        { icon = "", title = "Menu", section = "keys", indent = 5, padding = 1, gap = 0 },
+        { icon = "", title = "Recent Projects", section = "projects", indent = 5, padding = 1, gap = 0 },
+        { icon = "", title = "Recent Files", section = "recent_files", indent = 5, padding = 1, gap = 0 },
       },
     },
     terminal = {
