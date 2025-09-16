@@ -22,11 +22,11 @@ return {
                                          
                                          
         ]],
-        sections = {
-          { section = "header" },
-          { icon = "", title = "Recent Projects", section = "projects", indent = 3, padding = 1 },
-          { icon = "", title = "Recent Files", section = "recent_files", indent = 3, padding = 1 },
-        },
+      },
+      sections = {
+        { section = "header" },
+        { icon = "", title = "Recent Projects", section = "projects", indent = 3, padding = 1 },
+        { icon = "", title = "Recent Files", section = "recent_files", indent = 3, padding = 1 },
       },
     },
     terminal = {

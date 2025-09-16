@@ -83,11 +83,7 @@ local function unmap(lhs, modes)
 end
 
 ---------------------------------------------------------------------------------------------------
-unmap({
-  { ")", { "i" } },
-  { "]", { "i" } },
-  { "}", { "i" } },
-})
+unmap({})
 
 local function new_tab()
   vim.cmd("tabnew")
@@ -154,8 +150,8 @@ map({
   { "<C-h>", "<><Left>", { modes = { "i" } } },
   { "<C-n>", "()<Left>", { modes = { "i" } } },
   { "<C-e>", "[]<Left>", { modes = { "i" } } },
-  { "<C-i>", "{}<Left>", { modes = { "i" } } },
   { "<C-o>", "''<Left>", { modes = { "i" } } },
-  { "<C-k>", '""<Left>', { modes = { "i" } } },
-  { "<C-m>", "``<Left>", { modes = { "i" } } },
+  { "<C-j>", "{}<Left>", { modes = { "i" } } },
+  { "<C-l>", '""<Left>', { modes = { "i" } } },
+  { "<C-u>", "``<Left>", { modes = { "i" } } },
 })
