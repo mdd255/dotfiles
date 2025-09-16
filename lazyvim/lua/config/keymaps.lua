@@ -145,13 +145,4 @@ map({
     new_tab,
     { desc = "Create new tab" },
   },
-
-  -- Auto close braces
-  { "<C-h>", "<><Left>", { modes = { "i" } } },
-  { "<C-n>", "()<Left>", { modes = { "i" } } },
-  { "<C-e>", "[]<Left>", { modes = { "i" } } },
-  { "<C-o>", "''<Left>", { modes = { "i" } } },
-  { "<C-j>", "{}<Left>", { modes = { "i" } } },
-  { "<C-l>", '""<Left>', { modes = { "i" } } },
-  { "<C-u>", "``<Left>", { modes = { "i" } } },
 })

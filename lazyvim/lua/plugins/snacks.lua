@@ -2,6 +2,7 @@ return {
   "snacks.nvim",
   opts = {
     indent = { enabled = true },
+    animate = { enabled = true },
     input = { enabled = true },
     notifier = { enabled = true },
     scope = { enabled = true },
@@ -9,7 +10,21 @@ return {
     statuscolumn = { enabled = false },
     toggle = { map = LazyVim.safe_keymap_set },
     words = { enabled = true },
-    picker = { enabled = true },
+    picker = {
+      matcher = {
+        cwd_bonus = true,
+        frecency = true,
+      },
+      win = {
+        input = {
+          keys = {
+            ["<Esc>"] = { "close", mode = { "n", "i" } },
+            ["<C-n>"] = { "preview_scroll_down", mode = { "n", "i" } },
+            ["<C-e>"] = { "preview_scroll_up", mode = { "n", "i" } },
+          },
+        },
+      },
+    },
     dashboard = {
       preset = {
         keys = {
@@ -115,7 +130,7 @@ return {
     {
       "fs",
       function()
-        Snacks.picker.grep_lines()
+        Snacks.picker.grep()
       end,
       desc = "Grep",
     },
@@ -236,9 +251,9 @@ return {
     {
       "/",
       function()
-        Snacks.picker.grep_buffers()
+        Snacks.picker.lines()
       end,
-      desc = "Grep buffer",
+      desc = "Grep current buffer",
     },
     {
       "<Space><Space>",
