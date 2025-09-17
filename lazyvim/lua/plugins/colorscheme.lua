@@ -81,6 +81,9 @@ return {
           FlashMatch = { fg = "${gray}", bg = "${black}" },
           FlashCurrent = { fg = "${blue}", bg = "${black}" },
           FlashBackdrop = { fg = "${gray}", bg = "${black}" },
+          BlinkCmpMenuBorder = { fg = "${blue}", bg = "${red}" },
+          BlinkCmpDocBorder = { fg = "${blue}" },
+          BlinkCmpSignatureHelpBorder = { fg = "${blue}" },
         },
         options = {
           cursorline = true,
