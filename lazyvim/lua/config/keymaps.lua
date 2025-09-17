@@ -130,6 +130,7 @@ map({
 
   -- Misc
   { "V", "v$", { desc = "Visual to end of line" } },
+  { "l", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<cr>", { desc = "Quit" } },
   { "ss", "<cmd>w<cr>", { desc = "Save" } },
