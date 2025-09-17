@@ -105,6 +105,8 @@ return {
     { "<Leader>sm", false },
     { "<Leader>sq", false },
     { "<Leader>su", false },
+    { "<Leader>dps", false },
+    { "<Leader>S", false },
     -- finder keys
     {
       "ff",
@@ -290,6 +292,20 @@ return {
         Snacks.picker.lsp_workspace_symbols()
       end,
       desc = "Workspace LSP symbols",
+    },
+    {
+      "th",
+      function()
+        vim.lsp.buf.hover()
+      end,
+      desc = "LSP hover",
+    },
+    {
+      "tr",
+      function()
+        vim.lsp.buf.rename()
+      end,
+      desc = "LSP rename",
     },
     {
       "ta",

@@ -4,11 +4,11 @@ return {
     keymap = {
       preset = "none",
 
-      ["<Tab>"] = { "insert_next" },
-      ["<Cr>"] = { "accept" },
-      ["<S-Tab>"] = { "insert_prev" },
-      ["<C-n>"] = { "scroll_documentation_down" },
-      ["<C-e>"] = { "scroll_documentation_up" },
+      ["<Tab>"] = { "insert_next", "fallback" },
+      ["<Cr>"] = { "accept", "fallback" },
+      ["<S-Tab>"] = { "insert_prev", "fallback" },
+      ["<C-d>"] = { "scroll_documentation_down" },
+      ["<C-u>"] = { "scroll_documentation_up" },
     },
     completion = {
       accept = { auto_brackets = { enabled = true } },
