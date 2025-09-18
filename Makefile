@@ -15,7 +15,7 @@ PACMAN_TOOLS := fzf fd bat dunst ttf-firacode-nerd unzip maim python-pip
 PACMAN_MEDIA := pavucontrol bluez bluez-utils blueman
 PACMAN_DOCKER := docker docker-compose
 PACMAN_QTILE := rofi qtile python-iwlib python-psutil i3lock xdotool
-PACMAN_NVIM := neovim ruby python-pynvim lazygit
+PACMAN_NVIM := neovim ruby python-pynvim lazygit github-cli
 YAY_PACKAGES := xbanish wezterm pyenv pyenv-virtualenv biome cursor-bin
 
 # URLs
