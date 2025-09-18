@@ -85,10 +85,7 @@ end
 ---------------------------------------------------------------------------------------------------
 unmap({})
 
-local function new_tab()
-  vim.cmd("tabnew")
-  vim.cmd("BufferLineTabRename")
-end
+vim.cmd("nnoremap T :LualineRenameTab ")
 
 local function toggle_terminal()
   Snacks.terminal()
@@ -104,8 +101,8 @@ map({
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
 
   -- Scroll
-  { "m", "<C-d>", { desc = "Scroll down half page" } },
-  { "M", "<C-u>", { desc = "Scroll up half page" } },
+  { "m", "18j", { desc = "Scroll down half page" } },
+  { "M", "18k", { desc = "Scroll up half page" } },
 
   -- Colemak
   { "n", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down" } },
@@ -132,18 +129,10 @@ map({
   { "V", "v$", { desc = "Visual to end of line" } },
   { "l", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
-  { "<Leader>q", "<cmd>q<cr>", { desc = "Quit" } },
-  { "ss", "<cmd>w<cr>", { desc = "Save" } },
+  { "<Leader>q", "<cmd>q<Cr>", { desc = "Quit" } },
+  { "ss", "<cmd>w<Cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },
-  {
-    "<C-Cr>",
-    toggle_terminal,
-    { modes = { "t" }, desc = "Toggle terminal" },
-  },
-  {
-    "<Leader><Tab>",
-    new_tab,
-    { desc = "Create new tab" },
-  },
+  { "<C-Cr>", toggle_terminal, { modes = { "t" }, desc = "Toggle terminal" } },
+  { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
 })
