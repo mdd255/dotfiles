@@ -76,7 +76,7 @@ return {
           GitSignsCurrentLineBlame = { bg = "${cursorline}", fg = "${comment}" },
           CursorLineNr = { fg = "${blue}" },
           IblWhitespace = { fg = "${cursorline}" },
-          WinSeparator = { fg = "${white}" },
+          WinSeparator = { fg = "${gray}" },
           FlashLabel = { fg = "${blue}", bg = "${black}" },
           FlashMatch = { fg = "${gray}", bg = "${black}" },
           FlashCurrent = { fg = "${blue}", bg = "${black}" },
