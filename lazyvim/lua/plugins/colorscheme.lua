@@ -87,6 +87,8 @@ return {
           BlinkCmpMenuBorder = { fg = hi.blue, bg = hi.red },
           BlinkCmpDocBorder = { fg = hi.blue },
           BlinkCmpSignatureHelpBorder = { fg = hi.blue },
+          SnacksIndent = { fg = hi.gray },
+          SnacksIndentScope = { fg = hi.white },
         },
         options = {
           cursorline = true,
