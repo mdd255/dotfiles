@@ -87,9 +87,6 @@ unmap({})
 
 vim.cmd("nnoremap T :LualineRenameTab ")
 
-local function toggle_terminal()
-  Snacks.terminal()
-end
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -133,6 +130,6 @@ map({
   { "ss", "<cmd>w<Cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },
-  { "<C-Cr>", toggle_terminal, { modes = { "t" }, desc = "Toggle terminal" } },
+  { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
 })

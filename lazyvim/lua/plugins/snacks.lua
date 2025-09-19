@@ -108,218 +108,38 @@ return {
     { "<Leader>dps", false },
     { "<Leader>S", false },
     -- finder keys
-    {
-      "ff",
-      function()
-        Snacks.picker.files()
-      end,
-      desc = "Find files",
-    },
-    {
-      "fb",
-      function()
-        Snacks.picker.buffers()
-      end,
-      desc = "Find buffers",
-    },
-    {
-      "fc",
-      function()
-        Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
-      end,
-      desc = "Find config files",
-    },
-    {
-      "fs",
-      function()
-        Snacks.picker.grep()
-      end,
-      desc = "Grep",
-    },
-    {
-      "fr",
-      function()
-        Snacks.picker.recent()
-      end,
-      desc = "Find recents",
-    },
-    {
-      "fp",
-      function()
-        Snacks.picker.projects()
-      end,
-      { desc = "Find projects" },
-    },
-    {
-      "fk",
-      function()
-        Snacks.picker.keymaps()
-      end,
-      desc = "Find keymaps",
-    },
-    {
-      "fm",
-      function()
-        Snacks.picker.marks()
-      end,
-      desc = "Find marks",
-    },
-    {
-      "fh",
-      function()
-        Snacks.picker.highlights()
-      end,
-      desc = "Find highlights",
-    },
+    { "ff", "<cmd>lua Snacks.picker.files()<Cr>", desc = "Find files" },
+    { "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", desc = "Find buffers" },
+    { "fc", "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>", desc = "Find config files" },
+    { "fs", "<cmd>lua Snacks.picker.grep()<Cr>", desc = "Grep" },
+    { "fr", "<cmd>luaSnacks.picker.recent()<Cr>", desc = "Find recents" },
+    { "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" } },
+    { "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", desc = "Find keymaps" },
+    { "fm", "<cmd>lua Snacks.picker.marks()<Cr>", desc = "Find marks" },
+    { "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", desc = "Find highlights" },
     -- git keymaps
-    {
-      "gbr",
-      function()
-        Snacks.picker.git_branches()
-      end,
-      desc = "Git branches",
-    },
-    {
-      "glo",
-      function()
-        Snacks.picker.git_log()
-      end,
-      desc = "Git log",
-    },
-    {
-      "glf",
-      function()
-        Snacks.picker.git_log_file()
-      end,
-      desc = "Git log files",
-    },
-    {
-      "gst",
-      function()
-        Snacks.picker.git_status()
-      end,
-      desc = "Git status",
-    },
-    {
-      "gdi",
-      function()
-        Snacks.picker.git_diff()
-      end,
-      desc = "Git diff",
-    },
-    {
-      "gss",
-      function()
-        Snacks.picker.git_stash()
-      end,
-      desc = "Git stash",
-    },
-    {
-      "gbb",
-      function()
-        Snacks.gitbrowse()
-      end,
-      desc = "Git open file in browser",
-    },
+    { "gbr", "<cmd>lua Snacks.picker.git_branches()<Cr>", desc = "Git branches" },
+    { "glo", "<cmd>lua Snacks.picker.git_log()<Cr>", desc = "Git log" },
+    { "glf", "<cmd>lua Snacks.picker.git_log_file()<Cr>", desc = "Git log files" },
+    { "gst", "<cmd>lua Snacks.picker.git_status()<Cr>", desc = "Git status" },
+    { "gdi", "<cmd>lua Snacks.picker.git_diff()<Cr>", desc = "Git diff" },
+    { "gss", "<cmd>lua Snacks.picker.git_stash()<Cr>", desc = "Git stash" },
+    { "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
     -- misc keymaps
-    {
-      "g<Cr>",
-      function()
-        Snacks.lazygit()
-      end,
-      desc = "Open Lazygit",
-    },
-    {
-      "<C-Cr>",
-      function()
-        Snacks.terminal()
-      end,
-      desc = "Toggle terminal",
-    },
-    {
-      "-",
-      function()
-        Snacks.picker.explorer()
-      end,
-      desc = "Toggle explorer",
-    },
-    {
-      "<Cr>",
-      function()
-        Snacks.picker.commands()
-      end,
-      desc = "Find commands",
-    },
-    {
-      "/",
-      function()
-        Snacks.picker.lines()
-      end,
-      desc = "Grep current buffer",
-    },
-    {
-      "<Space><Space>",
-      function()
-        Snacks.picker.resume()
-      end,
-      desc = "Resume last picker",
-    },
+    { "g<Cr>", "<cmd>lua Snacks.lazygit()<Cr>", desc = "Open Lazygit" },
+    { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", desc = "Toggle terminal" },
+    { "-", "<cmd>lua Snacks.picker.explorer()<Cr>", desc = "Toggle explorer" },
+    { "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", desc = "Find commands" },
+    { "/", "<cmd>lua Snacks.picker.lines()<Cr>", desc = "Grep current buffer" },
+    { "<Space><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", desc = "Resume last picker" },
     -- lsp keymaps
-    {
-      "tt",
-      function()
-        Snacks.picker.lsp_definitions()
-      end,
-      desc = "Go to definitions",
-    },
-    {
-      "tf",
-      function()
-        Snacks.picker.lsp_references()
-      end,
-      desc = "Go to references",
-    },
-    {
-      "ts",
-      function()
-        Snacks.picker.lsp_symbols()
-      end,
-      desc = "LSP symbols",
-    },
-    {
-      "tS",
-      function()
-        Snacks.picker.lsp_workspace_symbols()
-      end,
-      desc = "Workspace LSP symbols",
-    },
-    {
-      "th",
-      function()
-        vim.lsp.buf.hover()
-      end,
-      desc = "LSP hover",
-    },
-    {
-      "tr",
-      function()
-        vim.lsp.buf.rename()
-      end,
-      desc = "LSP rename",
-    },
-    {
-      "ta",
-      function()
-        Snacks.picker.diagnostics_buffer()
-      end,
-      desc = "LSP disagnostics",
-    },
-    {
-      "tA",
-      function()
-        Snacks.picker.diagnostics()
-      end,
-      desc = "Workspace LSP disagnostics",
-    },
+    { "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", desc = "Go to definitions" },
+    { "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", desc = "Go to references" },
+    { "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", desc = "LSP symbols" },
+    { "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", desc = "Workspace LSP symbols" },
+    { "th", "<cmd>lua vim.lsp.buf.hover()<Cr>", desc = "LSP hover" },
+    { "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", desc = "LSP rename" },
+    { "ta", "<cmd>luaSnacks.picker.diagnostics_buffer()<Cr>", desc = "LSP disagnostics" },
+    { "tA", "<cmd>luaSnacks.picker.diagnostics()<Cr>", desc = "Workspace LSP disagnostics" },
   },
 }
