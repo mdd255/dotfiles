@@ -9,8 +9,8 @@ local color = {
   red = "#ef596f",
   light_red = "#00ffff",
   green = "#89ca78",
-  gray = "#333333",
-  dark_gray = "#252525",
+  gray = "#505050",
+  dark_gray = "#151515",
 }
 
 return color
