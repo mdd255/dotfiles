@@ -74,21 +74,28 @@ return {
           DiagnosticUnderlineInfo = { underline = true },
           DiagnosticUnderlineWarn = { underline = true },
           DiagnosticUnderlineHint = { underline = true },
-          DiffviewDiffDelete = { bg = hi.light_red },
           Visual = { bg = hi.blue, fg = hi.black },
-          GitSignsCurrentLineBlame = { bg = hi.red, fg = hi.comment },
           CursorLineNr = { fg = hi.blue, bold = true, bg = hi.cursorline },
           IblWhitespace = { fg = hi.cursorline },
           WinSeparator = { fg = hi.blue },
+          -- gitsign & diffview
+          GitSignsCurrentLineBlame = { bg = hi.red, fg = hi.comment },
+          DiffviewDiffDelete = { bg = hi.light_red },
+          -- flash.nvim
           FlashLabel = { fg = hi.blue, bg = hi.black },
           FlashMatch = { fg = hi.gray, bg = hi.black },
           FlashCurrent = { fg = hi.blue, bg = hi.black },
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
+          -- blink.cmp
           BlinkCmpMenuBorder = { fg = hi.blue, bg = hi.red },
           BlinkCmpDocBorder = { fg = hi.blue },
           BlinkCmpSignatureHelpBorder = { fg = hi.blue },
+          -- snacks
           SnacksIndent = { fg = hi.gray },
           SnacksIndentScope = { fg = hi.white },
+          -- grugfar
+          GrugFarResultsMatch = { bg = hi.gray, fg = hi.blue },
+          GrugFarResultsPath = { fg = hi.red, underline = true, italic = true },
         },
         options = {
           cursorline = true,
