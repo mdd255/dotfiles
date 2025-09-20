@@ -13,7 +13,11 @@ return {
       accept = { auto_brackets = { enabled = true } },
       ghost_text = { enabled = true },
       menu = { enabled = true },
-      list = { selection = { preselect = true }, cycle = { from_top = false } },
+      list = {
+        selection = { preselect = true },
+        cycle = { from_top = false },
+        max_items = 10,
+      },
     },
   },
 }

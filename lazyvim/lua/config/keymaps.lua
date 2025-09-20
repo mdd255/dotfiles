@@ -138,6 +138,7 @@ map({
   { "0", "^" },
   { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
+  { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
   { ";", comment, { desc = "Comment", remap = true } },
 
   -- vim edit register control

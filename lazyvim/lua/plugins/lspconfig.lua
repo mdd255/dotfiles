@@ -21,6 +21,9 @@ return {
       { "<Leader>m", "<cmd>Mason<Cr>", desc = "Mason" },
     },
     opts = {
+      ui = {
+        border = "rounded",
+      },
       ensure_installed = {
         "intelephense",
         "jdtls",
