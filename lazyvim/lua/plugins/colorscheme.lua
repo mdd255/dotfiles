@@ -86,10 +86,6 @@ return {
           FlashMatch = { fg = hi.gray, bg = hi.black },
           FlashCurrent = { fg = hi.blue, bg = hi.black },
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
-          -- blink.cmp
-          BlinkCmpMenuBorder = { fg = hi.blue, bg = hi.red },
-          BlinkCmpDocBorder = { fg = hi.blue },
-          BlinkCmpSignatureHelpBorder = { fg = hi.blue },
           -- snacks
           SnacksIndent = { fg = hi.gray },
           SnacksIndentScope = { fg = hi.white },
