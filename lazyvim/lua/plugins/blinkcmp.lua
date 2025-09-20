@@ -3,7 +3,6 @@ return {
   opts = {
     keymap = {
       preset = "none",
-
       ["<Tab>"] = { "insert_next", "fallback" },
       ["<Cr>"] = { "accept", "fallback" },
       ["<S-Tab>"] = { "insert_prev", "fallback" },

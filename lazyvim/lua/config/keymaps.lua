@@ -87,6 +87,12 @@ unmap({})
 
 vim.cmd("nnoremap T :LualineRenameTab ")
 
+local function comment()
+  local count = vim.v.count1
+  vim.cmd.normal({ args = { count .. "gcc" }, bang = false })
+  vim.cmd.normal({ args = { count .. "j" }, bang = true })
+end
+
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -98,8 +104,8 @@ map({
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
 
   -- Scroll
-  { "m", "18j", { desc = "Scroll down half page" } },
-  { "M", "18k", { desc = "Scroll up half page" } },
+  { "m", "<C-d>", { desc = "Scroll down half page" } },
+  { "M", "<C-u>", { desc = "Scroll up half page" } },
 
   -- Colemak
   { "n", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down" } },
@@ -132,4 +138,9 @@ map({
   { "0", "^" },
   { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
+  { ";", comment, { desc = "Comment", remap = true } },
+
+  -- vim edit register control
+  { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
+  { "P", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
 })

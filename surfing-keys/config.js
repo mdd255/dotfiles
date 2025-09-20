@@ -305,7 +305,7 @@
       forward_character: "i"
     },
     Insert: {
-      exit_insert_mode: "<Ctrl-Enter>"
+      exit_insert_mode: "<Esc>"
     }
   };
   function remap(mode, customBindings2) {
@@ -326,7 +326,9 @@
     }
     const modePassThroughKeys = passThroughBindings[mode] || [];
     const modeBindings = Bindings[mode] || {};
-    const excludeKeys = modePassThroughKeys.map((key) => modeBindings[key]);
+    const excludeKeys = modePassThroughKeys.map(
+      (key) => modeBindings[key]
+    );
     const modeCustomBindings = customBindings2[mode] || {};
     for (const [key, customBindKey] of Object.entries(modeCustomBindings)) {
       const defaultBindKey = modeBindings[key];
