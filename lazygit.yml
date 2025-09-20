@@ -162,8 +162,8 @@ keybinding:
         toggleRangeSelect: v
         rangeSelectDown: <s-down>
         rangeSelectUp: <s-up>
-        prevBlock: <tab>
-        nextBlock: <backtab>
+        prevBlock: <backtab>
+        nextBlock: <tab>
         jumpToBlock:
             - "1"
             - "2"
