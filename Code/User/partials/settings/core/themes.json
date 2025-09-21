@@ -1,5 +1,7 @@
 {
 	"$schema": "vscode://schemas/settings/default",
+	"material-icon-theme.hidesExplorerArrows": true,
+	"workbench.iconTheme": "material-icon-theme",
 	"workbench.colorCustomizations": {
 		"[Default Dark Modern]": {
 			"editor.background": "#0c0c0c",

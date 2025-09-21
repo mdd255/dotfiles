@@ -18,9 +18,11 @@
 	"workbench.editor.decorations.colors": false,
 	"workbench.editor.decorations.badges": false,
 	"workbench.welcomePage.walkthroughs.openOnInstall": false,
-	"workbench.tree.indent": 15,
 	"workbench.editor.closeOnFileDelete": true,
 	"workbench.editor.limit.enabled": true,
 	"workbench.activityBar.orientation": "vertical",
+	"workbench.tree.enableStickyScroll": false,
+	"workbench.tree.renderIndentGuides": "always",
+	"workbench.tree.indent": 18,
 	"workbench.editor.limit.value": 10
 }

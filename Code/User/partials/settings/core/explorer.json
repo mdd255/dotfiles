@@ -5,6 +5,9 @@
 	"explorer.decorations.colors": true,
 	"explorer.confirmDelete": false,
 	"explorer.confirmDragAndDrop": false,
+	"explorer.compactFolders": false,
 	"files.enableTrash": true,
-	"files.confirmDelete": false
+	"files.confirmDelete": false,
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true
 }

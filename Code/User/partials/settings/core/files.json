@@ -1,7 +1,5 @@
 {
 	"$schema": "vscode://schemas/settings/default",
-	"explorer.confirmDelete": false,
-	"explorer.confirmDragAndDrop": false,
 	"files.enableTrash": false,
 	"files.hotExit": "onExitAndWindowClose",
 	"files.simpleDialog.enable": true,
