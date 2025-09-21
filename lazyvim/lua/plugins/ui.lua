@@ -39,4 +39,18 @@ return {
       centered_peeking = true,
     },
   },
+  {
+    "petertriho/nvim-scrollbar",
+    opts = {
+      show_in_active_only = true,
+      handler = {
+        cursor = false,
+        diagnostic = true,
+        gitsigns = true,
+        handle = false,
+        search = false,
+        ale = false,
+      },
+    },
+  },
 }

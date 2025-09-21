@@ -10,6 +10,24 @@ return {
     statuscolumn = { enabled = false },
     toggle = { map = LazyVim.safe_keymap_set },
     words = { enabled = true },
+    scratch = {
+      name = "Code playground",
+      win_by_ft = {
+        lua = {
+          keys = {
+            ["source"] = {
+              "<cr>",
+              function(self)
+                local name = "scratch." .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buf), ":e")
+                Snacks.debug.run({ buf = self.buf, name = name })
+              end,
+              desc = "Source buffer",
+              mode = { "n", "i" },
+            },
+          },
+        },
+      },
+    },
     picker = {
       matcher = {
         cwd_bonus = true,
@@ -107,6 +125,8 @@ return {
     { "<Leader>su", false },
     { "<Leader>dps", false },
     { "<Leader>S", false },
+    { "<Leader>uC", false },
+    { "<Leader>un", false },
     -- finder keys
     { "ff", "<cmd>lua Snacks.picker.files()<Cr>", desc = "Find files" },
     { "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", desc = "Find buffers" },

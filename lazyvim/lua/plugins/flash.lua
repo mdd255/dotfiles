@@ -1,6 +1,7 @@
 return {
   "folke/flash.nvim",
   opts = {
+    jump = { autojump = true },
     labels = "neioharstdqwfpluyzxcvkmbgj;NEIOHARSTDQWFPLUYZXCVKMBGJ1234567890!@#$%^&*()_+=.,",
     modes = {
       char = {
@@ -13,6 +14,9 @@ return {
       before = true,
       after = false,
     },
+    search = {
+      multi_window = false,
+    },
   },
   keys = function()
     return {
@@ -22,23 +26,10 @@ return {
         function()
           require("flash").jump({
             multi_windows = false,
-            search = { mode = "search", max_length = 0 },
-            pattern = [[\<]],
+            search = { mode = "search", max_length = 20 },
           })
         end,
-        desc = "Flash to beginning of word",
-      },
-      {
-        "<s-tab>",
-        mode = { "n", "v", "o" },
-        function()
-          require("flash").jump({
-            multi_windows = false,
-            search = { mode = "search", max_length = 0 },
-            pattern = [[\>]],
-          })
-        end,
-        desc = "Flash to end of word",
+        desc = "Flash any forward",
       },
       {
         "'",

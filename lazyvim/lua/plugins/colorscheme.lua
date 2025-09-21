@@ -79,12 +79,12 @@ return {
           IblWhitespace = { fg = hi.cursorline },
           WinSeparator = { fg = hi.blue },
           -- gitsign & diffview
-          GitSignsCurrentLineBlame = { bg = hi.red, fg = hi.comment },
+          GitSignsCurrentLineBlame = { bg = hi.cursorline, fg = hi.comment },
           DiffviewDiffDelete = { bg = hi.light_red },
           -- flash.nvim
-          FlashLabel = { fg = hi.blue, bg = hi.black },
+          FlashLabel = { fg = hi.blue, bg = hi.black, italic = true },
           FlashMatch = { fg = hi.gray, bg = hi.black },
-          FlashCurrent = { fg = hi.blue, bg = hi.black },
+          FlashCurrent = { fg = hi.red, bg = hi.black, underline = true },
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
           -- snacks
           SnacksIndent = { fg = hi.gray },
