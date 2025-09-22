@@ -7,16 +7,15 @@ return {
     notifier = { enabled = true },
     scope = { enabled = true },
     scroll = { enabled = true },
-    statuscolumn = { enabled = false },
-    toggle = { map = LazyVim.safe_keymap_set },
-    words = { enabled = true },
+    statuscolumn = { enabled = true },
+    words = { enabled = false },
     scratch = {
       name = "Code playground",
       win_by_ft = {
         lua = {
           keys = {
             ["source"] = {
-              "<cr>",
+              "<Cr>",
               function(self)
                 local name = "scratch." .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(self.buf), ":e")
                 Snacks.debug.run({ buf = self.buf, name = name })
@@ -127,11 +126,6 @@ return {
     { "<Leader>S", false },
     { "<Leader>uC", false },
     { "<Leader>un", false },
-    -- { "gd", false },
-    -- { "gD", false },
-    -- { "gr", false },
-    -- { "gI", false },
-    -- { "gy", false },
     -- finder keys
     { "ff", "<cmd>lua Snacks.picker.files()<Cr>", desc = "Find files" },
     { "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", desc = "Find buffers" },

@@ -1,7 +1,7 @@
 return {
   "nvim-mini/mini.pairs",
   opts = {
-    modes = { insert = true, command = false, terminal = false },
+    modes = { insert = true, command = true, terminal = true },
     mappings = {
       ["<C-h>"] = { action = "open", pair = "<>" },
       ["<C-n>"] = { action = "open", pair = "()" },

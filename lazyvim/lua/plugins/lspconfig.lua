@@ -10,6 +10,8 @@ return {
       keys[#keys + 1] = { "gI", false }
       keys[#keys + 1] = { "gy", false }
       keys[#keys + 1] = { "gk", false }
+      keys[#keys + 1] = { "gK", false }
+      keys[#keys + 1] = { "gD", false }
       keys[#keys + 1] = { "<C-k>", false }
       keys[#keys + 1] = { "<Leader>ss", false }
       keys[#keys + 1] = { "<Leader>SS", false }

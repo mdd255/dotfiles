@@ -1,3 +1,7 @@
 vim.opt.timeoutlen = 500
 vim.opt.winborder = "rounded"
 vim.opt.numberwidth = 4
+vim.opt.swapfile = false
+vim.opt.spell = true
+vim.opt.spelllang = "en_us"
+vim.opt.spellfile = vim.fn.stdpath("config") .. "/spell/index.utf-8.add"

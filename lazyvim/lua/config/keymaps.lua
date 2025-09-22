@@ -93,6 +93,14 @@ local function comment()
   vim.cmd.normal({ args = { count .. "j" }, bang = true })
 end
 
+local function add_to_dictionary()
+  local spellfile = vim.fn.stdpath("config") .. "/spell/index.utf-8.add"
+  local word = vim.fn.expand("<cword>")
+  vim.cmd("normal! zg")
+  vim.cmd("mkspell! " .. vim.fn.fnameescape(spellfile))
+  print("Added '" .. word .. "' to dictionary")
+end
+
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -140,6 +148,7 @@ map({
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
   { ";", comment, { desc = "Comment", remap = true } },
+  { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
