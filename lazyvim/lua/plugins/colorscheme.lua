@@ -76,6 +76,7 @@ return {
           DiagnosticUnderlineHint = { underline = true },
           Visual = { bg = hi.blue, fg = hi.black },
           CursorLineNr = { fg = hi.blue, bold = true, bg = hi.cursorline },
+          CursorColumn = { bg = hi.cursorline },
           IblWhitespace = { fg = hi.cursorline },
           WinSeparator = { fg = hi.blue },
           -- gitsign & diffview
