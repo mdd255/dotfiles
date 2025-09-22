@@ -12,12 +12,17 @@ return {
     completion = {
       accept = { auto_brackets = { enabled = true } },
       ghost_text = { enabled = true },
-      menu = { enabled = true },
+      menu = { enabled = true, scrollbar = false },
+      documentation = { window = { scrollbar = false } },
       list = {
         selection = { preselect = true },
         cycle = { from_top = false },
-        max_items = 10,
+        max_items = 8,
       },
+    },
+
+    signature = {
+      window = { scrollbar = false },
     },
   },
 }

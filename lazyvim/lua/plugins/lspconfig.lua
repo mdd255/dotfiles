@@ -30,6 +30,7 @@ return {
         "json-lsp",
         "dockerfile-language-server",
       },
+      ui = { scrollbar = false },
     },
   },
 }

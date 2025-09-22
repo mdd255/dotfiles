@@ -119,17 +119,6 @@ return {
   config = function()
     local _recorder = require("recorder")
 
-    local trouble = require("trouble")
-
-    -- setup a statusline provider for symbols
-    local symbols = trouble.statusline({
-      mode = "lsp_document_symbols",
-      groups = {},
-      title = false,
-      filter = { range = true },
-      format = "{symbol.name:Normal}",
-    })
-
     require("lualine").setup({
       disabled_filetypes = {
         statusline = {},
@@ -143,7 +132,7 @@ return {
         lualine_z = {},
       },
       tabline = {
-        lualine_a = { windows, symbols.get },
+        lualine_a = { windows },
         lualine_b = {},
         lualine_c = {},
         lualine_x = {},
