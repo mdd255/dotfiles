@@ -5,7 +5,7 @@ return {
   },
   dependencies = {
     { "tpope/vim-dadbod", lazy = true },
-    { "kristijanhusak/vim-dadbod-completion", ft = { "sql" }, lazy = true },
+    { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "psql" }, lazy = true },
   },
   config = function()
     vim.g.db_ui_force_echo_notifications = false
