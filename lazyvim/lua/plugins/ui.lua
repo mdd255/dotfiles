@@ -59,6 +59,7 @@ return {
       },
       excluded_filetypes = {
         "snacks_picker_list",
+        "lazy",
       },
     },
   },
