@@ -36,16 +36,6 @@ return {
     },
   },
   {
-    "nacro90/numb.nvim",
-    opts = {
-      show_numbers = true,
-      show_cursor_line = true,
-      hide_relativenumbers = true,
-      number_only = false,
-      centered_peeking = true,
-    },
-  },
-  {
     "petertriho/nvim-scrollbar",
     opts = {
       show_in_active_only = true,
