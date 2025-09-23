@@ -149,6 +149,7 @@ map({
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
   { ";", comment, { desc = "Comment", remap = true } },
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
+  { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },

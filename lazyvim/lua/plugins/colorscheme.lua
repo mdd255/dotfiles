@@ -15,6 +15,7 @@ local hi = {
   dark_gray = "${dark_gray}",
   cursorline = "${cursorline}",
   comment = "${comment}",
+  light_blue = "${light_blue}",
 }
 
 return {
@@ -24,6 +25,7 @@ return {
       require("onedarkpro").setup({
         colors = {
           dark_gray = color.dark_gray,
+          light_blue = color.light_blue,
           gray = color.gray,
           blue = color.blue,
           cyan = color.cyan,
@@ -67,10 +69,19 @@ return {
           fg_gutter = color.gray,
         },
         highlights = {
+          -- Treesitter
           ["@punctuation.delimiter"] = { fg = hi.yellow },
           ["@punctuation.special"] = { fg = hi.blue },
           ["@punctuation.bracket"] = { fg = hi.yellow },
           ["@operator"] = { fg = hi.yellow },
+          ["@lsp.type.function.typescript"] = { fg = hi.purple },
+          ["@type.property.typescript"] = { fg = hi.light_blue },
+          ["@lsp.type.class"] = { fg = hi.blue },
+          ["@boolean"] = { fg = hi.purple },
+          ["@variable.member"] = { fg = hi.orange },
+
+          -- Vim
+          Type = { fg = hi.blue },
           DiagnosticUnderlineError = { underline = true },
           DiagnosticUnderlineInfo = { underline = true },
           DiagnosticUnderlineWarn = { underline = true },
