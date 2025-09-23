@@ -1,5 +1,6 @@
 return {
   "kristijanhusak/vim-dadbod-ui",
+  lazy = true,
   keys = {
     { "<Leader>d", "<cmd>DBUI<Cr>" },
   },

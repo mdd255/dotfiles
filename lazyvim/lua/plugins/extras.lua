@@ -23,4 +23,20 @@ return {
       })
     end,
   },
+  {
+    {
+      "chrisgrieser/nvim-recorder",
+      lazy = true,
+      opts = {
+        slots = { "a", "b" },
+        clear = true,
+        logLevel = vim.log.levels.OFF,
+        mapping = {
+          startStopRecording = "Q",
+          playMacro = "q",
+          editMacro = "<LEADER>cq",
+        },
+      },
+    },
+  },
 }
