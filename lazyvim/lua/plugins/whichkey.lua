@@ -16,7 +16,7 @@ return {
     },
     icons = {
       mappings = false,
-      separator = "", -- symbol used between a key and it's label
+      separator = "",
     },
   },
   keys = false,
