@@ -253,10 +253,14 @@
     open_vim_editor_current: "<Ctrl-i>",
     open_neovim_current: "<Ctrl-Alt-i>"
   };
+  var CommandBindings = {
+    close_omnibar: "<Esc>"
+  };
   var Bindings = {
     Normal: NormalBindings,
     Insert: InsertBindings,
-    Visual: VisualBindings
+    Visual: VisualBindings,
+    Command: CommandBindings
   };
 
   // bindings.ts
@@ -267,14 +271,13 @@
       "scroll_to_top",
       "scroll_to_bottom",
       "reload_page",
-      "copy_current_url"
+      "copy_current_url",
+      "open_bookmark"
     ],
     Visual: ["find_current_page", "toggle_visual_mode"]
   };
   var customBindings = {
     Normal: {
-      choose_tab: "p",
-      restore_closed_tab: "T",
       display_hints_scrollable: "w",
       scroll_half_page_up: "e",
       scroll_half_page_down: "n",
@@ -290,12 +293,11 @@
       copy_link_url: "yf",
       yank_text_element: "yt",
       open_url: "l",
-      go_last_used_tab: "t",
+      choose_tab: "t",
       edit_url_vim_reload: "a",
       edit_url_vim_new: "A",
       go_one_tab_left: "N",
-      go_one_tab_right: "E",
-      open_bookmark: "b"
+      go_one_tab_right: "E"
     },
     Visual: {
       next_found_text: "m",
@@ -320,6 +322,10 @@
         mapFn = api.vmap;
         unmapFn = api.vunmap;
         break;
+      case "Command":
+        mapFn = api.cmap;
+        unmapFn = api.unmap;
+        break;
       default:
         mapFn = api.map;
         unmapFn = api.unmap;
@@ -332,7 +338,6 @@
     const modeCustomBindings = customBindings2[mode] || {};
     for (const [key, customBindKey] of Object.entries(modeCustomBindings)) {
       const defaultBindKey = modeBindings[key];
-      unmapFn(customBindKey);
       mapFn(customBindKey, defaultBindKey);
       excludeKeys.push(customBindKey);
       unmapFn(defaultBindKey);
@@ -345,15 +350,24 @@
       const excludedChunk = remap(mode, customBindings);
       excludedKeys.push(...excludedChunk);
     }
-    api.unmapAllExcept(excludedKeys, /.*/);
+    api.unmapAllExcept(excludedKeys);
     api.aceVimMap("n", "j");
     api.aceVimMap("e", "k");
     api.aceVimMap("i", "l");
   }
+  api.vunmap("0");
+  api.vunmap("l");
+  api.vunmap("h");
+  api.vunmap("j");
 
   // theme.ts
-  api.Hints.style("border: solid 1px #3D3E3E; color:#F92660; background: initial; background-color: #272822; font-family: Maple Mono Freeze; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);");
-  api.Hints.style("border: solid 1px #3D3E3E !important; padding: 1px !important; color: #A6E22E !important; background: #272822 !important; font-family: Maple Mono Freeze !important; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8) !important;", "text");
+  api.Hints.style(
+    "border: solid 1px #3D3E3E; color:#F92660; background: initial; background-color: #272822; font-family: Maple Mono Freeze; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);"
+  );
+  api.Hints.style(
+    "border: solid 1px #3D3E3E !important; padding: 1px !important; color: #A6E22E !important; background: #272822 !important; font-family: Maple Mono Freeze !important; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8) !important;",
+    "text"
+  );
   api.Visual.style("marks", "background-color: #A6E22E99;");
   api.Visual.style("cursor", "background-color: #F92660;");
   settings.theme = `

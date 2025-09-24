@@ -2,7 +2,7 @@ return {
   "kristijanhusak/vim-dadbod-ui",
   lazy = true,
   keys = {
-    { "<Leader>d", "<cmd>DBUI<Cr>" },
+    { "<Leader>d", "<cmd>DBUI<Cr>", desc = "DBUI" },
   },
   dependencies = {
     { "tpope/vim-dadbod", lazy = true },

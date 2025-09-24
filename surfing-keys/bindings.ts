@@ -8,14 +8,13 @@ const passThroughBindings: PassThroughBindings = {
     'scroll_to_bottom',
     'reload_page',
     'copy_current_url',
+    'open_bookmark',
   ],
   Visual: ['find_current_page', 'toggle_visual_mode'],
 }
 
 const customBindings: CustomBindings = {
   Normal: {
-    choose_tab: 'p',
-    restore_closed_tab: 'T',
     display_hints_scrollable: 'w',
     scroll_half_page_up: 'e',
     scroll_half_page_down: 'n',
@@ -31,12 +30,11 @@ const customBindings: CustomBindings = {
     copy_link_url: 'yf',
     yank_text_element: 'yt',
     open_url: 'l',
-    go_last_used_tab: 't',
+    choose_tab: 't',
     edit_url_vim_reload: 'a',
     edit_url_vim_new: 'A',
     go_one_tab_left: 'N',
     go_one_tab_right: 'E',
-    open_bookmark: 'b',
   },
   Visual: {
     next_found_text: 'm',
@@ -65,6 +63,11 @@ function remap(mode: Mode, customBindings: CustomBindings): string[] {
       unmapFn = api.vunmap
       break
 
+    case 'Command':
+      mapFn = api.cmap
+      unmapFn = api.unmap
+      break
+
     default:
       mapFn = api.map
       unmapFn = api.unmap
@@ -80,7 +83,6 @@ function remap(mode: Mode, customBindings: CustomBindings): string[] {
   for (const [key, customBindKey] of Object.entries(modeCustomBindings)) {
     const defaultBindKey = modeBindings[key as keyof typeof modeBindings]
 
-    unmapFn(customBindKey)
     mapFn(customBindKey, defaultBindKey)
     excludeKeys.push(customBindKey)
     unmapFn(defaultBindKey)
@@ -97,11 +99,15 @@ export function buildBindings(): void {
     excludedKeys.push(...excludedChunk)
   }
 
-  api.unmapAllExcept(excludedKeys, /.*/)
+  api.unmapAllExcept(excludedKeys)
 
   // Ace Vim bindings
   api.aceVimMap('n', 'j')
   api.aceVimMap('e', 'k')
   api.aceVimMap('i', 'l')
 }
-
+// api.unmapAllExcept(['?', 'r'])
+api.vunmap('0')
+api.vunmap('l')
+api.vunmap('h')
+api.vunmap('j')

@@ -54,7 +54,7 @@ return {
           diff_text = color.green,
           virtual_text_warning = color.yellow,
           virtual_text_information = color.blue,
-          cursorline = color.dark_gray,
+          cursorline = color.black,
           selection = color.dark_gray,
           color_column = color.dark_gray,
           fold = color.dark_gray,
@@ -91,31 +91,39 @@ return {
           SpellRare = { underline = true },
           SpellLocal = { underline = true },
           Visual = { bg = hi.blue, fg = hi.black },
-          CursorLineNr = { fg = hi.blue, bold = true, bg = hi.dark_gray },
+          CursorLineNr = { fg = hi.black, bold = true, bg = hi.gray },
           CursorColumn = { bg = hi.dark_gray },
           IblWhitespace = { fg = hi.dark_gray },
           WinSeparator = { fg = hi.blue },
+
           -- gitsign & diffview
-          GitSignsCurrentLineBlame = { bg = hi.dark_gray, fg = hi.comment },
+          GitSignsCurrentLineBlame = { bg = hi.cursorline, fg = hi.comment },
           DiffviewDiffDelete = { bg = hi.light_red },
+
           -- flash.nvim
-          FlashLabel = { fg = hi.blue, bg = hi.black, italic = true },
+          FlashLabel = { fg = hi.blue, bg = hi.black },
           FlashMatch = { fg = hi.gray, bg = hi.black },
           FlashCurrent = { fg = hi.red, bg = hi.black, underline = true },
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
+
           -- snacks
           SnacksIndent = { fg = hi.gray },
           SnacksIndentScope = { fg = hi.white },
+          SnacksPickerPrompt = { bg = hi.black, fg = hi.white },
+          SnacksPickerListCursorLine = { bg = hi.dark_gray },
+          SnacksPickerList = { fg = hi.gray },
+          SnacksDashboardHeader = { fg = hi.blue },
+
           -- grugfar
           GrugFarResultsMatch = { bg = hi.gray, fg = hi.blue },
           GrugFarResultsPath = { fg = hi.red, underline = true, italic = true },
         },
         options = {
-          cursorline = true,
-          transparency = true,
+          cursorline = false,
+          transparency = false,
           terminal_colors = true,
           lualine_transparency = true,
-          highlight_inactive_windows = true,
+          highlight_inactive_windows = false,
         },
       })
     end,

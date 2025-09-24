@@ -141,6 +141,7 @@ map({
   { "l", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<Cr>", { desc = "Quit" } },
+  { "<Leader>Q", "<cmd>qa!<Cr>", { desc = "Quit all" } },
   { "ss", "<cmd>w<Cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },

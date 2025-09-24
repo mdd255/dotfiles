@@ -1,8 +1,12 @@
-api.Hints.style('border: solid 1px #3D3E3E; color:#F92660; background: initial; background-color: #272822; font-family: Maple Mono Freeze; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);');
-api.Hints.style("border: solid 1px #3D3E3E !important; padding: 1px !important; color: #A6E22E !important; background: #272822 !important; font-family: Maple Mono Freeze !important; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8) !important;", "text");
-api.Visual.style('marks', 'background-color: #A6E22E99;');
-api.Visual.style('cursor', 'background-color: #F92660;');
-
+api.Hints.style(
+  'border: solid 1px #3D3E3E; color:#F92660; background: initial; background-color: #272822; font-family: Maple Mono Freeze; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8);',
+)
+api.Hints.style(
+  'border: solid 1px #3D3E3E !important; padding: 1px !important; color: #A6E22E !important; background: #272822 !important; font-family: Maple Mono Freeze !important; box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.8) !important;',
+  'text',
+)
+api.Visual.style('marks', 'background-color: #A6E22E99;')
+api.Visual.style('cursor', 'background-color: #F92660;')
 
 /* set theme */
 settings.theme = `
@@ -286,6 +290,7 @@ settings.theme = `
     display: none;
 }
 
-`;
+`
 
-export {}; // Make this a module
+export { } // Make this a module
+

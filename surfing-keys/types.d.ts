@@ -2,44 +2,53 @@
 
 interface SurfingKeysAPI {
   Hints: {
-    style(css: string, mode?: string): void;
-    setCharacters(chars: string): void;
-  };
+    style(css: string, mode?: string): void
+    setCharacters(chars: string): void
+  }
   Visual: {
-    style(element: string, css: string): void;
-  };
-  map(key: string, target: string, domain?: string): void;
-  unmap(key: string, domain?: string): void;
-  vmap(key: string, target: string, domain?: string): void;
-  vunmap(key: string, domain?: string): void;
-  imap(key: string, target: string, domain?: string): void;
-  iunmap(key: string, domain?: string): void;
+    style(element: string, css: string): void
+  }
+  map(key: string, target: string, domain?: RegExp): void
+  unmap(key: string, domain?: RegExp): void
+  vmap(key: string, target: string, domain?: RegExp): void
+  vunmap(key: string, domain?: RegExp): void
+  imap(key: string, target: string, domain?: RegExp): void
+  iunmap(key: string, domain?: RegExp): void
+  cmap(key: string, target: string, domain?: RegExp): void
+  cunmap(key: string, domain?: RegExp): void
+  lmap(key: string, target: string, domain?: RegExp): void
+  lunmap(key: string, domain?: RegExp): void
   unmapAllExcept(keys: string[], domain?: RegExp)
-  addSearchAlias(alias: string, name: string, url: string, suggestion?: string): void;
-  removeSearchAlias(alias: string): void;
-  aceVimMap(key: string, target: string, domain?: string): void;
-};
+  addSearchAlias(
+    alias: string,
+    name: string,
+    url: string,
+    suggestion?: string,
+  ): void
+  removeSearchAlias(alias: string): void
+  aceVimMap(key: string, target: string, domain?: string): void
+}
 
-type Position = 'left' | 'right' | 'top' | 'bottom';
+type Position = 'left' | 'right' | 'top' | 'bottom'
 
 interface SurfingKeysSettings {
-  onLoad: () => void;
-  theme: string;
-  hintAlign: Position;
-  defaultSearchEngine: string;
-  omnibarPosition: Position;
-  focusFirstCandidate: boolean;
-  focusAfterClosed: 'first' | 'last';
-  scrollStepSize: number;
-  tabsThreshold: number;
-  modeAfterYank: Mode;
-  smoothScroll: boolean;
-  showModeStatus: boolean;
-  omnibarSuggestion: boolean;
-  verticalTabs: boolean;
-  newTabPosition: 'left' | 'right' | 'first' | 'last';
-  tabsMRUOrder: boolean;
-};
+  onLoad: () => void
+  theme: string
+  hintAlign: Position
+  defaultSearchEngine: string
+  omnibarPosition: Position
+  focusFirstCandidate: boolean
+  focusAfterClosed: 'first' | 'last'
+  scrollStepSize: number
+  tabsThreshold: number
+  modeAfterYank: Mode
+  smoothScroll: boolean
+  showModeStatus: boolean
+  omnibarSuggestion: boolean
+  verticalTabs: boolean
+  newTabPosition: 'left' | 'right' | 'first' | 'last'
+  tabsMRUOrder: boolean
+}
 
 const NormalBindings = {
   // Help
@@ -213,7 +222,7 @@ const NormalBindings = {
   // Vim-like marks
   add_current_url_vim_marks: 'm',
   jump_vim_mark: "'",
-  jump_vim_mark_new_tab: 'Ctrl-\'',
+  jump_vim_mark_new_tab: "Ctrl-'",
 
   // Proxy
   toggle_proxy_current: 'cp',
@@ -248,7 +257,7 @@ const NormalBindings = {
   backward_cycle_candidates: '<Shift-Tab>',
   forward_cycle_input_history: '<Ctrl-n>',
   backward_cycle_input_history: '<Ctrl-p>',
-} as const;
+} as const
 
 const VisualBindings = {
   // Visual Mode
@@ -293,7 +302,7 @@ const VisualBindings = {
   forward_20_lines: '<Ctrl-d>',
   translate_selected_google: 't',
   translate_word_cursor: 'q',
-} as const;
+} as const
 
 const InsertBindings = {
   // Insert Mode
@@ -305,33 +314,39 @@ const InsertBindings = {
   delete_word_backwards: '<Alt-w>',
   delete_word_forwards: '<Alt-d>',
   exit_insert_mode: '<Esc>',
-  toggle_quotes_input: '<Ctrl-\'>',
+  toggle_quotes_input: "<Ctrl-'>",
   open_vim_editor_current: '<Ctrl-i>',
   open_neovim_current: '<Ctrl-Alt-i>',
-} as const;
+} as const
+
+const CommandBindings = {
+  close_omnibar: '<Esc>',
+} as const
 
 declare global {
-  const api: SurfingKeysAPI;
-  const settings: SurfingKeysSettings;
-  type BindingsType = typeof Bindings;
-  type Mode = 'Normal' | 'Insert' | 'Visual';
+  const api: SurfingKeysAPI
+  const settings: SurfingKeysSettings
+  type BindingsType = typeof Bindings
+  type Mode = 'Normal' | 'Insert' | 'Visual' | 'Command'
 
   type CustomBindings = {
-			Normal?: Partial<Record<keyof typeof NormalBindings, string>>;
-			Visual?: Partial<Record<keyof typeof VisualBindings, string>>;
-			Insert?: Partial<Record<keyof typeof InsertBindings, string>>;
-		};
+    Normal?: Partial<Record<keyof typeof NormalBindings, string>>
+    Visual?: Partial<Record<keyof typeof VisualBindings, string>>
+    Insert?: Partial<Record<keyof typeof InsertBindings, string>>
+    Command?: Partial<Record<keyof typeof CommandBindings, string>>
+  }
 
   type PassThroughBindings = {
-			Normal?: (keyof typeof NormalBindings)[];
-			Visual?: (keyof typeof VisualBindings)[];
-			Insert?: (keyof typeof InsertBindings)[];
-		};
-
+    Normal?: (keyof typeof NormalBindings)[]
+    Visual?: (keyof typeof VisualBindings)[]
+    Insert?: (keyof typeof InsertBindings)[]
+    Command?: (keyof typeof CommandBindings)[]
+  }
 }
 
 export const Bindings = {
   Normal: NormalBindings,
   Insert: InsertBindings,
   Visual: VisualBindings,
-} as const;
+  Command: CommandBindings,
+} as const
