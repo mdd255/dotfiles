@@ -37,3 +37,8 @@ Qtile
 symlinks
 SurfingKeys
 Treesitter
+YYYY
+enum
+boolean
+json
+msg

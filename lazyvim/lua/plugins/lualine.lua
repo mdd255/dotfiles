@@ -86,8 +86,8 @@ local branch = {
   "branch",
   icon = "",
   fmt = function(str)
-    if str:len() > 35 then
-      return str:sub(1, 18) .. "..."
+    if str:len() > 80 then
+      return str:sub(1, 77) .. "..."
     end
 
     return str

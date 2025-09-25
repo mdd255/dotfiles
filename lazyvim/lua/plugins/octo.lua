@@ -6,5 +6,9 @@ return {
   },
   opts = {
     picker = "snacks",
+    ssh_aliases = {
+      ["git-hp"] = "github.com",
+      ["git-abd"] = "github.com",
+    },
   },
 }

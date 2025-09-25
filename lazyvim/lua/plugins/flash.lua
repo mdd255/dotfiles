@@ -2,7 +2,7 @@ return {
   "folke/flash.nvim",
   opts = {
     jump = { autojump = true },
-    labels = "neioharstdqwfpluyzxcvkmbgj;NEIOHARSTDQWFPLUYZXCVKMBGJ1234567890!@#$%^&*()_+=.,",
+    labels = "neioharstdqwfpluyzxcvkmbgj;",
     modes = {
       char = {
         keys = {},
