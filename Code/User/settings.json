@@ -1057,5 +1057,8 @@
 	"gitlens.hovers.enabled": false,
 	"diffEditor.renderSideBySide": true,
 	"merge-conflict.autoNavigateNextConflict.enabled": true,
-	"material-icon-theme.activeIconPack": "nest"
+	"material-icon-theme.activeIconPack": "nest",
+	"[php]": {
+		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+	}
 }
