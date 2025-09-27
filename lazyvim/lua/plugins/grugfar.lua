@@ -3,6 +3,7 @@ return {
   opts = { headerMaxWidth = 80 },
   cmd = "GrugFar",
   keys = {
+    { "<Leader>sr", false },
     {
       "S",
       function()

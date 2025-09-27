@@ -16,7 +16,23 @@ return {
     },
     icons = {
       mappings = false,
-      separator = "", -- symbol used between a key and it's label
+      separator = "",
+    },
+    spec = {
+      { mode = { "n" } },
+      { "t", group = " LSP" },
+      { "f", group = " Find" },
+      { "g", group = " Goto" },
+      { "<Leader>", group = " 󱁐" },
+      { "<Leader>d", group = "DBUI" },
+      { "<Leader>g", group = "Lazygit" },
+      { "<Leader>c", group = " Macro" },
+    },
+    triggers = {
+      { "t", mode = { "n" } },
+      { "f", mode = { "n" } },
+      { "g", mode = { "n" } },
+      { "<Leader>", mode = { "n" } },
     },
   },
   keys = false,

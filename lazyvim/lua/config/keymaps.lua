@@ -83,7 +83,14 @@ local function unmap(lhs, modes)
 end
 
 ---------------------------------------------------------------------------------------------------
-unmap({})
+unmap({
+  { "t", { modes = { "n", "v", "o" } } },
+  { "f", { modes = { "n", "v", "o" } } },
+  { "s", { modes = { "n", "v", "o" } } },
+  { "<Leader>uG" },
+  { "<Leader>up" },
+  { "<Leader>w0" },
+})
 
 vim.cmd("nnoremap T :LualineRenameTab ")
 
@@ -155,4 +162,20 @@ map({
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
   { "P", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
+
+  -- bracket mappings
+  { "on", "i(", { modes = { "v", "o" }, desc = "i(" } },
+  { "oe", "i[", { modes = { "v", "o" }, desc = "i[" } },
+  { "oh", "i<", { modes = { "v", "o" }, desc = "i<" } },
+  { "oo", "i'", { modes = { "v", "o" }, desc = "i'" } },
+  { "ol", "i{", { modes = { "v", "o" }, desc = "i{" } },
+  { "oj", 'i"', { modes = { "v", "o" }, desc = 'i"' } },
+  { "ou", "i`", { modes = { "v", "o" }, desc = "i`" } },
+  { "an", "a(", { modes = { "v", "o" }, desc = "a(" } },
+  { "ae", "a[", { modes = { "v", "o" }, desc = "a[" } },
+  { "ah", "a<", { modes = { "v", "o" }, desc = "a<" } },
+  { "ao", "a'", { modes = { "v", "o" }, desc = "a'" } },
+  { "al", "a{", { modes = { "v", "o" }, desc = "a{" } },
+  { "aj", 'a"', { modes = { "v", "o" }, desc = 'a"' } },
+  { "au", "a`", { modes = { "v", "o" }, desc = "a`" } },
 })
