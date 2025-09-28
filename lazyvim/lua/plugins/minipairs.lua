@@ -3,13 +3,13 @@ return {
   opts = {
     modes = { insert = true, command = true, terminal = true },
     mappings = {
-      ["<C-h>"] = { action = "open", pair = "<>" },
-      ["<C-n>"] = { action = "open", pair = "()" },
-      ["<C-e>"] = { action = "open", pair = "[]" },
-      ["<C-o>"] = { action = "closeopen", pair = "''" },
-      ["<C-l>"] = { action = "open", pair = "{}" },
-      ["<C-j>"] = { action = "closeopen", pair = '""' },
-      ["<C-u>"] = { action = "closeopen", pair = "``" },
+      [";h"] = { action = "open", pair = "<>" },
+      [";n"] = { action = "open", pair = "()" },
+      [";e"] = { action = "open", pair = "[]" },
+      [";i"] = { action = "open", pair = "{}" },
+      [";o"] = { action = "closeopen", pair = "''" },
+      [";l"] = { action = "closeopen", pair = '""' },
+      [";u"] = { action = "closeopen", pair = "``" },
     },
   },
 }
