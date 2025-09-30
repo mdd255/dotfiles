@@ -1,11 +1,23 @@
 return {
   {
-    "kristijanhusak/vim-dadbod-completion",
-    ft = { "sql", "mysql", "psql" },
-    lazy = true,
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    opts = {
+      suggestion = { enabled = false },
+      panel = { enabled = false },
+      filetypes = {
+        markdown = true,
+        help = true,
+      },
+    },
   },
   {
     "saghen/blink.cmp",
+    dependencies = {
+      "fang2hou/blink-copilot",
+      "kristijanhusak/vim-dadbod-completion",
+    },
     opts = {
       keymap = {
         preset = "none",
@@ -23,22 +35,23 @@ return {
         list = {
           selection = { preselect = true },
           cycle = { from_top = false },
-          max_items = 8,
+          max_items = 25,
         },
       },
       signature = {
         window = { scrollbar = false },
       },
       sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
+        default = { "lsp", "path", "snippets", "buffer", "copilot" },
         per_filetype = {
-          sql = { "snippets", "dadbod", "buffer" },
-          mysql = { "snippets", "dadbod", "buffer" },
-          psql = { "snippets", "dadbod", "buffer" },
+          sql = { "snippets", "dadbod" },
+          mysql = { "snippets", "dadbod" },
+          psql = { "snippets", "dadbod" },
+          ["copilot-chat"] = { "path", "buffer" },
         },
-        -- add vim-dadbod-completion to your completion providers
         providers = {
-          dadbod = { name = "Dadbod", module = "vim_dadbod_completion.blink" },
+          dadbod = { name = "DB", module = "vim_dadbod_completion.blink" },
+          copilot = { name = "copilot", module = "blink-copilot", score_offset = 100, async = true },
         },
       },
     },

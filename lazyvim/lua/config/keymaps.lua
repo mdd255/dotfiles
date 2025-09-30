@@ -108,6 +108,11 @@ local function add_to_dictionary()
   print("Added '" .. word .. "' to dictionary")
 end
 
+local function source_configs()
+  vim.cmd("source %")
+  print("Sourced configuration")
+end
+
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -158,6 +163,7 @@ map({
   { ";", comment, { desc = "Comment", remap = true } },
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
+  { "sr", source_configs, { desc = "Source config" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
