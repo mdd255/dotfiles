@@ -3,6 +3,7 @@ return {
   opts = { headerMaxWidth = 80 },
   cmd = "GrugFar",
   keys = {
+    { "<Leader>sr", false },
     {
       "S",
       function()
@@ -12,6 +13,7 @@ return {
           transient = true,
           prefills = {
             filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+            flags = "-i",
           },
         })
       end,

@@ -2,6 +2,12 @@ return {
   {
     "folke/noice.nvim",
     keys = {
+      { "<Leader>sn", false },
+      { "<Leader>sna", false },
+      { "<Leader>snd", false },
+      { "<Leader>snh", false },
+      { "<Leader>snl", false },
+      { "<Leader>snt", false },
       {
         "<c-n>",
         function()
@@ -12,7 +18,7 @@ return {
         silent = true,
         expr = true,
         desc = "Scroll Forward",
-        mode = { "n", "s" },
+        mode = { "n", "i" },
       },
       {
         "<c-e>",
@@ -24,14 +30,29 @@ return {
         silent = true,
         expr = true,
         desc = "Scroll Backward",
-        mode = { "n", "s" },
+        mode = { "n", "i" },
       },
     },
-    ops = {
+    opts = {
+      cmdline = {
+        enabled = true,
+        view = "cmdline_popup",
+      },
+      messages = {
+        enabled = true,
+      },
+      popupmenu = {
+        enabled = true,
+      },
       views = {
         popupmenu = { scrollbar = false },
       },
-      presets = { lsp_doc_border = true },
+      presets = {
+        bottom_search = true,
+        command_palette = true,
+        long_message_to_split = true,
+        lsp_doc_border = true,
+      },
     },
   },
   {

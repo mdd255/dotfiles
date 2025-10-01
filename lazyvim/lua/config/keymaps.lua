@@ -83,7 +83,14 @@ local function unmap(lhs, modes)
 end
 
 ---------------------------------------------------------------------------------------------------
-unmap({})
+unmap({
+  { "t", { modes = { "n", "v", "o" } } },
+  { "f", { modes = { "n", "v", "o" } } },
+  { "s", { modes = { "n", "v", "o" } } },
+  { "<Leader>uG" },
+  { "<Leader>up" },
+  { "<Leader>w0" },
+})
 
 vim.cmd("nnoremap T :LualineRenameTab ")
 
@@ -99,6 +106,11 @@ local function add_to_dictionary()
   vim.cmd("normal! zg")
   vim.cmd("mkspell! " .. vim.fn.fnameescape(spellfile))
   print("Added '" .. word .. "' to dictionary")
+end
+
+local function source_configs()
+  vim.cmd("source %")
+  print("Sourced configuration")
 end
 
 ---------------------------------------------------------------------------------------------------
@@ -151,8 +163,25 @@ map({
   { ";", comment, { desc = "Comment", remap = true } },
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
+  { "sr", source_configs, { desc = "Source config" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
   { "P", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
+
+  -- bracket mappings
+  { "oh", "i<", { modes = { "v", "o" }, desc = "i<" } },
+  { "on", "i(", { modes = { "v", "o" }, desc = "i(" } },
+  { "oe", "i[", { modes = { "v", "o" }, desc = "i[" } },
+  { "oi", "i{", { modes = { "v", "o" }, desc = "i{" } },
+  { "oo", "i'", { modes = { "v", "o" }, desc = "i'" } },
+  { "ol", 'i"', { modes = { "v", "o" }, desc = 'i"' } },
+  { "ou", "i`", { modes = { "v", "o" }, desc = "i`" } },
+  { "ah", "a<", { modes = { "v", "o" }, desc = "a<" } },
+  { "an", "a(", { modes = { "v", "o" }, desc = "a(" } },
+  { "ae", "a[", { modes = { "v", "o" }, desc = "a[" } },
+  { "ai", "a{", { modes = { "v", "o" }, desc = "a{" } },
+  { "ao", "a'", { modes = { "v", "o" }, desc = "a'" } },
+  { "al", 'a"', { modes = { "v", "o" }, desc = 'a"' } },
+  { "au", "a`", { modes = { "v", "o" }, desc = "a`" } },
 })

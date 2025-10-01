@@ -1,78 +1,74 @@
 local refactor_config = {
    highlight_definitions = {
-      enable = true
+      enable = true,
    },
    highlight_current_scope = {
-      enable = false
+      enable = false,
    },
    smart_rename = {
       enable = false,
-      keymaps = {
-      }
+      keymaps = {},
    },
    navigation = {
       enable = false,
-      keymaps = {}
-   }
+      keymaps = {},
+   },
 }
 
 return {
-   'nvim-treesitter/nvim-treesitter',
+   "nvim-treesitter/nvim-treesitter",
    dependencies = {
-      'windwp/nvim-ts-autotag',
-      'nvim-treesitter/nvim-treesitter-refactor',
-      'm-demare/hlargs.nvim',
-      'nvim-treesitter/nvim-treesitter-textobjects',
-      'nvim-treesitter/playground'
+      "windwp/nvim-ts-autotag",
+      "nvim-treesitter/nvim-treesitter-refactor",
+      "m-demare/hlargs.nvim",
+      "nvim-treesitter/nvim-treesitter-textobjects",
+      "nvim-treesitter/playground",
    },
    -- run = ':TSInstall bash go graphql http javascript typescript json lua make markdown prisma python rust sql tsx typescript vim yaml dockerfile markdown'
-   run = ':TSUpdate',
+   run = ":TSUpdate",
    config = function()
-      require 'nvim-treesitter.configs'.setup {
+      require("nvim-treesitter.configs").setup({
          ensure_installed = {
-            'typescript',
-            'javascript',
-            'go',
-            'prisma',
-            'graphql',
-            'bash',
-            'json',
-            'yaml',
-            'make',
-            'lua',
-            'sql',
-            'rust',
-            'python',
-            'dockerfile',
+            "typescript",
+            "javascript",
+            "go",
+            "prisma",
+            "graphql",
+            "bash",
+            "json",
+            "yaml",
+            "make",
+            "lua",
+            "sql",
+            "rust",
+            "python",
+            "dockerfile",
          },
-         refactor         = refactor_config,
-         highlight        = {
+         refactor = refactor_config,
+         highlight = {
             enable = true,
-            disable = { 'http' },
+            disable = { "http" },
          },
-         indent           = {
+         indent = {
             enable = {
-               'javascriptreact'
-            }
+               "javascriptreact",
+            },
          },
-         autotag          = {
-            enable = true
+         autotag = {
+            enable = true,
          },
-         rainbow          = {
-            enable         = true,
-            extended_mode  = true,
+         rainbow = {
+            enable = true,
+            extended_mode = true,
             max_file_lines = 1000,
          },
-      }
+      })
 
-      vim.api.nvim_create_autocmd(
-         'FileType',
-         {
-            pattern  = 'tsplayground',
-            callback = function()
-               vim.bo.sw = 2
-            end
-         }
-      )
-   end
+      vim.api.nvim_create_autocmd("FileType", {
+         pattern = "tsplayground",
+         callback = function()
+            vim.bo.sw = 2
+         end,
+      })
+   end,
 }

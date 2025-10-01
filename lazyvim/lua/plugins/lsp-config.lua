@@ -14,19 +14,30 @@ return {
       keys[#keys + 1] = { "gD", false }
       keys[#keys + 1] = { "<C-k>", false }
       keys[#keys + 1] = { "<Leader>ss", false }
-      keys[#keys + 1] = { "<Leader>SS", false }
+      keys[#keys + 1] = { "<Leader>sS", false }
+      keys[#keys + 1] = { "<Leader>ca", false }
+      keys[#keys + 1] = { "<Leader>cc", false }
+      keys[#keys + 1] = { "<Leader>cl", false }
+      keys[#keys + 1] = { "<Leader>cC", false }
+      keys[#keys + 1] = { "<Leader>cR", false }
+      keys[#keys + 1] = { "<Leader>cr", false }
+      keys[#keys + 1] = { "<Leader>cA", false }
+      keys[#keys + 1] = { "[[", false }
+      keys[#keys + 1] = { "]]", false }
+      keys[#keys + 1] = { "<A-n>", false }
+      keys[#keys + 1] = { "<A-p>", false }
     end,
   },
   {
     "mason-org/mason.nvim",
     keys = {
+      { "<Leader>cm", false },
       { "<Leader>m", "<cmd>Mason<Cr>", desc = "Mason" },
     },
     opts = {
       ensure_installed = {
         "intelephense",
         "jdtls",
-        "vtsls",
         "biome",
         "gopls",
         "json-lsp",
@@ -34,5 +45,12 @@ return {
       },
       ui = { scrollbar = false },
     },
+  },
+  {
+    "stevearc/conform.nvim",
+    dependencies = { "mason.nvim" },
+    lazy = true,
+    cmd = "ConformInfo",
+    keys = false,
   },
 }
