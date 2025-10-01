@@ -55,32 +55,4 @@ return {
       },
     },
   },
-  {
-    "petertriho/nvim-scrollbar",
-    opts = {
-      show_in_active_only = true,
-      handlers = {
-        cursor = false,
-        diagnostic = true,
-        gitsigns = true,
-        handle = true,
-        search = false,
-        ale = false,
-      },
-      marks = {
-        Error = { text = { "" } },
-        Warn = { text = { "" } },
-        Info = { text = { "" } },
-        Hint = { text = { "" } },
-        Misc = { text = { "" } },
-        GitAdd = { text = "" },
-        GitChange = { text = "" },
-        GitDelete = { text = "" },
-      },
-      excluded_filetypes = {
-        "snacks_picker_list",
-        "lazy",
-      },
-    },
-  },
 }

@@ -15,7 +15,7 @@ if vim.g.neovide then
   vim.g.neovide_macos_simple_fullscreen = true
   vim.g.neovide_position_animation_length = 0.2
   vim.g.neovide_cursor_animation_length = 0.2
-  vim.g.neovide_cursor_short_animation_length = 0.05
-  vim.g.neovide_cursor_trail_size = 0.5
+  vim.g.neovide_cursor_short_animation_length = 0.04
+  vim.g.neovide_cursor_trail_size = 0.8
   vim.g.neovide_cursor_vfx_mode = "pixiedust"
 end

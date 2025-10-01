@@ -6,7 +6,7 @@ alias "?"="alias | fzf --preview=''"
 alias "h"="history | fzf --preview=''"
 
 # applications
-alias vi="nvim $@"
+alias vi="neovide --x11-wm-class Code --x11-wm-class-instance Code & disown"
 alias ls="eza --long"
 alias top="btop $@"
 alias wifi="nmcli dev wifi $@"

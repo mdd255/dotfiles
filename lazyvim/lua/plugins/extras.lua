@@ -43,4 +43,11 @@ return {
     opts = {},
     keys = false,
   },
+  {
+    "folke/ts-comments.nvim",
+    event = "VeryLazy",
+    opts = {
+      lang = { mysql = "# %s" },
+    },
+  },
 }

@@ -58,7 +58,7 @@ local file_name = {
   "filename",
   file_status = true,
   path = 1,
-  shorting_target = 20,
+  shorting_target = 50,
 }
 
 local tabs = {
@@ -128,12 +128,12 @@ return {
         lualine_b = { mode },
         lualine_c = { file_name, diagnostics },
         lualine_x = { searchcount, _recorder.recordingStatus, _recorder.displaySlots },
-        lualine_y = { "location", diff, branch, project_name },
+        lualine_y = { diff, "location", "progress", branch },
         lualine_z = {},
       },
       tabline = {
-        lualine_a = { windows },
-        lualine_b = {},
+        lualine_a = { project_name },
+        lualine_b = { windows },
         lualine_c = {},
         lualine_x = {},
         lualine_y = { tabs },
@@ -147,7 +147,7 @@ return {
         component_separators = { left = "󰇝", right = "󰇝" },
         section_separators = { left = "", right = "" },
         always_divide_middle = true,
-        disabled_filetypes = { "dbui", "dbout" },
+        disabled_filetypes = { "dbui", "dbout", "snacks_terminal" },
       },
     })
   end,
