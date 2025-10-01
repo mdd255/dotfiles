@@ -45,6 +45,12 @@ keys = [
     # The essentials
     Key(
         [ALT],
+        "a",
+        lazy.spawn("neovide --x11-wm-class Code --x11-wm-class-instance Code"),
+        desc="Launch default IDE",
+    ),
+    Key(
+        [ALT],
         "Return",
         lazy.spawn(TERM),
         desc="Launch default terminal",
