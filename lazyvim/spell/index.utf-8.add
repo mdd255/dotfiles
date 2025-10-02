@@ -45,3 +45,7 @@ msg
 TODO
 dropdown
 i
+cursorline
+autocmds
+cursorline
+filetype
