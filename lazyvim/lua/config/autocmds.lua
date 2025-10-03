@@ -7,7 +7,9 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       gitcommit = true,
       snacks_dashboard = true,
       snacks_picker_list = true,
+      snacks_terminal = true,
       dbout = true,
+      dbui = true,
       ["grug-far"] = true,
     }
 
