@@ -3,14 +3,24 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   callback = function()
     local ft = vim.bo.filetype
 
-    local blacklist = {
+    local relativenumber_blacklist = {
+      gitcommit = true,
+      snacks_dashboard = true,
+      snacks_picker_list = true,
+      dbout = true,
+      ["grug-far"] = true,
+    }
+
+    local cursorline_blacklist = {
       gitcommit = true,
       snacks_dashboard = true,
     }
 
-    vim.opt_local.relativenumber = true
+    if not relativenumber_blacklist[ft] then
+      vim.opt_local.relativenumber = true
+    end
 
-    if not blacklist[ft] then
+    if not cursorline_blacklist[ft] then
       vim.opt_local.cursorline = true
     end
   end,
