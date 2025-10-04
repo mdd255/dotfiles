@@ -1,7 +1,0 @@
-require('hydras.coc')
-require('hydras.nvim_hop')
-require('hydras.git')
-require('hydras.lazy')
-require('hydras.sys')
-require('hydras.nvim_telescope')
-require('hydras.ts_text_object')

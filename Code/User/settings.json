@@ -293,7 +293,6 @@
 	],
 	"vscode-neovim.ctrlKeysForInsertMode": [ ],
 	"vscode-neovim.ctrlKeysForNormalMode": [ ],
-	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
 	"outline.showArrays": false,
 	"outline.showBooleans": false,
 	"outline.showConstants": false,
@@ -1060,5 +1059,10 @@
 	"material-icon-theme.activeIconPack": "nest",
 	"[php]": {
 		"editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
-	}
+	},
+	"vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+	"vscode-neovim.logOutputToConsole": true,
+	"vscode-neovim.revealCursorScrollLine": true,
+	"vscode-neovim.compositeKeys": { },
+	"vscode-neovim.NVIM_APPNAME": "vscode-nvim"
 }
