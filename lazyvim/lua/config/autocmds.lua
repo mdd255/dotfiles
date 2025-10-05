@@ -11,6 +11,8 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       dbout = true,
       dbui = true,
       ["grug-far"] = true,
+      ["json.kulala_ui"] = true,
+      ["text.kulala_ui"] = true,
     }
 
     local cursorline_blacklist = {

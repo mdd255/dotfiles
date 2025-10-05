@@ -11,6 +11,7 @@ vim.opt.spelllang = "en_us"
 vim.opt.spellfile = vim.fn.stdpath("config") .. "/spell/index.utf-8.add"
 
 if vim.g.neovide then
+  vim.o.guifont = "FiraCode Nerd Font:h12"
   vim.g.neovide_hide_mouse_when_typing = true
   vim.g.neovide_macos_simple_fullscreen = true
   vim.g.neovide_position_animation_length = 0.2

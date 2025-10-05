@@ -62,63 +62,63 @@ return {
 		end
 
 		return {
-		{
-			"<tab>",
-			mode = { "n", "v", "o" },
-			function()
-				require("flash").jump({
-					multi_windows = false,
-					search = { mode = "search", max_length = 0 },
-					pattern = [[\<]],
-				})
-			end,
-			desc = "Flash to beginning of word",
-		},
-		{
-			"<s-tab>",
-			mode = { "n", "v", "o" },
-			function()
-				require("flash").jump({
-					multi_windows = false,
-					search = { mode = "search", max_length = 0 },
-					pattern = [[\>]],
-				})
-			end,
-			desc = "Flash to end of word",
-		},
-		{
-			"'",
-			mode = { "n", "x", "o" },
-			function()
-				require("flash").jump({
-					pattern = [=[[([{<'"`]]=],
-					search = { mode = "search" },
-					label = { after = false, before = true, current = false },
-				})
-			end,
-			desc = "Flash open bracket",
-		},
-		{
-			"dn",
-			mode = "n",
-			function()
-				require("flash").jump({
-					pattern = [=[[([{<"'`]]=],
-					search = { mode = "search" },
-					label = { after = false, before = true, current = false },
+			{
+				"<tab>",
+				mode = { "n", "v", "o" },
+				function()
+					require("flash").jump({
+						multi_windows = false,
+						search = { mode = "search", max_length = 0 },
+						pattern = [[\<]],
+					})
+				end,
+				desc = "Flash to beginning of word",
+			},
+			{
+				"<s-tab>",
+				mode = { "n", "v", "o" },
+				function()
+					require("flash").jump({
+						multi_windows = false,
+						search = { mode = "search", max_length = 0 },
+						pattern = [[\>]],
+					})
+				end,
+				desc = "Flash to end of word",
+			},
+			{
+				"'",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump({
+						pattern = [=[[([{<'"`]]=],
+						search = { mode = "search" },
+						label = { after = false, before = true, current = false },
+					})
+				end,
+				desc = "Flash open bracket",
+			},
+			{
+				"dn",
+				mode = "n",
+				function()
+					require("flash").jump({
+						pattern = [=[[([{<"'`]]=],
+						search = { mode = "search" },
+						label = { after = false, before = true, current = false },
 						action = create_text_object_action("d", "i"),
-				})
-			end,
-			desc = "Flash delete inside",
-		},
-		{
-			"de",
-			mode = "n",
-			function()
-				require("flash").jump({
-					pattern = [=[[([{<"'`]]=],
-					search = { mode = "search" },
-					label = { after = false, before = true, current = false },
+					})
+				end,
+				desc = "Flash delete inside",
+			},
+			{
+				"de",
+				mode = "n",
+				function()
+					require("flash").jump({
+						pattern = [=[[([{<"'`]]=],
+						search = { mode = "search" },
+						label = { after = false, before = true, current = false },
 						action = create_text_object_action("d", "a"),
 					})
 				end,
@@ -146,10 +146,10 @@ return {
 						search = { mode = "search" },
 						label = { after = false, before = true, current = false },
 						action = create_text_object_action("c", "a"),
-				})
-			end,
+					})
+				end,
 				desc = "Flash change around",
-		},
+			},
 			{
 				"yn",
 				mode = "n",
@@ -175,7 +175,7 @@ return {
 					})
 				end,
 				desc = "Flash yank around",
-			}
+			},
 		}
 	end,
 }

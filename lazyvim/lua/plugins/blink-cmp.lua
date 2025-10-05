@@ -44,9 +44,9 @@ return {
       sources = {
         default = { "lsp", "path", "snippets", "buffer", "copilot" },
         per_filetype = {
-          sql = { "snippets", "dadbod" },
-          mysql = { "snippets", "dadbod" },
-          psql = { "snippets", "dadbod" },
+          sql = { "snippets", "dadbod", "buffer" },
+          mysql = { "snippets", "dadbod", "buffer" },
+          psql = { "snippets", "dadbod", "buffer" },
           ["copilot-chat"] = { "path", "buffer" },
         },
         providers = {

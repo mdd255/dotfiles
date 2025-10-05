@@ -9,7 +9,7 @@ HOME_DIR := $(HOME)
 XORG_CONF_DIR := /etc/X11/xorg.conf.d
 APPS_DIR := ~/Apps
 
-# Package lists
+Package lists
 PACMAN_CORE := xclip git-delta eza jq postgresql-libs btop ibus go xorg-xev zip
 PACMAN_TOOLS := fzf fd bat dunst ttf-firacode-nerd unzip maim python-pip
 PACMAN_MEDIA := pavucontrol bluez bluez-utils blueman

@@ -109,7 +109,6 @@ return {
  | | | | | | (_| | (_| |/ /_ ___) |___) |
  |_| |_| |_|\__,_|\__,_|____|____/|____/ 
                                          
-                                         
         ]],
       },
       sections = {
@@ -173,6 +172,7 @@ return {
     { "<Leader>S", false },
     { "<Leader>uC", false },
     { "<Leader>un", false },
+
     -- finder keys
     { "ff", "<cmd>lua Snacks.picker.files()<Cr>", desc = "Find files" },
     { "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", desc = "Find buffers" },
@@ -183,6 +183,7 @@ return {
     { "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", desc = "Find keymaps" },
     { "fm", "<cmd>lua Snacks.picker.marks()<Cr>", desc = "Find marks" },
     { "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", desc = "Find highlights" },
+
     -- git keymaps
     { "gbr", "<cmd>lua Snacks.picker.git_branches()<Cr>", desc = "Git branches" },
     { "glo", "<cmd>lua Snacks.picker.git_log()<Cr>", desc = "Git log" },
@@ -191,6 +192,7 @@ return {
     { "gdi", "<cmd>lua Snacks.picker.git_diff()<Cr>", desc = "Git diff" },
     { "gss", "<cmd>lua Snacks.picker.git_stash()<Cr>", desc = "Git stash" },
     { "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
+
     -- misc keymaps
     { "<Leader>g", "<cmd>lua Snacks.lazygit()<Cr>", desc = "Open Lazygit" },
     { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", desc = "Toggle terminal" },
@@ -198,7 +200,10 @@ return {
     { "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", desc = "Find commands" },
     { "/", "<cmd>lua Snacks.picker.lines()<Cr>", desc = "Grep current buffer" },
     { "<Space><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", desc = "Resume last picker" },
-    -- lsp keymaps
+
+    -- LSP keymaps
+    { "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", desc = "Go to next diagnostics" },
+    { "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", desc = "Go to prev diagnostics" },
     { "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", desc = "Go to definitions" },
     { "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", desc = "Go to references" },
     { "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", desc = "LSP symbols" },
