@@ -204,6 +204,7 @@ return {
     -- LSP keymaps
     { "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", desc = "Go to next diagnostics" },
     { "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", desc = "Go to prev diagnostics" },
+    { "t<Cr>", "<cmd>lua vim.lsp.buf.code_action()<Cr>", desc = "Code action" },
     { "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", desc = "Go to definitions" },
     { "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", desc = "Go to references" },
     { "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", desc = "LSP symbols" },

@@ -27,7 +27,7 @@ return {
       { "<Leader>", group = " 󱁐" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>g", group = "Lazygit" },
-      { "<Leader>c", group = " Macro" },
+      { "<Leader>c", group = "Macro" },
     },
     triggers = {
       { "t", mode = { "n" } },
