@@ -84,12 +84,11 @@ end
 
 ---------------------------------------------------------------------------------------------------
 unmap({
-  { "t", { modes = { "n", "v", "o" } } },
-  { "f", { modes = { "n", "v", "o" } } },
-  { "s", { modes = { "n", "v", "o" } } },
-  { "<Leader>uG" },
   { "<Leader>up" },
   { "<Leader>w0" },
+  { "gcc" },
+  { "gO" },
+  { "<Leader>b" },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")

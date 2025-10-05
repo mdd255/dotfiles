@@ -6,6 +6,7 @@ return {
     input = { enabled = true },
     notifier = { enabled = true },
     scope = { enabled = false },
+    toggle = { enabled = false },
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
     words = { enabled = false },

@@ -17,7 +17,7 @@ return {
   end,
   keys = {
     { "<C-CR>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
-    { "<Leader>a", "", desc = "+ai", mode = { "n", "v" } },
+    { "<Leader>a", "", desc = "+Copilot", mode = { "n", "v" } },
     {
       "<Leader>aa",
       function()
