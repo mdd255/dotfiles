@@ -93,6 +93,8 @@ return {
       preset = {
         keys = {
           { icon = "", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
+          { icon = "", key = "p", desc = "Projects", action = ":lua Snacks.dashboard.pick('projects')" },
+          { icon = "", key = "k", desc = "Keymaps", action = ":lua Snacks.dashboard.pick('keymaps')" },
           {
             icon = "",
             key = "c",
@@ -103,13 +105,12 @@ return {
           { icon = "", key = "q", desc = "Quit", action = ":qa" },
         },
         header = [[
-                _     _ ___  _____ _____ 
+                _     _ ___  _____ _____
                | |   | |__ \| ____| ____|
   _ __ ___   __| | __| |  ) | |__ | |__  
- | '_ ` _ \ / _` |/ _` | / /|___ \|___ \ 
- | | | | | | (_| | (_| |/ /_ ___) |___) |
+ | '_ ` _ \_/ _` |/ _` | / /|___ \|___ \ 
+ | | | | | | (_| | (_| |/ /_ ___)  ___) |
  |_| |_| |_|\__,_|\__,_|____|____/|____/ 
-                                         
         ]],
       },
       sections = {
@@ -195,23 +196,23 @@ return {
     { "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
 
     -- misc keymaps
-    { "<Leader>g", "<cmd>lua Snacks.lazygit()<Cr>", desc = "Open Lazygit" },
+    -- { "<Leader>g", "<cmd>lua Snacks.lazygit()<Cr>", desc = "Open Lazygit" },
     { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", desc = "Toggle terminal" },
     { "-", "<cmd>lua Snacks.picker.explorer()<Cr>", desc = "Toggle explorer" },
     { "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", desc = "Find commands" },
     { "/", "<cmd>lua Snacks.picker.lines()<Cr>", desc = "Grep current buffer" },
-    { "<Space><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", desc = "Resume last picker" },
+    { "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", desc = "Resume last picker" },
 
     -- LSP keymaps
     { "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", desc = "Go to next diagnostics" },
     { "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", desc = "Go to prev diagnostics" },
     { "t<Cr>", "<cmd>lua vim.lsp.buf.code_action()<Cr>", desc = "Code action" },
+    { "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", desc = "LSP hover" },
+    { "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", desc = "LSP rename" },
     { "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", desc = "Go to definitions" },
     { "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", desc = "Go to references" },
     { "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", desc = "LSP symbols" },
     { "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", desc = "Workspace LSP symbols" },
-    { "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", desc = "LSP hover" },
-    { "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", desc = "LSP rename" },
     { "ta", "<cmd>lua Snacks.picker.diagnostics_buffer()<Cr>", desc = "LSP disagnostics" },
     { "tA", "<cmd>lua Snacks.picker.diagnostics()<Cr>", desc = "Workspace LSP disagnostics" },
   },

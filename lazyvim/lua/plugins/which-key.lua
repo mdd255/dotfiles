@@ -26,7 +26,7 @@ return {
       { "s", group = " Misc" },
       { "<Leader>", group = " 󱁐" },
       { "<Leader>d", group = "DBUI" },
-      { "<Leader>g", group = "Lazygit" },
+      { "<Leader>g", group = "Neogit" },
       { "<Leader>c", group = "Macro" },
     },
     triggers = {

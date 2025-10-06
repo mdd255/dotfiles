@@ -13,6 +13,11 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       ["grug-far"] = true,
       ["json.kulala_ui"] = true,
       ["text.kulala_ui"] = true,
+      NeogitStatus = true,
+      help = true,
+      DiffviewFiles = true,
+      NeogitCommitView = true,
+      NeogitLogView = true,
     }
 
     local cursorline_blacklist = {

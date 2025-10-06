@@ -86,9 +86,7 @@ end
 unmap({
   { "<Leader>up" },
   { "<Leader>w0" },
-  { "gcc" },
   { "gO" },
-  { "<Leader>b" },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")

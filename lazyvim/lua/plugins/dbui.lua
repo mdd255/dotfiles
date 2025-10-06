@@ -23,5 +23,12 @@ return {
         vim.wo.number = false
       end,
     })
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "mysql",
+      callback = function()
+        vim.opt_local.commentstring = "# %s"
+      end,
+    })
   end,
 }
