@@ -18,6 +18,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       DiffviewFiles = true,
       NeogitCommitView = true,
       NeogitLogView = true,
+      NeogitDiffView = true,
     }
 
     local cursorline_blacklist = {
