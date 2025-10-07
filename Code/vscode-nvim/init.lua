@@ -1,6 +1,5 @@
--- _G.event_delay_ms = 100
--- require("base")
--- require("configs")
--- require("mappings")
--- require("autocmd")
-require("vscode").notify("holo")
+_G.event_delay_ms = 100
+require("base")
+require("configs")
+require("mappings")
+require("autocmd")
