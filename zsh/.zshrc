@@ -1,5 +1,3 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 [[ -f "$HOME/.fig/shell/zshrc.pre.zsh" ]] && builtin source "$HOME/.fig/shell/zshrc.pre.zsh"
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
@@ -59,34 +57,11 @@ source $HOME/.config/dotfiles/zsh/.zsh_aliases
 # bindkey
 source $HOME/.config/dotfiles/zsh/.zsh_custom_keys
 
-# env
-source $HOME/.config/dotfiles/zsh/.zsh_env
-
 zstyle ':completion:*' matcher-list '' \
   'm:{a-z\-}={A-Z\_}' \
   'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \
   'r:|?=** m:{a-z\-}={A-Z\_}'
 
-# fnm
-export PATH="~/.local/share/fnm:$PATH"
-eval "`fnm env`"
-
-# bun completions
-[ -s "/home/dh/.bun/_bun" ] && source "/home/dh/.bun/_bun"
-
 # libpq
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/dungtd4/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
-
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-NODE_EXTRA_CA_CERTS=~/.aws/nskp_config/netskope-cert-bundle.pem

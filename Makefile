@@ -155,13 +155,14 @@ deps-docker: ## Install Docker and setup user permissions
 
 install-zsh: deps-core ## Install and configure Zsh with Oh My Zsh
 	@echo "🔧 Installing Zsh and Oh My Zsh..."
-	rm -rf ~/.oh-my-zsh ~/.zshrc
+	rm -rf ~/.oh-my-zsh ~/.zshrc ~/.zshenv
 	$(call install_pacman_packages,zsh)
 	curl -fsSL $(OMZ_INSTALL_URL) | bash
 	git clone $(ZSH_AUTOSUGGESTIONS_REPO) ~/.oh-my-zsh/plugins/zsh-autosuggestions
 	git clone $(ZSH_HIGHLIGHTING_REPO) ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
 	git clone --depth=1 $(POWERLEVEL10K_REPO) ~/.oh-my-zsh/themes/powerlevel10k
 	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zshrc,~/.zshrc)
+	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zsh_env,~/.zshenv)
 	mkdir -p ~/.cargo
 	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zshenv,~/.cargo/env)
 	$(call create_symlink,$(DOTFILES_DIR)/zsh/.p10k.zsh,~/.p10k.zsh)
