@@ -57,7 +57,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
 if vim.g.neovide then
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     callback = function()
-      vim.o.titlestring = vim.fn.getcwd():gsub("^.*/", "")
+      local project_name = vim.fn.getcwd():gsub("^.*/", "")
+      vim.o.titlestring = project_name
     end,
   })
 end

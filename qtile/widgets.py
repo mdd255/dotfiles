@@ -24,8 +24,8 @@ extension_defaults = widget_defaults.copy()
 
 
 def shorten_window_name(win_name_str):
-    # if len(win_name_str) < 30:
-        # return win_name_str
+    if len(win_name_str) < 40:
+        return win_name_str
 
     win_name_sep = "-"
     alter_win_name_sep = "|"
@@ -99,7 +99,7 @@ def init_widgets_list():
             foreground=colors[1],
             background=colors[0],
             max_width=None,
-            max_chars=100,
+            max_chars=50,
             fmt="󰙏 [{}]",
             timeout=5,
             padding=10
