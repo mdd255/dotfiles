@@ -1,6 +1,7 @@
 from libqtile import widget, bar
 from os import popen
 from libqtile.config import Screen
+import subprocess
 
 FONT = "FiraCode Nerd Font Mono"
 TEXT_FONT_SIZE = 13
@@ -24,7 +25,7 @@ extension_defaults = widget_defaults.copy()
 
 
 def shorten_window_name(win_name_str):
-    if len(win_name_str) < 40:
+    if len(win_name_str) < 30:
         return win_name_str
 
     win_name_sep = "-"
@@ -40,6 +41,16 @@ def shorten_window_name(win_name_str):
         win_names.append(win_name)
     return "".join(win_names)
 
+
+def ibus_source():
+    try:
+        engine = subprocess.check_output(["ibus", "engine"], text=True).strip()
+        if "Bamboo" in engine:
+            return "VI"
+        else:
+            return "EN"
+    except subprocess.CalledProcessError:
+        return "Unknown"
 
 def init_widgets_list():
     """Status bar config."""
@@ -102,7 +113,7 @@ def init_widgets_list():
             max_chars=50,
             fmt="󰙏 [{}]",
             timeout=5,
-            padding=10
+            padding=5
         )
     ]
 
@@ -112,7 +123,7 @@ def init_widgets_list():
             format="{down:.0f}{down_suffix:<2}",
             foreground=colors[1],
             background=colors[0],
-            padding=10,
+            padding=5,
             use_bits=False,
             update_interval=21,
         ),
@@ -123,7 +134,7 @@ def init_widgets_list():
             charge_char="󰂄 ",
             full_char="󰁹 ",
             unknown_char="󰂃 ",
-            update_interval=50,
+            update_interval=300,
             format="{char}{percent:2.0%}",
             foreground=colors[1],
             background=colors[0],
@@ -136,7 +147,7 @@ def init_widgets_list():
             background=colors[0],
             mouse_callbacks={"Button1": lambda: None},
             update_interval=5,
-            padding=10,
+            padding=5,
         ),
         widget.Clock(
             fontsize=TEXT_FONT_SIZE,
@@ -144,8 +155,14 @@ def init_widgets_list():
             format="%a %m-%d %H:%M ",
             foreground=colors[1],
             background=colors[0],
-            padding=10,
+            padding=5,
         ),
+        widget.GenPollText(
+            update_interval=1,
+            func=ibus_source,
+            padding=5,
+        )
+
     ]
 
     # remove battery widget if there is no battery

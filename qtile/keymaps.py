@@ -58,19 +58,19 @@ keys = [
     Key(
         [ALT],
         "Escape",
-        lazy.spawn(HOME + "/.config/rofi/scripts/menu.sh"),
+        lazy.spawn(HOME + "/.config/rofi/scripts/menu"),
         desc="Rofi show running applications",
     ),
     Key(
         [CONTROL],
         "Escape",
-        lazy.spawn(HOME + "/.config/rofi/scripts/cmd.sh"),
+        lazy.spawn(HOME + "/.config/rofi/scripts/cmd"),
         desc="Rofi show running applications",
     ),
     Key(
         [ALT],
         "Tab",
-        lazy.spawn(HOME + "/.config/rofi/scripts/index.sh"),
+        lazy.spawn(HOME + "/.config/rofi/scripts/index"),
         desc="Rofi show running applications",
     ),
     Key(
@@ -114,13 +114,13 @@ keys = [
     Key(
         [ALT],
         "o",
-        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch.sh next"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch next"),
         desc="Move focus to next monitor",
     ),
     Key(
         [ALT, SHIFT],
         "o",
-        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch.sh prev"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch prev"),
         desc="Move focus to previous monitor",
     ),
     # Window controls
@@ -157,13 +157,13 @@ keys = [
     Key(
         [ALT, SHIFT],
         "n",
-        lazy.layout.shuffle_down(),
+        lazy.layoutuffle_down(),
         desc="Move windows down in current stack",
     ),
     Key(
         [ALT, SHIFT],
         "e",
-        lazy.layout.shuffle_up(),
+        lazy.layoutuffle_up(),
         desc="Move windows up in current stack",
     ),
     Key(
@@ -188,7 +188,7 @@ keys = [
     Key(
         [ALT],
         "comma",
-        lazy.layout.shrink(),
+        lazy.layoutrink(),
         lazy.layout.decrease_ratio().when(layout=["Tile"]),
         desc="decrease number in master pane (Tile)",
     ),
@@ -265,14 +265,14 @@ keys = [
         [WIN, SHIFT],
         "3",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn("sh " + QTILE_DIR + "/.init-scripts/toggle-touchpad.sh 0"),
+        lazy.spawn("sh " + QTILE_DIR + "/.init-scripts/toggle-touchpad 0"),
         desc="disable touchpad",
     ),
     Key(
         [WIN],
         "3",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn("sh " + QTILE_DIR + "/.init-scripts/toggle-touchpad.sh 1"),
+        lazy.spawn("sh " + QTILE_DIR + "/.init-scripts/toggle-touchpad 1"),
         desc="enable touchpad",
     ),
     # Brightness control
@@ -281,21 +281,21 @@ keys = [
         [WIN],
         "1",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh inc 0"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness inc 0"),
         desc="Increase brightness",
     ),
     Key(
         [WIN, SHIFT],
         "1",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh des 0"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness des 0"),
         desc="Decrease brightness",
     ),
     Key(
         [WIN, CONTROL],
         "1",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh dim 0"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness dim 0"),
         desc="Dim screen",
     ),
     # monitor #2
@@ -303,34 +303,34 @@ keys = [
         [WIN],
         "2",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh inc 1"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness inc 1"),
         desc="Increase brightness",
     ),
     Key(
         [WIN, SHIFT],
         "2",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh des 1"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness des 1"),
         desc="Decrease brightness",
     ),
     Key(
         [WIN, CONTROL],
         "2",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness.sh dim 1"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/brightness dim 1"),
         desc="Dim screen",
     ),
     # Power control
     Key(
         [WIN],
         "q",
-        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/lock.sh"),
+        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/lock"),
         desc="Lock screen",
     ),
     Key(
         [WIN],
         "Escape",
-        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2.sh"),
+        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2"),
         desc="Power management",
     ),
     # Keyboard layout control
@@ -346,8 +346,16 @@ keys = [
         [WIN],
         "s",
         lazy.spawn(SOUND_CMD),
-        lazy.spawn(QTILE_DIR + "/.init-scripts/toggle-xbanish.sh"),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/toggle-xbanish"),
         desc="Switch cursor visibility",
+    ),
+    # Input method control
+    Key(
+        [WIN],
+        "space",
+        lazy.spawn(SOUND_CMD),
+        lazy.spawn(QTILE_DIR + "/.init-scripts/ibus-switch-input"),
+        desc="Switch input method",
     ),
 ]
 
