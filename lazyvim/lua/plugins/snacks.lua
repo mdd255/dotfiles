@@ -187,7 +187,6 @@ return {
     { "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
 
     -- misc keymaps
-    -- { "<Leader>g", "<cmd>lua Snacks.lazygit()<Cr>", desc = "Open Lazygit" },
     { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", desc = "Toggle terminal" },
     { "-", "<cmd>lua Snacks.picker.explorer()<Cr>", desc = "Toggle explorer" },
     { "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", desc = "Find commands" },

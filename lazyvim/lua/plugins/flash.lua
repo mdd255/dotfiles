@@ -22,6 +22,38 @@ return {
   keys = function()
     return {
       {
+        "<tab>",
+        mode = { "n" },
+        function()
+          require("flash").jump({
+            search = {
+              mode = "char",
+              max_length = 1,
+              wrap = false,
+              forward = true,
+              multi_windows = false,
+            },
+          })
+        end,
+        desc = "Flash f",
+      },
+      {
+        "<s-tab>",
+        mode = { "n" },
+        function()
+          require("flash").jump({
+            search = {
+              mode = "char",
+              forward = false,
+              wrap = false,
+              multi_windows = false,
+              max_length = 1,
+            },
+          })
+        end,
+        desc = "Flash F",
+      },
+      {
         "w",
         mode = { "n" },
         function()
@@ -39,8 +71,8 @@ return {
         desc = "Flash forward to beginning of word",
       },
       {
-        "w",
-        mode = { "v" },
+        "W",
+        mode = { "n" },
         function()
           require("flash").jump({
             search = {
@@ -50,10 +82,10 @@ return {
               forward = true,
               multi_windows = false,
             },
-            pattern = [[\>]],
+            pattern = [[\w\>]],
           })
         end,
-        desc = "Flash forward to beginning of word",
+        desc = "Flash forward to end of word",
       },
       {
         "b",
@@ -73,8 +105,8 @@ return {
         desc = "Flash backward to beginning of word",
       },
       {
-        "b",
-        mode = { "v" },
+        "B",
+        mode = { "n" },
         function()
           require("flash").jump({
             search = {
@@ -84,10 +116,10 @@ return {
               wrap = false,
               forward = false,
             },
-            pattern = [[\>]],
+            pattern = [[\w\>]],
           })
         end,
-        desc = "Flash backward to beginning of word",
+        desc = "Flash backward to end of word",
       },
     }
   end,

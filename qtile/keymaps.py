@@ -324,8 +324,8 @@ keys = [
     Key(
         [WIN],
         "q",
-        lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/lock"),
-        desc="Lock screen",
+        lazy.spawn("systemctl suspend"),
+        desc="Suspend",
     ),
     Key(
         [WIN],

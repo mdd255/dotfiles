@@ -3,22 +3,12 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   callback = function()
     local ft = vim.bo.filetype
 
-    local relativenumber_blacklist = {
-      gitcommit = true,
-      snacks_dashboard = true,
-      snacks_picker_list = true,
-      snacks_terminal = true,
-      dbout = true,
-      dbui = true,
-      ["grug-far"] = true,
-      ["json.kulala_ui"] = true,
-      ["text.kulala_ui"] = true,
-      NeogitStatus = true,
-      help = true,
-      DiffviewFiles = true,
-      NeogitCommitView = true,
-      NeogitLogView = true,
-      NeogitDiffView = true,
+    local relativenumber_whitelist = {
+      typescipt = true,
+      php = true,
+      javascript = true,
+      java = true,
+      lua = true,
     }
 
     local cursorline_blacklist = {
@@ -26,7 +16,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       snacks_dashboard = true,
     }
 
-    if not relativenumber_blacklist[ft] then
+    if relativenumber_whitelist[ft] then
       vim.opt_local.relativenumber = true
     end
 
