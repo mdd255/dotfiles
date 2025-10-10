@@ -11,10 +11,18 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       lua = true,
     }
 
+    local linenumber_blacklist = {
+      ["copilot-chat"] = true,
+    }
+
     local cursorline_blacklist = {
       gitcommit = true,
       snacks_dashboard = true,
     }
+
+    if linenumber_blacklist[ft] then
+      vim.opt_local.number = false
+    end
 
     if relativenumber_whitelist[ft] then
       vim.opt_local.relativenumber = true
@@ -31,6 +39,13 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
   callback = function()
     vim.opt_local.cursorline = false
     vim.opt_local.relativenumber = false
+  end,
+})
+
+-- Highlight on yank
+vim.api.nvim_create_autocmd("TextYankPost", {
+  callback = function()
+    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
   end,
 })
 

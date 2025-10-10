@@ -147,7 +147,7 @@ return {
         component_separators = { left = "󰇝", right = "󰇝" },
         section_separators = { left = "", right = "" },
         always_divide_middle = true,
-        disabled_filetypes = { "dbui", "dbout", "snacks_terminal", "snacks_dashboard", "copilot-chat" },
+        disabled_filetypes = { "dbui", "dbout", "snacks_terminal", "snacks_dashboard" },
       },
     })
   end,

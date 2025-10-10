@@ -33,7 +33,8 @@ return {
       mapping = {
         startStopRecording = "Q",
         playMacro = "q",
-        editMacro = "<Leader>cq",
+        editMacro = "_",
+        deleteAllMacros = "_",
       },
     },
   },

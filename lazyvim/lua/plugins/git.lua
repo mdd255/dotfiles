@@ -1,5 +1,9 @@
 return {
   {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen" },
+  },
+  {
     "lewis6991/gitsigns.nvim",
     opts = {
       current_line_blame = true,
@@ -58,7 +62,6 @@ return {
     "NeogitOrg/neogit",
     dependencies = {
       "nvim-lua/plenary.nvim",
-      "sindrets/diffview.nvim",
       "folke/snacks.nvim",
     },
     keys = {
