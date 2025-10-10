@@ -132,8 +132,8 @@ deps-dco: ## Install Docker Color Output
 deps-screenshot: ## Install screenshot tools
 	@echo "🔧 Installing screenshot tools..."
 	$(call install_pacman_packages,maim python-pip)
-	$(call create_sudo_symlink,$(HOME_DIR)/.config/qtile/.init-scripts/screenshot.sh,/usr/bin/screenshot)
-	$(call create_sudo_symlink,$(HOME_DIR)/.config/qtile/.init-scripts/screenshot-all.sh,/usr/bin/screenshot-all)
+	$(call create_sudo_symlink,$(HOME_DIR)/.config/qtile/.init-scripts/screenshot,/usr/bin/screenshot)
+	$(call create_sudo_symlink,$(HOME_DIR)/.config/qtile/.init-scripts/screenshot-all,/usr/bin/screenshot-all)
 
 deps-media: ## Install media and bluetooth packages
 	@echo "🔧 Installing media packages..."

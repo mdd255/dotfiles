@@ -58,7 +58,7 @@ if vim.g.neovide then
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
     callback = function()
       local project_name = vim.fn.getcwd():gsub("^.*/", "")
-      vim.o.titlestring = project_name
+      vim.o.titlestring = "vi:" .. project_name
     end,
   })
 end
