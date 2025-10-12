@@ -77,7 +77,7 @@
     "map ts Vomnibar.activateTabs",
     "map tt visitPreviousTab",
     "map to Vomnibar.activateTabs keyword=chatgpt.com",
-    "map th Vomnibar.activateTabskeyword=app.slack.com/client/E07C0G7TVJL",
+    "map th Vomnibar.activateTabs keyword=app.slack.com/client/E07C0G7TVJL",
     "map ta Vomnibar.activateTabs keyword=app.slack.com/client/TQG9YHL6B",
     "map ty Vomnibar.activateTabs keyword=youtube.com",
     "map tg Vomnibar.activateTabs keyword=github.com",
