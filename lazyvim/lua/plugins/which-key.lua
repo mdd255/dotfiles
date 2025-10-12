@@ -27,6 +27,7 @@ return {
       { "<Leader>", group = " 󱁐" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>g", group = "Neogit" },
+      { "<Leader>s", group = "Diffview Open" },
       { "<Leader>c", group = "Macro" },
     },
     triggers = {

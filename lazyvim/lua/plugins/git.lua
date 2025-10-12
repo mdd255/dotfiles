@@ -2,6 +2,9 @@ return {
   {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen" },
+    keys = {
+      { "<Leader>s", "<cmd>DiffviewOpen<Cr>", desc = "Diffview Open" },
+    },
   },
   {
     "lewis6991/gitsigns.nvim",
