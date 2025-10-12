@@ -65,3 +65,6 @@ zstyle ':completion:*' matcher-list '' \
 # libpq
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
+
+# bun completions
+[ -s "/home/dh/.bun/_bun" ] && source "/home/dh/.bun/_bun"

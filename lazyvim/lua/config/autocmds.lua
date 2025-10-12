@@ -9,6 +9,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       javascript = true,
       java = true,
       lua = true,
+      http = true,
     }
 
     local linenumber_blacklist = {
@@ -57,13 +58,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
     client.server_capabilities.documentHighlightProvider = false
   end,
 })
-
--- neovide only
-if vim.g.neovide then
-  vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-    callback = function()
-      local project_name = vim.fn.getcwd():gsub("^.*/", "")
-      vim.o.titlestring = "vi:" .. project_name
-    end,
-  })
-end

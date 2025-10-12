@@ -266,7 +266,7 @@ keys = [
         "3",
         lazy.spawn(SOUND_CMD),
         lazy.spawn("sh " + QTILE_DIR + "/.init-scripts/toggle-touchpad 0"),
-        desc="disable touchpad",
+        desc="Disable touchpad",
     ),
     Key(
         [WIN],
@@ -324,12 +324,14 @@ keys = [
     Key(
         [WIN],
         "q",
+        lazy.spawn(SOUND_CMD),
         lazy.spawn("systemctl suspend"),
         desc="Suspend",
     ),
     Key(
         [WIN],
         "Escape",
+        lazy.spawn(SOUND_CMD),
         lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2"),
         desc="Power management",
     ),
