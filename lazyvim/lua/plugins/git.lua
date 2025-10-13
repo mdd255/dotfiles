@@ -51,7 +51,10 @@ return {
     "pwntester/octo.nvim",
     lazy = true,
     keys = {
-      { "<Leader>o", "<cmd>Octo<Cr>", desc = "Octo" },
+      { "<Leader>o", "<cmd>Octo pr list<Cr>", desc = "PR list" },
+      { "<LocalLeader>R", "<cmd>Octo pr reload<Cr>", desc = "Octo reload", ft = "octo" },
+      { "<LocalLeader>dd", "<cmd>Octo pr draft<Cr>", desc = "mark as draft", ft = "octo" },
+      { "<LocalLeader>dr", "<cmd>Octo pr ready<Cr>", desc = "mark as ready", ft = "octo" },
     },
     opts = {
       picker = "snacks",
@@ -60,6 +63,29 @@ return {
         ["git-abd"] = "github.com",
       },
     },
+    config = function(_, opts)
+      require("octo").setup(opts)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "octo" },
+        callback = function(event)
+          local wk = require("which-key")
+
+          wk.add({
+            { "<localleader>a", group = "+Octo assignee", buffer = event.buf },
+            { "<localleader>v", group = "+Octo review", buffer = event.buf },
+            { "<localleader>p", group = "+Octo PR", buffer = event.buf },
+            { "<localleader>l", group = "+Octo label", buffer = event.buf },
+            { "<localleader>i", group = "+Octo misc", buffer = event.buf },
+            { "<localleader>g", group = "+Octo navigate", buffer = event.buf },
+            { "<localleader>c", group = "+Octo comment", buffer = event.buf },
+            { "<localleader>r", group = "+Octo reaction", buffer = event.buf },
+            { "<localleader>d", group = "+Octo PR draft/ready", buffer = event.buf },
+            { "<localleader>pr", group = "+Octo merge rebase", buffer = event.buf },
+            { "<localleader>ps", group = "+Octo merge squash", buffer = event.buf },
+          })
+        end,
+      })
+    end,
   },
   {
     "NeogitOrg/neogit",

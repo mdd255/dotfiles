@@ -46,15 +46,6 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 -- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
-    vim.highlight.on_yank({ higroup = "Visual", timeout = 200 })
-  end,
-})
-
--- disable
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(args)
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    client.server_capabilities.semanticTokensProvider = nil
-    client.server_capabilities.documentHighlightProvider = false
+    vim.highlight.on_yank({ higroup = "Visual", timeout = 150 })
   end,
 })

@@ -3,6 +3,15 @@ return {
     "neovim/nvim-lspconfig",
     keys = false,
     opts = function()
+      -- delegate hightlights to treesitter
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local client = vim.lsp.get_client_by_id(args.data.client_id)
+          client.server_capabilities.semanticTokensProvider = nil
+          client.server_capabilities.documentHighlightProvider = false
+        end,
+      })
+
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
       keys[#keys + 1] = { "K", false }
       keys[#keys + 1] = { "gd", false }
