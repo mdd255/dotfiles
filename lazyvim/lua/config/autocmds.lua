@@ -10,11 +10,10 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
       java = true,
       lua = true,
       http = true,
+      yaml = true,
     }
 
-    local linenumber_blacklist = {
-      ["copilot-chat"] = true,
-    }
+    local linenumber_blacklist = {}
 
     local cursorline_blacklist = {
       gitcommit = true,
