@@ -5,8 +5,8 @@ current=$(ibus engine)
 if [[ "$current" == *"Bamboo"* ]]; then
   ibus engine "xkb:us::eng"
   setxkbmap -variant colemak
-  notify-send -t 1000 "Input: US Colemak"
+  notify-send -t 1000 "Ibus" "US Colemak"
 else
   ibus engine "Bamboo"
-  notify-send -t 1000 "Input: VI Bamboo"
+  notify-send -t 1000 "Ibus" "VI Bamboo"
 fi

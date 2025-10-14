@@ -86,12 +86,6 @@ keys = [
         desc="Toggle through layouts",
     ),
     Key(
-        [ALT, SHIFT],
-        "o",
-        lazy.window.kill(),
-        desc="Kill active window",
-    ),
-    Key(
         [ALT],
         "q",
         lazy.window.kill(),
@@ -102,6 +96,7 @@ keys = [
         "r",
         lazy.spawn(SOUND_CMD),
         lazy.restart(),
+        lazy.spawn("notify-send \"Qtile\" \"Reloaded config\""),
         desc="Restart Qtile",
     ),
     Key(
@@ -116,12 +111,6 @@ keys = [
         "o",
         lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch next"),
         desc="Move focus to next monitor",
-    ),
-    Key(
-        [ALT, SHIFT],
-        "o",
-        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch prev"),
-        desc="Move focus to previous monitor",
     ),
     # Window controls
     Key(
@@ -205,7 +194,7 @@ keys = [
         desc="toggle window between minimum and maximum sizes",
     ),
     Key(
-        [WIN, CONTROL],
+        [WIN],
         "m",
         lazy.window.toggle_fullscreen(),
         desc="toggle fullscreen",
@@ -335,10 +324,29 @@ keys = [
         lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2"),
         desc="Power management",
     ),
-    # Keyboard layout control
+    # Screen navigation
+    Key(
+        [WIN],
+        "r",
+        lazy.to_screen(0),
+        desc="Focus screen 0",
+    ),
+    Key(
+        [WIN],
+        "s",
+        lazy.to_screen(1),
+        desc="Focus screen 1",
+    ),
     Key(
         [WIN],
         "a",
+        lazy.to_screen(2),
+        desc="Focus screen 2",
+    ),
+    # Keyboard layout control
+    Key(
+        [WIN],
+        "v",
         lazy.spawn(SOUND_CMD),
         lazy.spawn(QTILE_DIR + "/.init-scripts/keyboard-layout"),
         desc="Switch keyboard layout",
@@ -346,7 +354,7 @@ keys = [
     # Cursor visibility control
     Key(
         [WIN],
-        "s",
+        "b",
         lazy.spawn(SOUND_CMD),
         lazy.spawn(QTILE_DIR + "/.init-scripts/toggle-xbanish"),
         desc="Switch cursor visibility",
