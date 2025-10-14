@@ -161,6 +161,7 @@ map({
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "sr", source_configs, { desc = "Source config" } },
+  { "sa", "<cmd>e api.http<Cr>", { desc = "Source config" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },

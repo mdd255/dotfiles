@@ -4,7 +4,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     local ft = vim.bo.filetype
 
     local relativenumber_whitelist = {
-      typescipt = true,
+      typescript = true,
       php = true,
       javascript = true,
       java = true,

@@ -27,8 +27,9 @@ return {
       { "<Leader>", group = " 󱁐" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>g", group = "Neogit" },
-      { "<Leader>s", group = "Diffview Open" },
+      { "<Leader>s", group = "Diffview open" },
       { "<Leader>c", group = "Macro" },
+      { "<Leader><Tab>", group = "New tab" },
     },
     triggers = {
       { "t", mode = { "n" } },
