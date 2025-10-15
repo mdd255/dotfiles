@@ -147,7 +147,7 @@ map({
 
   -- Misc
   { "V", "v$", { desc = "Visual to end of line" } },
-  { "l", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
+  { "_", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<Cr>", { desc = "Close current window" } },
   { "<Leader>Q", "<cmd>tabclose<Cr>", { desc = "Close current tab" } },
@@ -161,7 +161,7 @@ map({
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "sr", source_configs, { desc = "Source config" } },
-  { "sa",            "<cmd>e api.http<Cr>",            { desc = "Open api.http" } },
+  { "sa", "<cmd>e api.http<Cr>", { desc = "Open api.http" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
@@ -182,4 +182,13 @@ map({
   { "qo", "a'", { modes = { "v", "o" }, desc = "a'" } },
   { "ql", 'a"', { modes = { "v", "o" }, desc = 'a"' } },
   { "qu", "a`", { modes = { "v", "o" }, desc = "a`" } },
+
+  -- bracket jumpings
+  { "qh", "f<", { modes = { "n", "v", "o" }, desc = "f<" } },
+  { "qn", "f(", { modes = { "n", "v", "o" }, desc = "f(" } },
+  { "qe", "f[", { modes = { "n", "v", "o" }, desc = "f[" } },
+  { "qi", "f{", { modes = { "n", "v", "o" }, desc = "f{" } },
+  { "qo", "f'", { modes = { "n", "v", "o" }, desc = "f'" } },
+  { "ql", 'f"', { modes = { "n", "v", "o" }, desc = 'f"' } },
+  { "qu", "f`", { modes = { "n", "v", "o" }, desc = "f`" } },
 })

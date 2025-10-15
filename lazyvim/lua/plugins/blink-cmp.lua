@@ -42,7 +42,7 @@ return {
         window = { scrollbar = false },
       },
       sources = {
-        default = { "lsp", "path", "snippets", "buffer", "copilot" },
+        default = { "buffer", "copilot", "lsp", "path", "snippets" },
         per_filetype = {
           sql = { "snippets", "dadbod", "buffer" },
           mysql = { "snippets", "dadbod", "buffer" },

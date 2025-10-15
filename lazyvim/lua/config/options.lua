@@ -1,5 +1,5 @@
 vim.g.maplocalleader = "t"
-vim.opt.timeoutlen = 250
+vim.opt.timeoutlen = 350
 vim.opt.winborder = "rounded"
 vim.opt.numberwidth = 4
 vim.opt.swapfile = false

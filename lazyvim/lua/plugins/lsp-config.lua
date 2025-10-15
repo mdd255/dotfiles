@@ -35,71 +35,6 @@ return {
       keys[#keys + 1] = { "]]", false }
       keys[#keys + 1] = { "<A-n>", false }
       keys[#keys + 1] = { "<A-p>", false }
-      return {
-        inlay_hints = {
-          enabled = false,
-        },
-        folds = {
-          enabled = false,
-        },
-        codelens = {
-          enabled = false,
-        },
-        document_highlight = {
-          enabled = false,
-        },
-        format = {
-          formatting_options = nil,
-          timeout_ms = nil,
-        },
-        autoformat = false,
-        diagnostics = {
-          underline = true,
-          update_in_insert = false,
-          virtual_text = {
-            spacing = 4,
-            source = "if_many",
-            prefix = "●",
-          },
-          severity_sort = true,
-        },
-        setup = {},
-        servers = {
-          ts_ls = {
-            settings = {
-              typescript = {
-                suggest = {
-                  includeCompletionsForModuleExports = true,
-                  includeCompletionsForImportStatements = true,
-                },
-                preferences = {
-                  includePackageJsonAutoImports = "off",
-                  disableSuggestions = false,
-                },
-              },
-              javascript = {
-                suggest = {
-                  includeCompletionsForModuleExports = true,
-                  includeCompletionsForImportStatements = true,
-                },
-                preferences = {
-                  includePackageJsonAutoImports = "off",
-                  disableSuggestions = false,
-                },
-              },
-            },
-            init_options = {
-              preferences = {
-                disableSuggestions = false,
-              },
-            },
-            capabilities = {
-              documentFormattingProvider = false,
-              documentRangeFormattingProvider = false,
-            },
-          },
-        },
-      }
     end,
   },
   {
@@ -127,5 +62,13 @@ return {
     lazy = true,
     cmd = "ConformInfo",
     keys = false,
+    opts = {
+      formatters_by_ft = {
+        lua = { "stylua" },
+        python = { "isort", "black" },
+        rust = { "rustfmt", lsp_format = "fallback" },
+        javascript = { "biome", "ts_ls", stop_after_first = true },
+      },
+    },
   },
 }
