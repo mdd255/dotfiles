@@ -77,6 +77,7 @@
     "map ts Vomnibar.activateTabs",
     "map tt visitPreviousTab",
     "map to Vomnibar.activateTabs keyword=chatgpt.com",
+    "map tn Vomnibar.activateTabs keyword=nerdfonts.com/cheat-sheet",
     "map th Vomnibar.activateTabs keyword=app.slack.com/client/E07C0G7TVJL",
     "map ta Vomnibar.activateTabs keyword=app.slack.com/client/TQG9YHL6B",
     "map ty Vomnibar.activateTabs keyword=youtube.com",

@@ -38,20 +38,11 @@ local theme = {
 }
 
 local shorten_filename = function(str)
-  local found_current_idx = str:find("%.", 1)
-
-  if found_current_idx == nil or found_current_idx == 1 then
+  local last_dot = string.match(str, "^(.*)%.")
+  if not last_dot then
     return str
   end
-
-  local last_found_idx = found_current_idx
-
-  while found_current_idx ~= nil do
-    last_found_idx = found_current_idx
-    found_current_idx = str:find("%.", last_found_idx + 1)
-  end
-
-  return str:sub(1, last_found_idx - 1)
+  return last_dot
 end
 
 local file_name = {
@@ -112,7 +103,10 @@ local windows = {
   disabled_buftypes = { "terminal", "nofile", "" },
 }
 
-local project_name = [[vim.fn.getcwd():gsub("^.*/", "")]]
+local project_name = function()
+  local cwd = vim.loop.cwd()
+  return string.gsub(cwd, "^.*/", "")
+end
 
 return {
   "nvim-lualine/lualine.nvim",

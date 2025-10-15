@@ -16,7 +16,7 @@ return {
     },
     icons = {
       mappings = false,
-      separator = "",
+      separator = "",
     },
     spec = {
       { mode = { "n" } },
@@ -25,6 +25,7 @@ return {
       { "g", group = " Goto" },
       { "s", group = " Misc" },
       { "<Leader>", group = " 󱁐" },
+      { "gs", group = "Git stash/status" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>g", group = "Neogit" },
       { "<Leader>s", group = "Diffview open" },

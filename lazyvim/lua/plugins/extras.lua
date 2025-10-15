@@ -34,6 +34,7 @@ return {
         startStopRecording = "Q",
         playMacro = "q",
         editMacro = "_",
+        yankMacro = "_",
         deleteAllMacros = "_",
       },
     },

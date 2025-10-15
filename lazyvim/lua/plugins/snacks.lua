@@ -1,5 +1,8 @@
 return {
-  "snacks.nvim",
+  "folke/snacks.nvim",
+  keys = function()
+    return {}
+  end,
   opts = {
     indent = { enabled = true },
     animate = { enabled = true },
@@ -44,7 +47,7 @@ return {
                       };
                   });
                 ]]
-                for _, line in pairs(vim.api.nvim_buf_get_lines(self.buf, 0, -1, true)) do
+                for _, line in ipairs(vim.api.nvim_buf_get_lines(self.buf, 0, -1, true)) do
                   script = script .. line .. "\n"
                 end
 
@@ -56,9 +59,8 @@ return {
                   :sync()
 
                 if result then
-                  for _, line in pairs(result) do
+                  for _, line in ipairs(result) do
                     local line_number, output = line:match("%[eval%]:(%d+): (.*)")
-                    -- Subtract the lines of the injected script.
                     vim.api.nvim_buf_set_extmark(0, namespace, line_number - 21, 0, {
                       virt_text = { { output, "Comment" } },
                     })
@@ -98,10 +100,10 @@ return {
         header = [[
                 _     _ ___  _____ _____
                | |   | |__ \| ____| ____|
-  _ __ ___   __| | __| |  ) | |__ | |__  
- | '_ ` _ \_/ _` |/ _` | / /|___ \|___ \ 
+  _ __ ___   __| | __| |  ) | |__ | |__
+ | '_ ` _ \_/ _` |/ _` | / /|___ \|___ \
  | | | | | | (_| | (_| |/ /_ ___)  ___) |
- |_| |_| |_|\__,_|\__,_|____|____/|____/ 
+ |_| |_| |_|\__,_|\__,_|____|____/|____/
         ]],
       },
       sections = {
@@ -115,95 +117,49 @@ return {
       enabled = true,
     },
   },
-  keys = {
-    -- disable default keymaps
-    { "<Leader>E", false },
-    { "<Leader>fe", false },
-    { "<Leader>fE", false },
-    { "<Leader>,", false },
-    { "<Leader>/", false },
-    { "<Leader>:", false },
-    { "<Leader>n", false },
-    { "<Leader>fb", false },
-    { "<Leader>fB", false },
-    { "<Leader>fc", false },
-    { "<Leader>ff", false },
-    { "<Leader>fF", false },
-    { "<Leader>fg", false },
-    { "<Leader>fr", false },
-    { "<Leader>fR", false },
-    { "<Leader>fp", false },
-    { "<Leader>gd", false },
-    { "<Leader>gs", false },
-    { "<Leader>gS", false },
-    { "<Leader>sb", false },
-    { "<Leader>sB", false },
-    { "<Leader>sg", false },
-    { "<Leader>sG", false },
-    { "<Leader>sp", false },
-    { "<Leader>sw", false },
-    { "<Leader>sW", false },
-    { '<Leader>s"', false },
-    { "<Leader>s/", false },
-    { "<Leader>sa", false },
-    { "<Leader>sc", false },
-    { "<Leader>sC", false },
-    { "<Leader>sd", false },
-    { "<Leader>sD", false },
-    { "<Leader>sh", false },
-    { "<Leader>sH", false },
-    { "<Leader>si", false },
-    { "<Leader>sj", false },
-    { "<Leader>sk", false },
-    { "<Leader>sl", false },
-    { "<Leader>sR", false },
-    { "<Leader>sM", false },
-    { "<Leader>sm", false },
-    { "<Leader>sq", false },
-    { "<Leader>su", false },
-    { "<Leader>dps", false },
-    { "<Leader>S", false },
-    { "<Leader>uC", false },
-    { "<Leader>un", false },
+  config = function(_, opts)
+    require("snacks").setup(opts)
+
+    local map = vim.keymap.set
 
     -- finder keys
-    { "ff", "<cmd>lua Snacks.picker.files()<Cr>", desc = "Find files" },
-    { "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", desc = "Find buffers" },
-    { "fc", "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>", desc = "Find config files" },
-    { "fs", "<cmd>lua Snacks.picker.grep()<Cr>", desc = "Grep" },
-    { "fr", "<cmd>lua Snacks.picker.recent()<Cr>", desc = "Find recents" },
-    { "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" } },
-    { "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", desc = "Find keymaps" },
-    { "fm", "<cmd>lua Snacks.picker.marks()<Cr>", desc = "Find marks" },
-    { "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", desc = "Find highlights" },
+    map("n", "ff", "<cmd>lua Snacks.picker.files()<Cr>", { desc = "Find files" })
+    map("n", "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", { desc = "Find buffers" })
+    map("n", "fc", "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>", { desc = "Find config files" })
+    map("n", "fs", "<cmd>lua Snacks.picker.grep()<Cr>", { desc = "Grep" })
+    map("n", "fr", "<cmd>lua Snacks.picker.recent()<Cr>", { desc = "Find recents" })
+    map("n", "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" })
+    map("n", "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", { desc = "Find keymaps" })
+    map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
+    map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
 
     -- git keymaps
-    { "gbr", "<cmd>lua Snacks.picker.git_branches()<Cr>", desc = "Git branches" },
-    { "glo", "<cmd>lua Snacks.picker.git_log()<Cr>", desc = "Git log" },
-    { "glf", "<cmd>lua Snacks.picker.git_log_file()<Cr>", desc = "Git log files" },
-    { "gst", "<cmd>lua Snacks.picker.git_status()<Cr>", desc = "Git status" },
-    { "gdi", "<cmd>lua Snacks.picker.git_diff()<Cr>", desc = "Git diff" },
-    { "gss", "<cmd>lua Snacks.picker.git_stash()<Cr>", desc = "Git stash" },
-    { "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
+    map("n", "gbr", "<cmd>lua Snacks.picker.git_branches()<Cr>", { desc = "Git branches" })
+    map("n", "glo", "<cmd>lua Snacks.picker.git_log()<Cr>", { desc = "Git log" })
+    map("n", "glf", "<cmd>lua Snacks.picker.git_log_file()<Cr>", { desc = "Git log files" })
+    map("n", "gst", "<cmd>lua Snacks.picker.git_status()<Cr>", { desc = "Git status" })
+    map("n", "gdi", "<cmd>lua Snacks.picker.git_diff()<Cr>", { desc = "Git diff" })
+    map("n", "gss", "<cmd>lua Snacks.picker.git_stash()<Cr>", { desc = "Git stash" })
+    map("n", "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", { desc = "Git open file in browser" })
 
     -- misc keymaps
-    { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", desc = "Toggle terminal" },
-    { "-", "<cmd>lua Snacks.picker.explorer()<Cr>", desc = "Toggle explorer" },
-    { "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", desc = "Find commands" },
-    { "/", "<cmd>lua Snacks.picker.lines()<Cr>", desc = "Grep current buffer" },
-    { "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", desc = "Resume last picker" },
+    map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
+    map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
+    map("n", "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", { desc = "Find commands" })
+    map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
+    map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
 
     -- LSP keymaps
-    { "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", desc = "Go to next diagnostics" },
-    { "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", desc = "Go to prev diagnostics" },
-    { "t<Cr>", "<cmd>lua vim.lsp.buf.code_action()<Cr>", desc = "Code action" },
-    { "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", desc = "LSP hover" },
-    { "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", desc = "LSP rename" },
-    { "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", desc = "Go to definitions" },
-    { "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", desc = "Go to references" },
-    { "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", desc = "LSP symbols" },
-    { "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", desc = "Workspace LSP symbols" },
-    { "ta", "<cmd>lua Snacks.picker.diagnostics_buffer()<Cr>", desc = "LSP disagnostics" },
-    { "tA", "<cmd>lua Snacks.picker.diagnostics()<Cr>", desc = "Workspace LSP disagnostics" },
-  },
+    map("n", "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", { desc = "Go to next diagnostics" })
+    map("n", "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", { desc = "Go to prev diagnostics" })
+    map("n", "t<Cr>", "<cmd>lua vim.lsp.buf.code_action()<Cr>", { desc = "Code action" })
+    map("n", "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", { desc = "LSP hover" })
+    map("n", "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", { desc = "LSP rename" })
+    map("n", "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", { desc = "Go to definitions" })
+    map("n", "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", { desc = "Go to references" })
+    map("n", "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", { desc = "LSP symbols" })
+    map("n", "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", { desc = "Workspace LSP symbols" })
+    map("n", "ta", "<cmd>lua Snacks.picker.diagnostics_buffer()<Cr>", { desc = "LSP diagnostics" })
+    map("n", "tA", "<cmd>lua Snacks.picker.diagnostics()<Cr>", { desc = "Workspace LSP diagnostics" })
+  end,
 }

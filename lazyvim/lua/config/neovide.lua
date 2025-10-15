@@ -16,7 +16,8 @@ vim.keymap.set("t", "<A-v>", '<C-\\><C-N>"+Pa')
 -- auto cmds
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   callback = function()
-    local project_name = vim.fn.getcwd():gsub("^.*/", "")
+    local cwd = vim.loop.cwd()
+    local project_name = string.gsub(cwd, "^.*/", "")
     vim.o.titlestring = "vi:" .. project_name
   end,
 })

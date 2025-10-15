@@ -18,7 +18,7 @@ return {
     }
   end,
   keys = {
-    { "<Leader>a", "", desc = "+Copilot", mode = { "n" } },
+    { "<Leader>a", "", desc = "Copilot", mode = { "n" } },
     {
       "<Leader>aa",
       function()
