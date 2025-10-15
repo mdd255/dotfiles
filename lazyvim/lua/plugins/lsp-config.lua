@@ -35,6 +35,61 @@ return {
       keys[#keys + 1] = { "]]", false }
       keys[#keys + 1] = { "<A-n>", false }
       keys[#keys + 1] = { "<A-p>", false }
+      return {
+        servers = {
+          ts_ls = {
+            settings = {
+              typescript = {
+                inlayHints = {
+                  includeInlayParameterNameHints = "none",
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                  includeInlayFunctionParameterTypeHints = false,
+                  includeInlayVariableTypeHints = false,
+                  includeInlayPropertyDeclarationTypeHints = false,
+                  includeInlayFunctionLikeReturnTypeHints = false,
+                  includeInlayEnumMemberValueHints = false,
+                },
+                suggest = {
+                  includeCompletionsForModuleExports = true,
+                  includeCompletionsForImportStatements = true,
+                },
+                preferences = {
+                  includePackageJsonAutoImports = "off",
+                  disableSuggestions = false,
+                },
+              },
+              javascript = {
+                inlayHints = {
+                  includeInlayParameterNameHints = "none",
+                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                  includeInlayFunctionParameterTypeHints = false,
+                  includeInlayVariableTypeHints = false,
+                  includeInlayPropertyDeclarationTypeHints = false,
+                  includeInlayFunctionLikeReturnTypeHints = false,
+                  includeInlayEnumMemberValueHints = false,
+                },
+                suggest = {
+                  includeCompletionsForModuleExports = true,
+                  includeCompletionsForImportStatements = true,
+                },
+                preferences = {
+                  includePackageJsonAutoImports = "off",
+                  disableSuggestions = false,
+                },
+              },
+            },
+            init_options = {
+              preferences = {
+                disableSuggestions = false,
+              },
+            },
+            capabilities = {
+              documentFormattingProvider = false,
+              documentRangeFormattingProvider = false,
+            },
+          },
+        },
+      }
     end,
   },
   {
@@ -51,6 +106,7 @@ return {
         "gopls",
         "json-lsp",
         "dockerfile-language-server",
+        "typescript-language-server",
       },
       ui = { scrollbar = false },
     },

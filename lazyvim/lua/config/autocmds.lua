@@ -1,44 +1,41 @@
--- Enable cursorline only if filetype is not in the blacklist
+-- Autocommands are automatically loaded on the VeryLazy event
+-- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
+-- Add any additional autocmds here
+
+local function setup_cursor_options()
+  local ft = vim.bo.filetype
+
+  local relativenumber_whitelist = {
+    typescript = true,
+    php = true,
+    javascript = true,
+    java = true,
+    lua = true,
+    http = true,
+    yaml = true,
+  }
+
+  local cursorline_blacklist = {
+    gitcommit = true,
+    snacks_dashboard = true,
+  }
+
+  vim.opt_local.relativenumber = relativenumber_whitelist[ft] or false
+  vim.opt_local.cursorline = not cursorline_blacklist[ft]
+end
+
+-- Enable cursorline and relativenumber for specific filetypes
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   callback = function()
-    local ft = vim.bo.filetype
-
-    local relativenumber_whitelist = {
-      typescript = true,
-      php = true,
-      javascript = true,
-      java = true,
-      lua = true,
-      http = true,
-      yaml = true,
-    }
-
-    local linenumber_blacklist = {}
-
-    local cursorline_blacklist = {
-      gitcommit = true,
-      snacks_dashboard = true,
-    }
-
-    if linenumber_blacklist[ft] then
-      vim.opt_local.number = false
-    end
-
-    if relativenumber_whitelist[ft] then
-      vim.opt_local.relativenumber = true
-    end
-
-    if not cursorline_blacklist[ft] then
-      vim.opt_local.cursorline = true
-    end
+    setup_cursor_options()
+    vim.opt_local.cursorline = true
   end,
 })
 
--- Always disable on leave
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
   callback = function()
-    vim.opt_local.cursorline = false
     vim.opt_local.relativenumber = false
+    vim.opt_local.cursorline = false
   end,
 })
 
