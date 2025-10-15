@@ -99,10 +99,10 @@ return {
         },
         header = [[
                 _     _ ___  _____ _____
-               | |   | |__ \| ____| ____|
+                 | |   | |__ \| ____| ____|
   _ __ ___   __| | __| |  ) | |__ | |__
  | '_ ` _ \_/ _` |/ _` | / /|___ \|___ \
- | | | | | | (_| | (_| |/ /_ ___)  ___) |
+   | | | | | | (_| | (_| |/ /_ ___)  ___) |
  |_| |_| |_|\__,_|\__,_|____|____/|____/
         ]],
       },
@@ -125,7 +125,12 @@ return {
     -- finder keys
     map("n", "ff", "<cmd>lua Snacks.picker.files()<Cr>", { desc = "Find files" })
     map("n", "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", { desc = "Find buffers" })
-    map("n", "fc", "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>", { desc = "Find config files" })
+    map(
+      "n",
+      "fc",
+      "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>",
+      { desc = "Find config files" }
+    )
     map("n", "fs", "<cmd>lua Snacks.picker.grep()<Cr>", { desc = "Grep" })
     map("n", "fr", "<cmd>lua Snacks.picker.recent()<Cr>", { desc = "Find recents" })
     map("n", "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" })
