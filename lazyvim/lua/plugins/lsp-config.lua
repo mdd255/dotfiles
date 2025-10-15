@@ -36,19 +36,38 @@ return {
       keys[#keys + 1] = { "<A-n>", false }
       keys[#keys + 1] = { "<A-p>", false }
       return {
+        inlay_hints = {
+          enabled = false,
+        },
+        folds = {
+          enabled = false,
+        },
+        codelens = {
+          enabled = false,
+        },
+        document_highlight = {
+          enabled = false,
+        },
+        format = {
+          formatting_options = nil,
+          timeout_ms = nil,
+        },
+        autoformat = false,
+        diagnostics = {
+          underline = true,
+          update_in_insert = false,
+          virtual_text = {
+            spacing = 4,
+            source = "if_many",
+            prefix = "●",
+          },
+          severity_sort = true,
+        },
+        setup = {},
         servers = {
           ts_ls = {
             settings = {
               typescript = {
-                inlayHints = {
-                  includeInlayParameterNameHints = "none",
-                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                  includeInlayFunctionParameterTypeHints = false,
-                  includeInlayVariableTypeHints = false,
-                  includeInlayPropertyDeclarationTypeHints = false,
-                  includeInlayFunctionLikeReturnTypeHints = false,
-                  includeInlayEnumMemberValueHints = false,
-                },
                 suggest = {
                   includeCompletionsForModuleExports = true,
                   includeCompletionsForImportStatements = true,
@@ -59,15 +78,6 @@ return {
                 },
               },
               javascript = {
-                inlayHints = {
-                  includeInlayParameterNameHints = "none",
-                  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                  includeInlayFunctionParameterTypeHints = false,
-                  includeInlayVariableTypeHints = false,
-                  includeInlayPropertyDeclarationTypeHints = false,
-                  includeInlayFunctionLikeReturnTypeHints = false,
-                  includeInlayEnumMemberValueHints = false,
-                },
                 suggest = {
                   includeCompletionsForModuleExports = true,
                   includeCompletionsForImportStatements = true,

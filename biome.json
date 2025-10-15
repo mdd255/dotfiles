@@ -22,12 +22,12 @@
     }
   },
   "formatter": {
-    "enabled": false
+    "enabled": true
   },
   "javascript": {
     "formatter": {
-      "enabled": false,
-      "semicolons": "asNeeded",
+      "enabled": true,
+      "semicolons": "always",
       "indentStyle": "space",
       "quoteStyle": "single",
       "trailingCommas": "all",
