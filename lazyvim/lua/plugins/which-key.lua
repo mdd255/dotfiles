@@ -16,7 +16,7 @@ return {
     },
     icons = {
       mappings = false,
-      separator = "",
+      separator = "__",
     },
     spec = {
       { mode = { "n" } },
@@ -26,7 +26,7 @@ return {
       { "s", group = " Search/Replace" },
       { "q", group = " Navigation" },
       { "<Leader>", group = " Leader" },
-      { "<Leader>a", group = " Code companion" },
+      { "<Leader>a", group = "Code companion" },
       { "gs", group = "Git stash/status" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>g", group = "Neogit" },

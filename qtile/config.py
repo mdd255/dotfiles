@@ -3,7 +3,7 @@
 import subprocess
 from typing import Any, List
 
-from libqtile import bar, hook, layout
+from libqtile import hook, layout
 from libqtile.config import Match
 
 from keymaps import keys, groups
@@ -18,10 +18,10 @@ from widgets import (
 
 
 layout_theme = {
-    "border_width": 0,
+    "border_width": 1,
     "margin": 0,
-    "border_focus": "white",
-    "border_normal": "1D2330",
+    "border_focus": "#61afef",
+    "border_normal": "#505050",
     "max_ratio": 0.75,
     "min_ratio": 0.25,
 }

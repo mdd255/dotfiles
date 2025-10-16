@@ -2,50 +2,23 @@ return {
   "olimorris/codecompanion.nvim",
   opts = {
     memory = {
-      opts = {
-        chat = { enabled = true },
-      },
+      opts = { chat = { enabled = true }, inline = { enabled = false } },
     },
     strategies = {
       chat = {
-        opts = {
-          completion_provider = "blink",
-        },
-        adapter = {
-          name = "copilot",
-          model = "claude-sonnet-4",
-        },
+        opts = { completion_provider = "blink" },
+        adapter = { name = "copilot", model = "claude-sonnet-4" },
         keymaps = {
-          send = {
-            modes = { n = "<Cr>", i = "<C-Cr>" },
-          },
-          close = {
-            modes = { n = { "<Esc>" }, i = "<C-q>" },
-          },
-          stop = {
-            modes = { n = { "tq" } },
-          },
-          clear = {
-            modes = { n = { "tl" } },
-          },
-          super_diff = {
-            modes = { n = { "t<Cr>" } },
-          },
-          goto_file_under_cursor = {
-            modes = { n = { "tt" } },
-          },
-          copilot_stats = {
-            modes = { n = { "th" } },
-          },
-          memory = {
-            modes = { n = { "tx" } },
-          },
-          next_chat = {
-            modes = { n = { "tn" } },
-          },
-          previous_chat = {
-            modes = { n = { "te" } },
-          },
+          send = { modes = { n = "<Cr>", i = "<C-Cr>" } },
+          close = { modes = { n = { "<Esc>" }, i = "<C-q>" } },
+          stop = { modes = { n = { "tq" } } },
+          clear = { modes = { n = { "tl" } } },
+          super_diff = { modes = { n = { "t<Cr>" } } },
+          goto_file_under_cursor = { modes = { n = { "tt" } } },
+          copilot_stats = { modes = { n = { "th" } } },
+          memory = { modes = { n = { "tx" } } },
+          next_chat = { modes = { n = { "tn" } } },
+          previous_chat = { modes = { n = { "te" } } },
         },
       },
     },

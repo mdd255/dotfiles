@@ -24,13 +24,13 @@ group_keys = {
 }
 
 group_names = [
-    ("", {"layout": "max"}),
-    ("", {"layout": "max"}),
-    ("󰌀", {"layout": "max"}),
-    ("", {"layout": "max"}),
-    ("", {"layout": "max"}),
-    ("", {"layout": "max"}),
-    ("", {"layout": "max"}),
+    ("󰰒", {"layout": "max"}),
+    ("󰯷", {"layout": "max"}),
+    ("󰰃", {"layout": "max"}),
+    ("󰰕", {"layout": "max"}),
+    ("󰰌", {"layout": "max"}),
+    ("󰰧", {"layout": "max"}),
+    ("󰰳", {"layout": "max"}),
     ("", {"layout": "max"}),
 ]
 
