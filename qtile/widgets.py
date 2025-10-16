@@ -9,7 +9,7 @@ ICON_SIZE = 14
 LARGE_ICON_SIZE = 22
 BAR_HEIGHT = 20
 
-colors = ["#0a0a0a", "#61afef", "#e5c07b", "#abb2bf", "#ef596f"]
+colors = ["#000000", "#61afef", "#e5c07b", "#abb2bf", "#ef596f"]
 
 # DEFAULT WIDGET SETTINGS #####
 widget_defaults = {
