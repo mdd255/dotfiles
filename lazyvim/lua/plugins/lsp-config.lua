@@ -67,7 +67,7 @@ return {
         lua = { "stylua" },
         python = { "isort", "black" },
         rust = { "rustfmt", lsp_format = "fallback" },
-        javascript = { "biome", "ts_ls", stop_after_first = true },
+        javascript = { "biome", stop_after_first = true },
       },
     },
   },
