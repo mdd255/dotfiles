@@ -324,25 +324,6 @@ keys = [
         lazy.spawn("/usr/bin/zsh " + QTILE_DIR + "/.init-scripts/power-v2"),
         desc="Power management",
     ),
-    # Screen navigation
-    Key(
-        [WIN],
-        "r",
-        lazy.to_screen(0),
-        desc="Focus screen 0",
-    ),
-    Key(
-        [WIN],
-        "s",
-        lazy.to_screen(1),
-        desc="Focus screen 1",
-    ),
-    Key(
-        [WIN],
-        "a",
-        lazy.to_screen(2),
-        desc="Focus screen 2",
-    ),
     # Keyboard layout control
     Key(
         [WIN],
@@ -369,19 +350,28 @@ keys = [
     ),
 ]
 
+def focus_group(qtile, group_name):
+    """Focus on the screen that contains the specified group."""
+    group = qtile.groups_map[group_name]
+    if group.screen:
+        # Group is visible on a screen, focus that screen
+        qtile.focus_screen(group.screen.index)
+    else:
+        # Group is not visible, bring it to current screen
+        group.cmd_toscreen()
+
 for i, (group_name, kwargs) in enumerate(group_names, 1):
-    keys.append(
+    keys.extend([
+        # Switch to group - focus the screen containing the group
         Key(
             [WIN],
             group_keys[str(i)],
-            lazy.group[group_name].toscreen(),
-        )
-    )
-
-    keys.append(
+            lazy.function(lambda qtile, group=group_name: focus_group(qtile, group)),
+        ),
+        # Move window to group
         Key(
             [WIN, CONTROL],
             group_keys[str(i)],
-            lazy.window.togroup(group_name),
+            lazy.window.togroup(group_name, switch_group=False),
         )
-    )
+    ])
