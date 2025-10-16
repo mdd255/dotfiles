@@ -3,12 +3,17 @@ return {
     "neovim/nvim-lspconfig",
     keys = false,
     opts = function()
-      -- delegate hightlights to treesitter
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
           local client = vim.lsp.get_client_by_id(args.data.client_id)
           client.server_capabilities.semanticTokensProvider = nil
           client.server_capabilities.documentHighlightProvider = false
+
+          -- Disable auto-formatting for TypeScript language server
+          if client.name == "ts_ls" then
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+          end
         end,
       })
 
