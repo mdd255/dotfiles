@@ -1,16 +1,48 @@
 return {
   "olimorris/codecompanion.nvim",
+  dependencies = {
+    "franco-ruggeri/codecompanion-spinner.nvim",
+  },
   opts = {
+    extensions = {
+      spinner = {},
+    },
     memory = {
       opts = { chat = { enabled = true }, inline = { enabled = false } },
     },
+    display = {
+      chat = {
+        intro_message = "",
+        show_chat_settings = true,
+        show_tool_processing = true,
+        start_in_insert_mode = true,
+      },
+    },
     strategies = {
+      inline = {
+        keymaps = {
+          accept_change = {
+            modes = { n = "<C-Cr>" },
+          },
+          reject_change = {
+            modes = { n = "<C-i>" },
+          },
+          always_accept = {
+            modes = { n = "<C-o>" },
+          },
+        },
+      },
       chat = {
         opts = { completion_provider = "blink" },
         adapter = { name = "copilot", model = "claude-sonnet-4" },
+        tools = {
+          opts = {
+            default_tools = { "files", "search_web", "grep_search", "file_search" },
+          },
+        },
         keymaps = {
           send = { modes = { n = "<Cr>", i = "<C-Cr>" } },
-          close = { modes = { n = { "<Esc>" }, i = "<C-q>" } },
+          close = { modes = { n = { "<tQ>" }, i = "<C-q>" } },
           stop = { modes = { n = { "tq" } } },
           clear = { modes = { n = { "tl" } } },
           super_diff = { modes = { n = { "t<Cr>" } } },

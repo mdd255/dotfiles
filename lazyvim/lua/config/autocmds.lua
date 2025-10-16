@@ -13,6 +13,7 @@ local function setup_cursor_options()
     lua = true,
     http = true,
     yaml = true,
+    python = true,
   }
 
   local cursorline_blacklist = {
