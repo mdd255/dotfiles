@@ -1,7 +1,6 @@
 from libqtile import widget, bar
 from os import popen
 from libqtile.config import Screen
-import subprocess
 
 FONT = "FiraCode Nerd Font Mono"
 TEXT_FONT_SIZE = 13
@@ -41,16 +40,6 @@ def shorten_window_name(win_name_str):
         win_names.append(win_name)
     return "".join(win_names)
 
-
-def ibus_source():
-    try:
-        engine = subprocess.check_output(["ibus", "engine"], text=True).strip()
-        if "Bamboo" in engine:
-            return "VI"
-        else:
-            return "EN"
-    except subprocess.CalledProcessError:
-        return "Unknown"
 
 def init_widgets_list():
     """Status bar config."""
@@ -156,13 +145,7 @@ def init_widgets_list():
             foreground=colors[1],
             background=colors[0],
             padding=5,
-        ),
-        widget.GenPollText(
-            update_interval=1,
-            func=ibus_source,
-            padding=5,
         )
-
     ]
 
     # remove battery widget if there is no battery
