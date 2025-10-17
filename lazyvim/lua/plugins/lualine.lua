@@ -37,7 +37,7 @@ local theme = {
   },
 }
 
-local shorten_filename = function(str)
+local shorten_str = function(str)
   local last_dot = string.match(str, "^(.*)%.")
   if not last_dot then
     return str
@@ -55,16 +55,13 @@ local file_name = {
 local tabs = {
   "tabs",
   mode = 1,
-  fmt = shorten_filename,
+  fmt = shorten_str,
 }
 
 local mode = {
   "mode",
   icons_enabled = true,
-  icon = "",
-  fmt = function(str)
-    return str:sub(1, 3)
-  end,
+  icon = "󱀤",
 }
 
 local diff = {
@@ -75,7 +72,7 @@ local diff = {
 
 local branch = {
   "branch",
-  icon = "",
+  icon = "",
   fmt = function(str)
     if str:len() > 80 then
       return str:sub(1, 77) .. "..."
@@ -90,28 +87,29 @@ local diagnostics = {
   colored = false,
 }
 
-local searchcount = {
-  "searchcount",
-}
-
 local windows = {
   "windows",
   show_filename_only = true,
   show_modified_status = true,
   mode = 0,
-  fmt = shorten_filename,
+  fmt = shorten_str,
   disabled_buftypes = { "terminal", "nofile", "" },
+}
+
+local lsp_status = {
+  "lsp_status",
+  icon = "󰙴 ",
 }
 
 local project_name = function()
   local cwd = vim.loop.cwd()
-  return string.gsub(cwd, "^.*/", "")
+  return " " .. string.gsub(cwd, "^.*/", "")
 end
 
 return {
   "nvim-lualine/lualine.nvim",
   config = function()
-    local _recorder = require("recorder")
+    local recorder = require("recorder")
 
     require("lualine").setup({
       disabled_filetypes = {
@@ -121,12 +119,12 @@ return {
         lualine_a = {},
         lualine_b = { mode },
         lualine_c = { file_name, diagnostics },
-        lualine_x = { searchcount, _recorder.recordingStatus, _recorder.displaySlots },
+        lualine_x = { "searchcount", recorder.recordingStatus, recorder.displaySlots },
         lualine_y = { diff, "location", "progress", project_name, branch },
         lualine_z = {},
       },
       tabline = {
-        lualine_a = { windows },
+        lualine_a = { windows, lsp_status },
         lualine_b = {},
         lualine_c = {},
         lualine_x = {},

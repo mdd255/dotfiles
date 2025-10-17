@@ -21,7 +21,14 @@ local function setup_cursor_options()
     snacks_dashboard = true,
   }
 
-  vim.opt_local.relativenumber = relativenumber_whitelist[ft] or false
+  local number_blacklist = {
+    codecompanion = true,
+    gitcommit = true,
+    snacks_dashboard = true,
+  }
+
+  vim.opt_local.relativenumber = relativenumber_whitelist[ft] and not number_blacklist[ft] or false
+  vim.opt_local.number = not number_blacklist[ft]
   vim.opt_local.cursorline = not cursorline_blacklist[ft]
 end
 
