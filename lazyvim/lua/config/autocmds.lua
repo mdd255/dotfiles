@@ -25,6 +25,8 @@ local function setup_cursor_options()
     codecompanion = true,
     gitcommit = true,
     snacks_dashboard = true,
+    snacks_terminal = true,
+    ["grug-far"] = true,
   }
 
   vim.opt_local.relativenumber = relativenumber_whitelist[ft] and not number_blacklist[ft] or false
