@@ -26,6 +26,7 @@ local function setup_cursor_options()
     gitcommit = true,
     snacks_dashboard = true,
     snacks_terminal = true,
+    snacks_picker_list = true,
     ["grug-far"] = true,
   }
 

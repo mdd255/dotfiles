@@ -162,6 +162,7 @@ map({
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "sr", source_configs, { desc = "Source config" } },
   { "sa", "<cmd>e api.http<Cr>", { desc = "Open api.http" } },
+  { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
@@ -184,11 +185,11 @@ map({
   { "qu", "a`", { modes = { "v", "o" }, desc = "a`" } },
 
   -- bracket jumpings
-  { "qh", "f<", { modes = { "n", "v", "o" }, desc = "f<" } },
-  { "qn", "f(", { modes = { "n", "v", "o" }, desc = "f(" } },
-  { "qe", "f[", { modes = { "n", "v", "o" }, desc = "f[" } },
-  { "qi", "f{", { modes = { "n", "v", "o" }, desc = "f{" } },
-  { "qo", "f'", { modes = { "n", "v", "o" }, desc = "f'" } },
-  { "ql", 'f"', { modes = { "n", "v", "o" }, desc = 'f"' } },
-  { "qu", "f`", { modes = { "n", "v", "o" }, desc = "f`" } },
+  { "qh", "f<", { modes = { "n", "v" }, desc = "f<" } },
+  { "qn", "f(", { modes = { "n", "v" }, desc = "f(" } },
+  { "qe", "f[", { modes = { "n", "v" }, desc = "f[" } },
+  { "qi", "f{", { modes = { "n", "v" }, desc = "f{" } },
+  { "qo", "f'", { modes = { "n", "v" }, desc = "f'" } },
+  { "ql", 'f"', { modes = { "n", "v" }, desc = 'f"' } },
+  { "qu", "f`", { modes = { "n", "v" }, desc = "f`" } },
 })

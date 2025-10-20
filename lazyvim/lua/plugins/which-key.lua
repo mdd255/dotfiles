@@ -16,7 +16,7 @@ return {
     },
     icons = {
       mappings = false,
-      separator = "__",
+      separator = "->",
     },
     spec = {
       { mode = { "n" } },
