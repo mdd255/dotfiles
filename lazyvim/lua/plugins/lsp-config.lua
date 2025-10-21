@@ -5,12 +5,26 @@ return {
     opts = function()
       vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
+          local function contains(list, item)
+            for _, v in ipairs(list) do
+              if v == item then
+                return true
+              end
+            end
+            return false
+          end
+
+          local disabled_client_format = {
+            "ts_ls",
+            "vtsls",
+          }
+
           local client = vim.lsp.get_client_by_id(args.data.client_id)
           client.server_capabilities.semanticTokensProvider = nil
           client.server_capabilities.documentHighlightProvider = false
 
           -- Disable auto-formatting for TypeScript language server
-          if client.name == "ts_ls" then
+          if contains(disabled_client_format, client.name) then
             client.server_capabilities.documentFormattingProvider = false
             client.server_capabilities.documentRangeFormattingProvider = false
           end
@@ -56,7 +70,7 @@ return {
         "gopls",
         "json-lsp",
         "dockerfile-language-server",
-        "typescript-language-server",
+        "vtsls",
       },
       ui = { scrollbar = false },
     },

@@ -6,33 +6,42 @@ local function setup_cursor_options()
   local ft = vim.bo.filetype
 
   local relativenumber_whitelist = {
-    typescript = true,
-    php = true,
-    javascript = true,
-    java = true,
-    lua = true,
-    http = true,
-    yaml = true,
-    python = true,
+    "typescript",
+    "php",
+    "javascript",
+    "java",
+    "lua",
+    "http",
+    "yaml",
+    "python",
   }
 
   local cursorline_blacklist = {
-    gitcommit = true,
-    snacks_dashboard = true,
+    "gitcommit",
+    "snacks_dashboard",
   }
 
   local number_blacklist = {
-    codecompanion = true,
-    gitcommit = true,
-    snacks_dashboard = true,
-    snacks_terminal = true,
-    snacks_picker_list = true,
-    ["grug-far"] = true,
+    "codecompanion",
+    "gitcommit",
+    "snacks_dashboard",
+    "snacks_terminal",
+    "snacks_picker_list",
+    "grug-far",
   }
 
-  vim.opt_local.relativenumber = relativenumber_whitelist[ft] and not number_blacklist[ft] or false
-  vim.opt_local.number = not number_blacklist[ft]
-  vim.opt_local.cursorline = not cursorline_blacklist[ft]
+  local function contains(list, item)
+    for _, v in ipairs(list) do
+      if v == item then
+        return true
+      end
+    end
+    return false
+  end
+
+  vim.opt_local.relativenumber = contains(relativenumber_whitelist, ft) and not contains(number_blacklist, ft) or false
+  vim.opt_local.number = not contains(number_blacklist, ft)
+  vim.opt_local.cursorline = not contains(cursorline_blacklist, ft)
 end
 
 -- Enable cursorline and relativenumber for specific filetypes
