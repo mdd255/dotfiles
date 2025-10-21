@@ -90,6 +90,7 @@ unmap({
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")
+vim.cmd("nnoremap <Cr> :")
 
 local function comment()
   local count = vim.v.count1

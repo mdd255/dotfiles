@@ -150,7 +150,6 @@ return {
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
-    map("n", "<Cr>", "<cmd>lua Snacks.picker.commands()<Cr>", { desc = "Find commands" })
     map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
 
