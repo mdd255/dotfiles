@@ -28,6 +28,7 @@ local function setup_cursor_options()
     "snacks_terminal",
     "snacks_picker_list",
     "grug-far",
+    "lazy",
   }
 
   local function contains(list, item)

@@ -70,7 +70,7 @@ return {
         "gopls",
         "json-lsp",
         "dockerfile-language-server",
-        "vtsls",
+        "typescript-language-server",
       },
       ui = { scrollbar = false },
     },
