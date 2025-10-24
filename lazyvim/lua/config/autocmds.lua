@@ -30,6 +30,7 @@ local function setup_cursor_options()
     "grug-far",
     "lazy",
     "text.kulala_ui",
+    "NeogitStatus",
   }
 
   local function contains(list, item)
@@ -50,7 +51,6 @@ end
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   callback = function()
     setup_cursor_options()
-    vim.opt_local.cursorline = true
   end,
 })
 
