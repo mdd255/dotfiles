@@ -29,6 +29,7 @@ local function setup_cursor_options()
     "snacks_picker_list",
     "grug-far",
     "lazy",
+    "text.kulala_ui",
   }
 
   local function contains(list, item)
