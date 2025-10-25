@@ -94,7 +94,7 @@ return {
       "folke/snacks.nvim",
     },
     keys = {
-      { "<Leader>g", "<cmd>Neogit<Cr>", desc = "Neogit" },
+      { "ga", "<cmd>Neogit<Cr>", desc = "Neogit" },
     },
     opts = {
       user_default_keymaps = false,

@@ -29,7 +29,6 @@ return {
       { "<Leader>a", group = "Code companion" },
       { "gs", group = "Git stash/status" },
       { "<Leader>d", group = "DBUI" },
-      { "<Leader>g", group = "Neogit" },
       { "<Leader>s", group = "Diffview open" },
       { "<Leader>c", group = "Macro" },
       { "<Leader><Tab>", group = "New tab" },
