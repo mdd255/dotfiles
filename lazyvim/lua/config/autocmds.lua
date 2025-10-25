@@ -30,6 +30,7 @@ local function setup_cursor_options()
     "grug-far",
     "lazy",
     "text.kulala_ui",
+    "json.kulala_ui",
     "NeogitStatus",
   }
 
@@ -65,5 +66,34 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 vim.api.nvim_create_autocmd("TextYankPost", {
   callback = function()
     vim.highlight.on_yank({ higroup = "Visual", timeout = 150 })
+  end,
+})
+
+-- LSP disabled_client_format
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function(args)
+    local function contains(list, item)
+      for _, v in ipairs(list) do
+        if v == item then
+          return true
+        end
+      end
+      return false
+    end
+
+    local disabled_client_format = {
+      "ts_ls",
+      "vtsls",
+    }
+
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    client.server_capabilities.semanticTokensProvider = nil
+    client.server_capabilities.documentHighlightProvider = false
+
+    -- Disable auto-formatting for TypeScript language server
+    if contains(disabled_client_format, client.name) then
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
+    end
   end,
 })
