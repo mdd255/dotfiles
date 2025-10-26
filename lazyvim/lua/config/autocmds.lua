@@ -84,6 +84,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local disabled_client_format = {
       "ts_ls",
       "vtsls",
+      "tsgo",
     }
 
     local client = vim.lsp.get_client_by_id(args.data.client_id)
