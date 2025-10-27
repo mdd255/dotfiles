@@ -1,5 +1,6 @@
 alefragnani.bookmarks
 anysphere.cursorpyright
+arcticicestudio.nord-visual-studio-code
 asvetliakov.vscode-neovim
 be5invis.vscode-custom-css
 biomejs.biome
@@ -8,6 +9,7 @@ christian-kohler.path-intellisense
 cweijan.dbclient-jdbc
 cweijan.vscode-database-client2
 eamodio.gitlens
+enkia.tokyo-night
 github.vscode-github-actions
 github.vscode-pull-request-github
 golang.go
@@ -16,6 +18,7 @@ graphql.vscode-graphql-execution
 graphql.vscode-graphql-syntax
 humao.rest-client
 mikestead.dotenv
+monokai.theme-monokai-pro-vscode
 ms-python.debugpy
 ms-python.python
 naumovs.color-highlight
@@ -24,6 +27,7 @@ prisma.prisma
 redhat.java
 remcohaszing.schemastore
 rimuruchan.vscode-fix-checksums-next
+sainnhe.everforest
 streetsidesoftware.code-spell-checker
 sumneko.lua
 usernamehw.errorlens
