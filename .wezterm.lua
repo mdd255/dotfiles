@@ -8,9 +8,10 @@ local alt = "ALT"
 
 config.color_scheme = "AdventureTime"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
-config.font_size = 13
+config.font_size = 12.8
 config.cell_width = 1
 config.line_height = 0.9
+config.disable_default_key_bindings = true
 config.enable_wayland = false
 config.enable_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = true
