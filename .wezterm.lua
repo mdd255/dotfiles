@@ -92,12 +92,12 @@ config.keys = {
 		action = action.CloseCurrentTab({ confirm = false }),
 	},
 	{
-		key = "N",
+		key = "n",
 		mods = ctrl,
 		action = action.ScrollByPage(0.5),
 	},
 	{
-		key = "E",
+		key = "e",
 		mods = ctrl,
 		action = action.ScrollByPage(-0.5),
 	},
@@ -111,6 +111,11 @@ config.keys = {
 		mods = ctrl_cmd,
 		action = action.ToggleFullScreen,
 	},
+	-- {
+	-- key = "tab",
+	-- mods = ctrl,
+	-- action = action.ActivateTabRelative(1),
+	-- },
 }
 
 return config

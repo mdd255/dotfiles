@@ -141,7 +141,7 @@
 	"outline.icons": false,
 	"makefile.configureOnOpen": true,
 	"diffEditor.ignoreTrimWhitespace": false,
-	"workbench.colorTheme": "Tokyo Night",
+	"workbench.colorTheme": "Matte Black",
 	"search.smartCase": true,
 	"search.showLineNumbers": false,
 	"search.decorations.badges": false,
