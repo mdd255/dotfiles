@@ -24,7 +24,7 @@ return {
         "gopls",
         "json-lsp",
         "dockerfile-language-server",
-        "tsgo",
+        "typescript-language-server",
       },
       ui = { scrollbar = false },
     },

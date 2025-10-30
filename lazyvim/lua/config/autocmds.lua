@@ -14,6 +14,7 @@ local function setup_cursor_options()
     "http",
     "yaml",
     "python",
+    "sh",
   }
 
   local cursorline_blacklist = {
@@ -32,6 +33,8 @@ local function setup_cursor_options()
     "text.kulala_ui",
     "json.kulala_ui",
     "NeogitStatus",
+    "dbui",
+    "dbout",
   }
 
   local function contains(list, item)
