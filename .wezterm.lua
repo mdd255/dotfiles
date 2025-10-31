@@ -111,11 +111,11 @@ config.keys = {
 		mods = ctrl_cmd,
 		action = action.ToggleFullScreen,
 	},
-	-- {
-	-- key = "tab",
-	-- mods = ctrl,
-	-- action = action.ActivateTabRelative(1),
-	-- },
+	{
+		key = "Tab",
+		mods = ctrl,
+		action = action.ActivateTabRelative(1),
+	},
 }
 
 return config
