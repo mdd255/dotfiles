@@ -18,6 +18,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   callback = function()
     local cwd = vim.loop.cwd()
     local project_name = string.gsub(cwd, "^.*/", "")
-    vim.o.titlestring = " " .. project_name
+    vim.o.titlestring = " " .. project_name
   end,
 })

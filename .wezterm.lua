@@ -23,14 +23,8 @@ config.native_macos_fullscreen_mode = true
 
 ---@diagnostic disable-next-line: unused-local
 local function format_win_tile(tab, pane, tabs, panes, conf)
-	local cwd = tab.active_pane.current_working_dir
-	if cwd:sub(1, 2) == "~/" then
-		cwd = cwd:gsub("^~", os.getenv("HOME") or "~")
-	end
-
-	os.execute("notify-send holo")
-	local folder = cwd:gsub("/+$", ""):match("([^/]+)$") or cwd
-	return folder
+	local tab_name = tab.active_pane.name
+	return " " .. tab_name
 end
 
 wezterm.on("format-window-title", format_win_tile)
