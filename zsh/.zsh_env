@@ -12,11 +12,6 @@ export DOCKER_BUILDKIT=1
 # node
 export NODE_OPTIONS=--max-old-space-size=8192
 
-# ibus envs
-export GTK_IM_MODULE=ibus
-export XMODIFIERS=@im=ibus
-export QT_IM_MODULE=ibus
-
 # go envs
 export GOPATH=$HOME/go
 
