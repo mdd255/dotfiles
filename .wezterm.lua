@@ -29,7 +29,11 @@ local function format_win_tile(tab, pane, tabs, panes, conf)
 		title = tab.tab_title
 	end
 
-	return " " .. title
+	if #tabs == 1 then
+		return " " .. title .. ""
+	else
+		return string.format(" %d/%d:%s", tab.tab_index + 1, #tabs, title)
+	end
 end
 
 wezterm.on("format-window-title", format_win_tile)
