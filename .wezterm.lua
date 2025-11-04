@@ -23,8 +23,13 @@ config.native_macos_fullscreen_mode = true
 
 ---@diagnostic disable-next-line: unused-local
 local function format_win_tile(tab, pane, tabs, panes, conf)
-	local tab_name = tab.active_pane.name
-	return " " .. tab_name
+	local title = tab.active_pane.title
+
+	if tab.tab_title and #tab.tab_title > 0 then
+		title = tab.tab_title
+	end
+
+	return " " .. title
 end
 
 wezterm.on("format-window-title", format_win_tile)
