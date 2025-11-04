@@ -108,14 +108,20 @@ keys = [
     # Switch focus of monitors
     Key(
         [ALT],
-        "o",
+        "i",
         lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch next"),
         desc="Move focus to next monitor",
+    ),
+    Key(
+        [ALT],
+        "h",
+        lazy.spawn(QTILE_DIR + "/.init-scripts/smart-screen-switch prev"),
+        desc="Move focus to previous monitor",
     ),
     # Window controls
     Key(
         [ALT],
-        "h",
+        "o",
         lazy.layout.right(),
         desc="Move focus right in current stack pane",
     ),
@@ -127,7 +133,7 @@ keys = [
     ),
     Key(
         [ALT],
-        "n",
+        "o",
         lazy.layout.up(),
         desc="Move focus up in current stack pane",
     ),
@@ -312,7 +318,7 @@ keys = [
     # Power control
     Key(
         [WIN],
-        "q",
+        "l",
         lazy.spawn(SOUND_CMD),
         lazy.spawn("systemctl suspend"),
         desc="Suspend",
