@@ -17,10 +17,7 @@ group_keys = {
     "2": "e",
     "3": "i",
     "4": "o",
-    "5": "l",
-    "6": "u",
-    "7": "y",
-    "8": "semicolon",
+    "5": "h",
 }
 
 group_names = [
@@ -29,9 +26,6 @@ group_names = [
     ("󰰃", {"layout": "max"}),
     ("󰰕", {"layout": "max"}),
     ("󰰌", {"layout": "max"}),
-    ("󰰧", {"layout": "max"}),
-    ("󰰳", {"layout": "max"}),
-    ("", {"layout": "max"}),
 ]
 
 groups = [Group(name, **kwargs) for name, kwargs in group_names]
@@ -122,20 +116,8 @@ keys = [
     Key(
         [ALT],
         "o",
-        lazy.layout.right(),
-        desc="Move focus right in current stack pane",
-    ),
-    Key(
-        [ALT],
-        "e",
-        lazy.layout.down(),
-        desc="Move focus down in current stack pane",
-    ),
-    Key(
-        [ALT],
-        "o",
         lazy.layout.up(),
-        desc="Move focus up in current stack pane",
+        desc="Move focus right in current stack pane",
     ),
     Key(
         [ALT, SHIFT],
