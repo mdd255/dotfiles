@@ -17,7 +17,7 @@ output = "".join(new_lines).strip()
 if "Today" in output:
     data['text'] = " " + output.split('\n')[1] + ' | ' + output.split('\n')[2]
 else:
-    data['text'] = " "
+    data['text'] = " "
 
 data['tooltip'] = output
 print(json.dumps(data))
