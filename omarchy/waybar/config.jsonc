@@ -7,7 +7,7 @@
 	"height": 20,
 	// layout
 	"modules-left": ["wlr/taskbar"],
-	"modules-center": ["clock"],
+	"modules-center": ["custom/screenrecording-indicator", "clock"],
 	"modules-right": [
 		"custom/events",
 		"bluetooth",
@@ -30,6 +30,13 @@
 			"Hubstaff": "󱄅 Hubstaff",
 			"Github": " Github"
 		}
+	},
+	"custom/screenrecording-indicator": {
+		"interval": 5,
+		"on-click": "omarchy-cmd-screenrecord",
+		"exec": "~/.config/dotfiles/omarchy/scripts/screen-recording.sh",
+		"signal": 8,
+		"return-type": "json"
 	},
 	"clock": {
 		"format": "{:L%a %H:%M %d/%m} ",
