@@ -55,11 +55,8 @@ tooltip {
 
 #taskbar button.active * {
   color: #61afef;
-  margin: 0 0 0 0;
-  padding: 0 0 0 0;
 }
 
-#taskbar {
-  margin: 0 0 0 0;
-  padding: 0 0 0 0;
+#taskbar * {
+  margin: 0px -2px 0px 1px;
 }
