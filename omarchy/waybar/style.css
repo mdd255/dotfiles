@@ -19,23 +19,9 @@
   margin-right: 0px;
 }
 
-#workspaces button {
-  all: initial;
-  padding: 0 6px;
-  margin: 0 1.5px;
-  min-width: 9px;
-}
-
-#workspaces button.empty {
-  opacity: 0.5;
-}
-
 #cpu,
 #battery,
-#pulseaudio,
-#custom-omarchy,
-#custom-screenrecording-indicator,
-#custom-update {
+#pulseaudio {
   min-width: 12px;
   margin: 0 10 0 10px;
 }
@@ -53,12 +39,10 @@
   margin-right: 20px;
 }
 
-#tooltip {
-  padding: 2px;
-}
-
-#custom-update {
-  font-size: 10px;
+tooltip {
+  background: rgba(43, 48, 59, 0.5);
+  border: 1px solid white;
+  border-radius: 8px;
 }
 
 #clock {
@@ -69,16 +53,13 @@
   opacity: 0;
 }
 
-#custom-screenrecording-indicator {
-  min-width: 12px;
-  margin-left: 8.75px;
-  font-size: 10px;
-}
-
-#custom-screenrecording-indicator.active {
-  color: #a55555;
-}
-
 #taskbar button.active * {
   color: #61afef;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+}
+
+#taskbar {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
 }
