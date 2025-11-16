@@ -1,6 +1,7 @@
 -- Autocommands are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
--- Add any additional autocmds here
+
+local utils = require("config.utils")
 
 local function setup_cursor_options()
   local ft = vim.bo.filetype
@@ -99,5 +100,21 @@ vim.api.nvim_create_autocmd("LspAttach", {
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
     end
+  end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "typescript",
+  callback = function()
+    local function console_log()
+      local expr = "yeoconsole.log({<Esc>pa})<Esc>hh"
+
+      return utils.create_marcro({
+        pre_fn = utils.move_to_start_of_word,
+        expr = expr,
+      })
+    end
+
+    vim.keymap.set("n", "l", console_log, { buffer = true })
   end,
 })

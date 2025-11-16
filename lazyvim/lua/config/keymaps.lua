@@ -163,12 +163,15 @@ map({
   { "so", add_to_dictionary, { desc = "Add current word to dictionary" } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "sr", source_configs, { desc = "Source config" } },
-  { "sa", "<cmd>e api.http<Cr>", { desc = "Open api.http" } },
+  { "sa", "<cmd>tabnew | e api.http<Cr>", { desc = "Open api.http" } },
   { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
   { "P", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
+
+  -- vim yank control
+  { "yw", "ye", { modes = { "n" } } },
 
   -- bracket mappings
   { "ah", "i<", { modes = { "v", "o" }, desc = "i<" } },
@@ -186,7 +189,7 @@ map({
   { "sl", 'a"', { modes = { "v", "o" }, desc = 'a"' } },
   { "su", "a`", { modes = { "v", "o" }, desc = "a`" } },
 
-  -- bracket jumpings
+  -- bracket jumps
   { "qh", "f<", { modes = { "n", "v" }, desc = "f<" } },
   { "qn", "f(", { modes = { "n", "v" }, desc = "f(" } },
   { "qe", "f[", { modes = { "n", "v" }, desc = "f[" } },
