@@ -4,76 +4,20 @@ return {
     return {}
   end,
   opts = {
+    toggle = { enabled = false },
+    scope = { enabled = false },
+    image = { enabled = false },
+    zen = { enabled = false },
+    scratch = { enabled = false },
+    words = { enabled = false },
     indent = { enabled = true },
     animate = { enabled = true },
     input = { enabled = true },
     notifier = { enabled = true },
-    scope = { enabled = false },
-    toggle = { enabled = false },
     scroll = { enabled = true },
     statuscolumn = { enabled = true },
-    words = { enabled = false },
-    scratch = {
-      name = "Code playground",
-      win_by_ft = {
-        typescript = {
-          keys = {
-            ["source"] = {
-              "<cr>",
-              function(self)
-                local namespace = vim.api.nvim_create_namespace("node_result")
-                vim.api.nvim_buf_clear_namespace(self.buf, namespace, 0, -1)
-
-                -- Inject script that makes console log output line numbers.
-                local script = [[
-                  'use strict';
-
-                  const path = require('path');
-
-                  ['debug', 'log', 'warn', 'error'].forEach((methodName) => {
-                      const originalLoggingMethod = console[methodName];
-                      console[methodName] = (firstArgument, ...otherArguments) => {
-                          const originalPrepareStackTrace = Error.prepareStackTrace;
-                          Error.prepareStackTrace = (_, stack) => stack;
-                          const callee = new Error().stack[1];
-                          Error.prepareStackTrace = originalPrepareStackTrace;
-                          const relativeFileName = path.relative(process.cwd(), callee.getFileName());
-                          const prefix = `${relativeFileName}:${callee.getLineNumber()}:`;
-                          if (typeof firstArgument === 'string') {
-                              originalLoggingMethod(prefix + ' ' + firstArgument, ...otherArguments);
-                          } else {
-                              originalLoggingMethod(prefix, firstArgument, ...otherArguments);
-                          }
-                      };
-                  });
-                ]]
-                for _, line in ipairs(vim.api.nvim_buf_get_lines(self.buf, 0, -1, true)) do
-                  script = script .. line .. "\n"
-                end
-
-                local result = require("plenary.job")
-                  :new({
-                    command = "node",
-                    args = { "-e", script },
-                  })
-                  :sync()
-
-                if result then
-                  for _, line in ipairs(result) do
-                    local line_number, output = line:match("%[eval%]:(%d+): (.*)")
-                    vim.api.nvim_buf_set_extmark(0, namespace, line_number - 21, 0, {
-                      virt_text = { { output, "Comment" } },
-                    })
-                  end
-                end
-              end,
-              desc = "Source buffer",
-              mode = { "n", "x" },
-            },
-          },
-        },
-      },
-    },
+    terminal = { enabled = true },
+    explorer = { enabled = true },
     picker = {
       matcher = {
         cwd_bonus = true,
@@ -87,6 +31,25 @@ return {
             ["<S-Tab>"] = { "list_up", mode = { "n", "i" } },
             ["<C-n>"] = { "preview_scroll_down", mode = { "n", "i" } },
             ["<C-e>"] = { "preview_scroll_up", mode = { "n", "i" } },
+          },
+        },
+      },
+      sources = {
+        files = { hidden = true, ignored = true },
+        grep = { hidden = true, ignored = false },
+        explorer = {
+          hidden = false,
+          ignored = true,
+          diagnostics = false,
+          replace_netrw = true,
+          layout = {
+            layout = {
+              width = 40,
+              position = "left",
+              box = "vertical",
+              { win = "list" },
+              { win = "input", height = 1 },
+            },
           },
         },
       },
@@ -113,24 +76,17 @@ return {
         { icon = "", title = "Recent Files", section = "recent_files", indent = 5, padding = 1, gap = 0 },
       },
     },
-    terminal = {
-      enabled = true,
-    },
   },
   config = function(_, opts)
     require("snacks").setup(opts)
 
     local map = vim.keymap.set
+    local findConfigFileCmd = "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>"
 
     -- finder keys
     map("n", "ff", "<cmd>lua Snacks.picker.files()<Cr>", { desc = "Find files" })
     map("n", "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", { desc = "Find buffers" })
-    map(
-      "n",
-      "fc",
-      "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>",
-      { desc = "Find config files" }
-    )
+    map("n", "fc", findConfigFileCmd, { desc = "Find config files" })
     map("n", "fs", "<cmd>lua Snacks.picker.grep()<Cr>", { desc = "Grep" })
     map("n", "fr", "<cmd>lua Snacks.picker.recent()<Cr>", { desc = "Find recents" })
     map("n", "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" })

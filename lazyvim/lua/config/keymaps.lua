@@ -165,6 +165,7 @@ map({
   { "sr", source_configs, { desc = "Source config" } },
   { "sa", "<cmd>tabnew | e api.http<Cr>", { desc = "Open api.http" } },
   { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
+  { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
