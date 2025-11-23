@@ -2,7 +2,7 @@
 
 const { execSync } = require('node:child_process')
 
-const titleMaxLength = 25
+const titleMaxLength = 35
 
 try {
   const events = execSync("khal list now 1d --format '{title} {start-time}'")
