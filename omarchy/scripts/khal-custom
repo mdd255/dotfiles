@@ -1,0 +1,23 @@
+#!/usr/bin/env node
+
+const { execSync } = require('node:child_process')
+
+const titleMaxLength = 25
+
+try {
+  const events = execSync("khal list now 1d --format '{title} {start-time}'")
+    .toString().trim().split('\n').slice(1)
+
+  const nextEvents = events.slice(0, 2).map(event => {
+    const titleLen = event.length - 6
+    const maxLen = titleLen > titleMaxLength ? titleMaxLength : titleLen
+    const title = event.substring(0, maxLen)
+    const time = event.substring(event.length - 5)
+    return `${title} ${time}`
+  }).join(' | ')
+
+  const payload = { text: nextEvents, tooltip: events.join('\n') }
+  console.log(JSON.stringify(payload))
+} catch (err) {
+  execSync(`notify-send input 'Cannot run khal-script: ${err.message}'`)
+}
