@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+/** biome-ignore-all lint/suspicious/noConsole: really need this */
 const { execSync } = require('node:child_process')
 
 try {

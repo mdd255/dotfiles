@@ -68,3 +68,11 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
 # bun completions
 [ -s "/home/dh/.bun/_bun" ] && source "/home/dh/.bun/_bun"
+
+# pnpm
+export PNPM_HOME="/home/dh/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
