@@ -17,6 +17,42 @@ return {
       { "tt", "<cmd>lua require('kulala').run()<cr>", desc = "Send the request", ft = "http" },
       { "ts", "<cmd>lua require('kulala').show_stats()<cr>", desc = "Show stats", ft = "http" },
     },
-    opts = {},
+    opts = {
+      custom_dynamic_variables = {
+        ["_uuid"] = function()
+          local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+
+          return string.gsub(template, "[xy]", function(c)
+            local v = math.random(0, 15)
+            if c == "x" then
+              return string.format("%x", v)
+            else
+              v = (v % 4) + 8
+              return string.format("%x", v)
+            end
+          end)
+        end,
+        ["_email"] = function()
+          local domains = { "gmail.com", "yahoo.com", "hotmail.com", "outlook.com" }
+          local chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+          local length = math.random(5, 10)
+          local name = ""
+
+          for i = 1, length do
+            local idx = math.random(1, #chars)
+            name = name .. chars:sub(idx, idx)
+          end
+
+          local domain = domains[math.random(1, #domains)]
+          return name .. "@" .. domain
+        end,
+        ["_phone"] = function()
+          local areaCode = math.random(200, 999)
+          local prefix = math.random(200, 999)
+          local line = math.random(1000, 9999)
+          return string.format("(%03d) %03d-%04d", areaCode, prefix, line)
+        end,
+      },
+    },
   },
 }
