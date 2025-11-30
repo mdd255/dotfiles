@@ -2,7 +2,6 @@ return {
   {
     "saghen/blink.cmp",
     dependencies = {
-      "fang2hou/blink-copilot",
       "kristijanhusak/vim-dadbod-completion",
     },
     opts = {
@@ -29,16 +28,14 @@ return {
         window = { scrollbar = false },
       },
       sources = {
-        default = { "buffer", "copilot", "lsp", "path", "snippets" },
+        default = { "buffer", "lsp", "path", "snippets" },
         per_filetype = {
           sql = { "snippets", "dadbod", "buffer" },
           mysql = { "snippets", "dadbod", "buffer" },
           psql = { "snippets", "dadbod", "buffer" },
-          ["copilot-chat"] = { "path", "buffer" },
         },
         providers = {
           dadbod = { name = "DB", module = "vim_dadbod_completion.blink" },
-          copilot = { name = "copilot", module = "blink-copilot", score_offset = 100, async = true },
         },
       },
     },

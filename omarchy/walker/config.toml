@@ -8,14 +8,22 @@ hide_action_hints = true                                                    # gl
 "default" = { input = " Search...", list = "No Results" } # placeholders for input and empty list, key is the providers name, so f.e. "desktopapplications" or "menus:other"
 
 [keybinds]
+close = ["Escape"]
+next = ["Down", "ctrl n", "Tab"]
+previous = ["Up", "ctrl e", "shift Tab"]
+toggle_exact = []
+resume_last_query = []
 quick_activate = []
+
+[columns]
+symbols = 1 # providers to be queried by default
 
 [providers]
 max_results = 256 # 256 should be enough for everyone
 default = [
   "desktopapplications",
   "websearch",
-] # providers to be queried by default
+]
 
 [[providers.prefixes]]
 prefix = "/"

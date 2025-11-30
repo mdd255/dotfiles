@@ -91,6 +91,7 @@
 	"bluetooth": {
 		"format": "",
 		"format-disabled": "󰂲",
+		"format-off": "󰂲",
 		"format-connected": "{device_battery_percentage}"
 	},
 	"pulseaudio": {
