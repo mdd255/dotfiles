@@ -7,6 +7,4 @@ vim.opt.history = 200
 vim.opt.undolevels = 100
 vim.opt.mouse = ""
 vim.opt.wrap = false
-vim.opt.spell = true
-vim.opt.spelllang = "en_us"
-vim.opt.spellfile = vim.fn.stdpath("config") .. "/spell/index.utf-8.add"
+vim.opt.spell = false

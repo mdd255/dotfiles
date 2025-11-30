@@ -19,7 +19,6 @@
   margin-right: 0px;
 }
 
-#cpu,
 #battery,
 #pulseaudio {
   min-width: 12px;
@@ -33,10 +32,6 @@
 
 #network {
   margin-right: 10px;
-}
-
-#custom-expand-icon {
-  margin-right: 18px;
 }
 
 tooltip {
@@ -53,7 +48,11 @@ tooltip {
   opacity: 0;
 }
 
+#taskbar button * {
+  color: #606060;
+}
+
 #taskbar button.active * {
-  color: #61afef;
+  color: #ef596f;
 }
 

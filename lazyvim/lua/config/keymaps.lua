@@ -99,19 +99,6 @@ local function comment()
   vim.cmd.normal({ args = { count .. "j" }, bang = true })
 end
 
-local function add_to_dictionary()
-  local spellfile = vim.fn.stdpath("config") .. "/spell/index.utf-8.add"
-  local word = vim.fn.expand("<cword>")
-  vim.cmd("normal! zg")
-  vim.cmd("mkspell! " .. vim.fn.fnameescape(spellfile))
-  print("Added '" .. word .. "' to dictionary")
-end
-
-local function source_configs()
-  vim.cmd("source %")
-  print("Sourced configuration")
-end
-
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
