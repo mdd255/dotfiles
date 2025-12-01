@@ -12,7 +12,7 @@ return {
         ["<S-Tab>"] = { "insert_prev", "snippet_backward", "fallback" },
         ["<C-n>"] = { "scroll_documentation_down", "fallback" },
         ["<C-e>"] = { "scroll_documentation_up", "fallback" },
-        ["<Esc>"] = { "hide", "fallback" },
+        ["<C-o>"] = { "hide", "fallback" },
       },
       completion = {
         accept = { auto_brackets = { enabled = true } },
