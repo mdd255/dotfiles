@@ -61,8 +61,7 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.keys = {
-	{
+config.keys = {{
 		key = "r",
 		mods = ctrl,
 		action = action.PromptInputLine({
@@ -71,8 +70,8 @@ config.keys = {
 				if line then
 					window:active_tab():set_title(line)
 				end
-			end),
-		}),
+			end),,
+  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},}),
 	},
 	{
 		key = "v",
