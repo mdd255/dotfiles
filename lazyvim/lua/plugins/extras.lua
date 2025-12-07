@@ -1,5 +1,15 @@
 return {
   {
+    "folke/persistence.nvim",
+    event = "BufReadPre",
+    opts = {},
+    keys = false,
+  },
+  {
+    "folke/ts-comments.nvim",
+    event = "VeryLazy",
+  },
+  {
     "nacro90/numb.nvim",
     opts = {
       show_numbers = true,
@@ -40,13 +50,19 @@ return {
     },
   },
   {
-    "folke/persistence.nvim",
-    event = "BufReadPre",
-    opts = {},
-    keys = false,
-  },
-  {
-    "folke/ts-comments.nvim",
-    event = "VeryLazy",
+    "2kabhishek/nerdy.nvim",
+    dependencies = {
+      "folke/snacks.nvim",
+    },
+    cmd = "Nerdy",
+    keys = {
+      { "<Leader>t", "<cmd>Nerdy list<Cr>", desc = "Symbols" },
+    },
+    opts = {
+      max_recents = 20,
+      add_default_keybindings = false,
+      copy_to_clipboard = false,
+      copy_register = "+",
+    },
   },
 }
