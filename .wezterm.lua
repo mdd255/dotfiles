@@ -12,7 +12,7 @@ config.font_size = 12.8
 config.cell_width = 1
 config.line_height = 0.9
 config.disable_default_key_bindings = true
-config.enable_wayland = true
+config.enable_wayland = false
 config.enable_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = true
 config.tab_bar_at_bottom = true
@@ -40,7 +40,7 @@ local function format_win_tile(tab, pane, tabs, panes, conf)
 		table.insert(tab_titles, title)
 	end
 
-	return " " .. table.concat(tab_titles, " ") .. " "
+	return " " .. table.concat(tab_titles, " ")
 end
 
 wezterm.on("format-window-title", format_win_tile)
