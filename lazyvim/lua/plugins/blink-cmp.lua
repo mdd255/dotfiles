@@ -40,7 +40,10 @@ return {
         },
       },
       cmdline = {
-        keymap = { preset = "inherit" },
+        keymap = {
+          preset = "inherit",
+          ["<Cr>"] = { "accept", "fallback" },
+        },
         completion = {
           menu = { auto_show = true },
           ghost_text = { enabled = true },

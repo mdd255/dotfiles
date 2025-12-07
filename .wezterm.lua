@@ -23,17 +23,24 @@ config.native_macos_fullscreen_mode = true
 
 ---@diagnostic disable-next-line: unused-local
 local function format_win_tile(tab, pane, tabs, panes, conf)
-	local title = tab.active_pane.title
+	local tab_titles = {}
 
-	if tab.tab_title and #tab.tab_title > 0 then
-		title = tab.tab_title
+	for _, t in ipairs(tabs) do
+		local title = t.active_pane.title
+
+		if t.tab_title and #t.tab_title > 0 then
+			title = t.tab_title
+		end
+
+		-- Add indicator for active tab
+		if t.is_active then
+			title = "[" .. title .. "]"
+		end
+
+		table.insert(tab_titles, title)
 	end
 
-	if #tabs == 1 then
-		return " " .. title .. ""
-	else
-		return string.format(" %d/%d:%s", tab.tab_index + 1, #tabs, title)
-	end
+	return " " .. table.concat(tab_titles, " ") .. " "
 end
 
 wezterm.on("format-window-title", format_win_tile)
@@ -85,9 +92,20 @@ config.keys = {
 	{
 		key = "t",
 		mods = ctrl,
-		action = action.Multiple({
-			action.SpawnTab({ DomainName = "unix" }),
-		}),
+		action = wezterm.action_callback(function(window, pane)
+			local tab = window:mux_window():spawn_tab({})
+			window:perform_action(
+				action.PromptInputLine({
+					description = "New tab name",
+					action = wezterm.action_callback(function(_, _, line)
+						if line then
+							tab:set_title(line)
+						end
+					end),
+				}),
+				pane
+			)
+		end),
 	},
 	{
 		key = "q",
