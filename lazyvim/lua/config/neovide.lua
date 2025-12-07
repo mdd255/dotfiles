@@ -1,7 +1,7 @@
 -- options
 vim.o.guifont = "FiraCode Nerd Font:h12.8"
 vim.o.title = true
-vim.g.neovide_hide_mouse_when_typing = false
+vim.g.neovide_hide_mouse_when_typing = true
 vim.g.neovide_macos_simple_fullscreen = true
 vim.g.neovide_position_animation_length = 0.2
 vim.g.neovide_cursor_animation_length = 0.2

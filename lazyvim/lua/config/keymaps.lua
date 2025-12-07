@@ -99,6 +99,19 @@ local function comment()
   vim.cmd.normal({ args = { count .. "j" }, bang = true })
 end
 
+local is_maximized = false
+
+local function toggle_maximize()
+  if is_maximized then
+    vim.cmd("wincmd =")
+    is_maximized = false
+  else
+    vim.cmd("resize")
+    vim.cmd("vertical resize")
+    is_maximized = true
+  end
+end
+
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -125,6 +138,7 @@ map({
   { "<Leader>n", "<C-w>j", { desc = "To lower win" } },
   { "<Leader>e", "<C-w>k", { desc = "To upper win" } },
   { "<Leader>i", "<C-w>l", { desc = "To right win" } },
+  { "<C-Space>", toggle_maximize, { modes = { "i", "n", "t" }, desc = "Maximize current window" } },
 
   -- Split
   { "sn", "<cmd>split<cr>", { desc = "Split horizontally" } },
