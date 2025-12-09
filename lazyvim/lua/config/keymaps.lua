@@ -111,6 +111,21 @@ local function toggle_maximize()
   end
 end
 
+local function copy_filename(include_path)
+  local filename = vim.fn.expand("%:t")
+
+  if include_path == true then
+    filename = vim.fn.expand("%:p"):gsub(vim.fn.getcwd() .. "/", "")
+  end
+
+  if filename ~= nil and #filename >= 4 then
+    vim.fn.setreg("+", filename)
+    vim.notify("Copied: " .. filename .. " to clipboard")
+  else
+    vim.notify("Cannot get path")
+  end
+end
+
 ---------------------------------------------------------------------------------------------------
 map({
   -- Jump
@@ -161,7 +176,14 @@ map({
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
   { ";", comment, { desc = "Comment", remap = true } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
-  { "sa", "<cmd>tabnew | e api.http<Cr>", { desc = "Open api.http" } },
+  { "sy", copy_filename, { desc = "Copy filename to clipboard" } },
+  {
+    "sY",
+    function()
+      copy_filename(true)
+    end,
+    { desc = "Copy file path to clipboard" },
+  },
   { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
   { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
 
