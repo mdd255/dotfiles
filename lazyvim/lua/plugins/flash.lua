@@ -78,7 +78,7 @@ return {
         "<tab>",
         mode = { "n" },
         function()
-          require("flash").jump({
+          Flash.jump({
             search = {
               mode = "char",
               max_length = 1,
@@ -94,7 +94,7 @@ return {
         "<s-tab>",
         mode = { "n" },
         function()
-          require("flash").jump({
+          Flash.jump({
             search = {
               mode = "char",
               forward = false,
@@ -133,7 +133,7 @@ return {
         "W",
         mode = { "n" },
         function()
-          require("flash").jump({
+          Flash.jump({
             search = {
               mode = "search",
               max_length = 0,
@@ -173,7 +173,7 @@ return {
         "B",
         mode = { "n" },
         function()
-          require("flash").jump({
+          Flash.jump({
             search = {
               mode = "search",
               max_length = 0,
