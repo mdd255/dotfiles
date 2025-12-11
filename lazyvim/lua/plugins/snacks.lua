@@ -35,6 +35,19 @@ return {
         },
       },
       sources = {
+        projects = {
+          format = "file",
+          recent = true,
+          confirm = "load_session",
+          patterns = {
+            ".git",
+            "package.json",
+          },
+          dev = {
+            "~/.config/",
+            "~/Projects/",
+          },
+        },
         files = { hidden = true },
         grep = { hidden = true },
         explorer = {
