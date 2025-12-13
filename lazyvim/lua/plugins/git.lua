@@ -94,8 +94,8 @@ return {
     keys = {
       { "so", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
       { "sf", get_current_file_history, desc = "Diffview current file history" },
-      { "sb", git_diff_branch, desc = "Diff branch" },
-      { "st", git_pull, desc = "Git pull" },
+      { "sa", git_diff_branch, desc = "Diff branch" },
+      { "sr", git_pull, desc = "Git pull" },
     },
 
     config = function()

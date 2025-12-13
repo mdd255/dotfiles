@@ -108,13 +108,10 @@ return {
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
 
     -- git keymaps
-    map("n", "gbr", "<cmd>lua Snacks.picker.git_branches()<Cr>", { desc = "Git branches" })
-    map("n", "glo", "<cmd>lua Snacks.picker.git_log()<Cr>", { desc = "Git log" })
-    map("n", "glf", "<cmd>lua Snacks.picker.git_log_file()<Cr>", { desc = "Git log files" })
-    map("n", "gst", "<cmd>lua Snacks.picker.git_status()<Cr>", { desc = "Git status" })
-    map("n", "gdi", "<cmd>lua Snacks.picker.git_diff()<Cr>", { desc = "Git diff" })
-    map("n", "gss", "<cmd>lua Snacks.picker.git_stash()<Cr>", { desc = "Git stash" })
-    map("n", "gbb", "<cmd>lua Snacks.gitbrowse()<Cr>", { desc = "Git open file in browser" })
+    map("n", "gr", "<cmd>lua Snacks.picker.git_branches()<Cr>", { desc = "Git branches" })
+    map("n", "sl", "<cmd>lua Snacks.picker.git_log()<Cr>", { desc = "Git log" })
+    map("n", "st", "<cmd>lua Snacks.picker.git_stash()<Cr>", { desc = "Git stash" })
+    map("n", "gb", "<cmd>lua Snacks.gitbrowse()<Cr>", { desc = "Git open file in browser" })
 
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })

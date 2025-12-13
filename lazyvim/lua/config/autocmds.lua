@@ -24,8 +24,6 @@ local function setup_cursor_options()
   }
 
   local number_blacklist = {
-    "codecompanion",
-    "gitcommit",
     "snacks_dashboard",
     "snacks_terminal",
     "snacks_picker_list",
@@ -34,7 +32,6 @@ local function setup_cursor_options()
     "DiffviewFiles",
     "text.kulala_ui",
     "json.kulala_ui",
-    "NeogitStatus",
     "dbui",
     "dbout",
   }
