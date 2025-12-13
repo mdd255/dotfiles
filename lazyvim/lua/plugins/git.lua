@@ -15,12 +15,17 @@ return {
       end
 
       local function git_commit()
+        local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
         local function on_push_done(push_result)
           vim.schedule(function()
             if push_result.code == 0 then
-              vim.notify("Pushed successfully", vim.log.levels.INFO)
+              vim.notify("Pushed to: " .. branch .. " successfully", vim.log.levels.INFO)
             else
-              vim.notify("Push failed: " .. (push_result.stderr or "unknown error"), vim.log.levels.ERROR)
+              vim.notify(
+                "Failed when push to: " .. branch .. ": " .. (push_result.stderr or "unknown error"),
+                vim.log.levels.ERROR
+              )
             end
           end)
         end
@@ -31,7 +36,7 @@ return {
               vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR)
               return
             end
-            vim.notify("Committed successfully, pushing...", vim.log.levels.INFO)
+            vim.notify("Committed successfully, pushing to: " .. branch .. " ...", vim.log.levels.INFO)
             vim.system({ "git", "push" }, {}, on_push_done)
           end)
         end
@@ -45,7 +50,7 @@ return {
           end
         end
 
-        require("snacks").input({ prompt = "Commit message: " }, on_input)
+        require("snacks").input({ prompt = "Commit to: " .. branch .. " :" }, on_input)
       end
 
       local opts = {
