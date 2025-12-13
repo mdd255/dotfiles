@@ -1,6 +1,15 @@
 return {
   "MagicDuck/grug-far.nvim",
-  opts = { headerMaxWidth = 80 },
+  opts = {
+    normalModeSearch = true,
+    headerMaxWidth = 80,
+    showCompactInputs = true,
+    keymaps = {
+      openNextLocation = { n = "tn" },
+      openPrevLocation = { n = "te" },
+      syncLocations = { n = "ta" },
+    },
+  },
   cmd = "GrugFar",
   keys = {
     { "<Leader>sr", false },
@@ -9,11 +18,14 @@ return {
       function()
         local grug = require("grug-far")
         local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
+
         grug.open({
           transient = true,
           prefills = {
+            search = vim.fn.expand("<cword>"),
             filesFilter = ext and ext ~= "" and "*." .. ext or nil,
             flags = "-i",
+            paths = vim.fn.expand("%:."),
           },
         })
       end,
