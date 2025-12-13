@@ -6,5 +6,10 @@ vim.opt.swapfile = false
 vim.opt.history = 200
 vim.opt.undolevels = 100
 vim.opt.mouse = ""
-vim.opt.wrap = false
+vim.opt.wrap = true
+vim.g.diffview_active = false
 vim.opt.spell = false
+vim.opt.fillchars = {
+  diff = "",
+  fold = "-",
+}

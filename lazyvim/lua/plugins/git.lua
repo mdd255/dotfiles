@@ -1,10 +1,92 @@
 return {
   {
     "sindrets/diffview.nvim",
-    cmd = { "DiffviewOpen" },
+    lazy = false,
     keys = {
       { "<Leader>s", "<cmd>DiffviewOpen<Cr>", desc = "Diffview Open" },
     },
+
+    config = function()
+      local actions = require("diffview.actions")
+
+      local function close_diffview()
+        vim.cmd("DiffviewClose")
+        vim.g.diffview_active = false
+      end
+
+      local function git_commit()
+        require("snacks").input({
+          prompt = "Commit message: ",
+        }, function(msg)
+          if msg and msg ~= "" then
+            vim.cmd("!git commit -m " .. vim.fn.shellescape(msg) .. " && git push")
+            vim.notify("Git commited")
+          end
+        end)
+      end
+
+      local opts = {
+        enhanced_diff_hl = true,
+        view = {
+          default = {
+            layout = "diff2_horizontal",
+          },
+        },
+        file_panel = {
+          listing_style = "list",
+          win_config = {
+            position = "bottom",
+            height = 10,
+          },
+        },
+        keymaps = {
+          view = {
+            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
+            { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "gn", actions.next_conflict, { desc = "Goto next conflict" } },
+            { "n", "ge", actions.prev_conflict, { desc = "Goto prev conflict" } },
+            { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
+            { "n", "gct", actions.conflict_choose_all("theirs"), { desc = "Git conflict choose theirs" } },
+            { "n", "gca", actions.conflict_choose_all("all"), { desc = "Git conflict choose all" } },
+            { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
+            { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
+            { "n", "gca", actions.prev_conflict, { desc = "Toggle file explorer" } },
+            { "n", "gcp", git_commit, { desc = "Git commit" } },
+          },
+          file_panel = {
+            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
+            { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "<Esc>", actions.toggle_files, { desc = "Toggle file explorer" } },
+          },
+          file_history_panel = {
+            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
+            { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "<Esc>", actions.toggle_files, { desc = "Toggle file explorer" } },
+          },
+        },
+      }
+
+      -- Setup autocmd to disable line numbers when Diffview opens
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "DiffviewFiles", "DiffviewFileHistory" },
+        callback = function()
+          vim.defer_fn(function()
+            vim.g.diffview_active = true
+
+            local visible_wins = vim.api.nvim_tabpage_list_wins(0)
+
+            -- Disable for all visible windows in current tabpage
+            for _, win in ipairs(visible_wins) do
+              vim.api.nvim_set_option_value("number", false, { win = win })
+              vim.api.nvim_set_option_value("relativenumber", false, { win = win })
+              vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
+            end
+          end, 100)
+        end,
+      })
+
+      require("diffview").setup(opts)
+    end,
   },
   {
     "lewis6991/gitsigns.nvim",
@@ -48,162 +130,11 @@ return {
     },
   },
   {
-    "pwntester/octo.nvim",
-    lazy = true,
+    "folke/snacks.nvim",
     keys = {
-      { "<Leader>o", "<cmd>Octo pr list<Cr>", desc = "PR list" },
-      { "<LocalLeader>R", "<cmd>Octo pr reload<Cr>", desc = "Octo reload", ft = "octo" },
-      { "<LocalLeader>dd", "<cmd>Octo pr draft<Cr>", desc = "mark as draft", ft = "octo" },
-      { "<LocalLeader>dr", "<cmd>Octo pr ready<Cr>", desc = "mark as ready", ft = "octo" },
-    },
-    opts = {
-      picker = "snacks",
-      ssh_aliases = {
-        ["git-hp"] = "github.com",
-        ["git-abd"] = "github.com",
-      },
-    },
-    config = function(_, opts)
-      require("octo").setup(opts)
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "octo" },
-        callback = function(event)
-          local wk = require("which-key")
-
-          wk.add({
-            { "<localleader>a", group = "+Octo assignee", buffer = event.buf },
-            { "<localleader>v", group = "+Octo review", buffer = event.buf },
-            { "<localleader>p", group = "+Octo PR", buffer = event.buf },
-            { "<localleader>l", group = "+Octo label", buffer = event.buf },
-            { "<localleader>i", group = "+Octo misc", buffer = event.buf },
-            { "<localleader>g", group = "+Octo navigate", buffer = event.buf },
-            { "<localleader>c", group = "+Octo comment", buffer = event.buf },
-            { "<localleader>r", group = "+Octo reaction", buffer = event.buf },
-            { "<localleader>d", group = "+Octo PR draft/ready", buffer = event.buf },
-            { "<localleader>pr", group = "+Octo merge rebase", buffer = event.buf },
-            { "<localleader>ps", group = "+Octo merge squash", buffer = event.buf },
-          })
-        end,
-      })
-    end,
-  },
-  {
-    "NeogitOrg/neogit",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "folke/snacks.nvim",
-    },
-    keys = {
-      { "ga", "<cmd>Neogit<Cr>", desc = "Neogit" },
-    },
-    opts = {
-      user_default_keymaps = false,
-      integrations = {
-        diffview = true,
-        snacks = true,
-      },
-      mappings = {
-        commit_editor = {
-          ["q"] = "Close",
-          ["<c-c><c-c>"] = "Submit",
-          ["<c-c><c-k>"] = "Abort",
-          ["<m-p>"] = "PrevMessage",
-          ["<m-n>"] = "NextMessage",
-          ["<m-r>"] = "ResetMessage",
-        },
-        commit_editor_I = {
-          ["<c-c><c-c>"] = "Submit",
-          ["<c-c><c-k>"] = "Abort",
-        },
-        rebase_editor = {
-          ["p"] = "Pick",
-          ["r"] = "Reword",
-          ["e"] = "Edit",
-          ["s"] = "Squash",
-          ["f"] = "Fixup",
-          ["x"] = "Execute",
-          ["d"] = "Drop",
-          ["b"] = "Break",
-          ["q"] = "Close",
-          ["<cr>"] = "OpenCommit",
-          ["gk"] = "MoveUp",
-          ["gj"] = "MoveDown",
-          ["<c-c><c-c>"] = "Submit",
-          ["<c-c><c-k>"] = "Abort",
-          ["[c"] = "OpenOrScrollUp",
-          ["]c"] = "OpenOrScrollDown",
-        },
-        rebase_editor_I = {
-          ["<c-c><c-c>"] = "Submit",
-          ["<c-c><c-k>"] = "Abort",
-        },
-        finder = {
-          ["<cr>"] = "Select",
-          ["<esc>"] = "Close",
-          ["<tab>"] = "Next",
-          ["<s-tab>"] = "Previous",
-          ["<c-cr>"] = "InsertCompletion",
-          ["<c-y>"] = "CopySelection",
-          ["<space>"] = "MultiselectToggleNext",
-          ["<s-Space>"] = "MultiselectTogglePrevious",
-        },
-        -- Setting any of these to `false` will disable the mapping.
-        popup = {
-          ["?"] = "HelpPopup",
-          ["C"] = "CherryPickPopup",
-          ["d"] = "DiffPopup",
-          ["R"] = "RemotePopup",
-          ["P"] = "PushPopup",
-          ["X"] = "ResetPopup",
-          ["Z"] = "StashPopup",
-          ["i"] = "IgnorePopup",
-          ["t"] = "TagPopup",
-          ["b"] = "BranchPopup",
-          ["B"] = "BisectPopup",
-          ["w"] = "WorktreePopup",
-          ["c"] = "CommitPopup",
-          ["f"] = "FetchPopup",
-          ["l"] = "LogPopup",
-          ["x"] = "MergePopup",
-          ["m"] = false,
-          ["M"] = false,
-          ["p"] = "PullPopup",
-          ["r"] = "RebasePopup",
-          ["v"] = "RevertPopup",
-        },
-        status = {
-          ["n"] = "MoveDown",
-          ["e"] = "MoveUp",
-          ["q"] = "Close",
-          ["I"] = "InitRepo",
-          ["1"] = "Depth1",
-          ["2"] = "Depth2",
-          ["3"] = "Depth3",
-          ["4"] = "Depth4",
-          ["Q"] = "Command",
-          ["<cr>"] = "Toggle",
-          ["o"] = "GoToFile",
-          ["za"] = false,
-          ["x"] = "Discard",
-          ["s"] = "Stage",
-          ["S"] = "StageUnstaged",
-          ["u"] = "Unstage",
-          ["U"] = "UnstageStaged",
-          ["K"] = "Untrack",
-          ["y"] = "ShowRefs",
-          ["$"] = "CommandHistory",
-          ["Y"] = "YankSelected",
-          ["R"] = "RefreshBuffer",
-          ["<"] = "GoToPreviousHunkHeader",
-          [">"] = "GoToNextHunkHeader",
-          ["<tab>"] = "NextSection",
-          ["<s-tab>"] = "PreviousSection",
-        },
-      },
-      signs = {
-        hunk = { "", "" },
-        item = { "", "" },
-        section = { "", "" },
+      {
+        "<leader>gc",
+        desc = "Git commit and push",
       },
     },
   },

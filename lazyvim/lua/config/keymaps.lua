@@ -115,7 +115,7 @@ local function copy_filename(include_path)
   local filename = vim.fn.expand("%:t")
 
   if include_path == true then
-    filename = vim.fn.expand("%:p"):gsub(vim.fn.getcwd() .. "/", "")
+    filename = vim.fn.expand("%:.")
   end
 
   if filename ~= nil and #filename >= 4 then
@@ -126,59 +126,6 @@ local function copy_filename(include_path)
   end
 end
 
--- HopWord
-vim.keymap.set({ "n" }, "<leader>f", function()
-  local Flash = require("flash")
-
-  ---@param opts Flash.Format
-  local function format_first_match(opts)
-    -- always show first and second label
-    return {
-      { opts.match.label1, opts.hl_group },
-      { opts.match.label2, opts.hl_group },
-    }
-  end
-
-  local function format_second_match(opts)
-    return {
-      { opts.match.label2, opts.hl_group },
-    }
-  end
-
-  Flash.jump({
-    search = { mode = "search" },
-    label = { after = false, before = { 0, 0 }, uppercase = false, format = format_first_match },
-    pattern = [[\<]],
-    action = function(match, state)
-      state:hide()
-      Flash.jump({
-        search = { max_length = 0 },
-        highlight = { matches = false },
-        label = { after = { 0, 2 }, format = format_second_match },
-        matcher = function(win)
-          -- limit matches to the current label
-          return vim.tbl_filter(function(m)
-            return m.label == match.label and m.win == win
-          end, state.results)
-        end,
-        labeler = function(matches)
-          for _, m in ipairs(matches) do
-            m.label = m.label2 -- use the second label
-          end
-        end,
-      })
-    end,
-    labeler = function(matches, state)
-      local labels = state:labels()
-      for m, match in ipairs(matches) do
-        match.label1 = labels[math.floor((m - 1) / #labels) + 1]
-        match.label2 = labels[(m - 1) % #labels + 1]
-        match.label = match.label1
-      end
-    end,
-  })
-end)
----------------------------------------------------------------------------------------------------
 map({
   -- Jump
   { "H", "<C-o>", { desc = "Jump backward" } },
@@ -229,6 +176,8 @@ map({
   { ";", comment, { desc = "Comment", remap = true } },
   { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "sy", copy_filename, { desc = "Copy filename to clipboard" } },
+  { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
+  { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
   {
     "sY",
     function()
@@ -236,8 +185,6 @@ map({
     end,
     { desc = "Copy file path to clipboard" },
   },
-  { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
-  { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
 
   -- vim edit register control
   { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
@@ -270,4 +217,11 @@ map({
   { "qo", "f'", { modes = { "n", "v" }, desc = "f'" } },
   { "ql", 'f"', { modes = { "n", "v" }, desc = 'f"' } },
   { "qu", "f`", { modes = { "n", "v" }, desc = "f`" } },
+
+  -- fold overwrite
+  { "zz", "za", { modes = { "n", "v" }, desc = "Toggle current fold" } },
+  { "zn", "zj", { modes = { "n", "v" }, desc = "Goto next fold" } },
+  { "ze", "zk", { modes = { "n", "v" }, desc = "Goto prev fold" } },
+  { "za", "zr", { modes = { "n", "v" }, desc = "Open all folds" } },
+  { "zo", "zm", { modes = { "n", "v" }, desc = "Close all folds" } },
 })

@@ -31,6 +31,7 @@ local function setup_cursor_options()
     "snacks_picker_list",
     "grug-far",
     "lazy",
+    "DiffviewFiles",
     "text.kulala_ui",
     "json.kulala_ui",
     "NeogitStatus",
@@ -55,14 +56,18 @@ end
 -- Enable cursorline and relativenumber for specific filetypes
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   callback = function()
-    setup_cursor_options()
+    if not vim.g.diffview_active then
+      setup_cursor_options()
+    end
   end,
 })
 
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
   callback = function()
-    vim.opt_local.relativenumber = false
-    vim.opt_local.cursorline = false
+    if not vim.g.diffview_active then
+      vim.opt_local.relativenumber = false
+      vim.opt_local.cursorline = false
+    end
   end,
 })
 
