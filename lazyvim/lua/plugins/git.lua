@@ -15,15 +15,37 @@ return {
       end
 
       local function git_commit()
-        require("snacks").input({
-          prompt = "Commit message: ",
-        }, function(msg)
+        local function on_push_done(push_result)
+          vim.schedule(function()
+            if push_result.code == 0 then
+              vim.notify("Pushed successfully", vim.log.levels.INFO)
+            else
+              vim.notify("Push failed: " .. (push_result.stderr or "unknown error"), vim.log.levels.ERROR)
+            end
+          end)
+        end
+
+        local function on_commit_done(commit_result)
+          vim.schedule(function()
+            if commit_result.code ~= 0 then
+              vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR)
+              return
+            end
+            vim.notify("Committed successfully, pushing...", vim.log.levels.INFO)
+            vim.system({ "git", "push" }, {}, on_push_done)
+          end)
+        end
+
+        local function on_input(msg)
           if msg and msg ~= "" then
-            vim.cmd("!git commit -m " .. vim.fn.shellescape(msg) .. " && git push")
-            vim.notify("Git commited")
-            close_diffview()
+            vim.schedule(function()
+              close_diffview()
+              vim.system({ "git", "commit", "-m", msg }, {}, on_commit_done)
+            end)
           end
-        end)
+        end
+
+        require("snacks").input({ prompt = "Commit message: " }, on_input)
       end
 
       local opts = {
