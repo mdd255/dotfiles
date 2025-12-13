@@ -1,57 +1,105 @@
+local function get_current_file_history()
+  local current_file = vim.fn.expand("%:.")
+  vim.cmd("DiffviewFileHistory " .. current_file)
+end
+
+local function git_pull()
+  vim.notify("Pulling...", vim.log.levels.INFO)
+
+  vim.system({ "git", "pull" }, {}, function(pull_result)
+    vim.schedule(function()
+      if pull_result.code == 0 then
+        vim.notify("Pull successful", vim.log.levels.INFO)
+      else
+        vim.notify("Pull failed: " .. (pull_result.stderr or "unknown error"), vim.log.levels.ERROR)
+      end
+    end)
+  end)
+end
+
+local function close_diffview()
+  vim.cmd("DiffviewClose")
+  vim.g.diffview_active = false
+end
+
+local function git_commit()
+  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
+  local function on_push_done(push_result)
+    vim.schedule(function()
+      if push_result.code == 0 then
+        vim.notify("Pushed to: " .. branch, vim.log.levels.INFO)
+      else
+        vim.notify("Failed to push: " .. (push_result.stderr or "unknown error"), vim.log.levels.ERROR)
+      end
+    end)
+  end
+
+  local function on_commit_done(commit_result)
+    vim.schedule(function()
+      if commit_result.code ~= 0 then
+        vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR)
+        return
+      end
+      vim.notify("Committed, pushing to: " .. branch .. "...", vim.log.levels.INFO)
+      vim.system({ "git", "push" }, {}, on_push_done)
+    end)
+  end
+
+  local function on_input(msg)
+    if msg and msg ~= "" then
+      vim.schedule(function()
+        close_diffview()
+        vim.system({ "git", "commit", "-m", msg }, {}, on_commit_done)
+      end)
+    end
+  end
+
+  require("snacks").input({ prompt = "Commit to: " .. branch .. " :" }, on_input)
+end
+
+local function git_diff_branch()
+  local function on_branch_selected(selected)
+    if selected then
+      vim.cmd("DiffviewOpen " .. selected)
+    end
+  end
+
+  local function on_branches_fetched(branch_result)
+    vim.schedule(function()
+      if branch_result.code ~= 0 then
+        vim.notify("Failed to get branches", vim.log.levels.ERROR)
+        return
+      end
+
+      local branches = {}
+      for line in branch_result.stdout:gmatch("[^\r\n]+") do
+        local branch = line:gsub("^%s*%*?%s*", ""):gsub("^remotes/origin/", "")
+        if branch ~= "" and not branch:match("HEAD") then
+          table.insert(branches, branch)
+        end
+      end
+
+      vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
+    end)
+  end
+
+  vim.system({ "git", "branch", "-a" }, {}, on_branches_fetched)
+end
+
 return {
   {
     "sindrets/diffview.nvim",
     lazy = false,
     keys = {
-      { "<Leader>s", "<cmd>DiffviewOpen<Cr>", desc = "Diffview Open" },
+      { "so", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
+      { "sf", get_current_file_history, desc = "Diffview current file history" },
+      { "sb", git_diff_branch, desc = "Diff branch" },
+      { "st", git_pull, desc = "Git pull" },
     },
 
     config = function()
       local actions = require("diffview.actions")
-
-      local function close_diffview()
-        vim.cmd("DiffviewClose")
-        vim.g.diffview_active = false
-      end
-
-      local function git_commit()
-        local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-
-        local function on_push_done(push_result)
-          vim.schedule(function()
-            if push_result.code == 0 then
-              vim.notify("Pushed to: " .. branch .. " successfully", vim.log.levels.INFO)
-            else
-              vim.notify(
-                "Failed when push to: " .. branch .. ": " .. (push_result.stderr or "unknown error"),
-                vim.log.levels.ERROR
-              )
-            end
-          end)
-        end
-
-        local function on_commit_done(commit_result)
-          vim.schedule(function()
-            if commit_result.code ~= 0 then
-              vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR)
-              return
-            end
-            vim.notify("Committed successfully, pushing to: " .. branch .. " ...", vim.log.levels.INFO)
-            vim.system({ "git", "push" }, {}, on_push_done)
-          end)
-        end
-
-        local function on_input(msg)
-          if msg and msg ~= "" then
-            vim.schedule(function()
-              close_diffview()
-              vim.system({ "git", "commit", "-m", msg }, {}, on_commit_done)
-            end)
-          end
-        end
-
-        require("snacks").input({ prompt = "Commit to: " .. branch .. " :" }, on_input)
-      end
 
       local opts = {
         enhanced_diff_hl = true,
@@ -156,15 +204,6 @@ return {
         nmap("gp", gitsigns.preview_hunk, { desc = "Preview hunk" })
         nmap("gP", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
       end,
-    },
-  },
-  {
-    "folke/snacks.nvim",
-    keys = {
-      {
-        "<leader>gc",
-        desc = "Git commit and push",
-      },
     },
   },
 }
