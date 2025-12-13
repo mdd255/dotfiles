@@ -128,7 +128,7 @@ return {
             { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
             { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
             { "n", "gca", actions.prev_conflict, { desc = "Toggle file explorer" } },
-            { "n", "gcp", git_commit, { desc = "Git commit" } },
+            { "n", "s<Cr>", git_commit, { desc = "Git commit" } },
           },
           file_panel = {
             { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
