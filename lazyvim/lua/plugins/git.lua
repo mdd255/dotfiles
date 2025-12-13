@@ -21,6 +21,7 @@ return {
           if msg and msg ~= "" then
             vim.cmd("!git commit -m " .. vim.fn.shellescape(msg) .. " && git push")
             vim.notify("Git commited")
+            close_diffview()
           end
         end)
       end
@@ -43,6 +44,7 @@ return {
           view = {
             { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "S", actions.stage_all, { desc = "Stage all" } },
             { "n", "gn", actions.next_conflict, { desc = "Goto next conflict" } },
             { "n", "ge", actions.prev_conflict, { desc = "Goto prev conflict" } },
             { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
