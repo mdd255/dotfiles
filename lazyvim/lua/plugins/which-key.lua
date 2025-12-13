@@ -26,7 +26,6 @@ return {
       { "s", group = " Search/Replace" },
       { "q", group = " Navigation" },
       { "<Leader>", group = " Leader" },
-      { "<Leader>a", group = "Code companion" },
       { "gs", group = "Git stash/status" },
       { "<Leader>d", group = "DBUI" },
       { "<Leader>s", group = "Diffview open" },

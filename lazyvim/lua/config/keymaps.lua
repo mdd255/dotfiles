@@ -83,10 +83,18 @@ local function unmap(lhs, modes)
 end
 
 ---------------------------------------------------------------------------------------------------
+-- Disable LazyVim default keymaps
 unmap({
+  -- Misc
   { "<Leader>up" },
   { "<Leader>w0" },
   { "gO" },
+  -- LSP
+  { "gra" },
+  { "gri" },
+  { "grn" },
+  { "grr" },
+  { "grt" },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")
