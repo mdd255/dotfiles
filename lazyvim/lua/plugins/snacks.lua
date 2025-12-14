@@ -1,3 +1,5 @@
+local logo = require("config.logo")
+
 return {
   "folke/snacks.nvim",
   keys = function()
@@ -73,14 +75,7 @@ return {
           { icon = "", key = "o", desc = "Restore Session", section = "session" },
           { icon = "", key = "q", desc = "Quit", action = ":qa" },
         },
-        header = [[
-                _     _ ___  _____ _____
-                 | |   | |__ \| ____| ____|
-  _ __ ___   __| | __| |  ) | |__ | |__
- | '_ ` _ \_/ _` |/ _` | / /|___ \|___ \
-   | | | | | | (_| | (_| |/ /_ ___)  ___) |
- |_| |_| |_|\__,_|\__,_|____|____/|____/
-        ]],
+        header = logo,
       },
       sections = {
         { section = "header" },

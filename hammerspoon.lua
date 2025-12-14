@@ -1,3 +1,15 @@
+local apps = {
+	b = "Brave Browser",
+	["return"] = "Wezterm",
+	w = "Neovide",
+}
+
+for key, app in pairs(apps) do
+	hs.hotkey.bind({ "cmd" }, key, function()
+		hs.application.launchOrFocus(app)
+	end)
+end
+
 hs.hotkey.bind({ "cmd" }, "e", function()
 	local currentScreen = hs.mouse.getCurrentScreen()
 	local nextScreen = currentScreen:next()
@@ -26,26 +38,15 @@ hs.hotkey.bind({ "cmd" }, "n", function()
 	hs.eventtap.event.newMouseEvent(hs.eventtap.event.types.leftMouseUp, centerPos):post()
 end)
 
-hs.hotkey.bind({ "cmd" }, "b", function()
-	hs.application.launchOrFocus("Brave Browser")
-end)
-
-hs.hotkey.bind({ "cmd" }, "n", function()
-	hs.application.launchOrFocus("Neovide")
-end)
-
-hs.hotkey.bind({ "cmd" }, "return", function()
-	hs.application.launchOrFocus("WezTerm")
-end)
+local lastFrame = nil
 
 hs.hotkey.bind({ "cmd" }, "space", function()
 	local win = hs.window.focusedWindow()
+
 	if win then
 		win:toggleFullScreen()
 	end
 end)
-
-local lastFrame = nil
 
 hs.hotkey.bind({ "cmd", "shift" }, "space", function()
 	local win = hs.window.focusedWindow()
@@ -72,7 +73,7 @@ local function reloadConfig(files)
 end
 
 hs.pathwatcher.new(os.getenv("HOME") .. "/.config/dotfiles/hammerspoon.lua", reloadConfig):start()
-hs.alert.show("Config Loaded")
+hs.alert.show("Config loaded successfully")
 
 hs.hotkey.bind({ "cmd" }, "o", function()
 	local win = hs.window.focusedWindow()

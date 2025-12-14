@@ -18,8 +18,8 @@ local function git_pull()
 end
 
 local function close_diffview()
-  vim.cmd("DiffviewClose")
   vim.g.diffview_active = false
+  vim.cmd("DiffviewClose")
 end
 
 local function git_commit()
