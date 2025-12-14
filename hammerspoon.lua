@@ -30,7 +30,7 @@ hs.hotkey.bind({ "cmd" }, "b", function()
 	hs.application.launchOrFocus("Brave Browser")
 end)
 
-hs.hotkey.bind({ "cmd" }, "a", function()
+hs.hotkey.bind({ "cmd" }, "n", function()
 	hs.application.launchOrFocus("Neovide")
 end)
 
@@ -38,7 +38,7 @@ hs.hotkey.bind({ "cmd" }, "return", function()
 	hs.application.launchOrFocus("WezTerm")
 end)
 
-hs.hotkey.bind({ "shift", "cmd" }, "f", function()
+hs.hotkey.bind({ "cmd" }, "space", function()
 	local win = hs.window.focusedWindow()
 	if win then
 		win:toggleFullScreen()
@@ -47,7 +47,7 @@ end)
 
 local lastFrame = nil
 
-hs.hotkey.bind({ "cmd" }, "f", function()
+hs.hotkey.bind({ "cmd", "shift" }, "space", function()
 	local win = hs.window.focusedWindow()
 	if not win then
 		return
@@ -71,7 +71,7 @@ local function reloadConfig(files)
 	end
 end
 
-hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
+hs.pathwatcher.new(os.getenv("HOME") .. "/.config/dotfiles/hammerspoon.lua", reloadConfig):start()
 hs.alert.show("Config Loaded")
 
 hs.hotkey.bind({ "cmd" }, "o", function()
