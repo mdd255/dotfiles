@@ -23,7 +23,6 @@ return {
     picker = {
       formatters = {
         file = {
-          filename_first = true,
           show_idx = false,
         },
       },

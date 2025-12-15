@@ -72,6 +72,27 @@ function M.close_diffview()
   vim.cmd("DiffviewClose")
 end
 
+function M.git_push(force)
+  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
+  vim.notify("Pushing to: " .. branch .. "...", vim.log.levels.INFO, notify_opts)
+
+  local push_args = { "git", "push" }
+  if force then
+    table.insert(push_args, "--force")
+  end
+
+  vim.system(push_args, {}, function(result)
+    vim.schedule(function()
+      if result.code == 0 then
+        vim.notify("Pushed to: " .. branch, vim.log.levels.INFO, notify_opts)
+      else
+        vim.notify("Failed to push: " .. (result.stderr or "unknown error"), vim.log.levels.ERROR, notify_opts)
+      end
+    end)
+  end)
+end
+
 function M.git_commit(amend)
   local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
 
@@ -83,32 +104,16 @@ function M.git_commit(amend)
     default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
   end
 
-  local function on_push_done(push_result)
-    vim.schedule(function()
-      if push_result.code == 0 then
-        vim.notify("Pushed to: " .. branch, vim.log.levels.INFO, notify_opts)
-      else
-        vim.notify("Failed to push: " .. (push_result.stderr or "unknown error"), vim.log.levels.ERROR, notify_opts)
-      end
-    end)
-  end
-
   local function on_commit_done(commit_result)
     vim.schedule(function()
       if commit_result.code ~= 0 then
         vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR, notify_opts)
         return
       end
-      vim.notify("Committed, pushing to: " .. branch .. "...", vim.log.levels.INFO, notify_opts)
+      vim.notify("Committed successfully", vim.log.levels.INFO, notify_opts)
 
-      -- Build push args with --force when amending
-      local push_args = { "git", "push" }
-
-      if amend then
-        table.insert(push_args, "--force")
-      end
-
-      vim.system(push_args, {}, on_push_done)
+      -- Use the extracted git_push function
+      M.git_push(amend)
     end)
   end
 
