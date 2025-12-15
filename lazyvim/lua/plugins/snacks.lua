@@ -21,6 +21,12 @@ return {
     terminal = { enabled = true },
     explorer = { enabled = true },
     picker = {
+      formatters = {
+        file = {
+          filename_first = true,
+          show_idx = false,
+        },
+      },
       matcher = {
         cwd_bonus = true,
         frecency = true,
