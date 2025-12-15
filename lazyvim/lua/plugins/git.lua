@@ -1,91 +1,4 @@
-local function get_current_file_history()
-  local current_file = vim.fn.expand("%:.")
-  vim.cmd("DiffviewFileHistory " .. current_file)
-end
-
-local function git_pull()
-  vim.notify("Pulling...", vim.log.levels.INFO)
-
-  vim.system({ "git", "pull" }, {}, function(pull_result)
-    vim.schedule(function()
-      if pull_result.code == 0 then
-        vim.notify("Pull successful", vim.log.levels.INFO)
-      else
-        vim.notify("Pull failed: " .. (pull_result.stderr or "unknown error"), vim.log.levels.ERROR)
-      end
-    end)
-  end)
-end
-
-local function close_diffview()
-  vim.g.diffview_active = false
-  vim.cmd("DiffviewClose")
-end
-
-local function git_commit()
-  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-
-  local function on_push_done(push_result)
-    vim.schedule(function()
-      if push_result.code == 0 then
-        vim.notify("Pushed to: " .. branch, vim.log.levels.INFO)
-      else
-        vim.notify("Failed to push: " .. (push_result.stderr or "unknown error"), vim.log.levels.ERROR)
-      end
-    end)
-  end
-
-  local function on_commit_done(commit_result)
-    vim.schedule(function()
-      if commit_result.code ~= 0 then
-        vim.notify("Commit failed: " .. (commit_result.stderr or "unknown error"), vim.log.levels.ERROR)
-        return
-      end
-      vim.notify("Committed, pushing to: " .. branch .. "...", vim.log.levels.INFO)
-      vim.system({ "git", "push" }, {}, on_push_done)
-    end)
-  end
-
-  local function on_input(msg)
-    if msg and msg ~= "" then
-      vim.schedule(function()
-        close_diffview()
-        vim.system({ "git", "commit", "-m", msg }, {}, on_commit_done)
-      end)
-    end
-  end
-
-  require("snacks").input({ prompt = "Commit to: " .. branch .. " :" }, on_input)
-end
-
-local function git_diff_branch()
-  local function on_branch_selected(selected)
-    if selected then
-      vim.cmd("DiffviewOpen " .. selected)
-    end
-  end
-
-  local function on_branches_fetched(branch_result)
-    vim.schedule(function()
-      if branch_result.code ~= 0 then
-        vim.notify("Failed to get branches", vim.log.levels.ERROR)
-        return
-      end
-
-      local branches = {}
-      for line in branch_result.stdout:gmatch("[^\r\n]+") do
-        local branch = line:gsub("^%s*%*?%s*", ""):gsub("^remotes/origin/", "")
-        if branch ~= "" and not branch:match("HEAD") then
-          table.insert(branches, branch)
-        end
-      end
-
-      vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
-    end)
-  end
-
-  vim.system({ "git", "branch", "-a" }, {}, on_branches_fetched)
-end
+local git = require("config.git-functions")
 
 return {
   {
@@ -93,13 +6,18 @@ return {
     lazy = false,
     keys = {
       { "so", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
-      { "sf", get_current_file_history, desc = "Diffview current file history" },
-      { "sa", git_diff_branch, desc = "Diff branch" },
-      { "sr", git_pull, desc = "Git pull" },
+      { "sf", git.get_current_file_history, desc = "Diffview current file history" },
+      { "sa", git.git_diff_branch, desc = "Diff branch" },
+      { "sr", git.git_pull, desc = "Git pull" },
     },
 
     config = function()
       local actions = require("diffview.actions")
+
+      local function stage_all()
+        actions.stage_all()
+        vim.notify("Git: staged all files")
+      end
 
       local opts = {
         enhanced_diff_hl = true,
@@ -117,9 +35,9 @@ return {
         },
         keymaps = {
           view = {
-            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
+            { "n", "<Leader>q", git.close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
-            { "n", "S", actions.stage_all, { desc = "Stage all" } },
+            { "n", "S", stage_all, { desc = "Stage all" } },
             { "n", "gn", actions.next_conflict, { desc = "Goto next conflict" } },
             { "n", "ge", actions.prev_conflict, { desc = "Goto prev conflict" } },
             { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
@@ -128,15 +46,19 @@ return {
             { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
             { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
             { "n", "gca", actions.prev_conflict, { desc = "Toggle file explorer" } },
-            { "n", "s<Cr>", git_commit, { desc = "Git commit" } },
+            { "n", "s<Cr>", git.git_commit, { desc = "Git commit" } },
+            { "n", "sA", git.git_commit_amend, { desc = "Git commit amend" } },
           },
           file_panel = {
-            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "<Leader>q", git.close_diffview, { desc = "DiffviewClose" } },
             { "n", "<Esc>", actions.toggle_files, { desc = "Toggle file explorer" } },
+            { "n", "S", stage_all, { desc = "Stage all" } },
+            { "n", "s<Cr>", git.git_commit, { desc = "Git commit" } },
+            { "n", "sA", git.git_commit_amend, { desc = "Git commit amend" } },
           },
           file_history_panel = {
-            { "n", "<Leader>q", close_diffview, { desc = "DiffviewClose" } },
+            { "n", "<Leader>q", git.close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
             { "n", "<Esc>", actions.toggle_files, { desc = "Toggle file explorer" } },
           },

@@ -104,6 +104,7 @@ return {
 
     -- git keymaps
     map("n", "sb", "<cmd>lua Snacks.picker.git_branches()<Cr>", { desc = "Git branches" })
+    map("n", "sp", "<cmd>lua Snacks.picker.gh_pr()<Cr>", { desc = "Github PRs" })
     map("n", "sl", "<cmd>lua Snacks.picker.git_log()<Cr>", { desc = "Git log" })
     map("n", "st", "<cmd>lua Snacks.picker.git_stash()<Cr>", { desc = "Git stash" })
     map("n", "gb", "<cmd>lua Snacks.gitbrowse()<Cr>", { desc = "Git open file in browser" })
