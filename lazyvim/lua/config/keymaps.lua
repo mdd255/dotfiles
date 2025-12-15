@@ -187,6 +187,14 @@ map({
   { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
   { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
   {
+    "R",
+    function()
+      vim.cmd("checktime")
+      vim.notify("File reloaded", vim.log.levels.INFO, { title = "Neovim" })
+    end,
+    { desc = "Reload current file" },
+  },
+  {
     "sY",
     function()
       copy_filename(true)
