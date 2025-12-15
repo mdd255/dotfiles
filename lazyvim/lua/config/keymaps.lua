@@ -95,6 +95,9 @@ unmap({
   { "grn" },
   { "grr" },
   { "grt" },
+  -- fold
+  { "z=" },
+  { "zf" },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")

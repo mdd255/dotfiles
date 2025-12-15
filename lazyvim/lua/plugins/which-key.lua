@@ -21,6 +21,7 @@ return {
     spec = {
       { mode = { "n" } },
       { "t", group = " LSP" },
+      { "z", group = " Fold" },
       { "f", group = " Find" },
       { "g", group = " Goto" },
       { "s", group = " Search/Replace" },
@@ -37,6 +38,7 @@ return {
       { "f", mode = { "n" } },
       { "g", mode = { "n" } },
       { "s", mode = { "n" } },
+      { "z", mode = { "n" } },
       { "q", mode = { "n", "v", "o" } },
       { "<Leader>", mode = { "n" } },
     },
