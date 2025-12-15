@@ -122,6 +122,9 @@ return {
         nmap("gq", gitsigns.reset_hunk, { desc = "Reset hunk" })
         nmap("gQ", gitsigns.reset_buffer, { desc = "Reset buffer" })
 
+        nmap("gn", gitsigns.next_hunk, { desc = "Goto next hunk" })
+        nmap("ge", gitsigns.prev_hunk, { desc = "Goto previous hunk" })
+
         nmap("gp", gitsigns.preview_hunk, { desc = "Preview hunk" })
         nmap("gP", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
       end,
