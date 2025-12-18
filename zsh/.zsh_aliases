@@ -44,7 +44,7 @@ alias glo="git log"
 alias gi="git init"
 # stash/status
 alias gst="git status"
-alias gss="git stash"
+alias gss="git stash -u"
 alias gsl="git stash peek"
 alias gsp="git stash pop"
 alias gsd="git stash drop"
