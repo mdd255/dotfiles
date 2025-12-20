@@ -93,7 +93,7 @@ return {
           SpellRare = { underline = true },
           SpellLocal = { underline = true },
           Visual = { bg = hi.blue, fg = hi.black },
-          CursorLineNr = { fg = hi.black, bold = true, bg = hi.gray },
+          CursorLineNr = { fg = hi.blue, bg = hi.black },
           CursorColumn = { bg = hi.dark_gray },
           IblWhitespace = { fg = hi.dark_gray },
           WinSeparator = { fg = hi.blue },
