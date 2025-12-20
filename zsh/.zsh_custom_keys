@@ -13,47 +13,31 @@ bindkey "^[q" kill-line
 bindkey -r "^R"
 
 # fzf custom keys
+fd_path=".\
+  $HOME/Projects\
+  $HOME/.config\
+  $HOME/Downloads
+"
+
 fd_extra_args="
-  --hidden .\
-  --no-ignore\
+  --hidden\
   --ignore-case\
-  --max-depth 5\
-	--exclude node_modules\
-	--exclude .fnm\
-	--exclude .npm\
-	--exclude .cache\
-	--exclude gem\
-	--exclude skypeforlinux\
-	--exclude Postman\
-	--exclude Rambox\
-	--exclude .git\
-	--exclude .var\
-	--exclude libreoffice\
-	--exclude google-chrome\
-	--exclude proc\
-	--exclude themes\
-	--exclude plugins\
-	--exclude .icons\
-	--exclude .docker\
-	--exclude .bun\
-	--exclude .java\
-	--exclude .pki\
-	--exclude .oh-my-zsh\
-	--exclude /go/\
-	--exclude /.config/BraveSoftware\
-	--exclude Steam\
-	--exclude pnpm\
-	--exclude pack\
-	--exclude TabNine\
-	--exclude /.local/lib\
-	--exclude .vscode\
-	--exclude .dotnet\
-	--exclude .rustup\
-	--exclude .cargo\
-	--exclude .rest-client\
-	--exclude /.local/share/DBeaverData\
-	--exclude .eclipse\
-	"
+  --max-depth 2
+"
+
+get_dir_path() {
+  fd --type d $(echo $fd_extra_args) $(echo $fd_path) \
+	| grep -v " " \
+	| sed "s|$HOME|~|g" \
+	| fzf --no-preview --with-nth=-1 \
+	| xargs
+}
+
+get_file_path() {
+	fd --type f $(echo $fd_extra_args) $HOME \
+	| fzf \
+	| xargs
+}
 
 get_branch_name() {
 	git branch -a \
@@ -68,18 +52,6 @@ get_commit_hash() {
 	| sed 's/ /_/g' \
 	| fzf --no-preview \
 	| awk -F_ '{print $1}'
-}
-
-get_dir_path() {
-	fd --type d $(echo $fd_extra_args) $HOME \
-	| fzf --no-preview --with-nth=-1 \
-	| xargs
-}
-
-get_file_path() {
-	fd --type f $(echo $fd_extra_args) $HOME \
-	| fzf \
-	| xargs
 }
 
 fzf_gbr() {
