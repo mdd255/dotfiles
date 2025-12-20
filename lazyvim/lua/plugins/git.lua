@@ -81,6 +81,7 @@ return {
               vim.api.nvim_set_option_value("number", false, { win = win })
               vim.api.nvim_set_option_value("relativenumber", false, { win = win })
               vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
+              vim.api.nvim_set_option_value("statuscolumn", "", { win = win })
             end
           end, 100)
         end,
@@ -94,6 +95,14 @@ return {
     opts = {
       current_line_blame = true,
       current_line_blame_formatter = "   <author> - <author_time:%R> [<summary>]",
+      signs = {
+        add = { text = "│" },
+        change = { text = "│" },
+        delete = { text = "│" },
+        topdelete = { text = "│" },
+        changedelete = { text = "│" },
+        untracked = { text = "┆" },
+      },
       on_attach = function(bufnr)
         local gitsigns = require("gitsigns")
 
@@ -121,9 +130,6 @@ return {
 
         nmap("gq", gitsigns.reset_hunk, { desc = "Reset hunk" })
         nmap("gQ", gitsigns.reset_buffer, { desc = "Reset buffer" })
-
-        nmap("gn", gitsigns.next_hunk, { desc = "Goto next hunk" })
-        nmap("ge", gitsigns.prev_hunk, { desc = "Goto previous hunk" })
 
         nmap("gp", gitsigns.preview_hunk, { desc = "Preview hunk" })
         nmap("gP", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })

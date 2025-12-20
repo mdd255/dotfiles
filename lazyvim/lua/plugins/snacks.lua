@@ -17,7 +17,7 @@ return {
     input = { enabled = true },
     notifier = { enabled = true },
     scroll = { enabled = true },
-    statuscolumn = { enabled = true },
+    statuscolumn = { enabled = false },
     terminal = { enabled = true },
     explorer = { enabled = true },
     picker = {
