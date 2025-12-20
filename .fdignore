@@ -8,3 +8,7 @@ btop
 Postman
 aether
 elephant
+node_modules
+dist
+.git
+telemetry

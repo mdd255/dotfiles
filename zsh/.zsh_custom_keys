@@ -21,12 +21,11 @@ fd_path=".\
 
 fd_extra_args="
   --hidden\
-  --ignore-case\
-  --max-depth 2
+  --ignore-case
 "
 
 get_dir_path() {
-  fd --type d $(echo $fd_extra_args) $(echo $fd_path) \
+  fd --type d $(echo $fd_extra_args) --max-depth 2 $(echo $fd_path) \
 	| grep -v " " \
 	| sed "s|$HOME|~|g" \
 	| fzf --no-preview --with-nth=-1 \
@@ -34,7 +33,8 @@ get_dir_path() {
 }
 
 get_file_path() {
-	fd --type f $(echo $fd_extra_args) $HOME \
+  fd --type f $(echo $fd_extra_args) $(echo $fd_path) \
+	| grep -v " " \
 	| fzf \
 	| xargs
 }
