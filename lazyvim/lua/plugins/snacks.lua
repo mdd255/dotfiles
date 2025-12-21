@@ -12,7 +12,6 @@ return {
     zen = { enabled = false },
     scratch = { enabled = false },
     words = { enabled = false },
-    indent = { enabled = true },
     animate = { enabled = true },
     input = { enabled = true },
     notifier = { enabled = true },
@@ -20,6 +19,7 @@ return {
     statuscolumn = { enabled = false },
     terminal = { enabled = true },
     explorer = { enabled = true },
+    indent = { enabled = true, char = "▏" },
     picker = {
       formatters = {
         file = {
@@ -117,7 +117,7 @@ return {
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
-    map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
+    -- map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
 
     -- LSP keymaps

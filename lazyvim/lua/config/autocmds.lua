@@ -47,6 +47,12 @@ local function setup_cursor_options()
 
   vim.opt_local.relativenumber = contains(relativenumber_whitelist, ft) and not contains(number_blacklist, ft) or false
   vim.opt_local.number = not contains(number_blacklist, ft)
+
+  if not contains(number_blacklist, ft) then
+    vim.opt_local.statuscolumn = ""
+    vim.opt_local.signcolumn = "no"
+  end
+
   vim.opt_local.cursorline = not contains(cursorline_blacklist, ft)
 end
 

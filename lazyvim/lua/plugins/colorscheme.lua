@@ -67,7 +67,7 @@ return {
           fg = color.white,
           line_number = color.gray,
           inlay_hint = color.dark_gray,
-          indentline = color.gray,
+          indentline = color.dark_gray,
           fg_gutter = color.gray,
         },
         highlights = {
@@ -119,8 +119,8 @@ return {
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
 
           -- snacks
-          SnacksIndent = { fg = hi.gray },
-          SnacksIndentScope = { fg = hi.white },
+          SnacksIndent = { fg = hi.dark_gray },
+          SnacksIndentScope = { fg = hi.gray },
           SnacksPickerPrompt = { bg = hi.black, fg = hi.white },
           SnacksPickerListCursorLine = { bg = hi.dark_gray },
           SnacksPickerList = { fg = hi.gray },

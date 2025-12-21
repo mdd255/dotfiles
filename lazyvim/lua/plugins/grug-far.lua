@@ -1,7 +1,7 @@
 return {
   "MagicDuck/grug-far.nvim",
   opts = {
-    normalModeSearch = true,
+    normalModeSearch = false,
     headerMaxWidth = 80,
     showCompactInputs = true,
     keymaps = {
@@ -22,10 +22,10 @@ return {
         grug.open({
           transient = true,
           prefills = {
-            search = vim.fn.expand("<cword>"),
+            search = "",
             filesFilter = ext and ext ~= "" and "*." .. ext or nil,
             flags = "-i",
-            paths = vim.fn.expand("%:."),
+            paths = "",
           },
         })
       end,
