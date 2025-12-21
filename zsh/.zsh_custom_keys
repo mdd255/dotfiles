@@ -27,7 +27,7 @@ fd_extra_args="
 get_dir_path() {
   fd --type d $(echo $fd_extra_args) --max-depth 2 $(echo $fd_path) \
 	| grep -v " " \
-	| sed "s|$HOME|~|g" \
+	| sed "s|$HOME/||g" \
 	| fzf --no-preview --with-nth=-1 \
 	| xargs
 }
@@ -70,7 +70,7 @@ fzf_cd () {
   dir="$(get_dir_path)"
 
   if ((#dir > 0)); then
-    LBUFFER="cd ${dir}" && zle accept-line
+    LBUFFER="cd ~/${dir}" && zle accept-line
   fi
 }
 zle -N fzf_cd
