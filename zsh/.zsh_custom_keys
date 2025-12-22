@@ -14,9 +14,7 @@ bindkey -r "^R"
 
 # fzf custom keys
 fd_path=".\
-  $HOME/Projects\
-  $HOME/.config\
-  $HOME/Downloads
+  $HOME
 "
 
 fd_extra_args="
@@ -25,7 +23,7 @@ fd_extra_args="
 "
 
 get_dir_path() {
-  fd --type d $(echo $fd_extra_args) --max-depth 2 $(echo $fd_path) \
+  fd --type d $(echo $fd_extra_args) --max-depth 3 $(echo $fd_path) \
 	| grep -v " " \
 	| sed "s|$HOME/||g" \
 	| fzf --no-preview --with-nth=-1 \
