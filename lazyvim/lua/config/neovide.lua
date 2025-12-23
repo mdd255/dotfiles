@@ -1,5 +1,5 @@
 -- options
-vim.o.guifont = "FiraCode Nerd Font:h11.7"
+vim.o.guifont = "FiraCode Nerd Font:h11.4"
 vim.g.neovide_scale_factor = 1
 vim.o.title = true
 vim.g.neovide_hide_mouse_when_typing = true
