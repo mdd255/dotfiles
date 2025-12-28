@@ -37,7 +37,7 @@ return {
             snippet_indicator = "",
           },
         },
-        documentation = { window = { scrollbar = false }, auto_show = false },
+        documentation = { window = { scrollbar = false }, auto_show = true },
         list = {
           selection = { preselect = true, auto_insert = true },
           cycle = { from_top = false },
