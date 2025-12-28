@@ -9,6 +9,7 @@ vim.opt.mouse = ""
 vim.opt.wrap = false
 vim.g.diffview_active = false
 vim.opt.spell = false
+vim.opt.scroll = 25
 vim.opt.signcolumn = "yes"
 vim.opt.statuscolumn = "%=%{v:relnum==0?v:lnum:v:relnum}%s"
 vim.opt.fillchars = {

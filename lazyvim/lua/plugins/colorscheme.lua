@@ -129,6 +129,9 @@ return {
           -- grugfar
           GrugFarResultsMatch = { bg = hi.gray, fg = hi.blue },
           GrugFarResultsPath = { fg = hi.red, underline = true, italic = true },
+
+          -- scroll marks
+          ScrollIndicator = { fg = hi.white },
         },
         options = {
           cursorline = true,

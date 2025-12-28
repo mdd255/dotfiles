@@ -2,6 +2,7 @@
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 
 local utils = require("config.utils")
+local scroll_mark = require("config.scroll-mark")
 
 local function setup_cursor_options()
   local ft = vim.bo.filetype
@@ -51,6 +52,8 @@ local function setup_cursor_options()
   if contains(number_blacklist, ft) then
     vim.opt_local.statuscolumn = ""
     vim.opt_local.signcolumn = "no"
+  else
+    scroll_mark.mark_scroll()
   end
 
   vim.opt_local.cursorline = not contains(cursorline_blacklist, ft)
@@ -71,6 +74,8 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
       vim.opt_local.relativenumber = false
       vim.opt_local.cursorline = false
     end
+
+    vim.api.nvim_buf_clear_namespace(0, scroll_mark.ns, 0, -1)
   end,
 })
 

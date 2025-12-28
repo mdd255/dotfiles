@@ -1,4 +1,6 @@
 ---@diagnostic disable: undefined-global
+local scroll_mark = require("config.scroll-mark")
+
 -- @param lhs string|table - keymap or table of keymap configs
 -- @param rhs any - command/function (ignored if lhs is table)
 -- @param opts? table - options (ignored if lhs is table)
@@ -144,8 +146,8 @@ map({
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
 
   -- Scroll
-  { "m", "<C-d>", { desc = "Scroll down half page" } },
-  { "M", "<C-u>", { desc = "Scroll up half page" } },
+  { "m", scroll_mark.scroll_down, { desc = "Scroll down half page" } },
+  { "M", scroll_mark.scroll_up, { desc = "Scroll up half page" } },
 
   -- Colemak
   { "n", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down" } },
