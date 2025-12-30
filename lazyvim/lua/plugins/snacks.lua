@@ -42,6 +42,18 @@ return {
         },
       },
       sources = {
+        lsp_symbols = {
+          filter = {
+            default = {
+              "Class",
+              "Function",
+              "Interface",
+              "Method",
+              "Struct",
+              "Trait",
+            },
+          },
+        },
         projects = {
           format = "file",
           recent = true,
@@ -52,14 +64,16 @@ return {
           },
           dev = {
             "~/.config/",
-            "~/Projects/",
+            "~/Projects/priv/",
+            "~/Projects/ABD/",
+            "~/Projects/hipages/",
           },
         },
         files = { hidden = true },
         grep = { hidden = true },
         explorer = {
-          hidden = false,
-          ignored = true,
+          hidden = true,
+          ignored = false,
           diagnostics = false,
           replace_netrw = true,
           layout = {
@@ -117,7 +131,7 @@ return {
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
-    -- map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
+    map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
 
     -- LSP keymaps
