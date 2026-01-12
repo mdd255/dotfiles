@@ -60,7 +60,7 @@ local function setup_cursor_options()
 end
 
 -- Enable cursorline and relativenumber for specific filetypes
-vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
+vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FileType" }, {
   callback = function()
     if not vim.g.diffview_active then
       setup_cursor_options()
