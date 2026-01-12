@@ -13,8 +13,8 @@ return {
     },
     keymaps = {
       help = { n = "/" },
-      previewLocation = { n = "<Enter>" },
-      gotoLocation = { n = "tt" },
+      previewLocation = { n = "tt" },
+      gotoLocation = { n = "<Enter>" },
       historyOpen = { n = "th" },
       historyAdd = { n = "ti" },
       pickHistoryEntry = { n = "<Enter>" },
