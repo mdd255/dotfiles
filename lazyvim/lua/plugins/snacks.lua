@@ -67,6 +67,7 @@ return {
             "~/Projects/priv/",
             "~/Projects/ABD/",
             "~/Projects/hipages/",
+            "~/Projects/accelerator-app/",
           },
         },
         files = { hidden = true },
