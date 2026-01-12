@@ -1,0 +1,17 @@
+{
+	"layer": "top",
+	"position": "top",
+	"output": ["eDP-1"],
+	"modules-center": ["custom/events"],
+	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
+	"custom/events": {
+		"format": "󱑑 {text}",
+		"tooltip": true,
+		"interval": 300,
+		"format-icons": {
+			"default": ""
+		},
+		"exec": "~/.config/dotfiles/omarchy/scripts/khal-custom",
+		"return-type": "json"
+	}
+}

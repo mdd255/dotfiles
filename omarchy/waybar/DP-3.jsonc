@@ -1,0 +1,53 @@
+{
+	"layer": "top",
+	"position": "top",
+	"output": ["DP-3"],
+	"modules-right": ["bluetooth", "network", "pulseaudio", "battery"],
+	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
+	"network": {
+		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
+		"format": "{icon}",
+		"format-wifi": "{icon} {essid}",
+		"format-ethernet": "󰀂",
+		"format-disconnected": "󰤮",
+		"tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+		"tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+		"tooltip-format-disconnected": "Disconnected",
+		"interval": 3,
+		"spacing": 1
+	},
+	"battery": {
+		"format": "{capacity}% {icon}",
+		"format-discharging": "{icon}",
+		"format-charging": "{icon}",
+		"format-plugged": "",
+		"format-icons": {
+			"charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
+			"default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+		},
+		"format-full": "󰂅",
+		"interval": 5,
+		"states": {
+			"warning": 20,
+			"critical": 10
+		}
+	},
+	"bluetooth": {
+		"format": "",
+		"format-disabled": "󰂲",
+		"format-off": "󰂲",
+		"format-connected": " {device_alias}",
+		"format-connected-battery": " {device_alias} {device_battery_percentage}%",
+		"output": ["DP-3"]
+	},
+	"pulseaudio": {
+		"format": "{icon}",
+		"scroll-step": 5,
+		"format-muted": "",
+		"format-icons": {
+			"headphone": "",
+			"headset": "󰗋",
+			"default": ["", "", ""]
+		}
+	}
+}

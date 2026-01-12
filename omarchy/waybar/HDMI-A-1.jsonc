@@ -1,0 +1,36 @@
+{
+	"layer": "top",
+	"position": "top",
+	"output": ["HDMI-A-1"],
+	"modules-center": ["custom/earth", "clock", "clock#us", "clock#ptg"],
+	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
+	"custom/earth": {
+		"format": " "
+	},
+	"clock": {
+		"format": "{:L%a %H:%M %d/%m [Vietnam]}   ",
+		"timezone": "Asia/Ho_Chi_Minh",
+		"tooltip-format": "<tt><small>{calendar}</small></tt>",
+		"calendar": {
+			"mode": "month",
+			"mode-mon-col": 3,
+			"weeks-pos": "right",
+			"on-scroll": 1,
+			"format": {
+				"months": "<span color='#ffead3'><b>{}</b></span>",
+				"days": "<span color='#ecc6d9'><b>{}</b></span>",
+				"weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+				"weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+				"today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+			}
+		}
+	},
+	"clock#us": {
+		"format": "{:L%a %H:%M %d/%m [Florida]}   ",
+		"timezone": "America/New_York"
+	},
+	"clock#ptg": {
+		"format": "{:L%a %H:%M %d/%m [Portugal]}   ",
+		"timezone": "Portugal"
+	}
+}

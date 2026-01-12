@@ -4,12 +4,12 @@
 const { execSync } = require('node:child_process')
 
 try {
-  const events = execSync("khal list now 2d --format '{title} {start-time}'")
+  const events = execSync("khal list now 1d --format '{title} {start-time}-{end-time}'")
     .toString().trim()
 
-  const nextEvent = events.split('Tomorrow')[0].split('\n').slice(1, -1)[0] || ''
+  const nextEvents = events.split('\n').slice(1, 3).map(event => `[${event}]`).join("   ") || ''
 
-  const payload = { text: nextEvent, tooltip: events }
+  const payload = { text: nextEvents, tooltip: events }
   console.log(JSON.stringify(payload))
 } catch (err) {
   execSync(`notify-send input 'Cannot run khal-script: ${err.message}'`)
