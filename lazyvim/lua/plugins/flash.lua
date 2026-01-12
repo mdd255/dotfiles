@@ -22,11 +22,10 @@ return {
   keys = function()
     local Flash = require("flash")
 
-    ---@param opts Flash.Format
     local function format_first_match(opts)
-      -- always show first and second label
+      -- first label red, second label default (blue)
       return {
-        { opts.match.label1, opts.hl_group },
+        { opts.match.label1, "FlashLabelFirst" },
         { opts.match.label2, opts.hl_group },
       }
     end
@@ -37,31 +36,37 @@ return {
       }
     end
 
-    local function action(match, state)
-      state:hide()
+    local function create_action(offset)
+      return function(match, state)
+        state:hide()
 
-      Flash.jump({
-        search = {
-          max_length = 0,
-        },
-        highlight = { matches = false },
-        label = {
-          after = { 0, 2 },
-          format = format_second_match,
-        },
-        matcher = function(win)
-          -- limit matches to the current label
-          return vim.tbl_filter(function(m)
-            return m.label == match.label and m.win == win
-          end, state.results)
-        end,
-        labeler = function(matches)
-          for _, m in ipairs(matches) do
-            m.label = m.label2 -- use the second label
-          end
-        end,
-      })
+        Flash.jump({
+          search = {
+            max_length = 0,
+          },
+          jump = offset and { offset = offset } or nil,
+          highlight = { matches = false },
+          label = {
+            after = { 0, 2 },
+            format = format_second_match,
+          },
+          matcher = function(win)
+            -- limit matches to the current label
+            return vim.tbl_filter(function(m)
+              return m.label == match.label and m.win == win
+            end, state.results)
+          end,
+          labeler = function(matches)
+            for _, m in ipairs(matches) do
+              m.label = m.label2 -- use the second label
+            end
+          end,
+        })
+      end
     end
+
+    local action = create_action()
+    local action_before = create_action(-1)
 
     local function labeler(matches, state)
       local labels = state:labels()
@@ -75,36 +80,126 @@ return {
 
     return {
       {
-        "<tab>",
-        mode = { "n" },
+        "l",
+        mode = { "n", "v", "o" },
         function()
           Flash.jump({
             search = {
-              mode = "char",
-              max_length = 1,
+              mode = "search",
               wrap = false,
               forward = true,
-              multi_windows = false,
+              multi_window = true,
             },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
+            },
+            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
+            action = action,
+            labeler = labeler,
           })
         end,
-        desc = "Flash f",
+        desc = "Flash backward to punctuation",
       },
       {
-        "<s-tab>",
+        "L",
+        mode = { "n", "v", "o" },
+        function()
+          Flash.jump({
+            search = {
+              mode = "search",
+              wrap = false,
+              forward = false,
+              multi_window = true,
+            },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
+            },
+            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
+            action = action,
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash backward to punctuation",
+      },
+      {
+        "<Tab>",
+        mode = { "n", "v", "o" },
+        function()
+          Flash.jump({
+            search = {
+              mode = "search",
+              wrap = false,
+              forward = true,
+              multi_window = true,
+            },
+            jump = { offset = -1 },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
+            },
+            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
+            action = action_before,
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash forward to before punctuation",
+      },
+      {
+        "<S-Tab>",
+        mode = { "n", "v", "o" },
+        function()
+          Flash.jump({
+            search = {
+              mode = "search",
+              wrap = false,
+              forward = false,
+              multi_window = true,
+            },
+            jump = { offset = -1 },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
+            },
+            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
+            action = action_before,
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash backward to before punctuation",
+      },
+      {
+        "W",
         mode = { "n" },
         function()
           Flash.jump({
             search = {
-              mode = "char",
-              forward = false,
+              mode = "search",
               wrap = false,
-              multi_windows = false,
-              max_length = 1,
+              forward = true,
+              multi_window = false,
             },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
+            },
+            pattern = [[\w\>]],
+            action = action,
+            labeler = labeler,
           })
         end,
-        desc = "Flash F",
+        desc = "Flash forward to end of word",
       },
       {
         "w",
@@ -115,6 +210,7 @@ return {
               mode = "search",
               wrap = false,
               forward = true,
+              multi_window = false,
             },
             label = {
               after = false,
@@ -127,34 +223,42 @@ return {
             labeler = labeler,
           })
         end,
-        desc = "Flash forward to beginning of word",
+        desc = "Flash forward to start of word",
       },
       {
-        "W",
-        mode = { "n" },
+        "w",
+        mode = { "v", "o" },
         function()
           Flash.jump({
             search = {
               mode = "search",
-              max_length = 0,
               wrap = false,
               forward = true,
-              multi_windows = false,
+              multi_window = false,
+            },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
             },
             pattern = [[\w\>]],
+            action = action,
+            labeler = labeler,
           })
         end,
         desc = "Flash forward to end of word",
       },
       {
         "b",
-        mode = { "n" },
+        mode = { "n", "v", "o" },
         function()
           Flash.jump({
             search = {
               mode = "search",
               wrap = false,
               forward = false,
+              multi_window = false,
             },
             label = {
               after = false,
@@ -176,12 +280,19 @@ return {
           Flash.jump({
             search = {
               mode = "search",
-              max_length = 0,
-              multi_windows = false,
               wrap = false,
               forward = false,
+              multi_window = false,
+            },
+            label = {
+              after = { 0, 0 },
+              before = false,
+              uppercase = false,
+              format = format_first_match,
             },
             pattern = [[\w\>]],
+            action = action,
+            labeler = labeler,
           })
         end,
         desc = "Flash backward to end of word",

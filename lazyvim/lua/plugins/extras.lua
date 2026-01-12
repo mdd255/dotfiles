@@ -42,7 +42,7 @@ return {
       logLevel = vim.log.levels.OFF,
       mapping = {
         startStopRecording = "Q",
-        playMacro = "qq",
+        playMacro = "q",
         editMacro = "_",
         yankMacro = "_",
         deleteAllMacros = "_",

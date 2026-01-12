@@ -128,6 +128,6 @@ vim.api.nvim_create_autocmd("FileType", {
       })
     end
 
-    vim.keymap.set("n", "l", console_log, { buffer = true })
+    vim.keymap.set("n", "j", console_log, { buffer = true })
   end,
 })
