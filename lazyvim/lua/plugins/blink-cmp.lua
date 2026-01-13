@@ -34,7 +34,7 @@ return {
           enabled = true,
           scrollbar = false,
           draw = {
-            snippet_indicator = "",
+            snippet_indicator = "󰨸",
           },
         },
         documentation = { window = { scrollbar = false }, auto_show = true },

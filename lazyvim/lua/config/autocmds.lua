@@ -35,6 +35,8 @@ local function setup_cursor_options()
     "json.kulala_ui",
     "dbui",
     "dbout",
+    "noice",
+    "blink-cmp-menu",
   }
 
   local function contains(list, item)
