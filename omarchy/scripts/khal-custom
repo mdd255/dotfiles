@@ -7,7 +7,8 @@ try {
   const events = execSync("khal list now eod --format '{start-time}-{end-time} {title}'")
     .toString().trim()
 
-  const nextEvents = events.split('\n').slice(1, 3).map(event => `[${event}]`).join("   ") || ''
+  let nextEvents = events.split('\n').slice(1, 3).map(event => `[${event}]`).join("   ") || ''
+  nextEvents = nextEvents.length ? "󱑑 ".concat(nextEvents): ""
 
   const payload = { text: nextEvents, tooltip: events }
   console.log(JSON.stringify(payload))

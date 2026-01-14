@@ -3,9 +3,9 @@
 	"position": "top",
 	"output": ["eDP-1"],
 	"modules-center": ["custom/events"],
+	"modules-right": ["clock"],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"custom/events": {
-		"format": "󱑑 {text}",
 		"tooltip": true,
 		"interval": 300,
 		"format-icons": {

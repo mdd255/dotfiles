@@ -4,12 +4,12 @@
   "output": [
     "DP-3"
   ],
-  "modules-center": [
-    "custom/earth",
+  "modules-right": [
     "clock"
   ],
-  "modules-right": [
-    "bluetooth",
+  "modules-center": [
+    "bluetooth#keeb",
+    "bluetooth#audio",
     "network",
     "pulseaudio",
     "battery"
@@ -32,7 +32,7 @@
     "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
     "tooltip-format-disconnected": "Disconnected",
-    "interval": 3,
+    "interval": 5,
     "spacing": 1
   },
   "battery": {
@@ -67,29 +67,41 @@
       ]
     },
     "format-full": "󰂅",
-    "interval": 60,
+    "interval": 30,
     "states": {
       "warning": 20,
       "critical": 10
     }
   },
-  "bluetooth": {
+  "bluetooth#keeb": {
     "format": "",
     "format-disabled": "󰂲",
+    "format-device-preference": [
+      "mdd.corne.cherry",
+      "mdd.corne.choc"
+    ],
     "format-off": "󰂲",
-    "format-connected": " {device_alias}",
-    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
-    "output": [
-      "DP-3"
-    ]
+    "format-connected": "  {device_alias} {device_battery_percentage}%",
+    "format-connected-battery": "  {device_alias} {device_battery_percentage}%"
+  },
+  "bluetooth#audio": {
+    "format": "",
+    "format-disabled": "󰂲",
+    "format-device-preference": [
+      "mdd.apm.24",
+      "mdd.sf2c"
+    ],
+    "format-off": "󰂲",
+    "format-connected": "  {device_alias} {device_battery_percentage}%",
+    "format-connected-battery": "  {device_alias} {device_battery_percentage}%"
   },
   "pulseaudio": {
     "format": "{icon}",
     "scroll-step": 5,
     "format-muted": "",
     "format-icons": {
-      "headphone": "",
-      "headset": "󰗋",
+      "headphone": "󱡬",
+      "headset": "󰂯",
       "default": [
         "",
         "",
