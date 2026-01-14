@@ -3,6 +3,7 @@ local wezterm = require("wezterm")
 local config = wezterm.config_builder()
 local action = wezterm.action
 local ctrl = "CTRL"
+local ctrl_shift = "CTRL|SHIFT"
 local ctrl_cmd = "CTRL|CMD"
 local alt = "ALT"
 
@@ -34,13 +35,13 @@ local function format_win_tile(tab, pane, tabs, panes, conf)
 
 		-- Add indicator for active tab
 		if t.is_active then
-			title = " " .. title .. ""
+			title = "" .. title .. ""
 		end
 
 		table.insert(tab_titles, title)
 	end
 
-	return "" .. table.concat(tab_titles, " ")
+	return " " .. table.concat(tab_titles, " ")
 end
 
 wezterm.on("format-window-title", format_win_tile)
@@ -136,6 +137,11 @@ config.keys = {
 		key = "Tab",
 		mods = ctrl,
 		action = action.ActivateTabRelative(1),
+	},
+	{
+		key = "Tab",
+		mods = ctrl_shift,
+		action = action.ActivateTabRelative(-1),
 	},
 }
 
