@@ -226,7 +226,7 @@ return {
         desc = "Flash forward to start of word",
       },
       {
-        "w",
+        "e",
         mode = { "v", "o" },
         function()
           Flash.jump({
