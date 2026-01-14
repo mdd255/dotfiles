@@ -30,6 +30,7 @@ local function setup_cursor_options()
     "snacks_picker_list",
     "grug-far",
     "lazy",
+    "mason",
     "DiffviewFiles",
     "text.kulala_ui",
     "json.kulala_ui",
@@ -106,6 +107,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
       "tsgo",
     }
 
+    local disabled_tailwindcss_fts = {
+      "typescript",
+      "javascript",
+    }
+
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     client.server_capabilities.semanticTokensProvider = nil
     client.server_capabilities.documentHighlightProvider = false
@@ -114,6 +120,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
     if contains(disabled_client_format, client.name) then
       client.server_capabilities.documentFormattingProvider = false
       client.server_capabilities.documentRangeFormattingProvider = false
+    end
+
+    -- disable tailwindcss for .ts/.js files
+    if client.name == "tailwindcss" then
+      local ft = vim.bo[args.buf].filetype
+
+      if contains(disabled_tailwindcss_fts, ft) then
+        client.stop()
+      end
     end
   end,
 })
