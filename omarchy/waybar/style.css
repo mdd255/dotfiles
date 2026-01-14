@@ -53,7 +53,7 @@ tooltip {
 }
 
 #taskbar button.active * {
-  color: #ef596f;
+  color: @foreground;
 }
 
 
