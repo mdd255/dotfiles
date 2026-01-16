@@ -8,8 +8,10 @@ bmewburn.vscode-intelephense-client
 christian-kohler.path-intellisense
 cweijan.dbclient-jdbc
 cweijan.vscode-database-client2
+dbaeumer.vscode-eslint
 eamodio.gitlens
 enkia.tokyo-night
+esbenp.prettier-vscode
 github.vscode-github-actions
 github.vscode-pull-request-github
 golang.go
