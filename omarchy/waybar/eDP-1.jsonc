@@ -6,11 +6,11 @@
 	"modules-right": ["clock"],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"custom/events": {
-		"tooltip": true,
-		"interval": 300,
 		"format-icons": {
 			"default": ""
 		},
+		"tooltip": true,
+		"interval": 300,
 		"exec": "~/.config/dotfiles/omarchy/scripts/khal-custom",
 		"return-type": "json"
 	}

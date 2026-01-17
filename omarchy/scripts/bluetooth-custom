@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+/** biome-ignore-all lint/suspicious/noConsole: really need this */
+
+import { execSync } from "node:child_process";
+
+function run(cmd) {
+  return execSync(cmd, { encoding: "utf8" }).trim();
+}
+
+// Get connected devices
+const devicesRaw = run("bluetoothctl devices Connected");
+
+if (!devicesRaw) process.exit(0);
+
+const devices = devicesRaw.split("\n");
+
+let output = ''
+
+for (const device of devices) {
+  const parts = device.split(" ");
+  const mac = parts[1];
+  const name = parts.slice(2).join(" ");
+
+  const info = run(`bluetoothctl info ${mac}`);
+
+  const match = info.match(/Battery Percentage:\s+(0x[0-9a-fA-F]+)/);
+
+  output += `󰂯 ${name} `;
+
+  if (match) {
+    const hex = match[1];
+    const battery = parseInt(hex, 16);
+    output += `(${battery}%)  `;
+  }
+}
+
+  console.log(JSON.stringify({ text: output }));

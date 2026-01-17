@@ -89,50 +89,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- LSP disabled_client_format
-vim.api.nvim_create_autocmd("LspAttach", {
-  callback = function(args)
-    local function contains(list, item)
-      for _, v in ipairs(list) do
-        if v == item then
-          return true
-        end
-      end
-      return false
-    end
-
-    local disabled_client_format = {
-      "ts_ls",
-      "vtsls",
-      "tsgo",
-    }
-
-    local disabled_tailwindcss_fts = {
-      "typescript",
-      "javascript",
-    }
-
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    client.server_capabilities.semanticTokensProvider = nil
-    client.server_capabilities.documentHighlightProvider = false
-
-    -- Disable auto-formatting for TypeScript language server
-    if contains(disabled_client_format, client.name) then
-      client.server_capabilities.documentFormattingProvider = false
-      client.server_capabilities.documentRangeFormattingProvider = false
-    end
-
-    -- disable tailwindcss for .ts/.js files
-    if client.name == "tailwindcss" then
-      local ft = vim.bo[args.buf].filetype
-
-      if contains(disabled_tailwindcss_fts, ft) then
-        client.stop()
-      end
-    end
-  end,
-})
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "typescript",
   callback = function()

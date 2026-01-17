@@ -7,6 +7,18 @@ return {
         ["*"] = {
           keys = false,
         },
+        tailwindcss = {
+          filetypes = { "typescriptreact", "javascriptreact" },
+        },
+        tsgo = {
+          on_attach = function(client, bufnr)
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+            client.server_capabilities.semanticTokensProvider = nil
+            client.server_capabilities.documentHighlightProvider = false
+            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+          end,
+        },
       },
     },
   },
@@ -18,13 +30,14 @@ return {
     },
     opts = {
       ensure_installed = {
-        "intelephense",
-        "jdtls",
-        "biome",
-        "gopls",
         "json-lsp",
+        "biome",
+        "stylua",
+        "gopls",
+        "tailwindcss-language-server",
         "dockerfile-language-server",
-        "typescript-language-server",
+        "docker-language-server",
+        "tsgo",
       },
       ui = { scrollbar = false },
     },

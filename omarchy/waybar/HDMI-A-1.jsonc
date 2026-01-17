@@ -6,11 +6,11 @@
 	"modules-right": ["clock"],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"clock#us": {
-		"format": "{:L%H:%M %d/%m %a [America/New_York]}  ",
+		"format": "{:L%H:%M %d/%m %a [NY]}  ",
 		"timezone": "America/New_York"
 	},
 	"clock#ptg": {
-		"format": " {:L%H:%M %d/%m %a [Portugal]}",
+		"format": " {:L%H:%M %d/%m %a [PTG]}",
 		"timezone": "Portugal"
 	}
 }

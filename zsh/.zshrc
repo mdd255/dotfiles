@@ -77,3 +77,6 @@ case ":$PATH:" in
 esac
 # pnpm end
 export PATH="$HOME/.local/bin:$PATH"
+
+# opencode
+export PATH=/home/dh/.opencode/bin:$PATH
