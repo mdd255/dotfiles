@@ -1,6 +1,20 @@
 {
-	"select": {
-		"prefix": ["sel"],
-		"body": "SELECT ${2:*} FROM $1 WHERE ${3:TRUE}"
-	}
+  "select": {
+    "prefix": [
+      "se"
+    ],
+    "body": "SELECT ${2:*} FROM $1 WHERE ${3:TRUE}"
+  },
+  "update": {
+    "prefix": [
+      "up"
+    ],
+    "body": "UPDATE $1 SET ${2:key} = ${3:value} WHERE id = '${3}'"
+  },
+  "delete": {
+    "prefix": [
+      "de"
+    ],
+    "body": "DELETE FROM $1 WHERE id = '${2}'"
+  }
 }
