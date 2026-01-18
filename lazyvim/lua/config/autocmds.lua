@@ -78,7 +78,7 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
       vim.opt_local.cursorline = false
     end
 
-    vim.api.nvim_buf_clear_namespace(0, scroll_mark.ns, 0, -1)
+    pcall(vim.api.nvim_buf_clear_namespace, 0, scroll_mark.ns, 0, -1)
   end,
 })
 
@@ -95,7 +95,7 @@ vim.api.nvim_create_autocmd("FileType", {
     local function console_log()
       local expr = "yeoconsole.log({<Esc>pa})<Esc>hh"
 
-      return utils.create_marcro({
+      return utils.create_macro({
         pre_fn = utils.move_to_start_of_word,
         expr = expr,
       })

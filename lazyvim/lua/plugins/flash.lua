@@ -1,5 +1,6 @@
 return {
   "folke/flash.nvim",
+  event = "VeryLazy",
   opts = {
     exclude = { "snacks_dashboard" },
     jump = { autojump = false },

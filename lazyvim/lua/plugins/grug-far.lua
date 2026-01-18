@@ -33,7 +33,7 @@ return {
       swapReplacementInterpreter = { n = "" },
     },
   },
-  cmd = "GrugFar",
+  lazy = true,
   keys = {
     { "<Leader>sr", false },
     {

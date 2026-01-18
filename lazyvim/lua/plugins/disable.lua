@@ -5,4 +5,5 @@ return {
   { "nvim-mini/mini.ai", enabled = false },
   { "folke/trouble.nvim", enabled = false },
   { "folke/todo-comments.nvim", enabled = false },
+  { "rafamadriz/friendly-snippets", enabled = false },
 }

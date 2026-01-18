@@ -1,8 +1,10 @@
+---@diagnostic disable: undefined-global
 local git = require("config.git-functions")
 
 return {
   {
     "sindrets/diffview.nvim",
+    event = { "BufRead", "BufNewFile" },
     lazy = false,
     keys = {
       { "so", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },

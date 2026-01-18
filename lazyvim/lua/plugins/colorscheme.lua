@@ -1,26 +1,27 @@
 local color = require("config/color")
 
 local hi = {
-  black = "${black}",
-  cyan = "${cyan}",
-  yellow = "${yellow}",
-  orange = "${orange}",
-  white = "${white}",
-  purple = "${purple}",
-  blue = "${blue}",
-  red = "${red}",
-  light_red = "${light_red}",
-  green = "${green}",
-  gray = "${gray}",
-  dark_gray = "${dark_gray}",
-  cursorline = "${cursorline}",
-  comment = "${comment}",
-  light_blue = "${light_blue}",
+  black = color.black,
+  cyan = color.cyan,
+  yellow = color.yellow,
+  orange = color.orange,
+  white = color.white,
+  purple = color.purple,
+  blue = color.blue,
+  red = color.red,
+  light_red = color.light_red,
+  green = color.green,
+  gray = color.gray,
+  dark_gray = color.dark_gray,
+  cursorline = color.dark_gray,
+  comment = color.gray,
+  light_blue = color.light_blue,
 }
 
 return {
   {
     "olimorris/onedarkpro.nvim",
+    lazy = false,
     config = function()
       require("onedarkpro").setup({
         colors = {

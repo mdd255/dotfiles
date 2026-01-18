@@ -1,6 +1,10 @@
 local ns = vim.api.nvim_create_namespace("scroll_indicator")
 
 local function mark_line(buf, line)
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+
   vim.api.nvim_buf_set_extmark(buf, ns, line - 1, 0, {
     sign_text = "",
     sign_hl_group = "ScrollIndicator",
@@ -13,6 +17,11 @@ local function mark_scroll()
   end
 
   local buf = 0
+
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
+  end
+
   local scroll_size = vim.wo.scroll
 
   if scroll_size == 0 then
@@ -20,7 +29,7 @@ local function mark_scroll()
   end
 
   -- clear previous marks
-  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  pcall(vim.api.nvim_buf_clear_namespace, buf, ns, 0, -1)
 
   local current = vim.fn.line(".")
   local total_lines = vim.fn.line("$")
@@ -65,13 +74,19 @@ end
 local function scroll_down()
   local key = vim.api.nvim_replace_termcodes("<C-d>", true, false, true)
   vim.api.nvim_feedkeys(key, "n", false)
-  vim.schedule(mark_scroll)
+
+  vim.schedule(function()
+    pcall(mark_scroll)
+  end)
 end
 
 local function scroll_up()
   local key = vim.api.nvim_replace_termcodes("<C-u>", true, false, true)
   vim.api.nvim_feedkeys(key, "n", false)
-  vim.schedule(mark_scroll)
+
+  vim.schedule(function()
+    pcall(mark_scroll)
+  end)
 end
 
 return {

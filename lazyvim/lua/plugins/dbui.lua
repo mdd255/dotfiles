@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 return {
   "kristijanhusak/vim-dadbod-ui",
   lazy = true,
