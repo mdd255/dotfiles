@@ -10,6 +10,15 @@ return {
         tailwindcss = {
           filetypes = { "typescriptreact", "javascriptreact" },
         },
+        ts_ls = {
+          on_attach = function(client, bufnr)
+            client.server_capabilities.documentFormattingProvider = false
+            client.server_capabilities.documentRangeFormattingProvider = false
+            client.server_capabilities.semanticTokensProvider = nil
+            client.server_capabilities.documentHighlightProvider = false
+            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+          end,
+        },
         tsgo = {
           on_attach = function(client, bufnr)
             client.server_capabilities.documentFormattingProvider = false
