@@ -2,8 +2,14 @@
 	"layer": "top",
 	"position": "top",
 	"output": ["DP-3"],
-	"modules-right": ["clock"],
-	"modules-center": ["custom/bluetooth", "network", "pulseaudio", "battery"],
+	"modules-right": [
+		"custom/bluetooth",
+		"network",
+		"pulseaudio",
+		"battery",
+		"clock"
+	],
+	"modules-center": [],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"network": {
 		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],

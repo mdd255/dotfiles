@@ -112,8 +112,8 @@ function M.git_commit(amend)
       end
       vim.notify("Committed successfully", vim.log.levels.INFO, notify_opts)
 
-      -- Use the extracted git_push function
-      M.git_push(amend)
+      -- Push after commit (regular push, not force - user can force push manually if needed)
+      M.git_push(false)
     end)
   end
 

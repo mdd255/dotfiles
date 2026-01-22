@@ -49,7 +49,6 @@ return {
             { "n", "gca", actions.conflict_choose_all("all"), { desc = "Git conflict choose all" } },
             { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
             { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
-            { "n", "gca", actions.prev_conflict, { desc = "Toggle file explorer" } },
             { "n", "s<Cr>", git.git_commit, { desc = "Git commit" } },
             { "n", "sA", git.git_commit_amend, { desc = "Git commit amend" } },
           },
@@ -94,6 +93,7 @@ return {
   },
   {
     "lewis6991/gitsigns.nvim",
+    lazy = false,
     opts = {
       current_line_blame = true,
       current_line_blame_formatter = "   <author> - <author_time:%R> [<summary>]",

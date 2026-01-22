@@ -1,9 +1,9 @@
 {
-	"layer": "top",
-	"position": "top",
+	"layer": "bottom",
+	"position": "bottom",
 	"output": ["eDP-1"],
-	"modules-center": ["custom/events"],
-	"modules-right": ["clock"],
+	"modules-center": [],
+	"modules-right": ["custom/events", "clock"],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"custom/events": {
 		"format-icons": {

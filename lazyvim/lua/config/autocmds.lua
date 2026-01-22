@@ -38,6 +38,7 @@ local function setup_cursor_options()
     "dbout",
     "noice",
     "blink-cmp-menu",
+    "cursor-agent",
   }
 
   local function contains(list, item)
