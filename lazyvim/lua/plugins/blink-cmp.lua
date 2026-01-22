@@ -2,7 +2,14 @@ return {
   {
     "saghen/blink.cmp",
     dependencies = {
+      "supermaven-inc/supermaven-nvim",
       "kristijanhusak/vim-dadbod-completion",
+      {
+        "Huijiro/blink-cmp-supermaven",
+        config = function()
+          require("supermaven-nvim").setup({})
+        end,
+      },
     },
     opts = {
       fuzzy = {
@@ -48,7 +55,7 @@ return {
         window = { scrollbar = false },
       },
       sources = {
-        default = { "buffer", "lsp", "path", "snippets" },
+        default = { "snippets", "lsp", "buffer", "path", "supermaven" },
         per_filetype = {
           sql = { "snippets", "dadbod", "buffer" },
           mysql = { "snippets", "dadbod", "buffer" },
@@ -56,6 +63,7 @@ return {
         },
         providers = {
           dadbod = { name = "DB", module = "vim_dadbod_completion.blink" },
+          supermaven = { name = "supermaven", module = "blink-cmp-supermaven", async = true },
         },
       },
       cmdline = {

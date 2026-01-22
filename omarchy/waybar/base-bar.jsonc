@@ -36,11 +36,13 @@
 		},
 		"rewrite": {
 			".*Brave": " Brave",
-			"Zoom": " Zoom",
+			".*Zoom": " Zoom",
 			"Code": " Code",
+			"Cursor": " Code",
 			"Hubstaff": "󱄅 Hubstaff",
 			"Github": " Github",
-			"ChatGPT": " ChatGPT"
+			"ChatGPT": " ChatGPT",
+			"MongoDB Compass.*": " Compass"
 		}
 	}
 }
