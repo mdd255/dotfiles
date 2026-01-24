@@ -38,7 +38,7 @@ local function setup_cursor_options()
     "dbout",
     "noice",
     "blink-cmp-menu",
-    "cursor-agent",
+    "opencode_terminal",
   }
 
   local function contains(list, item)
