@@ -1,50 +1,16 @@
 return {
   "NickvanDyke/opencode.nvim",
   lazy = false,
-  dependencies = {
-    ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
-    { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
-  },
+  dependencies = { "folke/snacks.nvim" },
   config = function()
-    ---@type opencode.Opts
-    vim.g.opencode_opts = {
-      -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition" on the type or field.
-    }
-
-    -- Required for `opts.events.reload`.
     vim.o.autoread = true
+    vim.g.opencode_opts = {}
 
-    -- Recommended/example keymaps.
-    vim.keymap.set({ "n", "x" }, "<Leader>ac", function()
-      require("opencode").ask("@this: ", { submit = true })
-    end, { desc = "Ask opencode…" })
-
-    vim.keymap.set({ "n", "x" }, "<Leader>as", function()
-      require("opencode").select()
-    end, { desc = "Execute opencode action…" })
-
-    vim.keymap.set({ "n", "t" }, "<Leader>aa", function()
+    vim.keymap.set({ "n", "t" }, "<C-o>", function()
+      vim.notify("Opening...", vim.log.levels.INFO, { title = "Opencode" })
+      vim.cmd("tabnew")
       require("opencode").toggle()
-    end, { desc = "Toggle opencode" })
-
-    vim.keymap.set({ "n", "x" }, "<Leader>ar", function()
-      return require("opencode").operator("@this ")
-    end, { desc = "Add range to opencode", expr = true })
-
-    vim.keymap.set("n", "<Leader>al", function()
-      return require("opencode").operator("@this ") .. "_"
-    end, { desc = "Add line to opencode", expr = true })
-
-    vim.keymap.set("n", "<C-e>", function()
-      require("opencode").command("session.half.page.up")
-    end, { desc = "Scroll opencode up" })
-
-    vim.keymap.set("n", "<C-n>", function()
-      require("opencode").command("session.half.page.down")
-    end, { desc = "Scroll opencode down" })
-
-    -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o…".
-    vim.keymap.set("n", "+", "<C-a>", { desc = "Increment under cursor", noremap = true })
-    vim.keymap.set("n", "-", "<C-x>", { desc = "Decrement under cursor", noremap = true })
+      vim.cmd("close")
+    end, { desc = "Open opencode in new tab" })
   end,
 }
