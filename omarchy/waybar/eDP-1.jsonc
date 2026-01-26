@@ -3,7 +3,7 @@
 	"position": "bottom",
 	"output": ["eDP-1"],
 	"modules-center": [],
-	"modules-right": ["custom/events", "clock"],
+	"modules-right": ["custom/events"],
 	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
 	"custom/events": {
 		"format-icons": {

@@ -6,7 +6,7 @@ return {
     vim.o.autoread = true
     vim.g.opencode_opts = {}
 
-    vim.keymap.set({ "n", "t" }, "<C-o>", function()
+    vim.keymap.set({ "n", "t" }, "<C-y>", function()
       vim.notify("Opening...", vim.log.levels.INFO, { title = "Opencode" })
       vim.cmd("tabnew")
       require("opencode").toggle()
