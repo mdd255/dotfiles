@@ -7,6 +7,6 @@
 		"model_list": "ctrl+m",
 		"input_clear": "ctrl+o",
 		"session_list": "ctrl+s",
-		"session_interrupt": "ctrl+q"
+		"session_interrupt": "esc"
 	}
 }
