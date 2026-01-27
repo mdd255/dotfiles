@@ -121,17 +121,6 @@ case ":${PATH}:" in
       ;;
 esac
 
-# pyenv
-case ":${PATH}:" in
-   *:"$HOME/.pyenv/bin":*)
-      ;;
-   *)
-      export PATH="$HOME/.pyenv/bin:$PATH"
-      eval "$(pyenv init -)"
-      eval "$(pyenv virtualenv-init -)"
-      ;;
-esac
-
 # sdkman
 case ":${PATH}:" in
    *:"$HOME/.sdkman":*)
