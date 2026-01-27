@@ -103,16 +103,6 @@ case ":${PATH}:" in
       ;;
 esac
 
-# fnm envs
-case ":${PATH}:" in
-   *:"$HOME/.fnm":*)
-      ;;
-   *)
-      export PATH=~/.local/share/fnm:$PATH
-      eval "`fnm --version-file-strategy=recursive --log-level=quiet env --use-on-cd`"
-      ;;
-esac
-
 # yarn envs
 case ":${PATH}:" in
    *:"$HOME/.yarn/bin":*)
