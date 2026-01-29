@@ -13,6 +13,8 @@ return {
       { "sr", git.git_pull, desc = "Git pull" },
       { "sR", git.git_push, desc = "Git push" },
       { "sc", git.create_pr, desc = "Create PR" },
+      { "gl", git.gh_switch_account, desc = "Switch GitHub account" },
+      { "sp", "<cmd>lua Snacks.picker.gh_pr()<Cr>", desc = "Github PRs" },
     },
 
     config = function()

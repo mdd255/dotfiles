@@ -93,22 +93,12 @@ case ":${PATH}:" in
       ;;
 esac
 
-# pnpm envs
+# mise envs
 case ":${PATH}:" in
-   *:"$HOME/.local/share/pnpm":*)
+   *:"/usr/bin/mise":*)
       ;;
    *)
-      export PNPM_HOME="$HOME/.local/share/pnpm"
-      export PATH="$PNPM_HOME:$PATH"
-      ;;
-esac
-
-# yarn envs
-case ":${PATH}:" in
-   *:"$HOME/.yarn/bin":*)
-      ;;
-   *)
-      export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+     eval "$(mise activate zsh)"
       ;;
 esac
 
@@ -118,15 +108,5 @@ case ":${PATH}:" in
       ;;
    *)
       export PATH="$HOME/go/bin:$PATH"
-      ;;
-esac
-
-# sdkman
-case ":${PATH}:" in
-   *:"$HOME/.sdkman":*)
-      ;;
-   *)
-      export SDKMAN_DIR="$HOME/.sdkman"
-      [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
       ;;
 esac

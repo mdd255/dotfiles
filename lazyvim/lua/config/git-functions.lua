@@ -160,6 +160,73 @@ function M.git_diff_branch()
   end)
 end
 
+local function get_gh_accounts(callback)
+  vim.system({ "gh", "auth", "status" }, {}, function(result)
+    vim.schedule(function()
+      if result.code ~= 0 then
+        vim.notify(
+          "Failed to get GitHub accounts: " .. (result.stderr or "unknown error"),
+          vim.log.levels.ERROR,
+          notify_opts
+        )
+        callback(nil)
+        return
+      end
+
+      local seen = {}
+      local accounts = {}
+
+      for line in (result.stdout or ""):gmatch("[^\r\n]+") do
+        local account = line:match(" account (%S+) %(")
+        if account and not seen[account] then
+          seen[account] = true
+          table.insert(accounts, account)
+        end
+      end
+
+      if #accounts == 0 then
+        vim.notify("No GitHub accounts found", vim.log.levels.WARN, notify_opts)
+        callback(nil)
+        return
+      end
+
+      callback(accounts)
+    end)
+  end)
+end
+
+function M.gh_switch_account()
+  get_gh_accounts(function(accounts)
+    if not accounts then
+      return
+    end
+
+    vim.ui.select(accounts, {
+      prompt = "Switch GitHub account:",
+    }, function(selected)
+      if not selected then
+        return
+      end
+
+      vim.notify("Switching to " .. selected .. "...", vim.log.levels.INFO, notify_opts)
+
+      vim.system({ "gh", "auth", "switch", "-u", selected }, {}, function(switch_result)
+        vim.schedule(function()
+          if switch_result.code == 0 then
+            vim.notify("Switched to " .. selected, vim.log.levels.INFO, notify_opts)
+          else
+            vim.notify(
+              "Failed to switch account: " .. (switch_result.stderr or "unknown error"),
+              vim.log.levels.ERROR,
+              notify_opts
+            )
+          end
+        end)
+      end)
+    end)
+  end)
+end
+
 function M.create_pr()
   vim.notify("Creating PR...", vim.log.levels.INFO, notify_opts)
 

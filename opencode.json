@@ -5,8 +5,8 @@
 		"messages_page_up": "ctrl+e",
 		"messages_page_down": "ctrl+n",
 		"model_list": "ctrl+m",
-		"input_clear": "ctrl+o",
+		"input_clear": "esc",
 		"session_list": "ctrl+s",
-		"session_interrupt": "esc"
+		"session_interrupt": "ctrl+q"
 	}
 }
