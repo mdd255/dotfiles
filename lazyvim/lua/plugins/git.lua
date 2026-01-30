@@ -31,7 +31,6 @@ return {
       { "gcp", git.git_cherry_pick, desc = "Git cherry-pick" },
       { "gcd", git.git_cherry_pick_abort, desc = "Git cherry-pick abort" },
       { "grv", git.git_revert, desc = "Git revert" },
-      { "sb", "<cmd>lua Snacks.picker.git_branches()<Cr>", desc = "Git branches" },
       { "glo", "<cmd>DiffviewFileHistory<Cr>", desc = "Git log" },
       { "gpf", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
     },
