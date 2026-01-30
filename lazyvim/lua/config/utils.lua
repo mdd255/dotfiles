@@ -109,4 +109,37 @@ function M.unmap(lhs, modes)
   end
 end
 
+function M.exec_async(cmd, opts)
+  opts = opts
+    or {
+      notify = { title = "CMD" },
+      info_label = "Executing command...",
+      success_label = "Command executed",
+      failed_label = "Command failed: ",
+    }
+
+  vim.notify(opts.info_label, vim.log.levels.INFO, opts.notify)
+
+  vim.system(cmd, {}, function(cmd_result)
+    vim.schedule(function()
+      if cmd_result.code == 0 then
+        local message = opts.success_label
+        -- Append stdout if available and not empty
+        if cmd_result.stdout and cmd_result.stdout ~= "" then
+          message = message .. "\n" .. cmd_result.stdout
+        end
+        vim.notify(message, vim.log.levels.INFO, opts.notify)
+        if opts.on_success then
+          opts.on_success()
+        end
+      else
+        vim.notify(opts.failed_label .. (cmd_result.stderr or "unknown error"), vim.log.levels.ERROR, opts.notify)
+        if opts.on_failure then
+          opts.on_failure()
+        end
+      end
+    end)
+  end)
+end
+
 return M

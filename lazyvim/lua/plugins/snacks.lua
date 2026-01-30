@@ -122,12 +122,6 @@ return {
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
 
-    -- git keymaps
-    map("n", "sb", "<cmd>lua Snacks.picker.git_branches()<Cr>", { desc = "Git branches" })
-    map("n", "sl", "<cmd>lua Snacks.picker.git_log()<Cr>", { desc = "Git log" })
-    map("n", "st", "<cmd>lua Snacks.picker.git_stash()<Cr>", { desc = "Git stash" })
-    map("n", "gb", "<cmd>lua Snacks.gitbrowse()<Cr>", { desc = "Git open file in browser" })
-
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })

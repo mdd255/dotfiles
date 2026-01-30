@@ -7,14 +7,33 @@ return {
     event = { "BufRead", "BufNewFile" },
     lazy = false,
     keys = {
-      { "so", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
-      { "sf", git.get_current_file_history, desc = "Diffview current file history" },
-      { "sa", git.git_diff_branch, desc = "Diff branch" },
-      { "sr", git.git_pull, desc = "Git pull" },
-      { "sR", git.git_push, desc = "Git push" },
-      { "sc", git.create_pr, desc = "Create PR" },
-      { "gl", git.gh_switch_account, desc = "Switch GitHub account" },
-      { "sp", "<cmd>lua Snacks.picker.gh_pr()<Cr>", desc = "Github PRs" },
+      { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
+      { "gpr", "<cmd>lua Snacks.picker.gh_pr()<Cr>", desc = "Github PRs" },
+      { "gdf", git.get_current_file_history, desc = "Diffview current file history" },
+      { "gdb", git.git_diff_branch, desc = "Diff branch" },
+      { "gpl", git.git_pull, desc = "Git pull" },
+      { "gpu", git.git_push, desc = "Git push" },
+      { "gpc", git.create_pr, desc = "Create PR" },
+      { "gpa", git.gh_switch_account, desc = "Switch GitHub account" },
+      { "gss", git.git_stash_push, desc = "Git stash push" },
+      { "gsp", "<cmd>lua Snacks.picker.git_stash()<Cr>", desc = "Git stash" },
+      { "gsd", git.git_stash_drop, desc = "Git stash drop" },
+      { "gaq", git.git_restore_staged, desc = "Git restore --staged" },
+      { "grh", git.git_reset_hard, desc = "Git reset --hard" },
+      { "grs", git.git_reset_soft, desc = "Git reset --soft" },
+      { "gcm", git.git_commit, desc = "Git commit" },
+      { "gca", git.git_commit_amend, desc = "Git commit amend" },
+      { "gst", git.git_status, desc = "Git status" },
+      { "gad", git.git_add_all, desc = "Git add all" },
+      { "gbc", git.git_checkout_branch, desc = "Git checkout branch" },
+      { "gbn", git.git_checkout_new_branch, desc = "Git checkout new branch" },
+      { "gbd", git.git_delete_branch, desc = "Git delete branch" },
+      { "gcp", git.git_cherry_pick, desc = "Git cherry-pick" },
+      { "gcd", git.git_cherry_pick_abort, desc = "Git cherry-pick abort" },
+      { "grv", git.git_revert, desc = "Git revert" },
+      { "sb", "<cmd>lua Snacks.picker.git_branches()<Cr>", desc = "Git branches" },
+      { "glo", "<cmd>DiffviewFileHistory<Cr>", desc = "Git log" },
+      { "gpf", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
     },
 
     config = function()
@@ -51,8 +70,6 @@ return {
             { "n", "gca", actions.conflict_choose_all("all"), { desc = "Git conflict choose all" } },
             { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
             { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
-            { "n", "s<Cr>", git.git_commit, { desc = "Git commit" } },
-            { "n", "sA", git.git_commit_amend, { desc = "Git commit amend" } },
           },
           file_panel = {
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
@@ -135,8 +152,8 @@ return {
         nmap("gq", gitsigns.reset_hunk, { desc = "Reset hunk" })
         nmap("gQ", gitsigns.reset_buffer, { desc = "Reset buffer" })
 
-        nmap("gp", gitsigns.preview_hunk, { desc = "Preview hunk" })
-        nmap("gP", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
+        nmap("gi", gitsigns.preview_hunk, { desc = "Preview hunk" })
+        nmap("gI", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
       end,
     },
   },
