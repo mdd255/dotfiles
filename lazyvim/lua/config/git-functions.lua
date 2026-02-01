@@ -65,6 +65,7 @@ local function get_recent_commits(limit)
         end
 
         local commits = {}
+
         for line in result.stdout:gmatch("[^\r\n]+") do
           if line ~= "" then
             table.insert(commits, line)
@@ -75,156 +76,6 @@ local function get_recent_commits(limit)
       end)
     end)
   end
-end
-
-function M.get_current_file_history()
-  local current_file = vim.fn.expand("%:.")
-  vim.cmd("DiffviewFileHistory " .. current_file)
-end
-
-function M.git_stash_push()
-  exec_async({ "git", "stash", "push", "-u" }, {
-    notify = notify_opts,
-    info_label = "Stash pushing..",
-    success_label = "Stash pushed successful",
-    failed_label = "Stash push failed",
-  })
-end
-
-function M.git_status()
-  exec_async({ "git", "status", "--short" }, {
-    notify = notify_opts,
-    info_label = "Getting git status...",
-    success_label = "Git status:",
-    failed_label = "Failed to get status: ",
-  })
-end
-
-function M.git_stash_drop()
-  exec_async({ "git", "stash", "drop" }, {
-    notify = notify_opts,
-    info_label = "Stash dropping...",
-    success_label = "Stash dropped successful",
-    failed_label = "Stash drop failed",
-  })
-end
-
-function M.git_reset_hard()
-  exec_async({ "git", "reset", "--hard", "HEAD" }, {
-    notify = notify_opts,
-    info_label = "Hard reseting...",
-    success_label = "Hard reset to HEAD successful",
-    failed_label = "Hard reset to HEAD failed",
-  })
-end
-
-function M.git_reset_soft()
-  exec_async({ "git", "reset", "--soft", "HEAD" }, {
-    notify = notify_opts,
-    info_label = "Soft reseting...",
-    success_label = "Soft reset to HEAD successful",
-    failed_label = "Soft reset to HEAD failed",
-  })
-end
-
-function M.git_restore_staged()
-  exec_async({ "git", "restore", "--staged", "." }, {
-    notify = notify_opts,
-    info_label = "Restoring...",
-    success_label = "Restored successful",
-    failed_label = "Restore failed",
-  })
-end
-
-function M.git_pull()
-  exec_async({ "git", "pull" }, {
-    notify = notify_opts,
-    info_label = "Pulling...",
-    success_label = "Pull successful",
-    failed_label = "Pull failed: ",
-  })
-end
-
-function M.close_diffview()
-  vim.g.diffview_active = false
-  vim.cmd("DiffviewClose")
-end
-
-function M.git_push(force)
-  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-
-  local push_args = { "git", "push" }
-  if force then
-    table.insert(push_args, "--force")
-  end
-
-  exec_async(push_args, {
-    notify = notify_opts,
-    info_label = "Pushing to: " .. branch .. "...",
-    success_label = "Pushed to: " .. branch,
-    failed_label = "Failed to push: ",
-  })
-end
-
-function M.git_commit(amend)
-  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-
-  -- Get current commit message when amending
-  local default_msg = ""
-
-  if amend then
-    -- Use %s to get only the subject line (first line) to avoid newline issues
-    default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
-  end
-
-  local function on_input(msg)
-    if msg and msg ~= "" then
-      vim.schedule(function()
-        M.close_diffview()
-
-        local commit_args = { "git", "commit" }
-        if amend then
-          table.insert(commit_args, "--amend")
-        end
-        table.insert(commit_args, "-m")
-        table.insert(commit_args, msg)
-
-        exec_async(commit_args, {
-          notify = notify_opts,
-          info_label = "Committing...",
-          success_label = "Committed successfully",
-          failed_label = "Commit failed: ",
-          on_success = function()
-            M.git_push(false)
-          end,
-        })
-      end)
-    end
-  end
-
-  require("snacks").input({
-    prompt = amend and "Amend commit: " or "Commit to: " .. branch .. " :",
-    default = default_msg,
-  }, on_input)
-end
-
-function M.git_commit_amend()
-  M.git_commit(true)
-end
-
-function M.git_diff_branch()
-  local function on_branch_selected(selected)
-    if selected then
-      vim.cmd("DiffviewOpen " .. selected)
-    end
-  end
-
-  get_branches(false, true)(function(branches)
-    if not branches then
-      return
-    end
-    vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
-  end)
 end
 
 local function get_gh_accounts(callback)
@@ -469,10 +320,11 @@ function M.create_pr()
   end)
 end
 
+-- Exported functions
+
 function M.git_add_all()
   exec_async({ "git", "add", "." }, {
     notify = notify_opts,
-    info_label = "Staging all changes...",
     success_label = "All changes staged successfully",
     failed_label = "Failed to stage changes: ",
   })
@@ -483,7 +335,6 @@ function M.git_checkout_branch()
     if selected then
       exec_async({ "git", "checkout", selected }, {
         notify = notify_opts,
-        info_label = "Checking out " .. selected .. "...",
         success_label = "Checked out " .. selected,
         failed_label = "Failed to checkout branch: ",
       })
@@ -503,7 +354,6 @@ function M.git_checkout_new_branch()
     if branch_name and branch_name ~= "" then
       exec_async({ "git", "checkout", "-b", branch_name }, {
         notify = notify_opts,
-        info_label = "Creating and checking out " .. branch_name .. "...",
         success_label = "Created and checked out " .. branch_name,
         failed_label = "Failed to create branch: ",
       })
@@ -520,7 +370,6 @@ function M.git_delete_branch()
     if selected then
       exec_async({ "git", "branch", "-d", selected }, {
         notify = notify_opts,
-        info_label = "Deleting " .. selected .. "...",
         success_label = "Deleted " .. selected,
         failed_label = "Failed to delete branch (use -D to force): ",
       })
@@ -560,7 +409,6 @@ end
 function M.git_cherry_pick_abort()
   exec_async({ "git", "cherry-pick", "--abort" }, {
     notify = notify_opts,
-    info_label = "Aborting cherry-pick...",
     success_label = "Cherry-pick aborted",
     failed_label = "Failed to abort cherry-pick: ",
   })
@@ -573,7 +421,6 @@ function M.git_revert()
       local hash = selected:match("^(%S+)")
       exec_async({ "git", "revert", hash, "--no-edit" }, {
         notify = notify_opts,
-        info_label = "Reverting " .. hash .. "...",
         success_label = "Reverted " .. hash,
         failed_label = "Failed to revert: ",
       })
@@ -585,6 +432,152 @@ function M.git_revert()
       return
     end
     vim.ui.select(commits, { prompt = "Select commit to revert: " }, on_commit_selected)
+  end)
+end
+
+function M.get_current_file_history()
+  local current_file = vim.fn.expand("%:.")
+  vim.cmd("DiffviewFileHistory " .. current_file)
+end
+
+function M.git_stash_push()
+  exec_async({ "git", "stash", "push", "-u" }, {
+    notify = notify_opts,
+    success_label = "Stash pushed successful",
+    failed_label = "Stash push failed",
+  })
+end
+
+function M.git_status()
+  exec_async({ "git", "status", "--short" }, {
+    notify = notify_opts,
+    success_label = "Git status:",
+    failed_label = "Failed to get status: ",
+  })
+end
+
+function M.git_stash_drop()
+  exec_async({ "git", "stash", "drop" }, {
+    notify = notify_opts,
+    success_label = "Stash dropped successful",
+    failed_label = "Stash drop failed",
+  })
+end
+
+function M.git_reset_hard()
+  exec_async({ "git", "reset", "--hard", "HEAD" }, {
+    notify = notify_opts,
+    success_label = "Hard reset to HEAD successful",
+    failed_label = "Hard reset to HEAD failed",
+  })
+end
+
+function M.git_reset_soft()
+  exec_async({ "git", "reset", "--soft", "HEAD" }, {
+    notify = notify_opts,
+    success_label = "Soft reset to HEAD successful",
+    failed_label = "Soft reset to HEAD failed",
+  })
+end
+
+function M.git_restore_staged()
+  exec_async({ "git", "restore", "--staged", "." }, {
+    notify = notify_opts,
+    success_label = "Restored successful",
+    failed_label = "Restore failed",
+  })
+end
+
+function M.git_pull()
+  exec_async({ "git", "pull" }, {
+    notify = notify_opts,
+    info_label = "Pulling...",
+    success_label = "Pull successful",
+    failed_label = "Pull failed: ",
+  })
+end
+
+function M.close_diffview()
+  vim.g.diffview_active = false
+  vim.cmd("DiffviewClose")
+end
+
+function M.git_push(force)
+  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
+  local push_args = { "git", "push" }
+
+  if force then
+    table.insert(push_args, "--force")
+  end
+
+  exec_async(push_args, {
+    notify = notify_opts,
+    info_label = "Pushing to: " .. branch .. "...",
+    success_label = "Pushed to: " .. branch,
+    failed_label = "Failed to push: ",
+  })
+end
+
+function M.git_commit(amend)
+  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
+  -- Get current commit message when amending
+  local default_msg = ""
+
+  if amend then
+    -- Use %s to get only the subject line (first line) to avoid newline issues
+    default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
+  end
+
+  local function on_input(msg)
+    if msg and msg ~= "" then
+      vim.schedule(function()
+        M.close_diffview()
+
+        local commit_args = { "git", "commit" }
+        if amend then
+          table.insert(commit_args, "--amend")
+        end
+        table.insert(commit_args, "-m")
+        table.insert(commit_args, msg)
+
+        exec_async(commit_args, {
+          notify = notify_opts,
+          info_label = "Committing...",
+          success_label = "Committed successfully",
+          failed_label = "Commit failed: ",
+          on_success = function()
+            M.git_push(false)
+          end,
+        })
+      end)
+    end
+  end
+
+  require("snacks").input({
+    prompt = amend and "Amend commit: " or "Commit to: " .. branch .. " :",
+    default = default_msg,
+  }, on_input)
+end
+
+function M.git_commit_amend()
+  M.git_commit(true)
+end
+
+function M.git_diff_branch()
+  local function on_branch_selected(selected)
+    if selected then
+      vim.cmd("DiffviewOpen " .. selected)
+    end
+  end
+
+  get_branches(false, true)(function(branches)
+    if not branches then
+      return
+    end
+
+    vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
   end)
 end
 
