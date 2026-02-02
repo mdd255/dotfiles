@@ -37,6 +37,7 @@
 		"rewrite": {
 			".*Brave": " Brave",
 			".*Zoom": " Zoom",
+			"DevTools .*": " DevTools",
 			"Code": " Code",
 			"Cursor": " Code",
 			"Hubstaff": "󱄅 Hubstaff",
