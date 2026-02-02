@@ -39,7 +39,7 @@ local function setup_cursor_options()
     "noice",
     "blink-cmp-menu",
     "blink-cmp-documentation",
-    "opencode_terminal",
+    "cursor-agent",
   }
 
   local function contains(list, item)

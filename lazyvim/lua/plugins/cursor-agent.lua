@@ -1,6 +1,9 @@
 return {
   "bka9/cursor.nvim",
   event = "VeryLazy",
+  keys = {
+    { "<C-o>", "<cmd>CursorAgentFocus<cr>", desc = "Cursor Agent", mode = { "n", "x" } },
+  },
   opts = {
     -- base command
     cmd = "cursor-agent",
