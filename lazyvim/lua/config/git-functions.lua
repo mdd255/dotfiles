@@ -273,7 +273,8 @@ function M.create_pr()
 
   -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
-    local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title }
+    local current_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
+    local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title, "--head", current_branch }
 
     table.insert(args, "--body")
     table.insert(args, data.body)
@@ -295,7 +296,6 @@ function M.create_pr()
 
     exec_async(args, {
       notify = notify_opts,
-      info_label = "Creating PR " .. data.title .. "...",
       success_label = "PR created successfully: " .. data.title,
       failed_label = "Failed to create PR: ",
     })

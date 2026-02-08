@@ -40,6 +40,7 @@ local function setup_cursor_options()
     "blink-cmp-menu",
     "blink-cmp-documentation",
     "cursor-agent",
+    "markdown.gh",
   }
 
   local function contains(list, item)
