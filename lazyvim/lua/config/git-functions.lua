@@ -141,8 +141,6 @@ function M.gh_switch_account()
 end
 
 function M.create_pr()
-  vim.notify("Creating PR...", vim.log.levels.INFO, notify_opts)
-
   local pr_data = {
     assignee = "@me",
     base = nil,
@@ -273,6 +271,7 @@ function M.create_pr()
 
   -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
+    vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
     local current_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
     local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title, "--head", current_branch }
 

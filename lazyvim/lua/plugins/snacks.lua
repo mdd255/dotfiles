@@ -63,7 +63,7 @@ return {
             "package.json",
           },
           dev = {
-            "~/.config/",
+            "~/.config/dotfiles/",
             "~/Projects/priv/",
             "~/Projects/ABD/",
             "~/Projects/hipages/",
@@ -135,6 +135,7 @@ return {
     map("n", "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", { desc = "LSP hover" })
     map("n", "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", { desc = "LSP rename" })
     map("n", "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", { desc = "Go to definitions" })
+    map("n", "td", "<cmd>lua Snacks.picker.lsp_type_definitions()<Cr>", { desc = "Go to type definitions" })
     map("n", "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", { desc = "Go to references" })
     map("n", "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", { desc = "LSP symbols" })
     map("n", "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", { desc = "Workspace LSP symbols" })
