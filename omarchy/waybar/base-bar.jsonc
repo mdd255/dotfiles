@@ -31,7 +31,6 @@
 		"format": "{title}",
 		"sort-by-app-id": true,
 		"app_ids-mapping": {
-			"brave-browser": "Brave",
 			"cursor": "Code"
 		},
 		"rewrite": {
@@ -40,10 +39,12 @@
 			"DevTools .*": " DevTools",
 			"Code": " Code",
 			"Cursor": " Code",
-			"Hubstaff": "󱄅 Hubstaff",
 			"Github": " Github",
 			"ChatGPT": " ChatGPT",
-			"MongoDB Compass.*": " Compass"
+			"MongoDB Compass.*": "Compass",
+			".* Mozilla Thunderbird": "󰈹 Mail",
+			"Hubstaff": "󱄅 Hubstaff",
+			".*Alpha Bravo Development": " Zoom"
 		}
 	}
 }
