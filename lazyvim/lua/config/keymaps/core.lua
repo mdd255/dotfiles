@@ -40,6 +40,7 @@ map({
   { "ss", "<cmd>w<Cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },
+  { "<Esc>", "<C-\\><C-n>", { modes = { "t" }, desc = "Exit terminal mode" } },
   { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },

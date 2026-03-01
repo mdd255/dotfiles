@@ -20,20 +20,6 @@ return {
     },
   },
   {
-    "catgoose/nvim-colorizer.lua",
-    event = "BufReadPre",
-    config = function()
-      require("colorizer").setup({
-        user_default_options = {
-          names = false,
-          mode = "virtualtext",
-          virtualtext_inline = "after",
-          virtualtext = "",
-        },
-      })
-    end,
-  },
-  {
     "chrisgrieser/nvim-recorder",
     lazy = true,
     opts = {
