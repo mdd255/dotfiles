@@ -21,7 +21,6 @@ local hi = {
 return {
   {
     "olimorris/onedarkpro.nvim",
-    lazy = false,
     config = function()
       require("onedarkpro").setup({
         colors = {

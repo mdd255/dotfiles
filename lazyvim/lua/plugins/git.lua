@@ -5,7 +5,6 @@ return {
   {
     "sindrets/diffview.nvim",
     event = { "BufRead", "BufNewFile" },
-    lazy = false,
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
       { "gpr", "<cmd>lua Snacks.picker.gh_pr()<Cr>", desc = "Github PRs" },
@@ -111,7 +110,6 @@ return {
   },
   {
     "lewis6991/gitsigns.nvim",
-    lazy = false,
     opts = {
       current_line_blame = true,
       current_line_blame_formatter = "   <author> - <author_time:%R> [<summary>]",

@@ -25,6 +25,7 @@ local function setup_cursor_options()
   }
 
   local number_blacklist = {
+    "",
     "snacks_dashboard",
     "snacks_terminal",
     "snacks_picker_list",
