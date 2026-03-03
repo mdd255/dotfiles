@@ -1,58 +1,102 @@
 {
-	"layer": "top",
-	"position": "top",
-	"output": ["DP-3"],
-	"modules-right": [
-		"custom/bluetooth",
-		"network",
-		"pulseaudio",
-		"battery",
-		"clock"
-	],
-	"modules-center": [],
-	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
-	"network": {
-		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-		"format": "{icon}",
-		"format-wifi": "{icon} {essid}",
-		"format-ethernet": "󰀂",
-		"format-disconnected": "󰤮",
-		"tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-		"tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-		"tooltip-format-disconnected": "Disconnected",
-		"interval": 5,
-		"spacing": 1
-	},
-	"battery": {
-		"format": "{capacity}% {icon}",
-		"format-discharging": "{icon}",
-		"format-charging": "{icon}",
-		"format-plugged": "",
-		"format-icons": {
-			"charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
-			"default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-		},
-		"format-full": "󰂅",
-		"interval": 30,
-		"states": {
-			"warning": 20,
-			"critical": 10
-		}
-	},
-	"custom/bluetooth": {
-		"tooltip": true,
-		"interval": 5,
-		"exec": "~/.config/dotfiles/omarchy/scripts/bluetooth-custom",
-		"return-type": "json"
-	},
-	"pulseaudio": {
-		"format": "{icon}",
-		"scroll-step": 5,
-		"format-muted": "",
-		"format-icons": {
-			"headphone": "󱡬",
-			"headset": "󰂯",
-			"default": ["", "", ""]
-		}
-	}
+  "layer": "top",
+  "position": "top",
+  "output": [
+    "DP-3"
+  ],
+  "modules-right": [
+    "custom/bluetooth",
+    "network",
+    "pulseaudio",
+    "battery",
+    "clock"
+  ],
+  "modules-center": [
+    "custom/hubstaff"
+  ],
+  "include": [
+    "~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"
+  ],
+  "network": {
+    "format-icons": [
+      "󰤯",
+      "󰤟",
+      "󰤢",
+      "󰤥",
+      "󰤨"
+    ],
+    "format": "{icon}",
+    "format-wifi": "{icon} {essid}",
+    "format-ethernet": "󰀂",
+    "format-disconnected": "󰤮",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "interval": 5,
+    "spacing": 1
+  },
+  "battery": {
+    "format": "{capacity}% {icon}",
+    "format-discharging": "{icon}",
+    "format-charging": "{icon}",
+    "format-plugged": "",
+    "format-icons": {
+      "charging": [
+        "󰢜",
+        "󰂆",
+        "󰂇",
+        "󰂈",
+        "󰢝",
+        "󰂉",
+        "󰢞",
+        "󰂊",
+        "󰂋",
+        "󰂅"
+      ],
+      "default": [
+        "󰁺",
+        "󰁻",
+        "󰁼",
+        "󰁽",
+        "󰁾",
+        "󰁿",
+        "󰂀",
+        "󰂁",
+        "󰂂",
+        "󰁹"
+      ]
+    },
+    "format-full": "󰂅",
+    "interval": 30,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    }
+  },
+  "custom/bluetooth": {
+    "tooltip": true,
+    "interval": 5,
+    "exec": "~/.config/dotfiles/omarchy/scripts/bluetooth-custom",
+    "return-type": "json"
+  },
+  "custom/hubstaff": {
+    "tooltip": true,
+    "interval": 30,
+    "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom",
+    "return-type": "json"
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "scroll-step": 5,
+    "format-muted": "",
+    "format-icons": {
+      "headphone": "󱡬",
+      "headset": "󰂯",
+      "default": [
+        "",
+        "",
+        ""
+      ]
+    }
+  }
 }
