@@ -8,8 +8,8 @@
     "custom/bluetooth",
     "network",
     "pulseaudio",
-    "battery",
-    "clock"
+    "clock",
+    "battery"
   ],
   "modules-center": [
     "custom/hubstaff"
