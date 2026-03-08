@@ -10,7 +10,7 @@ return {
       },
       layout = "classic",
       sidebar = {
-        width = 0.3,
+        width = 0.25,
         use_brand_icon = true,
         show_system_schemas = false,
       },
@@ -18,13 +18,13 @@ return {
         show = false,
       },
       editor = {
-        height = 0.2,
+        height = 0.25,
       },
       result = {
         show_line_numbers = false,
         style = "vertical",
         header_align = "full",
-        height = 0.8,
+        height = 0.75,
       },
       keymaps = {
         execute = "<Cr>",
