@@ -75,8 +75,6 @@ case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
-# pnpm end
-export PATH="$HOME/.local/bin:$PATH"
 
-# opencode
-export PATH=/home/dh/.opencode/bin:$PATH
+# pnpm env
+export PATH="$HOME/.local/bin:$PATH"

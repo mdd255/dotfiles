@@ -133,6 +133,13 @@ return {
 
           -- scroll marks
           ScrollIndicator = { fg = hi.white },
+
+          -- dbab
+          DbabString = { fg = color.green },
+          DbabDateTime = { fg = color.blue },
+          DbabBoolean = { fg = color.purple },
+          DbabFK = { fg = color.orange },
+          DbabHistoryRowEven = { bg = color.black },
         },
         options = {
           cursorline = true,

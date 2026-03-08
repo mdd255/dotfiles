@@ -2,9 +2,9 @@ local color = require("config/color")
 
 local theme = {
   visual = {
-    a = { bg = color.black, fg = color.red },
-    b = { bg = color.black, fg = color.red },
-    c = { bg = color.black, fg = color.red },
+    a = { bg = color.black, fg = color.blue },
+    b = { bg = color.black, fg = color.blue },
+    c = { bg = color.black, fg = color.blue },
   },
   inactive = {
     a = { fg = color.gray, bg = color.black },
@@ -21,9 +21,9 @@ local theme = {
     z = { bg = color.black, fg = color.purple },
   },
   normal = {
-    a = { bg = color.black, fg = color.blue },
-    b = { bg = color.black, fg = color.blue },
-    c = { bg = color.black, fg = color.blue },
+    a = { bg = color.black, fg = color.red },
+    b = { bg = color.black, fg = color.red },
+    c = { bg = color.black, fg = color.red },
   },
   replace = {
     a = { bg = color.black, fg = color.orange },

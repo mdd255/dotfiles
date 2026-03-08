@@ -108,6 +108,17 @@ return {
   config = function(_, opts)
     require("snacks").setup(opts)
 
+    Snacks.picker.format.ui_select = function(_opts)
+      _opts = _opts or {}
+      local format_item = _opts.format_item or tostring
+
+      return function(item)
+        return { { format_item(item.item) } }
+      end
+    end
+
+    vim.ui.select = Snacks.picker.select
+
     local map = vim.keymap.set
     local findConfigFileCmd = "<cmd>lua Snacks.picker.files({ cwd = vim.fn.stdpath('config') })<Cr>"
 

@@ -3,7 +3,7 @@ return {
     "saghen/blink.cmp",
     dependencies = {
       "supermaven-inc/supermaven-nvim",
-      "kristijanhusak/vim-dadbod-completion",
+      "zerochae/dbab.nvim",
       {
         "Huijiro/blink-cmp-supermaven",
         config = function()
@@ -57,12 +57,12 @@ return {
       sources = {
         default = { "snippets", "lsp", "buffer", "path", "supermaven" },
         per_filetype = {
-          sql = { "snippets", "dadbod", "buffer" },
-          mysql = { "snippets", "dadbod", "buffer" },
-          psql = { "snippets", "dadbod", "buffer" },
+          sql = { "snippets", "dbab", "buffer" },
+          mysql = { "snippets", "dbab", "buffer" },
+          psql = { "snippets", "dbab", "buffer" },
         },
         providers = {
-          dadbod = { name = "DB", module = "vim_dadbod_completion.blink" },
+          dbab = { name = "DA", module = "blink_dbab" },
           supermaven = { name = "supermaven", module = "blink-cmp-supermaven", async = true },
         },
       },

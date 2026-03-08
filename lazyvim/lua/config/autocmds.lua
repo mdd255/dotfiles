@@ -42,6 +42,8 @@ local function setup_cursor_options()
     "blink-cmp-documentation",
     "cursor-agent",
     "markdown.gh",
+    "dbab_sidebar",
+    "dbab_history",
   }
 
   local function contains(list, item)

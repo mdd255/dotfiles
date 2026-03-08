@@ -110,3 +110,6 @@ case ":${PATH}:" in
       export PATH="$HOME/go/bin:$PATH"
       ;;
 esac
+
+# sensitive envs
+[ -s "/home/dh/.config/secret-env" ] && source "/home/dh/.config/secret-env"
