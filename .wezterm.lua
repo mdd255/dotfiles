@@ -49,8 +49,8 @@ wezterm.on("format-window-title", format_win_tile)
 
 config.colors = {
 	background = "black",
-	cursor_bg = "#6cb6eb",
-	cursor_fg = "white",
+	cursor_bg = "#89ca78",
+	cursor_fg = "red",
 	cursor_border = "red",
 	selection_bg = "#6cb6eb",
 	selection_fg = "white",

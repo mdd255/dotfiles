@@ -1,39 +1,10 @@
 local color = require("config/color")
 
 local theme = {
-  visual = {
-    a = { bg = color.black, fg = color.red },
-    b = { bg = color.black, fg = color.red },
-    c = { bg = color.black, fg = color.red },
-  },
-  inactive = {
-    a = { fg = color.gray, bg = color.black },
-    b = { fg = color.gray, bg = color.black },
-    c = { fg = color.gray, bg = color.black },
-  },
-  insert = {
-    a = { bg = color.black, fg = color.purple },
-    b = { bg = color.black, fg = color.purple },
-    c = { bg = color.black, fg = color.purple },
-
-    x = { bg = color.black, fg = color.purple },
-    y = { bg = color.black, fg = color.purple },
-    z = { bg = color.black, fg = color.purple },
-  },
   normal = {
     a = { bg = color.black, fg = color.blue },
     b = { bg = color.black, fg = color.blue },
     c = { bg = color.black, fg = color.blue },
-  },
-  replace = {
-    a = { bg = color.black, fg = color.orange },
-    b = { bg = color.black, fg = color.orange },
-    c = { bg = color.black, fg = color.orange },
-  },
-  terminal = {
-    a = { bg = color.black, fg = color.green },
-    b = { bg = color.black, fg = color.green },
-    c = { bg = color.black, fg = color.green },
   },
 }
 

@@ -134,6 +134,12 @@ return {
           -- scroll marks
           ScrollIndicator = { fg = hi.white },
 
+          -- cursor (mode-based colors via guicursor)
+          nCursor = { bg = color.red },
+          iCursor = { bg = color.green },
+          cCursor = { bg = color.orange },
+          tCursor = { bg = color.green },
+
           -- dbab
           DbabString = { fg = color.green },
           DbabDateTime = { fg = color.blue },

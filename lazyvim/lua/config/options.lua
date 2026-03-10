@@ -24,3 +24,5 @@ vim.opt.fillchars = {
   diff = "",
   fold = " ",
 }
+
+vim.opt.guicursor = "n-v:block-nCursor,i-ci-ve:ver25-iCursor,c:ver25-cCursor,t:block-tCursor,r-cr-o:hor20-nCursor"
