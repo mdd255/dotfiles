@@ -45,7 +45,7 @@ return {
 
     map("n", "<Leader>d", function()
       vim.cmd("Dbab")
-      vim.cmd("file DB")
+      vim.cmd("LualineRenameTab DB")
     end, { desc = "Open DB" })
   end,
 }

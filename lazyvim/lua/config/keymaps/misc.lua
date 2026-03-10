@@ -59,8 +59,8 @@ map({
     "<C-y>",
     function()
       vim.cmd("tabnew")
-      vim.cmd("file claude")
       vim.cmd("terminal")
+      vim.cmd("LualineRenameTab claude")
       vim.cmd("startinsert")
       vim.api.nvim_feedkeys("claude\n", "t", false)
     end,
