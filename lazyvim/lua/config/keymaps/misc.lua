@@ -54,6 +54,19 @@ map({
     { desc = "Comment", remap = true },
   },
 
+  -- Open Claude in new tab
+  {
+    "<C-y>",
+    function()
+      vim.cmd("tabnew")
+      vim.cmd("file claude")
+      vim.cmd("terminal")
+      vim.cmd("startinsert")
+      vim.api.nvim_feedkeys("claude\n", "t", false)
+    end,
+    { modes = { "n" }, desc = "Open Claude in new tab" },
+  },
+
   -- Window maximize
   {
     "<C-Space>",

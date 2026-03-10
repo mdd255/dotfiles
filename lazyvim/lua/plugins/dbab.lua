@@ -43,6 +43,9 @@ return {
 
     local map = vim.keymap.set
 
-    map("n", "<Leader>d", "<cmd>Dbab<Cr>", { desc = "Open DB" })
+    map("n", "<Leader>d", function()
+      vim.cmd("Dbab")
+      vim.cmd("file DB")
+    end, { desc = "Open DB" })
   end,
 }
