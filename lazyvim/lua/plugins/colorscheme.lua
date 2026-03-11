@@ -146,6 +146,7 @@ return {
           DbabBoolean = { fg = color.purple },
           DbabFK = { fg = color.orange },
           DbabHistoryRowEven = { bg = color.black },
+          DbabHeader = { bg = color.gray },
         },
         options = {
           cursorline = true,
