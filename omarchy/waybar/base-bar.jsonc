@@ -44,7 +44,8 @@
 			"MongoDB Compass.*": "Compass",
 			".* Mozilla Thunderbird": "󰈹 Mail",
 			"Hubstaff": "󱄅 Hubstaff",
-			".*Alpha Bravo Development": " Zoom"
+			".*Alpha Bravo Development": " Zoom",
+			".*Slack.*": " Slack"
 		}
 	}
 }
