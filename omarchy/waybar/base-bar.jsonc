@@ -45,7 +45,8 @@
 			".* Mozilla Thunderbird": "󰈹 Mail",
 			"Hubstaff": "󱄅 Hubstaff",
 			".*Alpha Bravo Development": " Zoom",
-			".*Slack.*": " Slack"
+			".*Slack.*": " Slack",
+			".*Trial.*": " TablePlus"
 		}
 	}
 }

@@ -42,7 +42,7 @@ local function format_win_tile(tab, pane, tabs, panes, conf)
 		table.insert(tab_titles, title)
 	end
 
-	return " " .. table.concat(tab_titles, " ")
+	return " " .. table.concat(tab_titles, " ")
 end
 
 wezterm.on("format-window-title", format_win_tile)
