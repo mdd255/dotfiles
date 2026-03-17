@@ -16,8 +16,19 @@ return {
             client.server_capabilities.documentRangeFormattingProvider = false
             client.server_capabilities.semanticTokensProvider = nil
             client.server_capabilities.documentHighlightProvider = false
-            vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
           end,
+          settings = {
+            typescript = {
+              inlayHints = {
+                enumMemberValues = { enabled = false },
+                functionLikeReturnTypes = { enabled = false },
+                parameterNames = { enabled = "none" },
+                parameterTypes = { enabled = false },
+                propertyDeclarationTypes = { enabled = false },
+                variableTypes = { enabled = false },
+              },
+            },
+          },
         },
       },
     },
