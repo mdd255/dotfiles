@@ -185,7 +185,7 @@ function M.create_pr()
     end)
   end
 
-  -- Helper function: Select reviewers
+  -- Helper function: Select reviewers (multi-select via Snacks picker)
   local function select_reviewers(callback)
     vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
 
@@ -208,53 +208,33 @@ function M.create_pr()
                 return
               end
 
-              local collaborators = {}
+              local items = {}
               for line in collab_result.stdout:gmatch("[^\r\n]+") do
-                table.insert(collaborators, line)
+                table.insert(items, { text = line })
               end
 
-              local selected_reviewers = {}
-
-              local function select_next()
-                local available = {}
-
-                for _, collab in ipairs(collaborators) do
-                  local already_selected = false
-
-                  for _, selected in ipairs(selected_reviewers) do
-                    if selected == collab then
-                      already_selected = true
-                      break
-                    end
-                  end
-
-                  if not already_selected then
-                    table.insert(available, collab)
-                  end
-                end
-
-                if #available == 0 then
-                  callback(table.concat(selected_reviewers, ","))
-                  return
-                end
-
-                table.insert(available, 1, "Done (no more reviewers)")
-
-                vim.ui.select(available, {
-                  prompt = #selected_reviewers > 0
-                      and "Select another reviewer (selected: " .. #selected_reviewers .. "):"
-                    or "Select reviewer (optional):",
-                }, function(selected)
-                  if not selected or selected == "Done (no more reviewers)" then
-                    callback(table.concat(selected_reviewers, ","))
-                  else
-                    table.insert(selected_reviewers, selected)
-                    select_next()
-                  end
-                end)
+              if #items == 0 then
+                callback("")
+                return
               end
 
-              select_next()
+              Snacks.picker.pick({
+                title = "Select Reviewers (Tab to toggle, Enter to confirm)",
+                items = items,
+                format = "text",
+                multi = true,
+                confirm = function(picker)
+                  local selected = picker:selected({ fallback = true })
+                  local reviewers = {}
+
+                  for _, sel in ipairs(selected) do
+                    table.insert(reviewers, sel.text)
+                  end
+
+                  picker:close()
+                  callback(table.concat(reviewers, ","))
+                end,
+              })
             end)
           end
         )
@@ -577,6 +557,70 @@ function M.git_diff_branch()
     end
 
     vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
+  end)
+end
+
+function M.list_gh_pr_reviews()
+  vim.notify("Loading PRs awaiting your review...", vim.log.levels.INFO, notify_opts)
+
+  vim.system({
+    "gh",
+    "pr",
+    "list",
+    "--search",
+    "user-review-requested:@me",
+    "--json",
+    "number,title,author,url",
+    "--jq",
+    '.[] | "#\\(.number) \\(.title) (@\\(.author.login))"',
+  }, {}, function(result)
+    vim.schedule(function()
+      if result.code ~= 0 then
+        vim.notify("Failed to list PRs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
+        return
+      end
+
+      local prs = {}
+      local urls = {}
+
+      for line in result.stdout:gmatch("[^\r\n]+") do
+        if line ~= "" then
+          table.insert(prs, line)
+        end
+      end
+
+      if #prs == 0 then
+        vim.notify("No PRs awaiting your review", vim.log.levels.INFO, notify_opts)
+        return
+      end
+
+      -- Fetch URLs separately for opening
+      vim.system({
+        "gh",
+        "pr",
+        "list",
+        "--search",
+        "user-review-requested:@me",
+        "--json",
+        "number,url",
+        "--jq",
+        ".[].url",
+      }, {}, function(url_result)
+        vim.schedule(function()
+          if url_result.code == 0 then
+            for line in url_result.stdout:gmatch("[^\r\n]+") do
+              table.insert(urls, line)
+            end
+          end
+
+          vim.ui.select(prs, { prompt = "PRs awaiting your review:" }, function(selected, idx)
+            if selected and urls[idx] then
+              vim.ui.open(urls[idx])
+            end
+          end)
+        end)
+      end)
+    end)
   end)
 end
 
