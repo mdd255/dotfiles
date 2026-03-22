@@ -88,3 +88,14 @@ bindkey "\ed" fzf_dir_picker
 fzf_commit_picker() { LBUFFER+="$(get_commit_hash)" }
 zle -N fzf_commit_picker
 bindkey "\ea" fzf_commit_picker
+
+# fzf history picker
+fzf_history_picker() {
+  cmd="$(history | awk '{ $1=$2=$3=""; print $0 }' | sort | uniq | fzf --no-preview --with-nth=.. --no-hscroll)"
+
+  if ((#cmd > 0)); then
+    LBUFFER="${cmd}" && zle accept-line
+  fi
+}
+zle -N fzf_history_picker
+bindkey "^H" fzf_history_picker

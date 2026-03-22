@@ -34,10 +34,10 @@ return {
         input = {
           keys = {
             ["<Esc>"] = { "close", mode = { "n", "i" } },
-            ["<Tab>"] = { "list_down", mode = { "n", "i" } },
-            ["<S-Tab>"] = { "list_up", mode = { "n", "i" } },
-            ["<C-n>"] = { "preview_scroll_down", mode = { "n", "i" } },
-            ["<C-e>"] = { "preview_scroll_up", mode = { "n", "i" } },
+            ["<C-n>"] = { "list_down", mode = { "n", "i" } },
+            ["<C-e>"] = { "list_up", mode = { "n", "i" } },
+            ["<C-i>"] = { "preview_scroll_down", mode = { "n", "i" } },
+            ["<C-h>"] = { "preview_scroll_up", mode = { "n", "i" } },
           },
         },
       },

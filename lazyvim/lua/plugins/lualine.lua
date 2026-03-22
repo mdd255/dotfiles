@@ -8,12 +8,28 @@ local theme = {
   },
 }
 
-local shorten_str = function(str)
-  local last_dot = string.match(str, "^(.*)%.")
-  if not last_dot then
-    return str
+local trim_ft = function(full_filename)
+  local filename = full_filename:match("^(.*)%.")
+
+  if not filename then
+    return full_filename
   end
-  return last_dot
+
+  return filename
+end
+
+local shorten_filename = function(full_filename)
+  if full_filename:sub(1, 1) == "." then
+    return full_filename
+  end
+
+  local filename = trim_ft(full_filename)
+
+  if filename:len() > 15 then
+    return filename:sub(1, 15) .. "_"
+  end
+
+  return filename
 end
 
 local file_name = {
@@ -26,7 +42,7 @@ local file_name = {
 local tabs = {
   "tabs",
   mode = 1,
-  fmt = shorten_str,
+  fmt = shorten_filename,
 }
 
 local mode = {
@@ -46,7 +62,7 @@ local branch = {
   icon = "",
   fmt = function(str)
     if str:len() > 80 then
-      return str:sub(1, 77) .. "..."
+      return str:sub(1, 77) .. "_"
     end
 
     return str
@@ -63,7 +79,7 @@ local windows = {
   show_filename_only = true,
   show_modified_status = true,
   mode = 0,
-  fmt = shorten_str,
+  fmt = trim_ft,
   disabled_buftypes = { "terminal", "nofile", "" },
 }
 

@@ -1,0 +1,14 @@
+new_tab build
+launch zsh -lc "docker start nats mongodb containers-redis-1 elasticsearch"
+cd ~/Projects/accelerator-app/acceleratorapp
+launch zsh -lc "yarn build:packages && yarn build:server -w"
+
+new_tab be
+cd ~/Projects/accelerator-app/acceleratorapp
+launch zsh -lc "ENABLE_BACKGROUND_WORKER=true yarn nodemon build/server/app.js"
+
+new_tab fe
+cd ~/Projects/accelerator-app/frontend
+launch zsh -lc "sleep 5 && pnpm -F app start"
+
+focus_tab 2
