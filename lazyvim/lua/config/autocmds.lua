@@ -1,6 +1,3 @@
--- Autocommands are automatically loaded on the VeryLazy event
--- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
-
 local utils = require("config.utils")
 local scroll_mark = require("config.scroll-mark")
 
@@ -35,12 +32,9 @@ local function setup_cursor_options()
     "DiffviewFiles",
     "text.kulala_ui",
     "json.kulala_ui",
-    "dbui",
-    "dbout",
     "noice",
     "blink-cmp-menu",
     "blink-cmp-documentation",
-    "cursor-agent",
     "markdown.gh",
     "dbab_sidebar",
     "dbab_history",

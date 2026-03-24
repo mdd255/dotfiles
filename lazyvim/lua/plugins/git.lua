@@ -7,7 +7,7 @@ return {
     lazy = false,
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
-      { "gpr", "<cmd>lua Snacks.picker.gh_pr()<Cr>", desc = "Github PRs" },
+      { "gpr", "<cmd>lua Snacks.picker.gh_pr({ search = 'user-review-requested:@me' })<Cr>", desc = "Github PRs" },
       { "gdf", git.get_current_file_history, desc = "Diffview current file history" },
       { "gdb", git.git_diff_branch, desc = "Diff branch" },
       { "gpl", git.git_pull, desc = "Git pull" },
@@ -42,8 +42,66 @@ return {
         vim.notify("Git: staged all files")
       end
 
+      local function update_diffview_progress()
+        local view = require("diffview.lib").get_current_view()
+
+        if not view or not view.panel then
+          return
+        end
+
+        local files = view.panel:ordered_file_list()
+        local total = #files
+        if total == 0 then
+          return
+        end
+
+        local cur = view.panel.cur_file
+        if cur then
+          for i, f in ipairs(files) do
+            if f == cur or (f.path and cur.path and f.path == cur.path) then
+              vim.g.diffview_progress = "[" .. i .. "/" .. total .. "]"
+              return
+            end
+          end
+        end
+
+        vim.g.diffview_progress = "[1/" .. total .. "]"
+      end
+
       local opts = {
         enhanced_diff_hl = true,
+        hooks = {
+          view_opened = function()
+            vim.g.diffview_tab = vim.api.nvim_tabpage_get_number(0)
+
+            vim.defer_fn(function()
+              vim.g.diffview_active = true
+              update_diffview_progress()
+
+              for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+                vim.api.nvim_set_option_value("number", false, { win = win })
+                vim.api.nvim_set_option_value("relativenumber", false, { win = win })
+                vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
+                vim.api.nvim_set_option_value("statuscolumn", "", { win = win })
+              end
+            end, 200)
+          end,
+
+          view_post_layout = function()
+            vim.g.diffview_tab = vim.g.diffview_tab or vim.api.nvim_tabpage_get_number(0)
+            vim.schedule(update_diffview_progress)
+          end,
+
+          diff_buf_win_enter = function()
+            vim.schedule(update_diffview_progress)
+          end,
+
+          view_closed = function()
+            vim.g.diffview_active = false
+            vim.g.diffview_progress = nil
+            vim.g.diffview_tab = nil
+          end,
+        },
         view = {
           default = {
             layout = "diff2_horizontal",
@@ -84,26 +142,6 @@ return {
           },
         },
       }
-
-      -- Setup autocmd to disable line numbers when Diffview opens
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "DiffviewFiles", "DiffviewFileHistory" },
-        callback = function()
-          vim.defer_fn(function()
-            vim.g.diffview_active = true
-
-            local visible_wins = vim.api.nvim_tabpage_list_wins(0)
-
-            -- Disable for all visible windows in current tabpage
-            for _, win in ipairs(visible_wins) do
-              vim.api.nvim_set_option_value("number", false, { win = win })
-              vim.api.nvim_set_option_value("relativenumber", false, { win = win })
-              vim.api.nvim_set_option_value("signcolumn", "no", { win = win })
-              vim.api.nvim_set_option_value("statuscolumn", "", { win = win })
-            end
-          end, 100)
-        end,
-      })
 
       require("diffview").setup(opts)
     end,

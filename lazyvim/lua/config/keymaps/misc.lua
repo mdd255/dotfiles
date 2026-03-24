@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 local utils = require("config.utils")
 local map = utils.map
+local term_cmd = utils.term_cmd
 
 -- Core navigation and editing keymaps
 map({
@@ -58,13 +59,18 @@ map({
   {
     "<C-y>",
     function()
-      vim.cmd("tabnew")
-      vim.cmd("terminal")
-      vim.cmd("LualineRenameTab claude")
-      vim.cmd("startinsert")
-      vim.api.nvim_feedkeys("claude\n", "t", false)
+      term_cmd("claude")
     end,
     { modes = { "n" }, desc = "Open Claude in new tab" },
+  },
+
+  -- Open Gemini in new tab
+  {
+    "<C-;>",
+    function()
+      term_cmd("gemini")
+    end,
+    { modes = { "n" }, desc = "Open Gemini in new tab" },
   },
 
   -- Window maximize

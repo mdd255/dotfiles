@@ -18,7 +18,7 @@ local trim_ft = function(full_filename)
   return filename
 end
 
-local shorten_filename = function(full_filename)
+local shorten_filename = function(full_filename, context)
   if full_filename:sub(1, 1) == "." then
     return full_filename
   end
@@ -26,7 +26,11 @@ local shorten_filename = function(full_filename)
   local filename = trim_ft(full_filename)
 
   if filename:len() > 15 then
-    return filename:sub(1, 15) .. "_"
+    filename = filename:sub(1, 15) .. "_"
+  end
+
+  if vim.g.diffview_progress and context and vim.g.diffview_tab == context.tabnr then
+    return filename .. " " .. vim.g.diffview_progress
   end
 
   return filename
@@ -127,11 +131,9 @@ return {
         section_separators = { left = "", right = "" },
         always_divide_middle = true,
         disabled_filetypes = {
-          "dbui",
-          "dbout",
+          "",
           "snacks_terminal",
           "snacks_dashboard",
-          "opencode_terminal",
         },
       },
     })

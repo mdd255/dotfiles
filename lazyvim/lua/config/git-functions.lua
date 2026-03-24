@@ -123,19 +123,35 @@ function M.gh_switch_account()
       return
     end
 
-    vim.ui.select(accounts, {
-      prompt = "Switch GitHub account:",
-    }, function(selected)
-      if not selected then
-        return
-      end
+    -- Get current login to exclude from the list
+    vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(result)
+      vim.schedule(function()
+        local current_login = result.code == 0 and result.stdout:gsub("%s+", "") or ""
 
-      exec_async({ "gh", "auth", "switch", "-u", selected }, {
-        notify = notify_opts,
-        info_label = "Switching to " .. selected .. "...",
-        success_label = "Switched to " .. selected,
-        failed_label = "Failed to switch account: ",
-      })
+        local filtered = vim.tbl_filter(function(account)
+          return account ~= current_login
+        end, accounts)
+
+        if #filtered == 0 then
+          vim.notify("No other GitHub accounts to switch to", vim.log.levels.INFO, notify_opts)
+          return
+        end
+
+        vim.ui.select(filtered, {
+          prompt = "Switch GitHub account (current: " .. current_login .. "):",
+        }, function(selected)
+          if not selected then
+            return
+          end
+
+          exec_async({ "gh", "auth", "switch", "-u", selected }, {
+            notify = notify_opts,
+            info_label = "Switching to " .. selected .. "...",
+            success_label = "Switched to " .. selected,
+            failed_label = "Failed to switch account: ",
+          })
+        end)
+      end)
     end)
   end)
 end
@@ -219,12 +235,27 @@ function M.create_pr()
               end
 
               Snacks.picker.pick({
-                title = "Select Reviewers (Tab to toggle, Enter to confirm)",
-                items = items,
+                title = "Select Reviewers (Tab to select, Enter to confirm)",
+                finder = function()
+                  return items
+                end,
                 format = "text",
-                multi = true,
-                confirm = function(picker)
-                  local selected = picker:selected({ fallback = true })
+                multi = { "confirm" },
+                actions = {
+                  select_and_clear = function(picker)
+                    picker.list:select()
+                    picker.list:move(1)
+                    vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
+                  end,
+                },
+                win = {
+                  input = {
+                    keys = {
+                      ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
+                    },
+                  },
+                },
+                confirm = function(picker, selected)
                   local reviewers = {}
 
                   for _, sel in ipairs(selected) do
@@ -477,7 +508,6 @@ function M.git_pull()
 end
 
 function M.close_diffview()
-  vim.g.diffview_active = false
   vim.cmd("DiffviewClose")
 end
 
@@ -515,9 +545,11 @@ function M.git_commit(amend)
         M.close_diffview()
 
         local commit_args = { "git", "commit" }
+
         if amend then
           table.insert(commit_args, "--amend")
         end
+
         table.insert(commit_args, "-m")
         table.insert(commit_args, msg)
 
@@ -527,7 +559,7 @@ function M.git_commit(amend)
           success_label = "Committed successfully",
           failed_label = "Commit failed: ",
           on_success = function()
-            M.git_push(false)
+            M.git_push(amend)
           end,
         })
       end)
@@ -557,70 +589,6 @@ function M.git_diff_branch()
     end
 
     vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
-  end)
-end
-
-function M.list_gh_pr_reviews()
-  vim.notify("Loading PRs awaiting your review...", vim.log.levels.INFO, notify_opts)
-
-  vim.system({
-    "gh",
-    "pr",
-    "list",
-    "--search",
-    "user-review-requested:@me",
-    "--json",
-    "number,title,author,url",
-    "--jq",
-    '.[] | "#\\(.number) \\(.title) (@\\(.author.login))"',
-  }, {}, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        vim.notify("Failed to list PRs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-        return
-      end
-
-      local prs = {}
-      local urls = {}
-
-      for line in result.stdout:gmatch("[^\r\n]+") do
-        if line ~= "" then
-          table.insert(prs, line)
-        end
-      end
-
-      if #prs == 0 then
-        vim.notify("No PRs awaiting your review", vim.log.levels.INFO, notify_opts)
-        return
-      end
-
-      -- Fetch URLs separately for opening
-      vim.system({
-        "gh",
-        "pr",
-        "list",
-        "--search",
-        "user-review-requested:@me",
-        "--json",
-        "number,url",
-        "--jq",
-        ".[].url",
-      }, {}, function(url_result)
-        vim.schedule(function()
-          if url_result.code == 0 then
-            for line in url_result.stdout:gmatch("[^\r\n]+") do
-              table.insert(urls, line)
-            end
-          end
-
-          vim.ui.select(prs, { prompt = "PRs awaiting your review:" }, function(selected, idx)
-            if selected and urls[idx] then
-              vim.ui.open(urls[idx])
-            end
-          end)
-        end)
-      end)
-    end)
   end)
 end
 

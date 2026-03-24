@@ -25,6 +25,14 @@ function M.create_macro(opts)
   vim.api.nvim_feedkeys(expr, "n", false)
 end
 
+function M.term_cmd(cmd)
+  vim.cmd("tabnew")
+  vim.cmd("terminal")
+  vim.cmd("LualineRenameTab " .. cmd)
+  vim.cmd("startinsert")
+  vim.api.nvim_feedkeys(cmd .. "\n", "t", false)
+end
+
 -- Keymap utility functions
 -- @param lhs string|table - keymap or table of keymap configs
 -- @param rhs any - command/function (ignored if lhs is table)

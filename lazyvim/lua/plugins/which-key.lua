@@ -4,19 +4,11 @@ return {
     preset = "helix",
     defaults = {},
     plugins = {
-      presets = {
-        operator = false,
-        motions = false,
-        text_objects = false,
-        windows = false,
-        nav = false,
-        z = false,
-        g = false,
-      },
+      presets = false,
     },
     icons = {
       mappings = false,
-      separator = "->",
+      separator = ".",
     },
     spec = {
       { mode = { "n" } },
@@ -27,7 +19,7 @@ return {
       { "s", group = " Search/Replace" },
       { "q", group = " Navigation" },
       { "<Leader>", group = " Leader" },
-      { "<Leader>d", group = "DBUI" },
+      { "<Leader>d", group = "DB UI" },
       { "<Leader>s", group = "Diffview open" },
       { "<Leader>c", group = "Macro" },
       { "<Leader><Tab>", group = "New tab" },
