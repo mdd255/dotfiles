@@ -8,7 +8,7 @@ return {
     },
     icons = {
       mappings = false,
-      separator = ".",
+      separator = "",
     },
     spec = {
       { mode = { "n" } },
