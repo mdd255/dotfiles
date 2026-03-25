@@ -255,7 +255,8 @@ function M.create_pr()
                     },
                   },
                 },
-                confirm = function(picker, selected)
+                confirm = function(picker)
+                  local selected = picker:selected()
                   local reviewers = {}
 
                   for _, sel in ipairs(selected) do
