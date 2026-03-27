@@ -10,7 +10,7 @@ return {
     scope = { enabled = false },
     image = { enabled = false },
     zen = { enabled = false },
-    scratch = { enabled = false },
+    scratch = { enabled = true },
     words = { enabled = false },
     animate = { enabled = true },
     input = { enabled = true },
@@ -42,18 +42,7 @@ return {
         },
       },
       sources = {
-        lsp_symbols = {
-          filter = {
-            default = {
-              "Class",
-              "Function",
-              "Interface",
-              "Method",
-              "Struct",
-              "Trait",
-            },
-          },
-        },
+        lsp_symbols = {},
         projects = {
           format = "file",
           recent = true,
@@ -132,6 +121,34 @@ return {
     map("n", "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", { desc = "Find keymaps" })
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
+
+    map({ "t" }, "<C-i>", function()
+      Snacks.scratch()
+
+      vim.schedule(function()
+        vim.opt_local.ft = "text"
+        vim.opt_local.number = false
+        vim.opt_local.statuscolumn = ""
+
+        local buf = vim.api.nvim_get_current_buf()
+
+        local function accept_scratch()
+          vim.cmd("%y+")
+          vim.cmd("close")
+
+          vim.schedule(function()
+            vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+          end)
+        end
+
+        vim.keymap.set("i", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
+        vim.keymap.set("n", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
+
+        vim.keymap.set("n", "<Esc>", function()
+          vim.cmd("close")
+        end, { buffer = buf, desc = "Close scratch window" })
+      end)
+    end, { desc = "Open scratch float from terminal" })
 
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })

@@ -1,5 +1,4 @@
 ---@diagnostic disable: undefined-global
-local scroll_mark = require("config.scroll-mark")
 local utils = require("config.utils")
 local map = utils.map
 
@@ -14,8 +13,8 @@ map({
   { "E", "<cmd>tabnext<cr>", { desc = "Next tab" } },
 
   -- Scroll
-  { "m", scroll_mark.scroll_down, { desc = "Scroll down half page" } },
-  { "M", scroll_mark.scroll_up, { desc = "Scroll up half page" } },
+  { "m", "<C-d>", { desc = "Scroll down half page" } },
+  { "M", "<C-u>", { desc = "Scroll up half page" } },
 
   -- Window nav
   { "<Leader>h", "<C-w>h", { desc = "To left win" } },
