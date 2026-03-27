@@ -240,6 +240,7 @@ function M.create_pr()
                   return items
                 end,
                 format = "text",
+                preview = false,
                 multi = { "confirm" },
                 actions = {
                   select_and_clear = function(picker)
