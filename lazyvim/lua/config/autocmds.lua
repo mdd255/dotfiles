@@ -24,6 +24,7 @@ local function setup_cursor_options()
     "",
     "snacks_dashboard",
     "snacks_terminal",
+    "claudecode",
     "snacks_picker_list",
     "grug-far",
     "lazy",

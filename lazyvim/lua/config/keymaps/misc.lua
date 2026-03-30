@@ -60,17 +60,12 @@ map({
     "<C-y>",
     function()
       term_cmd("claude")
+
+      vim.schedule(function()
+        vim.bo.filetype = "claudecode"
+      end)
     end,
     { modes = { "n" }, desc = "Open Claude in new tab" },
-  },
-
-  -- Open Gemini in new tab
-  {
-    "<C-;>",
-    function()
-      term_cmd("gemini")
-    end,
-    { modes = { "n" }, desc = "Open Gemini in new tab" },
   },
 
   -- Window maximize

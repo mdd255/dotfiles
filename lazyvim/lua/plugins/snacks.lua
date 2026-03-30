@@ -122,33 +122,38 @@ return {
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
 
-    map({ "t" }, "<C-i>", function()
-      Snacks.scratch()
-
-      vim.schedule(function()
-        vim.opt_local.ft = "text"
-        vim.opt_local.number = false
-        vim.opt_local.statuscolumn = ""
-
-        local buf = vim.api.nvim_get_current_buf()
-
-        local function accept_scratch()
-          vim.cmd("%y+")
-          vim.cmd("close")
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "claudecode",
+      callback = function(ev)
+        vim.keymap.set("t", "<C-i>", function()
+          Snacks.scratch()
 
           vim.schedule(function()
-            vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+            vim.opt_local.ft = "text"
+            vim.opt_local.number = false
+            vim.opt_local.statuscolumn = ""
+
+            local buf = vim.api.nvim_get_current_buf()
+
+            local function accept_scratch()
+              vim.cmd("%y+")
+              vim.cmd("close")
+
+              vim.schedule(function()
+                vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+              end)
+            end
+
+            vim.keymap.set("i", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
+            vim.keymap.set("n", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
+
+            vim.keymap.set("n", "<Esc>", function()
+              vim.cmd("close")
+            end, { buffer = buf, desc = "Close scratch window" })
           end)
-        end
-
-        vim.keymap.set("i", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
-        vim.keymap.set("n", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
-
-        vim.keymap.set("n", "<Esc>", function()
-          vim.cmd("close")
-        end, { buffer = buf, desc = "Close scratch window" })
-      end)
-    end, { desc = "Open scratch float from terminal" })
+        end, { buffer = ev.buf, desc = "Open scratch float from terminal" })
+      end,
+    })
 
     -- misc keymaps
     map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
