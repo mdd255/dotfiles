@@ -1,6 +1,6 @@
 {
-   "or": {
-      "prefix": ["or"],
-      "body": "or "
-   }
+	"or": {
+		"prefix": ["or"],
+		"body": "or "
+	}
 }
