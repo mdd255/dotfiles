@@ -9,6 +9,6 @@ launch zsh -lc "ENABLE_BACKGROUND_WORKER=true yarn nodemon build/server/app.js"
 
 new_tab fe
 cd ~/Projects/accelerator-app/frontend
-launch zsh -lc "sleep 5 && pnpm -F app start"
+launch zsh -lc "sleep 10 && pnpm -F app start"
 
 focus_tab 2
