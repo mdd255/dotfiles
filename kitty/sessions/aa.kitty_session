@@ -7,8 +7,12 @@ new_tab be
 cd ~/Projects/accelerator-app/acceleratorapp
 launch zsh -lc "ENABLE_BACKGROUND_WORKER=true yarn nodemon build/server/app.js"
 
+new_tab chat
+cd ~/Projects/accelerator-app/chat-server
+launch zsh -lc "yarn start"
+
 new_tab fe
 cd ~/Projects/accelerator-app/frontend
 launch zsh -lc "sleep 10 && pnpm -F app start"
 
-focus_tab 2
+focus_tab 1
