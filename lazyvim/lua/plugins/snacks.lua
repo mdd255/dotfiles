@@ -125,7 +125,7 @@ return {
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "claudecode",
       callback = function(ev)
-        vim.keymap.set("t", "<C-i>", function()
+        vim.keymap.set("t", "<C-Cr>", function()
           Snacks.scratch()
 
           vim.schedule(function()

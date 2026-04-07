@@ -225,6 +225,7 @@ function M.create_pr()
               end
 
               local items = {}
+
               for line in collab_result.stdout:gmatch("[^\r\n]+") do
                 table.insert(items, { text = line })
               end
@@ -235,12 +236,22 @@ function M.create_pr()
               end
 
               Snacks.picker.pick({
-                title = "Select Reviewers (Tab to select, Enter to confirm)",
                 finder = function()
                   return items
                 end,
                 format = "text",
-                preview = false,
+                layout = {
+                  layout = {
+                    title = "Select Reviewers (Tab to select, Enter to confirm)",
+                    box = "vertical",
+                    position = "float",
+                    width = 0.4,
+                    height = 0.4,
+                    border = "rounded",
+                    { win = "input", height = 1, border = "bottom" },
+                    { win = "list" },
+                  },
+                },
                 multi = { "confirm" },
                 actions = {
                   select_and_clear = function(picker)
