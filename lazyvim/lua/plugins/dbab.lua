@@ -19,7 +19,8 @@ return {
         show_system_schemas = false,
       },
       history = {
-        show = false,
+        show = true,
+        width = 0.25,
       },
       editor = {
         height = 0.25,
