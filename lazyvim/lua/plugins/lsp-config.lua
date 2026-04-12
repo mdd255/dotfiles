@@ -10,6 +10,11 @@ return {
         tailwindcss = {
           filetypes = { "typescriptreact", "javascriptreact" },
         },
+        clangd = {
+          on_attach = function(client, _)
+            client.server_capabilities.inlayHintProvider = false
+          end,
+        },
         tsgo = {
           on_attach = function(client, _)
             client.server_capabilities.documentFormattingProvider = false
