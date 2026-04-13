@@ -7,6 +7,7 @@ return {
         { name = "aa.staging", url = "$AA_MONGODB_STAGING" },
         { name = "bor.local", url = "postgres://postgres:postgres@localhost:5432/bor-api" },
         { name = "bor.staging", url = "$BOR_PSQL_STAGING" },
+        { name = "bor.staging_v2", url = "$BOR_PSQL_STAGING_V2" },
         { name = "bor.prod", url = "$BOR_PSQL_PROD" },
         { name = "iri.local", url = "postgres://postgres:postgres@localhost:5432/roofing_local" },
         { name = "iri.staging", url = "$IRI_PSQL_STAGING" },
