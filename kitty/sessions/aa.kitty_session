@@ -13,6 +13,6 @@ launch zsh -lc "yarn start"
 
 new_tab fe
 cd ~/Projects/accelerator-app/frontend
-launch zsh -lc "sleep 10 && pnpm -F app start"
+launch zsh -lc "sleep 15 && pnpm -F app start"
 
 focus_tab 1
