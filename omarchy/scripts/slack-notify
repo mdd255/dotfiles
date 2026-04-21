@@ -1,0 +1,103 @@
+#!/usr/bin/env node
+
+const { spawnSync } = require('node:child_process')
+const { homedir } = require('node:os')
+const fs = require('node:fs')
+
+const uid = process.getuid()
+process.env.XDG_RUNTIME_DIR ??= `/run/user/${uid}`
+process.env.DBUS_SESSION_BUS_ADDRESS ??= `unix:path=/run/user/${uid}/bus`
+
+const TOKENS_FILE = `${homedir()}/.config/slack-tokens.json`
+const STATE_FILE = `${process.env.XDG_RUNTIME_DIR}/slack-notify.json`
+
+async function listConversations(token) {
+  const channels = []
+  let cursor = ''
+
+  do {
+    const params = new URLSearchParams({
+      types: 'im,mpim',
+      exclude_archived: 'true',
+      limit: '200',
+      ...(cursor && { cursor })
+    })
+
+    const res = await fetch(`https://slack.com/api/conversations.list?${params}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+
+    const data = await res.json()
+    if (!data.ok) throw new Error(data.error)
+    channels.push(...data.channels)
+    cursor = data.response_metadata?.next_cursor ?? ''
+  } while (cursor)
+
+  return channels
+}
+
+async function getWorkspaceChannels(token) {
+  try {
+    return await listConversations(token)
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
+function loadState() {
+  try {
+    return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'))
+  } catch {
+    return {}
+  }
+}
+
+function saveState(state) {
+  try {
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state))
+  } catch {}
+}
+
+async function main() {
+  if (!fs.existsSync(TOKENS_FILE)) {
+    console.error('No tokens file found')
+    process.exit(0)
+  }
+
+  const workspaces = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf-8'))
+  const state = loadState()
+  const isFirstRun = Object.keys(state).length === 0
+
+  const newState = {}
+  const notifyLines = []
+
+  for (const { workspace, token } of workspaces) {
+    const channels = await getWorkspaceChannels(token)
+    const prev = state[workspace] ?? {}
+
+    newState[workspace] = {}
+    const active = []
+
+    for (const ch of channels) {
+      newState[workspace][ch.id] = ch.updated
+
+      if (!isFirstRun && ch.updated > (prev[ch.id] ?? 0)) {
+        active.push(ch)
+      }
+    }
+
+    if (active.length > 0) {
+      const count = active.length
+      notifyLines.push(`${workspace}: ${count} conversation${count > 1 ? 's' : ''} with new activity`)
+    }
+  }
+
+  saveState(newState)
+
+  if (notifyLines.length > 0) {
+    spawnSync('notify-send', ['-t', '6000', 'Slack reminder', notifyLines.join('\n')])
+  }
+}
+
+main().catch(() => process.exit(1))

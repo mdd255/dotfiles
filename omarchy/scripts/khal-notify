@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+const { formatEventTitle } = require('./calendar-utils')
+const { execSync } = require('node:child_process')
+
+const events = execSync("khal list now")
+  .toString()
+
+execSync(`notify-send -t 10000 'Upcomming events\n' "${formatEventTitle(events)}"`)

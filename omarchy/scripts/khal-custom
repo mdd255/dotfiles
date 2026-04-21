@@ -1,16 +1,19 @@
 #!/usr/bin/env node
-
-/** biome-ignore-all lint/suspicious/noConsole: really need this */
+const { formatEventTitle } = require('./calendar-utils')
 const { execSync } = require('node:child_process')
 
 try {
-  const events = execSync("khal list now eod --format '{start-time} {title}'")
-    .toString().trim()
+  const events = execSync("khal list now eod")
+    .toString()
 
-  let nextEvents = events.split('\n').slice(1, 4).map(event => `[${event.length > 35 ? event.slice(0, 35) : event}]`).join("  ") || ''
+  let nextEvents = formatEventTitle(events).split('\n').slice(1).map(event => {
+    const title = event.length > 50 ? event.slice(0, 35) : event
+    return title
+  }).join(" | ") || ''
+
   nextEvents = nextEvents.length ? "󱑑 ".concat(nextEvents): "[No event for today]"
 
-  const payload = { text: nextEvents, tooltip: events }
+  const payload = { text: nextEvents, tooltip: "" }
   console.log(JSON.stringify(payload))
 } catch (err) {
   execSync(`notify-send input 'Cannot run khal-script: ${err.message}'`)
