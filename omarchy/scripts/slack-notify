@@ -70,6 +70,7 @@ async function main() {
   const state = loadState()
   const isFirstRun = Object.keys(state).length === 0
 
+  const NOTIFY_TTL_MS = 30 * 60 * 1000
   const newState = {}
   const notifyLines = []
 
@@ -81,11 +82,20 @@ async function main() {
     const active = []
 
     for (const ch of channels) {
-      newState[workspace][ch.id] = ch.updated
+      const prevEntry = prev[ch.id] ?? { updated: 0, pendingSince: null }
+      const hasNewActivity = ch.updated > prevEntry.updated
+      let pendingSince = prevEntry.pendingSince
 
-      if (!isFirstRun && ch.updated > (prev[ch.id] ?? 0)) {
+      if (hasNewActivity) {
+        pendingSince = isFirstRun ? null : Date.now()
+        if (!isFirstRun) active.push(ch)
+      } else if (pendingSince && (Date.now() - pendingSince < NOTIFY_TTL_MS)) {
         active.push(ch)
+      } else {
+        pendingSince = null
       }
+
+      newState[workspace][ch.id] = { updated: ch.updated, pendingSince }
     }
 
     if (active.length > 0) {
@@ -99,7 +109,7 @@ async function main() {
   saveState(newState)
 
   if (notifyLines.length > 0) {
-    spawnSync('notify-send', ['-t', '6000', 'Slack reminder', notifyLines.join('\n')])
+    spawnSync('notify-send', ['-t', '12000', 'Slack reminder', notifyLines.join('\n')])
   }
 }
 
