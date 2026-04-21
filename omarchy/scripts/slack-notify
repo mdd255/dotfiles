@@ -38,7 +38,8 @@ async function listConversations(token) {
 
 async function getWorkspaceChannels(token) {
   try {
-    return await listConversations(token)
+    const conversations = await listConversations(token)
+    return conversations.filter(c => c.is_im)
   } catch (err) {
     console.error(err)
     return []
@@ -90,6 +91,8 @@ async function main() {
     if (active.length > 0) {
       const count = active.length
       notifyLines.push(`${workspace}: ${count} conversation${count > 1 ? 's' : ''} with new activity`)
+    } else {
+      console.info('No new messages for workspace', workspace)
     }
   }
 
