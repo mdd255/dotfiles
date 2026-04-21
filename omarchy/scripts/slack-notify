@@ -38,8 +38,8 @@ async function listConversations(token) {
 
 async function getWorkspaceChannels(token) {
   try {
-    const conversations = await listConversations(token)
-    return conversations.filter(c => c.is_im)
+    const conversations = (await listConversations(token)).filter(c => c.is_im && !c.is_user_deleted)
+    return conversations
   } catch (err) {
     console.error(err)
     return []
