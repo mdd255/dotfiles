@@ -63,7 +63,7 @@ async function main() {
 
   if (totalUnread > 0) {
     spawnSync('notify-send', [
-      '-t', '12000', '-a', 'mdd.slack',
+      '-t', '12000', '-a', 'with-sound',
       '--',
       `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
       lines.join('\n')
