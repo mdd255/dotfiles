@@ -4,112 +4,70 @@ const { spawnSync } = require('node:child_process')
 const { homedir } = require('node:os')
 const fs = require('node:fs')
 
-const uid = process.getuid()
-process.env.XDG_RUNTIME_DIR ??= `/run/user/${uid}`
-process.env.DBUS_SESSION_BUS_ADDRESS ??= `unix:path=/run/user/${uid}/bus`
+process.env.XDG_RUNTIME_DIR ??= `/run/user/${process.getuid()}`
+process.env.DBUS_SESSION_BUS_ADDRESS ??= `unix:path=${process.env.XDG_RUNTIME_DIR}/bus`
 
 const TOKENS_FILE = `${homedir()}/.config/slack-tokens.json`
-const STATE_FILE = `${process.env.XDG_RUNTIME_DIR}/slack-notify.json`
 
-async function listConversations(token) {
+const delay = ms => new Promise(r => setTimeout(r, ms))
+
+async function slackApi(token, method, params = {}) {
+  const url = new URL(`https://slack.com/api/${method}`)
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v)
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+  const data = await res.json()
+  if (!data.ok) throw new Error(`${method}: ${data.error}`)
+  return data
+}
+
+async function listImChannels(token) {
   const channels = []
   let cursor = ''
 
   do {
-    const params = new URLSearchParams({
-      types: 'im,mpim',
-      exclude_archived: 'true',
-      limit: '200',
-      ...(cursor && { cursor })
+    const data = await slackApi(token, 'conversations.list', {
+      types: 'im', exclude_archived: 'true', limit: '1000', ...(cursor && { cursor })
     })
 
-    const res = await fetch(`https://slack.com/api/conversations.list?${params}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-
-    const data = await res.json()
-    if (!data.ok) throw new Error(data.error)
-    channels.push(...data.channels)
+    channels.push(...data.channels.sort((a, b) => a.created - b.created).filter(c => !c.is_user_deleted))
     cursor = data.response_metadata?.next_cursor ?? ''
+    if (cursor) await delay(1300)
   } while (cursor)
-
   return channels
 }
 
-async function getWorkspaceChannels(token) {
-  try {
-    const conversations = (await listConversations(token)).filter(c => c.is_im && !c.is_user_deleted)
-    return conversations
-  } catch (err) {
-    console.error(err)
-    return []
-  }
-}
-
-function loadState() {
-  try {
-    return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'))
-  } catch {
-    return {}
-  }
-}
-
-function saveState(state) {
-  try {
-    fs.writeFileSync(STATE_FILE, JSON.stringify(state))
-  } catch {}
-}
-
 async function main() {
-  if (!fs.existsSync(TOKENS_FILE)) {
-    console.error('No tokens file found')
-    process.exit(0)
-  }
+  if (!fs.existsSync(TOKENS_FILE)) process.exit(0)
 
   const workspaces = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf-8'))
-  const state = loadState()
-  const isFirstRun = Object.keys(state).length === 0
-
-  const NOTIFY_TTL_MS = 30 * 60 * 1000
-  const newState = {}
-  const notifyLines = []
+  const lines = []
+  let totalUnread = 0
 
   for (const { workspace, token } of workspaces) {
-    const channels = await getWorkspaceChannels(token)
-    const prev = state[workspace] ?? {}
+    const channels = await listImChannels(token)
+    let workspaceUnread = 0
 
-    newState[workspace] = {}
-    const active = []
+    for (let i = 0; i < channels.length; i++) {
+      const info = (await slackApi(token, 'conversations.info', { channel: channels[i].id })).channel
 
-    for (const ch of channels) {
-      const prevEntry = prev[ch.id] ?? { updated: 0, pendingSince: null }
-      const hasNewActivity = ch.updated > prevEntry.updated
-      let pendingSince = prevEntry.pendingSince
-
-      if (hasNewActivity) {
-        pendingSince = isFirstRun ? null : Date.now()
-        if (!isFirstRun) active.push(ch)
-      } else if (pendingSince && (Date.now() - pendingSince < NOTIFY_TTL_MS)) {
-        active.push(ch)
-      } else {
-        pendingSince = null
+      if (info.unread_count && !info.latest?.bot_id) {
+        workspaceUnread += info.unread_count ?? 0
       }
-
-      newState[workspace][ch.id] = { updated: ch.updated, pendingSince }
     }
 
-    if (active.length > 0) {
-      const count = active.length
-      notifyLines.push(`${workspace}: ${count} conversation${count > 1 ? 's' : ''} with new activity`)
-    } else {
-      console.info('No new messages for workspace', workspace)
+    if (workspaceUnread > 0) {
+      totalUnread += workspaceUnread
+      lines.push(`- ${workspace}: ${workspaceUnread} unread DM${workspaceUnread !== 1 ? 's' : ''}`)
     }
   }
 
-  saveState(newState)
-
-  if (notifyLines.length > 0) {
-    spawnSync('notify-send', ['-t', '12000', 'Slack reminder', notifyLines.join('\n')])
+  if (totalUnread > 0) {
+    spawnSync('notify-send', [
+      '-t', '12000', '-a', 'mdd.slack',
+      '--',
+      `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
+      lines.join('\n')
+    ])
   }
 }
 
