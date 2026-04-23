@@ -47,7 +47,7 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
     `--on-active=${delaySec}`,
     `--unit=khal-reminder-${eventTime.getTime()}-${slug}`,
     '--',
-    'notify-send', '-t', '10000', '-a', 'with-sound',
+    'notify-send', '-t', '10000', '-a', 'reminder',
     `Event in ${label}`,
     title
   ])
