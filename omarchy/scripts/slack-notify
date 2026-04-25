@@ -50,7 +50,7 @@ async function main() {
     for (let i = 0; i < channels.length; i++) {
       const info = (await slackApi(token, 'conversations.info', { channel: channels[i].id })).channel
 
-      if (info.unread_count && !info.latest?.bot_id) {
+      if (info.unread_count && !info.latest?.bot_id && info.latest?.user !== 'USLACKBOT') {
         workspaceUnread += info.unread_count ?? 0
       }
     }
@@ -68,6 +68,8 @@ async function main() {
       `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
       lines.join('\n')
     ])
+  } else {
+    console.info('No unread messages')
   }
 }
 
