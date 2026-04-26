@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+
+const { spawnSync } = require('node:child_process');
+const { homedir } = require('node:os');
+const fs = require('node:fs');
+
+process.env.XDG_RUNTIME_DIR ??= `/run/user/${process.getuid()}`;
+process.env.DBUS_SESSION_BUS_ADDRESS ??= `unix:path=${process.env.XDG_RUNTIME_DIR}/bus`;
+
+const TOKENS_FILE = `${homedir()}/.config/slack-tokens.json`;
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+async function slackApi(token, method, params = {}) {
+  const url = new URL(`https://slack.com/api/${method}`);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const data = await res.json();
+  if (!data.ok) throw new Error(`${method}: ${data.error}`);
+  return data;
+}
+
+async function listImChannels(token) {
+  const channels = [];
+  let cursor = '';
+
+  do {
+    const data = await slackApi(token, 'conversations.list', {
+      types: 'im',
+      exclude_archived: 'true',
+      limit: '1000',
+      ...(cursor && { cursor }),
+    });
+
+    channels.push(
+      ...data.channels.sort((a, b) => a.created - b.created).filter(c => !c.is_user_deleted),
+    );
+    cursor = data.response_metadata?.next_cursor ?? '';
+    if (cursor) await delay(1300);
+  } while (cursor);
+  return channels;
+}
+
+async function main() {
+  if (!fs.existsSync(TOKENS_FILE)) process.exit(0);
+
+  const workspaces = JSON.parse(fs.readFileSync(TOKENS_FILE, 'utf-8'));
+  const lines = [];
+  let totalUnread = 0;
+
+  for (const { workspace, token } of workspaces) {
+    const channels = await listImChannels(token);
+    let workspaceUnread = 0;
+
+    for (let i = 0; i < channels.length; i++) {
+      const info = (await slackApi(token, 'conversations.info', { channel: channels[i].id }))
+        .channel;
+
+      if (info.unread_count && !info.latest?.bot_id && info.latest?.user !== 'USLACKBOT') {
+        workspaceUnread += info.unread_count ?? 0;
+      }
+    }
+
+    if (workspaceUnread > 0) {
+      totalUnread += workspaceUnread;
+      lines.push(`- ${workspace}: ${workspaceUnread} unread DM${workspaceUnread !== 1 ? 's' : ''}`);
+    }
+  }
+
+  if (totalUnread > 0) {
+    spawnSync('notify-send', [
+      '-t',
+      '12000',
+      '-a',
+      'reminder',
+      '--',
+      `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
+      lines.join('\n'),
+    ]);
+  } else {
+    console.info('No unread messages');
+  }
+}
+
+main().catch(() => process.exit(1));

@@ -1,25 +1,18 @@
 {
-  "layer": "top",
-  "position": "top",
-  "output": [
-    "HDMI-A-1"
-  ],
-  "modules-center": [],
-  "modules-right": [
-    "clock#us",
-    "custom/earth",
-    "clock#ptg",
-    "clock"
-  ],
-  "include": [
-    "~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"
-  ],
-  "clock#us": {
-    "format": "{:L%H:%M [%d %a NY]}  ",
-    "timezone": "America/New_York"
-  },
-  "clock#ptg": {
-    "format": " {:L%H:%M [%d %a PT]}",
-    "timezone": "Portugal"
-  }
+	"layer": "top",
+	"position": "top",
+	"output": ["HDMI-A-1"],
+	"modules-center": [],
+	"modules-right": ["clock#us", "clock#ptg", "clock"],
+	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
+	"clock#us": {
+		"format": "{:L%H:%M %a %d NY} ",
+		"tooltip": false,
+		"timezone": "America/New_York"
+	},
+	"clock#ptg": {
+		"format": "{:L%H:%M %a %d PT} ",
+		"tooltip": false,
+		"timezone": "Portugal"
+	}
 }

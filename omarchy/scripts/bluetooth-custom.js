@@ -2,26 +2,26 @@
 
 /** biome-ignore-all lint/suspicious/noConsole: really need this */
 
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 
 function run(cmd) {
-  return execSync(cmd, { encoding: "utf8" }).trim();
+  return execSync(cmd, { encoding: 'utf8' }).trim();
 }
 
 // Get connected devices
-const devicesRaw = run("bluetoothctl devices Connected | grep mdd");
-const batteryLevels = ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+const devicesRaw = run('bluetoothctl devices Connected | grep mdd');
+const batteryLevels = ['󰁺', '󰁻', '󰁼', '󰁽', '󰁾', '󰁿', '󰂀', '󰂁', '󰂂', '󰁹'];
 
 if (!devicesRaw) {
-  console.log(JSON.stringify({text: ""}))
+  console.log(JSON.stringify({ text: '' }));
 } else {
-  const devices = devicesRaw.split("\n");
-  let output = ''
+  const devices = devicesRaw.split('\n');
+  let output = '';
 
   for (const device of devices) {
-    const parts = device.split(" ");
+    const parts = device.split(' ');
     const mac = parts[1];
-    const name = parts.slice(2).join(" ");
+    const name = parts.slice(2).join(' ');
     let info;
 
     try {
@@ -35,8 +35,8 @@ if (!devicesRaw) {
 
     if (batteryPercentMatch) {
       const hex = batteryPercentMatch[1];
-      const batteryPercent = parseInt(hex, 16)
-      const batteryIdx = Math.min(Math.max(Math.floor(batteryPercent / 10), 1), 10)
+      const batteryPercent = parseInt(hex, 16);
+      const batteryIdx = Math.min(Math.max(Math.floor(batteryPercent / 10), 1), 10);
       output += `${batteryLevels[batteryIdx - 1]}  `;
     }
   }

@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 
-const CLI = "/home/dh/Hubstaff/HubstaffCLI.bin.x86_64";
+const CLI = '/home/dh/Hubstaff/HubstaffCLI.bin.x86_64';
 
 function run(cmd) {
-  return execSync(cmd, { encoding: "utf8" }).trim();
+  return execSync(cmd, { encoding: 'utf8' }).trim();
 }
 
 try {

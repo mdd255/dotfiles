@@ -7,11 +7,8 @@
   "modules-left": [
     "wlr/taskbar"
   ],
-  "custom/earth": {
-    "format": " "
-  },
   "clock": {
-    "format": " {:L%H:%M %d/%m %a} ",
+    "format": "{:L%H:%M %d.%m %a}",
     "timezone": "Asia/Ho_Chi_Minh",
     "tooltip-format": "<tt><small>{calendar}</small></tt>",
     "calendar": {

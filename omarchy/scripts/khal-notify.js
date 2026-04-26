@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+const { spawnSync } = require('node:child_process');
+const { formatEventTitle, generateCalendar, extractEventLines } = require('./calendar-utils');
+
+const raw = spawnSync('khal', ['calendar', '--notstarted'], { encoding: 'utf8' }).stdout;
+const calLines = generateCalendar(3);
+const eventLines = extractEventLines(raw).map(e => formatEventTitle(e, true));
+
+const CAL_COL = 28;
+const maxLines = Math.max(calLines.length, eventLines.length);
+const lines = [];
+
+for (let i = 0; i < maxLines; i++) {
+  const cal = (calLines[i] ?? '').padEnd(CAL_COL);
+  const event = (eventLines[i] ?? '').trimEnd();
+  lines.push(event ? `${cal}  ${event}` : cal.trimEnd());
+}
+
+const body = lines.join('\n');
+
+spawnSync('notify-send', ['-t', '15000', '-a', 'calendar', '', body]);

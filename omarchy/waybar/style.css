@@ -42,6 +42,17 @@ tooltip {
 
 #clock {
   margin-left: 5px;
+  color: #c5c5c5;
+}
+
+#clock.us {
+  margin-left: 5px;
+  color: #6bcbff;
+}
+
+#clock.ptg {
+  margin-left: 5px;
+  color: #606060;
 }
 
 .hidden {
