@@ -9,9 +9,11 @@ try {
   let nextEvents = formatEventTitle(events).split('\n').slice(1).map(event => {
     const title = event.length > 50 ? event.slice(0, 35) : event
     return title
-  }).join(" | ") || ''
+  })
 
-  nextEvents = nextEvents.length ? "󱑑 ".concat(nextEvents): "[No event for today]"
+  nextEvents = Array.from(new Set(nextEvents)).join(" | ") || ''
+
+  nextEvents = nextEvents.length ? "󱑑 ".concat(nextEvents): "󱑑 [No event for today]"
 
   const payload = { text: nextEvents, tooltip: "" }
   console.log(JSON.stringify(payload))
