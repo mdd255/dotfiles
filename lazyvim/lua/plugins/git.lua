@@ -56,6 +56,7 @@ return {
         end
 
         local cur = view.panel.cur_file
+
         if cur then
           for i, f in ipairs(files) do
             if f == cur or (f.path and cur.path and f.path == cur.path) then
@@ -119,8 +120,8 @@ return {
             { "n", "<Leader>q", git.close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
             { "n", "S", stage_all, { desc = "Stage all" } },
-            { "n", "gn", actions.next_conflict, { desc = "Goto next conflict" } },
-            { "n", "ge", actions.prev_conflict, { desc = "Goto prev conflict" } },
+            { "n", "gcn", actions.next_conflict, { desc = "Goto next conflict" } },
+            { "n", "gce", actions.prev_conflict, { desc = "Goto prev conflict" } },
             { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
             { "n", "gct", actions.conflict_choose_all("theirs"), { desc = "Git conflict choose theirs" } },
             { "n", "gca", actions.conflict_choose_all("all"), { desc = "Git conflict choose all" } },
@@ -150,7 +151,7 @@ return {
     "lewis6991/gitsigns.nvim",
     opts = {
       current_line_blame = true,
-      current_line_blame_formatter = "   <author> - <author_time:%R> [<summary>]",
+      current_line_blame_formatter = "    <author> - <author_time:%R> [<summary>]",
       signs = {
         add = { text = "│" },
         change = { text = "│" },
@@ -169,19 +170,11 @@ return {
         end
 
         nmap("gn", function()
-          if vim.wo.diff then
-            vim.cmd.normal({ "gn", bang = true })
-          else
-            gitsigns.nav_hunk("next")
-          end
+          gitsigns.nav_hunk("next")
         end, { desc = "Go to next hunk" })
 
         nmap("ge", function()
-          if vim.wo.diff then
-            vim.cmd.normal({ "ge", bang = true })
-          else
-            gitsigns.nav_hunk("prev")
-          end
+          gitsigns.nav_hunk("prev")
         end, { desc = "Go to prev hunk" })
 
         nmap("gq", gitsigns.reset_hunk, { desc = "Reset hunk" })

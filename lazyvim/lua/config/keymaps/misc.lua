@@ -7,6 +7,12 @@ local term_cmd = utils.term_cmd
 map({
   -- File operations
   {
+    "sa",
+    "<cmd>noautocmd w<cr>",
+    { desc = "Save without format" },
+  },
+
+  {
     "sy",
     function()
       local filename = vim.fn.expand("%:t")

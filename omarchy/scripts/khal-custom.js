@@ -31,5 +31,8 @@ try {
   const payload = { text: nextEvents, tooltip: '' };
   console.log(JSON.stringify(payload));
 } catch (err) {
-  execSync(`notify-send input 'Cannot run khal-script: ${err.message}'`);
+  console.log(JSON.stringify({ text: '󱑑 khal error', tooltip: err.message }));
+  try {
+    execSync(`notify-send "khal-custom" ${JSON.stringify('Error: ' + err.message)}`);
+  } catch {}
 }
