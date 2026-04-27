@@ -155,7 +155,7 @@ return {
               uppercase = false,
               format = format_first_match,
             },
-            pattern = [=[[(\[{<"'.,|:]]=],
+            pattern = [=[\([(\[{<.,|:]\|\w\@<!["']\)]=],
             action = action,
             labeler = labeler,
           })
@@ -237,7 +237,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search", multi_window = false },
             label = {
               after = true,
@@ -256,7 +256,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search" },
             label = {
               after = true,
@@ -275,7 +275,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search" },
             label = {
               after = true,
@@ -294,7 +294,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search" },
             label = {
               after = true,
@@ -313,7 +313,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search" },
             label = {
               after = true,
@@ -332,7 +332,7 @@ return {
         mode = "n",
         function()
           Flash.jump({
-            pattern = [=[[([{<"'`]]=],
+            pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
             search = { mode = "search" },
             label = {
               after = true,
