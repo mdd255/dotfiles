@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { execSync } from 'node:child_process';
+const { execSync } = require('node:child_process');
 
 const CLI = '/home/dh/Hubstaff/HubstaffCLI.bin.x86_64';
 

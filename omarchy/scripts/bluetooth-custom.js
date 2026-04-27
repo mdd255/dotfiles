@@ -2,7 +2,7 @@
 
 /** biome-ignore-all lint/suspicious/noConsole: really need this */
 
-import { execSync } from 'node:child_process';
+const { execSync } = require('node:child_process');
 
 function run(cmd) {
   return execSync(cmd, { encoding: 'utf8' }).trim();

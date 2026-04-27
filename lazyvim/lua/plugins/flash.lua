@@ -188,7 +188,7 @@ return {
       },
       {
         "l",
-        mode = { "n" },
+        mode = { "n", "v", "o" },
         function()
           Flash.jump({
             search = {
