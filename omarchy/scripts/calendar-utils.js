@@ -22,7 +22,7 @@ function generateCalendar(numMonths = 3) {
   let year = today.year;
   let month = today.month;
 
-  const lines = [`     ${DAY_NAMES.join(' ')}`];
+  const lines = [`    <span color="#61afef">${DAY_NAMES.join(' ')}</span>`];
 
   for (let m = 0; m < numMonths; m++) {
     if (m > 0) lines.push('');
@@ -38,13 +38,19 @@ function generateCalendar(numMonths = 3) {
 
     for (let w = 0; w < slots.length / 7; w++) {
       const week = slots.slice(w * 7, w * 7 + 7);
-      const prefix = w === 0 ? `${MONTH_NAMES[month]} ` : '    ';
+      const prefix = w === 0 ? `<span color="#61afef">${MONTH_NAMES[month]}</span> ` : '    ';
 
       const cells = week.map(d => {
         if (d == null) return '  ';
+        const formattedDay = String(d).padStart(2);
         const isToday = year === today.year && month === today.month && d === today.day;
-        return isToday ? ' ●' : String(d).padStart(2);
+        // marks today with red
+        return isToday ? `<span color="#ef596f">${formattedDay}</span>` : formattedDay;
       });
+
+      // marks weekend with gray
+      cells[5] = `<span color="#606060">${cells[5]}</span>`;
+      cells[6] = `<span color="#606060">${cells[6]}</span>`;
 
       lines.push(prefix + cells.join(' '));
     }
@@ -79,7 +85,7 @@ function extractEventLines(khalOutput) {
   return lines;
 }
 
-function formatEventTitle(title, onlyTileFormat = false) {
+function formatEventTitle(title) {
   const formatedTitle = title
     .replaceAll('|', '')
     .replaceAll('Alpha Bravo Development', 'ABD')
@@ -87,13 +93,11 @@ function formatEventTitle(title, onlyTileFormat = false) {
     .replaceAll('&', '&amp;')
     .replaceAll(' Bor project', 'BOR');
 
-  if (onlyTileFormat) return formatedTitle;
-
   return formatedTitle
     .replaceAll('[', '')
     .replaceAll(']', '')
     .replaceAll('-', '')
-    .replaceAll('  ', ' ');
+    .replace(/[^\S\r\n]+/g, ' ');
 }
 
 module.exports = { formatEventTitle, generateCalendar, extractEventLines };

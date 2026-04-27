@@ -15,20 +15,4 @@ map({
   { "<Leader>n", "<C-w>j", { desc = "To lower win" } },
   { "<Leader>e", "<C-w>k", { desc = "To upper win" } },
   { "<Leader>i", "<C-w>l", { desc = "To right win" } },
-
-  -- Bracket mappings for Colemak
-  { "h", "i<", { modes = { "o" }, desc = "i<" } },
-  { "n", "i(", { modes = { "o" }, desc = "i(" } },
-  { "e", "i[", { modes = { "o" }, desc = "i[" } },
-  { "i", "i{", { modes = { "o" }, desc = "i{" } },
-  { "o", "i'", { modes = { "o" }, desc = "i'" } },
-  { "l", 'i"', { modes = { "o" }, desc = 'i"' } },
-  { "u", "i`", { modes = { "o" }, desc = "i`" } },
-  { "H", "a<", { modes = { "o" }, desc = "a<" } },
-  { "N", "a(", { modes = { "o" }, desc = "a(" } },
-  { "E", "a[", { modes = { "o" }, desc = "a[" } },
-  { "I", "a{", { modes = { "o" }, desc = "a{" } },
-  { "O", "a'", { modes = { "o" }, desc = "a'" } },
-  { "L", 'a"', { modes = { "o" }, desc = 'a"' } },
-  { "U", "a`", { modes = { "o" }, desc = "a`" } },
 })

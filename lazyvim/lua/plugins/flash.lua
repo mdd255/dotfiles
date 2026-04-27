@@ -67,7 +67,6 @@ return {
     end
 
     local action = create_action()
-    local action_before = create_action(-1)
 
     local function labeler(matches, state)
       local labels = state:labels()
@@ -79,55 +78,65 @@ return {
       end
     end
 
+    local function create_text_object_action(op, text_obj)
+      return function(match, state)
+        state:hide()
+
+        Flash.jump({
+          search = { max_length = 0 },
+          highlight = { matches = false },
+          label = {
+            after = { 0, 2 },
+            format = format_second_match,
+          },
+          matcher = function(win)
+            return vim.tbl_filter(function(m)
+              return m.label == match.label and m.win == win
+            end, state.results)
+          end,
+          labeler = function(matches)
+            for _, m in ipairs(matches) do
+              m.label = m.label2
+            end
+          end,
+          action = function(match2)
+            local original_win = vim.api.nvim_get_current_win()
+            local original_pos = vim.api.nvim_win_get_cursor(original_win)
+
+            vim.api.nvim_win_call(match2.win, function()
+              vim.api.nvim_win_set_cursor(match2.win, match2.pos)
+              local line = vim.fn.getline(".")
+              local col = vim.fn.col(".")
+              local char = line:sub(col, col)
+
+              local motion_map = {
+                ["("] = op .. text_obj .. ")",
+                ["["] = op .. text_obj .. "]",
+                ["{"] = op .. text_obj .. "}",
+                ["<"] = op .. text_obj .. ">",
+                ['"'] = op .. text_obj .. '"',
+                ["'"] = op .. text_obj .. "'",
+                ["`"] = op .. text_obj .. "`",
+              }
+
+              local motion = motion_map[char] or (op .. text_obj .. "w")
+              vim.cmd("normal! " .. motion)
+
+              if op == "c" then
+                vim.cmd("startinsert")
+              end
+            end)
+
+            if op == "d" or op == "y" then
+              vim.api.nvim_set_current_win(original_win)
+              vim.api.nvim_win_set_cursor(original_win, original_pos)
+            end
+          end,
+        })
+      end
+    end
+
     return {
-      {
-        "l",
-        mode = { "n", "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              wrap = false,
-              forward = true,
-              multi_window = true,
-            },
-            label = {
-              after = { 0, 0 },
-              before = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
-            action = action,
-            labeler = labeler,
-          })
-        end,
-        desc = "Flash backward to punctuation",
-      },
-      {
-        "L",
-        mode = { "n", "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              wrap = false,
-              forward = false,
-              multi_window = true,
-            },
-            label = {
-              after = { 0, 0 },
-              before = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
-            action = action,
-            labeler = labeler,
-          })
-        end,
-        desc = "Flash backward to punctuation",
-      },
       {
         "<Tab>",
         mode = { "n", "v", "o" },
@@ -135,19 +144,19 @@ return {
           Flash.jump({
             search = {
               mode = "search",
-              wrap = false,
               forward = true,
               multi_window = true,
             },
             jump = { offset = -1 },
             label = {
-              after = { 0, 0 },
               before = false,
+              after = true,
+              current = false,
               uppercase = false,
               format = format_first_match,
             },
-            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
-            action = action_before,
+            pattern = [=[[(\[{<"'.,|:]]=],
+            action = action,
             labeler = labeler,
           })
         end,
@@ -160,66 +169,40 @@ return {
           Flash.jump({
             search = {
               mode = "search",
-              wrap = false,
               forward = false,
               multi_window = true,
             },
-            jump = { offset = -1 },
             label = {
-              after = { 0, 0 },
               before = false,
+              after = true,
+              current = false,
               uppercase = false,
               format = format_first_match,
             },
-            pattern = [=[[^[:alnum:]_ \t]\@<![^[:alnum:]_ \t]]=],
-            action = action_before,
-            labeler = labeler,
-          })
-        end,
-        desc = "Flash backward to before punctuation",
-      },
-      {
-        "W",
-        mode = { "n" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              wrap = false,
-              forward = true,
-              multi_window = false,
-            },
-            label = {
-              after = { 0, 0 },
-              before = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [[\w\>]],
+            pattern = [=[[)\]}>]]=],
             action = action,
             labeler = labeler,
           })
         end,
-        desc = "Flash forward to end of word",
+        desc = "Flash backward to closing brace",
       },
       {
-        "w",
+        "l",
         mode = { "n" },
         function()
           Flash.jump({
             search = {
               mode = "search",
-              wrap = false,
-              forward = true,
               multi_window = false,
             },
             label = {
-              after = false,
-              before = { 0, 0 },
+              after = true,
+              before = false,
+              current = false,
               uppercase = false,
               format = format_first_match,
             },
-            pattern = [[\<]],
+            pattern = [[\<\w]],
             action = action,
             labeler = labeler,
           })
@@ -227,47 +210,22 @@ return {
         desc = "Flash forward to start of word",
       },
       {
-        "e",
-        mode = { "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              wrap = false,
-              forward = true,
-              multi_window = false,
-            },
-            label = {
-              after = { 0, 0 },
-              before = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [[\w\>]],
-            action = action,
-            labeler = labeler,
-          })
-        end,
-        desc = "Flash forward to end of word",
-      },
-      {
-        "b",
+        "L",
         mode = { "n", "v", "o" },
         function()
           Flash.jump({
             search = {
               mode = "search",
-              wrap = false,
-              forward = false,
               multi_window = false,
             },
             label = {
-              after = false,
-              before = { 0, 0 },
+              after = true,
+              before = false,
+              current = false,
               uppercase = false,
               format = format_first_match,
             },
-            pattern = [[\<]],
+            pattern = [[\w\>]],
             action = action,
             labeler = labeler,
           })
@@ -275,28 +233,118 @@ return {
         desc = "Flash backward to beginning of word",
       },
       {
-        "B",
-        mode = { "n" },
+        "dn",
+        mode = "n",
         function()
           Flash.jump({
-            search = {
-              mode = "search",
-              wrap = false,
-              forward = false,
-              multi_window = false,
-            },
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search", multi_window = false },
             label = {
-              after = { 0, 0 },
+              after = true,
               before = false,
-              uppercase = false,
+              current = false,
               format = format_first_match,
             },
-            pattern = [[\w\>]],
-            action = action,
+            action = create_text_object_action("d", "i"),
             labeler = labeler,
           })
         end,
-        desc = "Flash backward to end of word",
+        desc = "Flash delete inside",
+      },
+      {
+        "de",
+        mode = "n",
+        function()
+          Flash.jump({
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search" },
+            label = {
+              after = true,
+              before = false,
+              current = false,
+              format = format_first_match,
+            },
+            action = create_text_object_action("d", "a"),
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash delete around",
+      },
+      {
+        "cn",
+        mode = "n",
+        function()
+          Flash.jump({
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search" },
+            label = {
+              after = true,
+              before = false,
+              current = false,
+              format = format_first_match,
+            },
+            action = create_text_object_action("c", "i"),
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash change inside",
+      },
+      {
+        "ce",
+        mode = "n",
+        function()
+          Flash.jump({
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search" },
+            label = {
+              after = true,
+              before = false,
+              current = false,
+              format = format_first_match,
+            },
+            action = create_text_object_action("c", "a"),
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash change around",
+      },
+      {
+        "yn",
+        mode = "n",
+        function()
+          Flash.jump({
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search" },
+            label = {
+              after = true,
+              before = false,
+              current = false,
+              format = format_first_match,
+            },
+            action = create_text_object_action("y", "i"),
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash yank inside",
+      },
+      {
+        "ye",
+        mode = "n",
+        function()
+          Flash.jump({
+            pattern = [=[[([{<"'`]]=],
+            search = { mode = "search" },
+            label = {
+              after = true,
+              before = false,
+              current = false,
+              format = format_first_match,
+            },
+            action = create_text_object_action("y", "a"),
+            labeler = labeler,
+          })
+        end,
+        desc = "Flash yank around",
       },
     }
   end,
