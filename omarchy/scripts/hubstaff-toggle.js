@@ -8,15 +8,14 @@ function run(cmd) {
   return execSync(cmd, { encoding: 'utf8' }).trim();
 }
 
-try {
-  const raw = run(`${CLI} status`);
-  const status = JSON.parse(raw);
-
-  if (status.tracking) {
-    run(`${CLI} stop`);
-  } else {
-    run(`${CLI} resume`);
+function main() {
+  try {
+    const raw = run(`${CLI} status`);
+    const status = JSON.parse(raw);
+    status.tracking ? run(`${CLI} stop`) : run(`${CLI} resume`);
+  } catch (err) {
+    run(`notify-send -t 2000 "Hubstaff" "Error: ${err.message}"`);
   }
-} catch (err) {
-  run(`notify-send -t 2000 "Hubstaff" "Error: ${err.message}"`);
 }
+
+main();

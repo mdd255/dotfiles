@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 /** biome-ignore-all lint/suspicious/noConsole: really need this */
 
 const { execSync } = require('node:child_process');
@@ -8,13 +7,15 @@ function run(cmd) {
   return execSync(cmd, { encoding: 'utf8' }).trim();
 }
 
-// Get connected devices
-const devicesRaw = run('bluetoothctl devices Connected | grep mdd');
-const batteryLevels = ['󰁺', '󰁻', '󰁼', '󰁽', '󰁾', '󰁿', '󰂀', '󰂁', '󰂂', '󰁹'];
+function main() {
+  // Get connected devices
+  const devicesRaw = run('bluetoothctl devices Connected | grep mdd');
+  const batteryLevels = ['󰁺', '󰁻', '󰁼', '󰁽', '󰁾', '󰁿', '󰂀', '󰂁', '󰂂', '󰁹'];
 
-if (!devicesRaw) {
-  console.log(JSON.stringify({ text: '' }));
-} else {
+  if (!devicesRaw) {
+    return console.log(JSON.stringify({ text: '' }));
+  }
+
   const devices = devicesRaw.split('\n');
   let output = '';
 
@@ -43,3 +44,5 @@ if (!devicesRaw) {
 
   console.log(JSON.stringify({ text: output }));
 }
+
+main();

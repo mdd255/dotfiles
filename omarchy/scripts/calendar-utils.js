@@ -14,6 +14,7 @@ const MONTH_NAMES = [
   'Nov',
   'Dec',
 ];
+
 const DAY_NAMES = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 function generateCalendar(numMonths = 3) {
@@ -21,7 +22,6 @@ function generateCalendar(numMonths = 3) {
   const today = { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
   let year = today.year;
   let month = today.month;
-
   const lines = [`    <span color="#61afef">${DAY_NAMES.join(' ')}</span>`];
 
   for (let m = 0; m < numMonths; m++) {
@@ -34,6 +34,7 @@ function generateCalendar(numMonths = 3) {
       ...Array(firstDow).fill(null),
       ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
     ];
+
     while (slots.length % 7 !== 0) slots.push(null);
 
     for (let w = 0; w < slots.length / 7; w++) {
@@ -56,6 +57,7 @@ function generateCalendar(numMonths = 3) {
     }
 
     month++;
+
     if (month > 11) {
       month = 0;
       year++;
