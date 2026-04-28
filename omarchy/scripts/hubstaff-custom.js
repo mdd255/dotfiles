@@ -4,12 +4,8 @@ const { execSync } = require('node:child_process');
 
 const CLI = '/home/dh/Hubstaff/HubstaffCLI.bin.x86_64';
 
-function run(cmd) {
-  return execSync(cmd, { encoding: 'utf8' }).trim();
-}
-
 try {
-  const raw = run(`${CLI} status`);
+  const raw = execSync(`${CLI} status`, { encoding: 'utf8' }).trim();
   const status = JSON.parse(raw);
   const tracking = status.tracking;
   const project = status.active_project;
@@ -20,6 +16,12 @@ try {
   const cls = tracking ? 'tracking' : 'idle';
 
   console.log(JSON.stringify({ text, tooltip, class: cls }));
-} catch {
-  console.log(JSON.stringify({ text: '󱄊  ', tooltip: 'Hubstaff not running', class: 'offline' }));
+} catch (err) {
+  console.log(
+    JSON.stringify({
+      text: `󱄊  ${err.message}`,
+      tooltip: 'Hubstaff not running',
+      class: 'err',
+    }),
+  );
 }

@@ -50,34 +50,40 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
     'notify-send',
     '-t',
     '10000',
-    '-a',
+    '-c',
     'reminder',
+    '-a',
+    'event',
     `Event in ${label}`,
     title,
   ]);
 }
 
-try {
-  const output = execSync('khal list now eod').toString();
-  const event = parseNextEvent(output);
-  if (!event) process.exit(0);
+function main() {
+  try {
+    const output = execSync('khal list now eod').toString();
+    const event = parseNextEvent(output);
+    if (!event) process.exit(0);
 
-  const now = Date.now();
-  const state = loadState();
-  const key = String(event.time.getTime());
+    const now = Date.now();
+    const state = loadState();
+    const key = String(event.time.getTime());
 
-  if (!state[key]) {
-    for (const [offsetMs, label] of [
-      [5 * 60 * 1000, '5 min'],
-      [1 * 60 * 1000, '1 min'],
-    ]) {
-      scheduleNotify(event.time, event.title, offsetMs, label, now);
+    if (!state[key]) {
+      for (const [offsetMs, label] of [
+        [5 * 60 * 1000, '5 min'],
+        [1 * 60 * 1000, '1 min'],
+      ]) {
+        scheduleNotify(event.time, event.title, offsetMs, label, now);
+      }
+
+      const fresh = Object.fromEntries(Object.entries(state).filter(([k]) => Number(k) > now));
+      fresh[key] = true;
+      saveState(fresh);
     }
-
-    const fresh = Object.fromEntries(Object.entries(state).filter(([k]) => Number(k) > now));
-    fresh[key] = true;
-    saveState(fresh);
+  } catch {
+    process.exit(1);
   }
-} catch {
-  process.exit(1);
 }
+
+main();

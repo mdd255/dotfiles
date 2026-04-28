@@ -20,7 +20,7 @@
 		"tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
 		"tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
 		"tooltip-format-disconnected": "Disconnected",
-		"interval": 5,
+		"interval": 7,
 		"spacing": 1
 	},
 	"battery": {
@@ -33,7 +33,7 @@
 			"default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
 		},
 		"format-full": "󰂅",
-		"interval": 30,
+		"interval": 60,
 		"states": {
 			"warning": 20,
 			"critical": 10
@@ -41,13 +41,13 @@
 	},
 	"custom/bluetooth": {
 		"tooltip": true,
-		"interval": 5,
+		"interval": 10,
 		"exec": "~/.config/dotfiles/omarchy/scripts/bluetooth-custom.js",
 		"return-type": "json"
 	},
 	"custom/hubstaff": {
 		"tooltip": true,
-		"interval": 30,
+		"interval": 20,
 		"exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
 		"return-type": "json"
 	},

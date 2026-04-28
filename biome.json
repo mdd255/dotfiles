@@ -27,7 +27,7 @@
 	},
 	"json": {
 		"formatter": {
-			"enabled": true
+			"enabled": false
 		}
 	},
 	"javascript": {

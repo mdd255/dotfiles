@@ -4,7 +4,7 @@ return {
   opts = {
     exclude = { "snacks_dashboard" },
     jump = { autojump = false },
-    labels = "neioharstqfpluyzxkmgj;-",
+    labels = "neioharstqfpluyzxkmgj;,.",
     modes = {
       char = {
         keys = {},
