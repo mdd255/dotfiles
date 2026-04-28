@@ -3,7 +3,7 @@ alias "1"="cd .."
 alias "2"="cd ../.."
 
 # applications
-alias vi="neovide --x11-wm-class Code --x11-wm-class-instance Code & disown"
+alias vi="neovide & disown"
 alias ls="eza --long"
 alias top="btop $@"
 alias wifi="nmcli dev wifi $@"
