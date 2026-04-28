@@ -90,7 +90,7 @@ function extractEventLines(khalOutput) {
 function formatEventTitle(title) {
   const formatedTitle = title
     .replaceAll('|', '')
-    .replaceAll('Alpha Bravo Development', 'ABD')
+    .replaceAll('Alpha Bravo Development', '')
     .replaceAll('Innovative Roofing', 'IRI')
     .replaceAll('&', '&amp;')
     .replaceAll(' Bor project', 'BOR');
