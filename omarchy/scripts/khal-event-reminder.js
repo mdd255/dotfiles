@@ -27,7 +27,8 @@ function parseNextEvent(output) {
 function loadState() {
   try {
     return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
-  } catch {
+  } catch (err) {
+    console.error('Failed to load state ', err.message);
     return {};
   }
 }
@@ -35,7 +36,9 @@ function loadState() {
 function saveState(state) {
   try {
     fs.writeFileSync(STATE_FILE, JSON.stringify(state));
-  } catch {}
+  } catch {
+    console.error('Failed to save state');
+  }
 }
 
 function scheduleNotify(eventTime, title, offsetMs, label, now) {
@@ -81,8 +84,8 @@ function main() {
       fresh[key] = true;
       saveState(fresh);
     }
-  } catch {
-    process.exit(1);
+  } catch (err) {
+    console.error(err.message);
   }
 }
 

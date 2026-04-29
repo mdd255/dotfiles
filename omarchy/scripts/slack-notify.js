@@ -79,15 +79,25 @@ async function main() {
         'reminder',
         '-a',
         'slack',
-        '--',
+        'Slack reminder',
         `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
         lines.join('\n'),
       ]);
     } else {
       console.info('No unread messages');
     }
-  } catch {
-    process.exit(1);
+  } catch (err) {
+    spawnSync('notify-send', [
+      '-t',
+      '12000',
+      '-c',
+      'reminder',
+      '-a',
+      'slack',
+      '--',
+      'Slack reminder',
+      err.message,
+    ]);
   }
 }
 

@@ -4,7 +4,7 @@ const { execSync } = require('node:child_process');
 
 execSync('hyprctl dispatch movecursortocorner 2');
 
-const pos = execSync('hyprctl cursorpos').toString().trim();
+const pos = execSync('hyprctl cursorpos');
 
 const [x, y] = pos.split(',').map(Number);
 
