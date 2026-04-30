@@ -59,14 +59,15 @@ async function main() {
         const info = (await slackApi(token, 'conversations.info', { channel: channel.id })).channel;
 
         if (info.unread_count && !info.latest?.bot_id && info.latest?.user !== 'USLACKBOT') {
-          workspaceUnread += info.unread_count ?? 0;
+          workspaceUnread++;
         }
       }
 
       if (workspaceUnread > 0) {
         totalUnread += workspaceUnread;
+
         lines.push(
-          `- ${workspace}: ${workspaceUnread} unread DM${workspaceUnread !== 1 ? 's' : ''}`,
+          `- [${workspace}] ${workspaceUnread} unread DM${workspaceUnread !== 1 ? 's' : ''}`,
         );
       }
     }
@@ -87,18 +88,8 @@ async function main() {
       console.info('No unread messages');
     }
   } catch (err) {
-    spawnSync('notify-send', [
-      '-t',
-      '12000',
-      '-c',
-      'reminder',
-      '-a',
-      'slack',
-      '--',
-      'Slack reminder',
-      err.message,
-    ]);
+    console.error(err);
   }
 }
 
-main().catch(() => process.exit(1));
+main();

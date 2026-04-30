@@ -136,101 +136,141 @@ return {
       end
     end
 
+    local function open_braces()
+      Flash.jump({
+        search = {
+          mode = "search",
+          forward = true,
+          multi_window = true,
+        },
+        jump = { offset = -1 },
+        label = {
+          before = false,
+          after = true,
+          current = false,
+          uppercase = false,
+          format = format_first_match,
+        },
+        pattern = [=[\([(\[{<.,|:]\|\w\@<!["']\)]=],
+        action = action,
+        labeler = labeler,
+      })
+    end
+
+    local function close_braces()
+      Flash.jump({
+        search = {
+          mode = "search",
+          forward = false,
+          multi_window = true,
+        },
+        label = {
+          before = false,
+          after = true,
+          current = false,
+          uppercase = false,
+          format = format_first_match,
+        },
+        pattern = [=[[)\]}>]]=],
+        action = action,
+        labeler = labeler,
+      })
+    end
+
+    local function start_of_word()
+      Flash.jump({
+        search = {
+          mode = "search",
+          multi_window = false,
+        },
+        label = {
+          after = true,
+          before = false,
+          current = false,
+          uppercase = false,
+          format = format_first_match,
+        },
+        pattern = [[\<\w]],
+        action = action,
+        labeler = labeler,
+      })
+    end
+
+    local function end_of_word()
+      Flash.jump({
+        search = {
+          mode = "search",
+          multi_window = false,
+        },
+        label = {
+          after = true,
+          before = false,
+          current = false,
+          uppercase = false,
+          format = format_first_match,
+        },
+        pattern = [[\w\>]],
+        action = action,
+        labeler = labeler,
+      })
+    end
+
     return {
       {
         "<Tab>",
         mode = { "n", "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              forward = true,
-              multi_window = true,
-            },
-            jump = { offset = -1 },
-            label = {
-              before = false,
-              after = true,
-              current = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [=[\([(\[{<.,|:]\|\w\@<!["']\)]=],
-            action = action,
-            labeler = labeler,
-          })
-        end,
+        open_braces,
         desc = "Flash forward to before punctuation",
       },
       {
         "<S-Tab>",
         mode = { "n", "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              forward = false,
-              multi_window = true,
-            },
-            label = {
-              before = false,
-              after = true,
-              current = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [=[[)\]}>]]=],
-            action = action,
-            labeler = labeler,
-          })
-        end,
+        close_braces,
         desc = "Flash backward to closing brace",
       },
       {
-        "l",
-        mode = { "n", "v", "o" },
-        function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              multi_window = false,
-            },
-            label = {
-              after = true,
-              before = false,
-              current = false,
-              uppercase = false,
-              format = format_first_match,
-            },
-            pattern = [[\<\w]],
-            action = action,
-            labeler = labeler,
-          })
-        end,
+        "w",
+        mode = { "n" },
+        start_of_word,
         desc = "Flash forward to start of word",
       },
       {
-        "L",
-        mode = { "n", "v", "o" },
+        "b",
+        mode = { "n" },
+        end_of_word,
+        desc = "Flash backward to beginning of word",
+      },
+      {
+        "l",
+        mode = { "v", "o" },
+        start_of_word,
+        desc = "Flash forward to start of word",
+      },
+      {
+        "k",
+        mode = { "v", "o" },
+        end_of_word,
+        desc = "Flash backward to beginning of word",
+      },
+      {
+        "l",
+        mode = { "n" },
         function()
           Flash.jump({
             search = {
               mode = "search",
               multi_window = false,
+              wrap = true,
+              max_length = 1,
             },
             label = {
               after = true,
               before = false,
-              current = false,
-              uppercase = false,
-              format = format_first_match,
+              current = true,
             },
-            pattern = [[\w\>]],
-            action = action,
-            labeler = labeler,
           })
         end,
-        desc = "Flash backward to beginning of word",
+        desc = "Flash f-motion on current line (both directions)",
       },
       {
         "dn",
@@ -242,7 +282,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("d", "i"),
@@ -261,7 +301,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("d", "a"),
@@ -280,7 +320,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("c", "i"),
@@ -299,7 +339,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("c", "a"),
@@ -318,7 +358,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("y", "i"),
@@ -337,7 +377,7 @@ return {
             label = {
               after = true,
               before = false,
-              current = false,
+              current = true,
               format = format_first_match,
             },
             action = create_text_object_action("y", "a"),

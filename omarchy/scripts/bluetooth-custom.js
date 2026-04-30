@@ -34,8 +34,8 @@ function main() {
     }
 
     console.log(JSON.stringify({ text: output }));
-  } catch (err) {
-    console.log(JSON.stringify({ text: err.message }));
+  } catch {
+    console.log(JSON.stringify({ text: '' }));
   }
 }
 

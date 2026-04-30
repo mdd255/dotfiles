@@ -114,8 +114,8 @@ return {
 
           -- flash.nvim
           FlashLabel = { fg = hi.blue, bg = hi.black },
-          FlashMatch = { fg = hi.gray, bg = hi.black },
-          FlashCurrent = { fg = hi.red, bg = hi.black },
+          FlashMatch = { fg = hi.gray, bg = hi.black, underline = true },
+          FlashCurrent = { fg = hi.gray, bg = hi.black },
           FlashLabelFirst = { fg = hi.red, bg = hi.black },
           FlashBackdrop = { fg = hi.gray, bg = hi.black },
 
