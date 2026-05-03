@@ -28,7 +28,7 @@ function main() {
       })
       .filter(Boolean);
 
-    nextEvents = Array.from(new Set(nextEvents)).join(' | ') || '';
+    nextEvents = Array.from(new Set(nextEvents.slice(0, 4))).join(' | ') || '';
     nextEvents = nextEvents.length ? `󱑑 ${nextEvents}` : '󱑑 [No event for today]';
 
     const payload = { text: nextEvents, tooltip: '' };
