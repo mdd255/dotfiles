@@ -12,23 +12,27 @@ const STATE_FILE = `${process.env.XDG_RUNTIME_DIR}/khal-event-reminder.json`;
 
 function parseNextEvent(output) {
   const now = new Date();
+  let earliest = null;
 
   for (const line of output.split('\n')) {
-    const m = line.match(/^(\d{2}):(\d{2})(?:-\d{2}:\d{2})?\s+(.+)/);
+    const m = line.trimStart().match(/^(\d{2}):(\d{2})(?:-\d{2}:\d{2})?\s+(.+)/);
     if (!m) continue;
     const t = new Date();
     t.setHours(Number(m[1]), Number(m[2]), 0, 0);
-    if (t > now) return { time: t, title: formatEventTitle(m[3].trim()) };
+    if (t <= now) continue;
+    if (!earliest || t < earliest.time) {
+      earliest = { time: t, title: formatEventTitle(m[3].trim()) };
+    }
   }
 
-  return null;
+  return earliest;
 }
 
 function loadState() {
   try {
     return JSON.parse(fs.readFileSync(STATE_FILE, 'utf-8'));
   } catch (err) {
-    console.error('Failed to load state ', err.message);
+    if (err.code !== 'ENOENT') console.error('Failed to load state:', err.message);
     return {};
   }
 }
@@ -45,7 +49,7 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
   const delaySec = Math.floor((eventTime.getTime() - offsetMs - now) / 1000);
   if (delaySec <= 0) return;
   const slug = label.replace(/\s+/g, '');
-  spawnSync('systemd-run', [
+  const result = spawnSync('systemd-run', [
     '--user',
     `--on-active=${delaySec}`,
     `--unit=khal-reminder-${eventTime.getTime()}-${slug}`,
@@ -60,6 +64,9 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
     `Event in ${label}`,
     title,
   ]);
+  if (result.status !== 0) {
+    console.error(`Failed to schedule ${label} reminder:`, result.stderr?.toString().trim());
+  }
 }
 
 function main() {
