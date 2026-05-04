@@ -11,7 +11,7 @@ function main() {
 
   try {
     const raw = execSync(
-      'khal list --format "{calendar}:::{start-time} {title}" now eod',
+      'khal list --format "{calendar}:::{start-time} {title}" now eod -a aa',
     ).toString();
 
     let nextEvents = raw
