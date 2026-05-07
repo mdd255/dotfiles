@@ -134,6 +134,7 @@ return {
           "",
           "snacks_terminal",
           "snacks_dashboard",
+          "claudecode",
         },
       },
     })

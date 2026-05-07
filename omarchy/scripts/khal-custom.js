@@ -28,13 +28,13 @@ function main() {
       })
       .filter(Boolean);
 
-    nextEvents = Array.from(new Set(nextEvents.slice(0, 4))).join(' | ') || '';
-    nextEvents = nextEvents.length ? `󱑑 ${nextEvents}` : '󱑑 [No event for today]';
+    nextEvents = Array.from(new Set(nextEvents.slice(0, 4))).join('   ') || '';
+    nextEvents = nextEvents.length ? `${nextEvents}` : '[No event for today]';
 
     const payload = { text: nextEvents, tooltip: '' };
     console.log(JSON.stringify(payload));
   } catch (err) {
-    console.log(JSON.stringify({ text: '󱑑 Khal error', tooltip: err.message }));
+    console.log(JSON.stringify({ text: 'Khal error', tooltip: err.message }));
     execSync(`notify-send "khal-custom" "${err.message}"`);
   }
 }

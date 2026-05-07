@@ -99,7 +99,7 @@ return {
           WinSeparator = { fg = hi.blue },
 
           -- gitsign & diffview
-          GitSignsCurrentLineBlame = { bg = hi.cursorline, fg = hi.comment },
+          GitSignsCurrentLineBlame = { bg = hi.black, fg = hi.comment },
           GitSignsAdd = { fg = hi.green },
           GitSignsChange = { fg = hi.orange },
           GitSignsDelete = { fg = hi.red },
@@ -149,7 +149,7 @@ return {
           DbabHeader = { bg = color.gray },
         },
         options = {
-          cursorline = true,
+          cursorline = false,
           transparency = true,
           terminal_colors = true,
           lualine_transparency = true,

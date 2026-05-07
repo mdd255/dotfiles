@@ -18,6 +18,10 @@ return {
       { "ts", "<cmd>lua require('kulala').show_stats()<cr>", desc = "Show stats", ft = "http" },
     },
     opts = {
+      environment_scope = "g",
+      ui = {
+        default_windbar_panes = { "body", "headers", "verbose" },
+      },
       custom_dynamic_variables = {
         ["_uuid"] = function()
           local template = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
@@ -38,7 +42,7 @@ return {
           local length = math.random(5, 10)
           local name = ""
 
-          for i = 1, length do
+          for _ = 1, length do
             local idx = math.random(1, #chars)
             name = name .. chars:sub(idx, idx)
           end

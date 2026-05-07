@@ -93,7 +93,8 @@ function formatEventTitle(title) {
     .replaceAll('Alpha Bravo Development', '')
     .replaceAll('Innovative Roofing', 'IRI')
     .replaceAll('&', '&amp;')
-    .replaceAll(' Bor project', 'BOR');
+    .replaceAll(' Bor project', 'BOR')
+    .replaceAll('AcceleratorApp', 'AA');
 
   return formatedTitle
     .replaceAll('[', '')
