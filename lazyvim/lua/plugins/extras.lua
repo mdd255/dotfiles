@@ -1,3 +1,5 @@
+local color = require("config/color")
+
 return {
   {
     "folke/persistence.nvim",
@@ -58,31 +60,31 @@ return {
     opts = {
       animation = {
         enabled = true,
-        duration = 200,
+        duration = 150,
         animation_type = "zoom",
         window_scoped = true,
       },
       highlights = {
         undo = {
-          hl_color = { bg = "#693232" },
+          hl_color = { bg = color.purple },
         },
         redo = {
-          hl_color = { bg = "#2F4640" },
+          hl_color = { bg = color.cyan },
         },
         yank = {
-          hl_color = { bg = "#7A683A" },
+          hl_color = { bg = color.blue },
         },
         paste = {
-          hl_color = { bg = "#325B5B" },
+          hl_color = { bg = color.green },
         },
         search = {
-          hl_color = { bg = "#5C475C" },
+          hl_color = { bg = color.orange },
         },
         comment = {
-          hl_color = { bg = "#7A5A3D" },
+          hl_color = { bg = color.gray },
         },
         cursor = {
-          hl_color = { bg = "#793D54" },
+          hl_color = { bg = color.red },
         },
       },
       priority = 2048 * 3,
