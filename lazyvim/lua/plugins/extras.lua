@@ -56,11 +56,10 @@ return {
   {
     "y3owk1n/undo-glow.nvim",
     event = { "VeryLazy" },
-    ---@type UndoGlow.Config
     opts = {
       animation = {
         enabled = true,
-        duration = 150,
+        duration = 120,
         animation_type = "zoom",
         window_scoped = true,
       },
@@ -72,7 +71,7 @@ return {
           hl_color = { bg = color.cyan },
         },
         yank = {
-          hl_color = { bg = color.blue },
+          hl_color = { bg = color.purple },
         },
         paste = {
           hl_color = { bg = color.green },
@@ -218,29 +217,6 @@ return {
         desc = "Highlight when yanking (copying) text",
         callback = function()
           require("undo-glow").yank()
-        end,
-      })
-
-      -- This only handles neovim instance and do not highlight when switching panes in tmux
-      vim.api.nvim_create_autocmd("CursorMoved", {
-        desc = "Highlight when cursor moved significantly",
-        callback = function() end,
-      })
-
-      -- This will handle highlights when focus gained, including switching panes in tmux
-      vim.api.nvim_create_autocmd("FocusGained", {
-        desc = "Highlight when focus gained",
-        callback = function() end,
-      })
-
-      vim.api.nvim_create_autocmd("CmdlineLeave", {
-        desc = "Highlight when search cmdline leave",
-        callback = function()
-          require("undo-glow").search_cmd({
-            animation = {
-              animation_type = "fade",
-            },
-          })
         end,
       })
     end,
