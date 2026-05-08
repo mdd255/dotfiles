@@ -78,13 +78,6 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
   end,
 })
 
--- Highlight on yank
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank({ higroup = "Visual", timeout = 150 })
-  end,
-})
-
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "typescript",
   callback = function()
