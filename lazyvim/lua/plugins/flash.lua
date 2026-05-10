@@ -136,47 +136,6 @@ return {
       end
     end
 
-    local function open_braces()
-      Flash.jump({
-        search = {
-          mode = "search",
-          forward = true,
-          multi_window = true,
-        },
-        jump = { offset = -1 },
-        label = {
-          before = false,
-          after = true,
-          current = false,
-          uppercase = false,
-          format = format_first_match,
-        },
-        pattern = [=[\([(\[{<.,|:]\|\w\@<!["']\)]=],
-        action = action,
-        labeler = labeler,
-      })
-    end
-
-    local function close_braces()
-      Flash.jump({
-        search = {
-          mode = "search",
-          forward = false,
-          multi_window = true,
-        },
-        label = {
-          before = false,
-          after = true,
-          current = false,
-          uppercase = false,
-          format = format_first_match,
-        },
-        pattern = [=[[)\]}>]]=],
-        action = action,
-        labeler = labeler,
-      })
-    end
-
     local function start_of_word()
       Flash.jump({
         search = {
@@ -217,40 +176,22 @@ return {
 
     return {
       {
-        "<Tab>",
-        mode = { "n", "v", "o" },
-        open_braces,
-        desc = "Flash forward to before punctuation",
-      },
-      {
-        "<S-Tab>",
-        mode = { "n", "v", "o" },
-        close_braces,
-        desc = "Flash backward to closing brace",
-      },
-      {
         "w",
         mode = { "n" },
         start_of_word,
-        desc = "Flash forward to start of word",
+        desc = "Flash to start of word",
       },
       {
         "b",
         mode = { "n" },
         end_of_word,
-        desc = "Flash backward to beginning of word",
+        desc = "Flash to beginning of word",
       },
       {
         "l",
         mode = { "v", "o" },
-        start_of_word,
-        desc = "Flash forward to start of word",
-      },
-      {
-        "k",
-        mode = { "v", "o" },
         end_of_word,
-        desc = "Flash backward to beginning of word",
+        desc = "Flash to end of word",
       },
       {
         "l",

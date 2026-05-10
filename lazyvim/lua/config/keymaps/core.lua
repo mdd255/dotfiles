@@ -43,7 +43,7 @@ map({
   { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
-  { "sh", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
+  { "st", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },
   { "<Esc>", "<cmd>nohlsearch<Cr>", { desc = "Clear hlsearch", modes = { "n" } } },
   { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
 
@@ -57,6 +57,10 @@ map({
   { "ze", "zk", { modes = { "n", "v" }, desc = "Goto prev fold" } },
   { "za", "zr", { modes = { "n", "v" }, desc = "Open all folds" } },
   { "zo", "zm", { modes = { "n", "v" }, desc = "Close all folds" } },
+
+  -- expand select
+  { "<Tab>", function() utils.ts_expand() end, { modes = { "n", "v" }, desc = "Expand selection" } },
+  { "<S-Tab>", function() utils.ts_shrink() end, { modes = { "v" }, desc = "Shrink selection" } },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")
