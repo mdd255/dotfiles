@@ -2,9 +2,7 @@ local logo = require("config.logo")
 
 return {
   "folke/snacks.nvim",
-  keys = function()
-    return {}
-  end,
+  lazy = false,
   opts = {
     toggle = { enabled = false },
     scope = { enabled = false },
