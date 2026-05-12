@@ -1,5 +1,13 @@
+local function DB()
+  vim.cmd("Dbab")
+  vim.cmd("LualineRenameTab DB")
+end
+
 return {
   "mdd255/dbab.nvim",
+  keys = {
+    { "<Leader>d", DB, { desc = "Open DB" } },
+  },
   config = function()
     require("dbab").setup({
       connections = {
@@ -49,12 +57,5 @@ return {
         result = {},
       },
     })
-
-    local map = vim.keymap.set
-
-    map("n", "<Leader>d", function()
-      vim.cmd("Dbab")
-      vim.cmd("LualineRenameTab DB")
-    end, { desc = "Open DB" })
   end,
 }

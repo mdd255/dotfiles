@@ -51,6 +51,7 @@ async function main() {
     let totalUnread = 0;
 
     for (const { workspace, token } of workspaces) {
+      console.info(`Checking workspace ${workspace}`);
       const channels = await listImChannels(token);
       let workspaceUnread = 0;
 
@@ -59,6 +60,7 @@ async function main() {
         const info = (await slackApi(token, 'conversations.info', { channel: channel.id })).channel;
 
         if (info.unread_count && !info.latest?.bot_id && info.latest?.user !== 'USLACKBOT') {
+          console.log(info);
           workspaceUnread++;
         }
       }
@@ -73,6 +75,8 @@ async function main() {
     }
 
     if (totalUnread > 0) {
+      console.info(`Notifying with ${totalUnread} unread messages`);
+
       spawnSync('notify-send', [
         '-t',
         '12000',
@@ -81,8 +85,7 @@ async function main() {
         '-a',
         'slack',
         'Slack reminder',
-        `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}`,
-        lines.join('\n'),
+        `You have ${totalUnread} unread message${totalUnread !== 1 ? 's' : ''}\n${lines.join('\n')}`,
       ]);
     } else {
       console.info('No unread messages');

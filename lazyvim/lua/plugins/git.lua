@@ -4,7 +4,6 @@ local git = require("config.git-functions")
 return {
   {
     "sindrets/diffview.nvim",
-    lazy = false,
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
       { "gpr", "<cmd>lua Snacks.picker.gh_pr({ search = 'user-review-requested:@me' })<Cr>", desc = "Github PRs" },
