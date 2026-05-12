@@ -7,4 +7,5 @@ return {
   { "folke/todo-comments.nvim", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
   { "nvim-treesitter/nvim-treesitter-textobjects", enabled = false },
+  { "folke/lazydev.nvim", enabled = false },
 }
