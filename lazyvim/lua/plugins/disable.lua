@@ -6,4 +6,5 @@ return {
   { "folke/trouble.nvim", enabled = false },
   { "folke/todo-comments.nvim", enabled = false },
   { "rafamadriz/friendly-snippets", enabled = false },
+  { "nvim-treesitter/nvim-treesitter-textobjects", enabled = false },
 }
