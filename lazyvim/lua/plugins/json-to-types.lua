@@ -4,12 +4,12 @@ return {
   ft = "json",
   keys = {
     {
-      "tt",
+      "ct",
       "<CMD>ConvertJSONtoLang typescript<CR>",
       desc = "Convert JSON to TS",
     },
     {
-      "tg",
+      "cg",
       "<CMD>ConvertJSONtoLang go<CR>",
       desc = "Convert JSON to Go",
     },
