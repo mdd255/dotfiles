@@ -296,8 +296,7 @@ function M.create_pr()
   -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
     vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
-    local current_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
-    local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title, "--head", current_branch }
+    local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title }
 
     table.insert(args, "--body")
     table.insert(args, data.body)
