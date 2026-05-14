@@ -242,11 +242,11 @@ function M.create_pr()
                 format = "text",
                 layout = {
                   layout = {
-                    title = "Select Reviewers (Tab to select, Enter to confirm)",
+                    title = "Select Reviewers",
                     box = "vertical",
                     position = "float",
                     width = 0.4,
-                    height = 0.4,
+                    height = 0.25,
                     border = "rounded",
                     { win = "input", height = 1, border = "bottom" },
                     { win = "list" },
@@ -508,6 +508,12 @@ function M.git_restore_staged()
     success_label = "Restored successful",
     failed_label = "Restore failed",
   })
+end
+
+function M.git_restore_all()
+  vim.fn.system({ "git", "clean", "-f" })
+  vim.fn.system({ "git", "checkout", "." })
+  vim.notify("Git cleaned", vim.log.levels.INFO, { title = "Git" })
 end
 
 function M.git_pull()
