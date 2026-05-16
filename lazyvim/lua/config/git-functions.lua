@@ -1,4 +1,5 @@
 local exec_async = require("config.utils").exec_async
+local snacks = require("snacks")
 local M = {}
 
 local notify_opts = {
@@ -187,7 +188,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    require("snacks").input({ prompt = "PR Title: ", default = default_title }, function(title)
+    snacks.input({ prompt = "PR Title: ", default = default_title }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -196,7 +197,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for body
   local function prompt_body(callback)
-    require("snacks").input({ prompt = "PR Body (optional): ", default = "" }, function(body)
+    snacks.input({ prompt = "PR Body (optional): ", default = "" }, function(body)
       callback(body or "")
     end)
   end
@@ -235,18 +236,18 @@ function M.create_pr()
                 return
               end
 
-              Snacks.picker.pick({
+              snacks.picker.pick({
                 finder = function()
                   return items
                 end,
                 format = "text",
                 layout = {
                   layout = {
-                    title = "Select Reviewers",
+                    title = "Select reviewers",
                     box = "vertical",
                     position = "float",
                     width = 0.4,
-                    height = 0.25,
+                    height = 0.3,
                     border = "rounded",
                     { win = "input", height = 1, border = "bottom" },
                     { win = "list" },
@@ -367,7 +368,27 @@ function M.git_checkout_branch()
     if not branches then
       return
     end
-    vim.ui.select(branches, { prompt = "Select branch to checkout: " }, on_branch_selected)
+    -- vim.ui.select(branches, { prompt = "Select branch to checkout: " }, on_branch_selected)
+
+    snacks.picker.pick({
+      finder = function()
+        return branches
+      end,
+      format = "text",
+      layout = {
+        layout = {
+          title = "Select checkout branch",
+          box = "vertical",
+          position = "float",
+          width = 0.4,
+          height = 0.5,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = on_branch_selected,
+    })
   end)
 end
 
@@ -382,7 +403,7 @@ function M.git_checkout_new_branch()
     end
   end
 
-  require("snacks").input({
+  snacks.input({
     prompt = "New branch name: ",
   }, on_input)
 end
@@ -584,7 +605,7 @@ function M.git_commit(amend)
     end
   end
 
-  require("snacks").input({
+  snacks.input({
     prompt = amend and "Amend commit: " or "Commit to: " .. branch .. " :",
     default = default_msg,
   }, on_input)
