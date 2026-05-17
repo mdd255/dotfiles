@@ -139,7 +139,7 @@ function M.gh_switch_account()
         end
 
         vim.ui.select(filtered, {
-          prompt = "Switch GitHub account (current: " .. current_login .. "):",
+          prompt = "Switch GitHub account (" .. current_login .. ")",
         }, function(selected)
           if not selected then
             return
@@ -195,11 +195,60 @@ function M.create_pr()
     end)
   end
 
-  -- Helper function: Prompt for body
+  -- Helper function: Prompt for body (multi-line floating textbox)
   local function prompt_body(callback)
-    snacks.input({ prompt = "PR Body (optional): ", default = "" }, function(body)
-      callback(body or "")
-    end)
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].filetype = "markdown"
+
+    local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
+    local width = math.floor(ui.width * 0.7)
+    local height = math.floor(ui.height * 0.4)
+
+    local win = vim.api.nvim_open_win(buf, true, {
+      relative = "editor",
+      width = width,
+      height = height,
+      row = math.floor((ui.height - height) / 2),
+      col = math.floor((ui.width - width) / 2),
+      style = "minimal",
+      border = "rounded",
+      title = " PR Body — <C-CR> confirm, Q cancel ",
+      title_pos = "center",
+    })
+
+    local done = false
+
+    local function finish(submit)
+      if done then
+        return
+      end
+      done = true
+
+      local body = ""
+      if submit then
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        body = table.concat(lines, "\n")
+      end
+
+      if vim.api.nvim_win_is_valid(win) then
+        vim.api.nvim_win_close(win, true)
+      end
+
+      callback(body)
+    end
+
+    local map_opts = { buffer = buf, nowait = true, silent = true }
+
+    vim.keymap.set({ "n", "i" }, "<C-CR>", function()
+      finish(true)
+    end, map_opts)
+
+    vim.keymap.set("n", "q", function()
+      finish(false)
+    end, map_opts)
+
+    vim.cmd("startinsert")
   end
 
   -- Helper function: Select reviewers (multi-select via Snacks picker)
@@ -354,30 +403,33 @@ function M.git_add_all()
 end
 
 function M.git_checkout_branch()
-  local function on_branch_selected(selected)
-    if selected then
-      exec_async({ "git", "checkout", selected }, {
-        notify = notify_opts,
-        success_label = "Checked out " .. selected,
-        failed_label = "Failed to checkout branch: ",
-      })
-    end
+  local function checkout(branch)
+    exec_async({ "git", "checkout", branch }, {
+      notify = notify_opts,
+      success_label = "Checked out " .. branch,
+      failed_label = "Failed to checkout branch: ",
+    })
   end
 
   get_branches(false, true)(function(branches)
     if not branches then
       return
     end
-    -- vim.ui.select(branches, { prompt = "Select branch to checkout: " }, on_branch_selected)
+
+    local items = {}
+
+    for _, branch in ipairs(branches) do
+      table.insert(items, { text = branch })
+    end
 
     snacks.picker.pick({
       finder = function()
-        return branches
+        return items
       end,
       format = "text",
       layout = {
         layout = {
-          title = "Select checkout branch",
+          title = "Select branch",
           box = "vertical",
           position = "float",
           width = 0.4,
@@ -387,7 +439,12 @@ function M.git_checkout_branch()
           { win = "list" },
         },
       },
-      confirm = on_branch_selected,
+      confirm = function(picker, item)
+        picker:close()
+        if item then
+          checkout(item.text)
+        end
+      end,
     })
   end)
 end
