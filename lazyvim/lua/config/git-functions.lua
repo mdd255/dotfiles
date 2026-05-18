@@ -116,6 +116,41 @@ local function get_gh_accounts(callback)
   end)
 end
 
+local PR_FILTERS = {
+  { name = "Review requested", search = "user-review-requested:@me" },
+  { name = "My PRs", search = "author:@me" },
+  { name = "All open", search = "" },
+}
+
+local pr_filter_idx = 1
+
+local function open_gh_pr()
+  local f = PR_FILTERS[pr_filter_idx]
+  snacks.picker.gh_pr({
+    search = f.search,
+    title = "  PRs · " .. f.name,
+    win = {
+      input = {
+        keys = {
+          ["<C-<Tab>>"] = {
+            function(picker)
+              pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
+              picker:close()
+              vim.schedule(open_gh_pr)
+            end,
+            mode = { "n", "i" },
+            desc = "Cycle PR filter",
+          },
+        },
+      },
+    },
+  })
+end
+
+function M.gh_pr_picker()
+  open_gh_pr()
+end
+
 function M.gh_switch_account()
   vim.notify("Loading github accounts...", vim.log.levels.INFO, notify_opts)
 
@@ -432,8 +467,8 @@ function M.git_checkout_branch()
           title = "Select branch",
           box = "vertical",
           position = "float",
-          width = 0.4,
-          height = 0.5,
+          width = 0.7,
+          height = 0.4,
           border = "rounded",
           { win = "input", height = 1, border = "bottom" },
           { win = "list" },

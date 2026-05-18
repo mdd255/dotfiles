@@ -91,7 +91,8 @@ function formatEventTitle(title) {
   const formatedTitle = title
     .replaceAll('|', '')
     .replaceAll('Alpha Bravo Development', '')
-    .replaceAll('Innovative Roofing', 'IRI')
+    .replaceAll('(with Dung Thai)', '')
+    .replaceAll('Innovative Roofing & BOR', '')
     .replaceAll('&', '&amp;')
     .replaceAll(' Bor project', 'BOR')
     .replaceAll('AcceleratorApp', 'AA');

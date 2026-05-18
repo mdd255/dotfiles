@@ -120,6 +120,18 @@ return {
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
 
+    vim.api.nvim_create_autocmd("WinEnter", {
+      callback = function()
+        if vim.bo.filetype == "snacks_picker_input" and vim.fn.mode():sub(1, 1) ~= "i" then
+          vim.schedule(function()
+            if vim.bo.filetype == "snacks_picker_input" then
+              vim.cmd("startinsert!")
+            end
+          end)
+        end
+      end,
+    })
+
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "claudecode",
       callback = function(ev)

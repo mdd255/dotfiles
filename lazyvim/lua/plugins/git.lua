@@ -6,7 +6,7 @@ return {
     "sindrets/diffview.nvim",
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
-      { "gpr", "<cmd>lua Snacks.picker.gh_pr({ search = 'user-review-requested:@me' })<Cr>", desc = "Github PRs" },
+      { "gpr", git.gh_pr_picker, desc = "Github PRs (toggle filter with C-Tab)" },
       { "gdf", git.get_current_file_history, desc = "Diffview current file history" },
       { "gdb", git.git_diff_branch, desc = "Diff branch" },
       { "gpl", git.git_pull, desc = "Git pull" },
