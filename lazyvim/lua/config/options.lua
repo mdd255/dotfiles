@@ -13,7 +13,7 @@ vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"
 vim.opt.undofile = true
 
 vim.opt.mouse = ""
-vim.opt.wrap = false
+vim.opt.wrap = true
 vim.g.diffview_active = false
 vim.opt.spell = false
 vim.opt.signcolumn = "yes"

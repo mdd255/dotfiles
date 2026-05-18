@@ -142,12 +142,13 @@ return {
               end)
             end
 
-            vim.keymap.set("i", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
-            vim.keymap.set("n", "<C-Cr>", accept_scratch, { buffer = buf, desc = "Copy scratch content and close" })
+            local map_opts = { buffer = buf, nowait = true, silent = true }
+            vim.keymap.set({ "i", "n" }, "<C-Cr>", accept_scratch, map_opts)
+            vim.keymap.set("n", "<C-Cr>", accept_scratch, map_opts)
 
             vim.keymap.set("n", "<Esc>", function()
               vim.cmd("close")
-            end, { buffer = buf, desc = "Close scratch window" })
+            end, map_opts)
           end)
         end, { buffer = ev.buf, desc = "Open scratch float from terminal" })
       end,
