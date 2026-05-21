@@ -6,6 +6,11 @@ local notify_opts = {
   title = "Git",
 }
 
+local function picker_width(fraction, min_cols)
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120 }
+  return math.max(min_cols or 60, math.floor(ui.width * fraction))
+end
+
 -- Helper function to get list of branches
 -- @param exclude_current: boolean - whether to exclude current branch
 -- @param unique: boolean - whether to ensure unique values
@@ -117,8 +122,8 @@ local function get_gh_accounts(callback)
 end
 
 local PR_FILTERS = {
-  { name = "Review requested", search = "user-review-requested:@me" },
   { name = "My PRs", search = "author:@me" },
+  { name = "Review requested", search = "user-review-requested:@me" },
   { name = "All open", search = "" },
 }
 
@@ -132,7 +137,7 @@ local function open_gh_pr()
     win = {
       input = {
         keys = {
-          ["<C-<Tab>>"] = {
+          ["<C-t>"] = {
             function(picker)
               pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
               picker:close()
@@ -173,20 +178,44 @@ function M.gh_switch_account()
           return
         end
 
-        vim.ui.select(filtered, {
-          prompt = "Switch GitHub account (" .. current_login .. ")",
-        }, function(selected)
-          if not selected then
-            return
-          end
+        local items = {}
 
-          exec_async({ "gh", "auth", "switch", "-u", selected }, {
-            notify = notify_opts,
-            info_label = "Switching to " .. selected .. "...",
-            success_label = "Switched to " .. selected,
-            failed_label = "Failed to switch account: ",
-          })
-        end)
+        for _, account in ipairs(filtered) do
+          table.insert(items, { text = account })
+        end
+
+        snacks.picker.pick({
+          finder = function()
+            return items
+          end,
+          format = "text",
+          layout = {
+            layout = {
+              title = "GH Account (" .. current_login .. ")",
+              box = "vertical",
+              position = "float",
+              width = picker_width(0.2, 60),
+              height = 0.15,
+              border = "rounded",
+              { win = "input", height = 1, border = "bottom" },
+              { win = "list" },
+            },
+          },
+          confirm = function(picker, item)
+            picker:close()
+
+            if not item then
+              return
+            end
+
+            exec_async({ "gh", "auth", "switch", "-u", item.text }, {
+              notify = notify_opts,
+              info_label = "Switching to " .. item.text .. "...",
+              success_label = "Switched to " .. item.text,
+              failed_label = "Failed to switch account: ",
+            })
+          end,
+        })
       end)
     end)
   end)
@@ -206,15 +235,23 @@ function M.create_pr()
   local function select_base_branch(callback)
     vim.notify("Loading base branches...", vim.log.levels.INFO, notify_opts)
 
-    get_branches(true, true)(function(branches)
-      if not branches then
-        return
-      end
+    vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(login_result)
+      vim.schedule(function()
+        local current_login = login_result.code == 0 and login_result.stdout:gsub("%s+", "") or ""
+        local prompt = current_login ~= "" and ("Select base branch (" .. current_login .. "): ")
+          or "Select base branch: "
 
-      vim.ui.select(branches, { prompt = "Select base branch: " }, function(selected)
-        if selected then
-          callback(selected)
-        end
+        get_branches(true, true)(function(branches)
+          if not branches then
+            return
+          end
+
+          vim.ui.select(branches, { prompt = prompt }, function(selected)
+            if selected then
+              callback(selected)
+            end
+          end)
+        end)
       end)
     end)
   end
@@ -237,8 +274,8 @@ function M.create_pr()
     vim.bo[buf].filetype = "markdown"
 
     local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
-    local width = math.floor(ui.width * 0.7)
-    local height = math.floor(ui.height * 0.4)
+    local width = math.floor(ui.width * 0.8)
+    local height = math.floor(ui.height * 0.7)
 
     local win = vim.api.nvim_open_win(buf, true, {
       relative = "editor",
@@ -261,6 +298,7 @@ function M.create_pr()
       done = true
 
       local body = ""
+
       if submit then
         local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
         body = table.concat(lines, "\n")
@@ -282,18 +320,65 @@ function M.create_pr()
     vim.keymap.set("n", "q", function()
       finish(false)
     end, map_opts)
-
-    vim.cmd("startinsert")
   end
 
   -- Helper function: Select reviewers (multi-select via Snacks picker)
   local function select_reviewers(callback)
     vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
 
+    local function show_picker(items)
+      snacks.picker.pick({
+        finder = function()
+          return items
+        end,
+        format = "text",
+        layout = {
+          layout = {
+            title = "Select reviewers",
+            box = "vertical",
+            position = "float",
+            width = picker_width(0.2, 60),
+            height = 0.3,
+            border = "rounded",
+            { win = "input", height = 1, border = "bottom" },
+            { win = "list" },
+          },
+        },
+        multi = { "confirm" },
+        actions = {
+          select_and_clear = function(picker)
+            picker.list:select()
+            picker.list:move(1)
+            vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
+          end,
+        },
+        win = {
+          input = {
+            keys = {
+              ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
+            },
+          },
+        },
+        confirm = function(picker)
+          local selected = picker:selected()
+          local reviewers = {}
+
+          for _, sel in ipairs(selected) do
+            table.insert(reviewers, sel.text)
+          end
+
+          picker:close()
+          vim.schedule(function()
+            callback(table.concat(reviewers, ","))
+          end)
+        end,
+      })
+    end
+
     vim.system({ "gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner" }, {}, function(repo_result)
       vim.schedule(function()
         if repo_result.code ~= 0 then
-          callback("")
+          show_picker({})
           return
         end
 
@@ -304,66 +389,15 @@ function M.create_pr()
           {},
           function(collab_result)
             vim.schedule(function()
-              if collab_result.code ~= 0 then
-                callback("")
-                return
-              end
-
               local items = {}
 
-              for line in collab_result.stdout:gmatch("[^\r\n]+") do
-                table.insert(items, { text = line })
+              if collab_result.code == 0 then
+                for line in collab_result.stdout:gmatch("[^\r\n]+") do
+                  table.insert(items, { text = line })
+                end
               end
 
-              if #items == 0 then
-                callback("")
-                return
-              end
-
-              snacks.picker.pick({
-                finder = function()
-                  return items
-                end,
-                format = "text",
-                layout = {
-                  layout = {
-                    title = "Select reviewers",
-                    box = "vertical",
-                    position = "float",
-                    width = 0.4,
-                    height = 0.3,
-                    border = "rounded",
-                    { win = "input", height = 1, border = "bottom" },
-                    { win = "list" },
-                  },
-                },
-                multi = { "confirm" },
-                actions = {
-                  select_and_clear = function(picker)
-                    picker.list:select()
-                    picker.list:move(1)
-                    vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-                  end,
-                },
-                win = {
-                  input = {
-                    keys = {
-                      ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
-                    },
-                  },
-                },
-                confirm = function(picker)
-                  local selected = picker:selected()
-                  local reviewers = {}
-
-                  for _, sel in ipairs(selected) do
-                    table.insert(reviewers, sel.text)
-                  end
-
-                  picker:close()
-                  callback(table.concat(reviewers, ","))
-                end,
-              })
+              show_picker(items)
             end)
           end
         )
@@ -380,11 +414,12 @@ function M.create_pr()
 
   -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
-    vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
-    local args = { "gh", "pr", "create", "--base", data.base, "--title", data.title }
+    local head_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
+    local args =
+      { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", '"' .. data.title .. '"' }
 
     table.insert(args, "--body")
-    table.insert(args, data.body)
+    table.insert(args, '"' .. data.body .. '"')
 
     if data.assignee ~= "" then
       table.insert(args, "--assignee")
@@ -401,10 +436,27 @@ function M.create_pr()
       table.insert(args, data.label)
     end
 
-    exec_async(args, {
+    local cmd_str = table.concat(args, " ")
+
+    vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+
+    exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
       notify = notify_opts,
-      success_label = "PR created successfully: " .. data.title,
-      failed_label = "Failed to create PR: ",
+      supress_notify = true,
+      failed_label = "Failed to push branch: ",
+      on_success = function()
+        exec_async(args, {
+          notify = notify_opts,
+          success_label = "PR created successfully: ",
+          failed_label = "Failed to create PR: ",
+          on_success = function()
+            vim.cmd("stopinsert")
+          end,
+          on_failure = function()
+            vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
+          end,
+        })
+      end,
     })
   end
 
@@ -467,7 +519,7 @@ function M.git_checkout_branch()
           title = "Select branch",
           box = "vertical",
           position = "float",
-          width = 0.7,
+          width = picker_width(0.7, 80),
           height = 0.4,
           border = "rounded",
           { win = "input", height = 1, border = "bottom" },

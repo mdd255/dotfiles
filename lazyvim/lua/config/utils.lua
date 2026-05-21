@@ -5,9 +5,11 @@ local _ts_history = {}
 
 local function _ts_apply(node)
   local sr, sc, er, ec = node:range()
+
   if vim.fn.mode() ~= "n" then
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "x", false)
   end
+
   vim.api.nvim_win_set_cursor(0, { sr + 1, sc })
   vim.cmd("normal! v")
   vim.api.nvim_win_set_cursor(0, { er + 1, math.max(0, ec - 1) })
@@ -19,7 +21,11 @@ function M.ts_expand()
   if mode == "n" then
     _ts_history = {}
     local node = vim.treesitter.get_node()
-    if not node then return end
+
+    if not node then
+      return
+    end
+
     table.insert(_ts_history, node)
     _ts_apply(node)
     return
@@ -33,17 +39,25 @@ function M.ts_expand()
   local sel_ec = math.max(anchor[3], cursor[3]) - 1
 
   local node = vim.treesitter.get_node({ pos = { sel_sr, sel_sc } })
+
   while node do
     local nsr, nsc, ner, nec = node:range()
     local nec_inc = nec - 1
     local start_ok = nsr < sel_sr or (nsr == sel_sr and nsc <= sel_sc)
     local end_ok = ner > sel_er or (ner == sel_er and nec_inc >= sel_ec)
     local is_larger = nsr < sel_sr or nsc < sel_sc or ner > sel_er or nec_inc > sel_ec
-    if start_ok and end_ok and is_larger then break end
+
+    if start_ok and end_ok and is_larger then
+      break
+    end
+
     node = node:parent()
   end
 
-  if not node then return end
+  if not node then
+    return
+  end
+
   table.insert(_ts_history, node)
   _ts_apply(node)
 end
@@ -64,6 +78,7 @@ function M.move_to_start_of_word()
 
   if line:sub(col + 1, col + 1):match("%w") then
     local s, _ = string.find(line:sub(1, col + 1), "%f[%w]%w*$")
+
     if s and s - 1 ~= col then
       vim.api.nvim_win_set_cursor(0, { row, s - 1 })
     end
@@ -113,7 +128,6 @@ function M.map(lhs, rhs, opts)
       local key = item[1]
       local command = item[2]
       local key_opts = vim.tbl_deep_extend("force", {}, default_opts, item[3] or {})
-
       local modes = key_opts.modes or { "n", "x" }
       key_opts.modes = nil
 
@@ -182,6 +196,7 @@ function M.exec_async(cmd, opts)
       info_label = nil,
       success_label = "Command executed",
       failed_label = "Command failed: ",
+      supress_notify = false,
     }
 
   if opts.info_label then
@@ -191,13 +206,15 @@ function M.exec_async(cmd, opts)
   vim.system(cmd, {}, function(cmd_result)
     vim.schedule(function()
       if cmd_result.code == 0 then
-        local message = opts.success_label
+        local message = opts.success_label or ""
 
         if cmd_result.stdout and cmd_result.stdout ~= "" then
           message = message .. "\n" .. cmd_result.stdout
         end
 
-        vim.notify(message, vim.log.levels.INFO, opts.notify)
+        if not opts.supress_notify then
+          vim.notify(message, vim.log.levels.INFO, opts.notify)
+        end
 
         if opts.on_success then
           opts.on_success()

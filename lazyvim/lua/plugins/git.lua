@@ -14,7 +14,7 @@ return {
       { "gpc", git.create_pr, desc = "Create PR" },
       { "gpa", git.gh_switch_account, desc = "Switch GitHub account" },
       { "gss", git.git_stash_push, desc = "Git stash push" },
-      { "gsp", "<cmd>lua Snacks.picker.git_stash()<Cr>", desc = "Git stash" },
+      { "gsp", function() Snacks.picker.git_stash({ confirm = "git_stash_apply" }) end, desc = "Git stash" },
       { "gsd", git.git_stash_drop, desc = "Git stash drop" },
       { "gaq", git.git_restore_staged, desc = "Git restore --staged" },
       { "grh", git.git_reset_hard, desc = "Git reset --hard" },
