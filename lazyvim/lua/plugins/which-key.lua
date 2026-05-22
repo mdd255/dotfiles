@@ -21,7 +21,7 @@ return {
       { "<Leader>", group = " Leader" },
       { "<Leader>d", group = "DB UI" },
       { "<Leader>s", group = "Diffview open" },
-      { "<Leader>c", group = "Macro" },
+      { "<Leader>c", group = "Docker" },
       { "<Leader><Tab>", group = "New tab" },
       { "gs", group = "Git stash/status" },
       { "ga", group = "Git add/restore" },

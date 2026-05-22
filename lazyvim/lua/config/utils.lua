@@ -100,10 +100,8 @@ end
 
 function M.term_cmd(cmd)
   vim.cmd("tabnew")
-  vim.cmd("terminal")
   vim.cmd("LualineRenameTab " .. cmd)
-  vim.cmd("startinsert")
-  vim.api.nvim_feedkeys(cmd .. "\n", "t", false)
+  vim.cmd("terminal " .. cmd)
 end
 
 -- Keymap utility functions

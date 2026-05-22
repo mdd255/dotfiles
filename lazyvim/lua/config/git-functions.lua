@@ -348,7 +348,6 @@ function M.create_pr()
         actions = {
           select_and_clear = function(picker)
             picker.list:select()
-            picker.list:move(1)
             vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
           end,
         },

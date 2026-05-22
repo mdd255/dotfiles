@@ -93,3 +93,20 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.keymap.set("n", "j", console_log, { buffer = true })
   end,
 })
+
+vim.api.nvim_create_autocmd("SessionLoadPost", {
+  callback = function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_valid(buf) and not vim.bo[buf].modified then
+        local name = vim.api.nvim_buf_get_name(buf)
+        local buftype = vim.bo[buf].buftype
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        local is_empty = #lines == 0 or (#lines == 1 and lines[1] == "")
+
+        if name == "" and buftype == "" and is_empty then
+          vim.api.nvim_buf_delete(buf, { force = false })
+        end
+      end
+    end
+  end,
+})
