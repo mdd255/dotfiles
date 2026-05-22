@@ -17,7 +17,7 @@ return {
       after = true,
     },
     search = {
-      multi_window = false,
+      multi_window = true,
     },
   },
   keys = function()
@@ -140,7 +140,6 @@ return {
       Flash.jump({
         search = {
           mode = "search",
-          multi_window = false,
         },
         label = {
           after = true,
@@ -159,7 +158,6 @@ return {
       Flash.jump({
         search = {
           mode = "search",
-          multi_window = false,
         },
         label = {
           after = true,
@@ -200,7 +198,6 @@ return {
           Flash.jump({
             search = {
               mode = "search",
-              multi_window = false,
               wrap = true,
               max_length = 1,
             },
@@ -219,7 +216,7 @@ return {
         function()
           Flash.jump({
             pattern = [=[\([([{<]\|\w\@<!["'`]\)]=],
-            search = { mode = "search", multi_window = false },
+            search = { mode = "search" },
             label = {
               after = true,
               before = false,

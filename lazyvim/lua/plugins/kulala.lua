@@ -19,6 +19,7 @@ return {
     },
     opts = {
       environment_scope = "g",
+      lsp = { formatter = false },
       ui = {
         default_windbar_panes = { "body", "headers", "verbose" },
       },

@@ -137,7 +137,7 @@ local function open_gh_pr()
     win = {
       input = {
         keys = {
-          ["<C-t>"] = {
+          ["<C-o>"] = {
             function(picker)
               pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
               picker:close()
@@ -415,8 +415,7 @@ function M.create_pr()
   -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
     local head_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
-    local args =
-      { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", '"' .. data.title .. '"' }
+    local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
 
     table.insert(args, "--body")
     table.insert(args, '"' .. data.body .. '"')

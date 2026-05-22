@@ -66,6 +66,7 @@ return {
     opts = {
       formatters_by_ft = {
         lua = { "stylua" },
+        http = {},
         python = {},
         rust = { "rustfmt", lsp_format = "fallback" },
         javascript = { "biome", stop_after_first = true },
