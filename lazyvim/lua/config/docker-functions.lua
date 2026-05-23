@@ -32,13 +32,15 @@ end
 
 -- ── Containers ────────────────────────────────────────────────────────────────
 
+-- Forward declarations — referenced in action callbacks before their definitions.
+local open_container_picker
+local open_image_picker
+
 local CONTAINER_FILTERS = {
   { name = "All", args = { "-a" } },
   { name = "Running", args = {} },
   { name = "Stopped", args = { "-a", "--filter", "status=exited" } },
 }
-
-local container_filter_idx = 1
 
 local CONTAINER_ACTIONS = {
   { text = " exec", key = "exec_bash" },
@@ -79,6 +81,7 @@ local function run_container_action(action_key, containers)
         failed_label = "Failed to " .. action_key .. " " .. c.Names .. ": ",
         on_success = function()
           cache.invalidate_pattern("docker.containers")
+          vim.schedule(open_container_picker)
         end,
       })
     end
@@ -183,19 +186,21 @@ end
 
 local function container_preview(c)
   return table.concat({
-    "ID          " .. c.ID,
-    "Name        " .. c.Names,
-    "Image       " .. c.Image,
-    "Size        " .. c.Size,
-    "Status      " .. c.Status,
-    "State       " .. c.State,
-    "Ports       " .. c.Ports,
-    "Date        " .. c.RunningFor .. " (" .. c.CreatedAt .. ")",
+    "id:          " .. c.ID,
+    "name:        " .. c.Names,
+    "image:       " .. c.Image,
+    "size:        " .. c.Size,
+    "status:      " .. c.Status,
+    "state:       " .. c.State,
+    "ports:       " .. c.Ports,
+    "running_for: " .. c.RunningFor,
+    "created_at:  " .. c.CreatedAt,
   }, "\n")
 end
 
-local function open_container_picker()
-  local f = CONTAINER_FILTERS[container_filter_idx]
+open_container_picker = function(filter_idx)
+  filter_idx = filter_idx or 1
+  local f = CONTAINER_FILTERS[filter_idx]
   local container_key = "docker.containers." .. table.concat(f.args, "_")
 
   if not cache.is_cached(container_key) then
@@ -224,7 +229,7 @@ local function open_container_picker()
         RunningFor = c.RunningFor,
         CreatedAt = c.CreatedAt,
         Size = c.Size,
-        preview = { text = container_preview(c), ft = "text" },
+        preview = { text = container_preview(c), ft = "yaml" },
       })
     end
 
@@ -232,7 +237,17 @@ local function open_container_picker()
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local state_hl = item.State == "running" and "DiagnosticOk" or "DiagnosticWarn"
+        local name_col = string.format("%-28s", container_ref(item))
+        local size_col = string.format("%-9s", item.Size or "")
+        local status_col = item.Status or ""
+        return {
+          { name_col, state_hl },
+          { size_col, "Comment" },
+          { status_col, "String" },
+        }
+      end,
       preview = "preview",
       layout = {
         layout = {
@@ -257,9 +272,11 @@ local function open_container_picker()
           vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
         end,
         cycle_filter = function(picker)
-          container_filter_idx = container_filter_idx % #CONTAINER_FILTERS + 1
+          local next_idx = filter_idx % #CONTAINER_FILTERS + 1
           picker:close()
-          vim.schedule(open_container_picker)
+          vim.schedule(function()
+            open_container_picker(next_idx)
+          end)
         end,
       },
       win = {
@@ -353,6 +370,7 @@ local function run_image_action(action_key, images)
           failed_label = "Failed to start container: ",
           on_success = function()
             cache.invalidate_pattern("docker.containers")
+            vim.schedule(open_container_picker)
           end,
         })
       end)
@@ -366,6 +384,7 @@ local function run_image_action(action_key, images)
         failed_label = "Failed to remove: ",
         on_success = function()
           cache.invalidate("docker.images")
+          vim.schedule(open_image_picker)
         end,
       })
     end
@@ -387,6 +406,7 @@ local function run_image_action(action_key, images)
         failed_label = "Failed to tag: ",
         on_success = function()
           cache.invalidate("docker.images")
+          vim.schedule(open_image_picker)
         end,
       })
     end)
@@ -428,15 +448,16 @@ end)
 
 local function image_preview(img)
   return table.concat({
-    "ID          " .. img.ID,
-    "Repository  " .. img.Repository,
-    "Size        " .. img.Size,
-    "Tag         " .. img.Tag,
-    "Date        " .. img.CreatedSince .. "  (" .. img.CreatedAt .. ")",
+    "id:           " .. img.ID,
+    "repository:   " .. img.Repository,
+    "tag:          " .. img.Tag,
+    "size:         " .. img.Size,
+    "created_since: " .. img.CreatedSince,
+    "created_at:   " .. img.CreatedAt,
   }, "\n")
 end
 
-function M.docker_images()
+open_image_picker = function()
   if not cache.is_cached("docker.images") then
     vim.notify("Loading images...", vim.log.levels.INFO, notify_opts)
   end
@@ -461,7 +482,7 @@ function M.docker_images()
         Size = img.Size,
         CreatedSince = img.CreatedSince,
         CreatedAt = img.CreatedAt,
-        preview = { text = image_preview(img), ft = "text" },
+        preview = { text = image_preview(img), ft = "yaml" },
       })
     end
 
@@ -469,7 +490,16 @@ function M.docker_images()
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local name_col = string.format("%-25s", image_ref(item))
+        local size_col = string.format("%-9s", item.Size or "")
+        local date_col = item.CreatedSince or ""
+        return {
+          { name_col, "Function" },
+          { size_col, "Comment" },
+          { date_col, "DiagnosticInfo" },
+        }
+      end,
       preview = "preview",
       layout = {
         layout = {
@@ -525,6 +555,10 @@ function M.docker_images()
       end,
     })
   end)
+end
+
+function M.docker_images()
+  open_image_picker()
 end
 
 -- ── Docker Build ──────────────────────────────────────────────────────────────

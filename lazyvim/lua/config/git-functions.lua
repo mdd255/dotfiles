@@ -135,7 +135,17 @@ local function stash_picker(title, on_confirm)
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local ref = item.text:match("^(stash@{%d+})")
+        if ref then
+          local rest = item.text:sub(#ref + 3)
+          return {
+            { ref, "DiagnosticInfo" },
+            { ": " .. rest, "Comment" },
+          }
+        end
+        return { { item.text, "Comment" } }
+      end,
       layout = {
         layout = {
           title = title,
@@ -456,7 +466,9 @@ function M.create_pr()
         finder = function()
           return items
         end,
-        format = "text",
+        format = function(item, _)
+          return { { item.text, "Function" } }
+        end,
         layout = {
           layout = {
             title = "Select reviewers",
@@ -610,7 +622,18 @@ function M.git_checkout_branch()
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local parts = vim.split(item.text, "/")
+        if #parts > 1 then
+          local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
+          return {
+            { prefix, "Comment" },
+            { parts[#parts], "Function" },
+          }
+        end
+        local is_main = item.text == "main" or item.text == "master"
+        return { { item.text, is_main and "DiagnosticWarn" or "Function" } }
+      end,
       layout = {
         layout = {
           title = "Select branch",
@@ -666,7 +689,17 @@ function M.git_delete_branch()
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local parts = vim.split(item.text, "/")
+        if #parts > 1 then
+          local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
+          return {
+            { prefix, "Comment" },
+            { parts[#parts], "DiagnosticError" },
+          }
+        end
+        return { { item.text, "DiagnosticError" } }
+      end,
       layout = {
         layout = {
           title = "Delete branch",
@@ -687,6 +720,9 @@ function M.git_delete_branch()
             notify = notify_opts,
             success_label = "Deleted " .. item.text,
             failed_label = "Failed to delete branch (use -D to force): ",
+            on_success = function()
+              vim.schedule(M.git_delete_branch)
+            end,
           })
         end
       end,
@@ -786,6 +822,9 @@ function M.git_stash_drop()
       notify = notify_opts,
       success_label = "Stash dropped: " .. item.ref,
       failed_label = "Failed to drop stash: ",
+      on_success = function()
+        vim.schedule(M.git_stash_drop)
+      end,
     })
   end)
 end

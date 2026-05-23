@@ -29,6 +29,12 @@ return {
         frecency = true,
       },
       win = {
+        preview = {
+          wo = {
+            number = false,
+            relativenumber = false,
+          },
+        },
         input = {
           keys = {
             ["<Esc>"] = { "close", mode = { "n", "i" } },
