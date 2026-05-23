@@ -1,20 +1,20 @@
-local exec_async = require("config.utils").exec_async
-local term_cmd = require("config.utils").term_cmd
+local utils = require("config.utils")
+local exec_async = utils.exec_async
+local term_cmd = utils.term_cmd
+local picker_width = utils.picker_width
 local snacks = require("snacks")
 local M = {}
 
-local notify_opts = { title = "GH Actions" }
+local cache = require("config.cache")
+local CACHE_TTL_MS = 60000 -- 60 s in ms
 
-local function picker_width(fraction, min_cols)
-  local ui = vim.api.nvim_list_uis()[1] or { width = 120 }
-  return math.max(min_cols or 60, math.floor(ui.width * fraction))
-end
+local notify_opts = { title = "GH Actions" }
 
 -- ── Filters ───────────────────────────────────────────────────────────────────
 
 local RUN_FILTERS = {
-  { name = "Running", status = "in_progress" },
   { name = "Recent", status = nil },
+  { name = "Running", status = "in_progress" },
   { name = "Failed", status = "failure" },
 }
 
@@ -35,97 +35,114 @@ local CONCLUSION_ICONS = {
 }
 
 local STATUS_ICONS = {
-  in_progress = "⟳",
-  queued = "◌",
-  waiting = "◌",
-  requested = "◌",
-  pending = "◌",
-  completed = "✓",
+  in_progress = "󱦟",
+  queued = "",
+  waiting = "",
+  requested = "",
+  pending = "",
+  completed = "",
 }
+
+local function run_status_icon(run)
+  local status = run.status
+
+  if status and status ~= "" and status ~= vim.NIL then
+    return STATUS_ICONS[status] or "?"
+  end
+
+  return "?"
+end
 
 local function run_icon(run)
   local conclusion = run.conclusion
+
   if conclusion and conclusion ~= "" and conclusion ~= vim.NIL then
     return CONCLUSION_ICONS[conclusion] or "?"
   end
+
   return STATUS_ICONS[run.status] or "?"
 end
 
 -- ── Fetch runs ────────────────────────────────────────────────────────────────
 
-local function get_gh_runs(filter, callback)
-  local cmd = {
-    "gh",
-    "run",
-    "list",
-    "--limit",
-    "30",
-    "--json",
-    "databaseId,displayTitle,headBranch,status,conclusion,workflowName,actor,event,createdAt,updatedAt,number,headSha,pullRequests,startedAt",
-  }
+-- Raw async fetcher factory for a given filter (no cache logic here).
+local function make_runs_fetcher(filter)
+  return function(callback)
+    local cmd = {
+      "gh",
+      "run",
+      "list",
+      "--limit",
+      "30",
+      "--json",
+      "databaseId,displayTitle,headBranch,status,conclusion,workflowName,event,createdAt,updatedAt,number,headSha,startedAt",
+    }
 
-  if filter.status then
-    vim.list_extend(cmd, { "--status", filter.status })
+    if filter.status then
+      vim.list_extend(cmd, { "--status", filter.status })
+    end
+
+    vim.system(cmd, {}, function(result)
+      vim.schedule(function()
+        if result.code ~= 0 then
+          vim.notify("Failed to list runs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+
+        local ok, data = pcall(vim.json.decode, result.stdout or "[]")
+
+        if not ok or type(data) ~= "table" then
+          vim.notify("Failed to parse run list", vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+
+        callback(data)
+      end)
+    end)
+  end
+end
+
+-- One cache.wrap entry per filter — inflight deduplication + TTL per filter key.
+local gh_runs_fetchers = {}
+
+for _, f in ipairs(RUN_FILTERS) do
+  local key = "gh.runs." .. (f.status or "recent")
+  gh_runs_fetchers[f.status or "recent"] = cache.wrap(key, CACHE_TTL_MS, make_runs_fetcher(f))
+end
+
+local function get_gh_runs(filter, callback)
+  local key = filter.status or "recent"
+
+  if not cache.is_cached("gh.runs." .. key) then
+    vim.notify("Loading runs...", vim.log.levels.INFO, notify_opts)
   end
 
-  vim.system(cmd, {}, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        vim.notify("Failed to list runs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-        callback(nil)
-        return
-      end
-
-      local ok, data = pcall(vim.json.decode, result.stdout or "[]")
-
-      if not ok or type(data) ~= "table" then
-        vim.notify("Failed to parse run list", vim.log.levels.ERROR, notify_opts)
-        callback(nil)
-        return
-      end
-
-      callback(data)
-    end)
-  end)
+  gh_runs_fetchers[key](callback)
 end
 
 -- ── Preview text ──────────────────────────────────────────────────────────────
 
 local function run_preview(run)
-  local actor_login = (type(run.actor) == "table") and (run.actor.login or "") or ""
-
-  local pr_str = ""
-  local base_branch = ""
-
-  if type(run.pullRequests) == "table" and #run.pullRequests > 0 then
-    local nums = {}
-    for _, pr in ipairs(run.pullRequests) do
-      table.insert(nums, "#" .. tostring(pr.number or "?"))
-    end
-    pr_str = table.concat(nums, ", ")
-    base_branch = run.pullRequests[1].baseRef or ""
-  end
-
   local conclusion = run.conclusion
   local status_str = run.status or ""
+
   if conclusion and conclusion ~= "" and conclusion ~= vim.NIL then
     status_str = status_str .. " / " .. conclusion
   end
 
   return table.concat({
-    "Workflow:    " .. (run.workflowName or ""),
-    "Title:       " .. (run.displayTitle or ""),
-    "Event:       " .. (run.event or ""),
+    "Run #:       " .. tostring(run.number),
+    "Run ID:      " .. tostring(run.databaseId),
+    "Title:       " .. (run.displayTitle or "N/A"),
+    "Workflow:    " .. (run.workflowName or "N/A"),
+    "Head branch: " .. run.headBranch,
+    "Event:       " .. (run.event or "N/A"),
     "Status:      " .. status_str,
-    "Author:      " .. actor_login,
-    "Head branch: " .. (run.headBranch or ""),
-    "Base branch: " .. base_branch,
-    "PR:          " .. pr_str,
-    "Run #:       " .. tostring(run.number or ""),
-    "Run ID:      " .. tostring(run.databaseId or ""),
-    "SHA:         " .. ((run.headSha or ""):sub(1, 10)),
-    "Created:     " .. (run.createdAt or ""),
-    "Updated:     " .. (run.updatedAt or ""),
+    "SHA:         " .. ((run.headSha and run.headSha ~= vim.NIL) and run.headSha:sub(1, 10) or "N/A"),
+    "Created:     " .. run.createdAt,
+    "Updated:     " .. run.updatedAt,
   }, "\n")
 end
 
@@ -155,7 +172,6 @@ local RUN_ACTIONS = {
   { text = "view jobs", key = "view_jobs" },
   { text = "open in browser", key = "browser" },
   { text = "download artifacts", key = "download" },
-  { text = "copy run ID", key = "copy_id" },
   { text = "cancel  ⚠", key = "cancel" },
   { text = "delete  ⚠", key = "delete" },
 }
@@ -174,6 +190,9 @@ local function run_action(action_key, run)
       info_label = "Re-running " .. label .. "...",
       success_label = "Re-run triggered: " .. label,
       failed_label = "Failed to re-run: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.runs")
+      end,
     })
   elseif action_key == "rerun_failed" then
     exec_async({ "gh", "run", "rerun", "--failed", id }, {
@@ -181,6 +200,9 @@ local function run_action(action_key, run)
       info_label = "Re-running failed jobs for " .. label .. "...",
       success_label = "Re-run failed jobs triggered: " .. label,
       failed_label = "Failed to re-run failed jobs: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.runs")
+      end,
     })
   elseif action_key == "view_log" then
     term_cmd("gh run view " .. id .. " --log 2>&1 | less -R")
@@ -193,7 +215,7 @@ local function run_action(action_key, run)
   elseif action_key == "browser" then
     exec_async({ "gh", "run", "view", id, "--web" }, {
       notify = notify_opts,
-      supress_notify = true,
+      suppress_notify = true,
       failed_label = "Failed to open browser: ",
     })
   elseif action_key == "download" then
@@ -206,9 +228,6 @@ local function run_action(action_key, run)
         failed_label = "Failed to download artifacts: ",
       })
     end)
-  elseif action_key == "copy_id" then
-    vim.fn.setreg("+", id)
-    vim.notify("Copied: " .. id, vim.log.levels.INFO, notify_opts)
   elseif action_key == "cancel" then
     confirm_dangerous("Cancel run " .. label .. "?", function()
       exec_async({ "gh", "run", "cancel", id }, {
@@ -216,6 +235,9 @@ local function run_action(action_key, run)
         info_label = "Cancelling " .. label .. "...",
         success_label = "Cancelled: " .. label,
         failed_label = "Failed to cancel: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.runs")
+        end,
       })
     end)
   elseif action_key == "delete" then
@@ -225,6 +247,9 @@ local function run_action(action_key, run)
         info_label = "Deleting " .. label .. "...",
         success_label = "Deleted: " .. label,
         failed_label = "Failed to delete: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.runs")
+        end,
       })
     end)
   end
@@ -271,7 +296,6 @@ end
 
 local function open_actions_picker()
   local f = RUN_FILTERS[run_filter_idx]
-  vim.notify("Loading runs (" .. f.name .. ")...", vim.log.levels.INFO, notify_opts)
 
   get_gh_runs(f, function(runs)
     if not runs then
@@ -281,23 +305,17 @@ local function open_actions_picker()
     local items = {}
 
     for _, run in ipairs(runs) do
-      local icon = run_icon(run)
-      local actor_login = (type(run.actor) == "table") and (run.actor.login or "") or ""
-      local pr_str = ""
-
-      if type(run.pullRequests) == "table" and #run.pullRequests > 0 then
-        pr_str = "PR#" .. tostring(run.pullRequests[1].number or "")
-      end
+      local conclusion_icon = run_icon(run)
+      local status_icon = run_status_icon(run)
 
       table.insert(items, {
         text = string.format(
-          "%s %-28s %-18s %-14s %-12s %s",
-          icon,
-          (run.workflowName or ""):sub(1, 28),
-          (run.headBranch or ""):sub(1, 18),
-          (run.status or ""):sub(1, 14),
-          actor_login:sub(1, 12),
-          pr_str
+          "%s %-28s %s   %-18s %s",
+          conclusion_icon,
+          run.displayTitle:sub(1, 26),
+          status_icon,
+          run.headBranch:sub(1, 15),
+          run.startedAt
         ),
         _run = run,
         preview = { text = run_preview(run), ft = "text" },
@@ -358,6 +376,7 @@ local function open_actions_picker()
 end
 
 function M.gh_actions_picker()
+  run_filter_idx = 1
   open_actions_picker()
 end
 

@@ -1,4 +1,7 @@
-local exec_async = require("config.utils").exec_async
+local utils = require("config.utils")
+local exec_async = utils.exec_async
+local picker_width = utils.picker_width
+local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
@@ -6,12 +9,9 @@ local notify_opts = {
   title = "Git",
 }
 
-local function picker_width(fraction, min_cols)
-  local ui = vim.api.nvim_list_uis()[1] or { width = 120 }
-  return math.max(min_cols or 60, math.floor(ui.width * fraction))
-end
+local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
--- Helper function to get list of branches
+-- Helper function to get list of branches (no cache — cheap local command).
 -- @param exclude_current: boolean - whether to exclude current branch
 -- @param unique: boolean - whether to ensure unique values
 -- @return function that takes a callback
@@ -28,7 +28,12 @@ local function get_branches(exclude_current, unique)
         local current_branch = nil
 
         if exclude_current then
-          current_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
+          for line in result.stdout:gmatch("[^\r\n]+") do
+            if line:match("^%*") then
+              current_branch = line:gsub("^%s*%*%s*", ""):gsub("^remotes/origin/", "")
+              break
+            end
+          end
         end
 
         local branches = {}
@@ -57,7 +62,7 @@ local function get_branches(exclude_current, unique)
   end
 end
 
--- Helper function to get list of recent commits
+-- Helper function to get list of recent commits (no cache — cheap local command).
 -- @param limit: number - how many recent commits to fetch
 -- @return function that takes a callback
 local function get_recent_commits(limit)
@@ -84,7 +89,78 @@ local function get_recent_commits(limit)
   end
 end
 
-local function get_gh_accounts(callback)
+-- Helper function to get list of stashes (no cache — cheap local command).
+-- @return function that takes a callback
+local function get_stashes()
+  return function(callback)
+    vim.system({ "git", "stash", "list" }, {}, function(result)
+      vim.schedule(function()
+        if result.code ~= 0 then
+          vim.notify("Failed to get stashes", vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+
+        local items = {}
+
+        for line in result.stdout:gmatch("[^\r\n]+") do
+          if line ~= "" then
+            local ref = line:match("^(stash@{%d+})")
+            table.insert(items, { text = line, ref = ref })
+          end
+        end
+
+        if #items == 0 then
+          vim.notify("No stashes found", vim.log.levels.INFO, notify_opts)
+          callback(nil)
+          return
+        end
+
+        callback(items)
+      end)
+    end)
+  end
+end
+
+-- Shared stash picker layout factory.
+-- @param title string - picker title
+-- @param on_confirm function - called with selected item
+local function stash_picker(title, on_confirm)
+  get_stashes()(function(items)
+    if not items then
+      return
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = "text",
+      layout = {
+        layout = {
+          title = title,
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.7, 80),
+          height = 0.4,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+
+        if item then
+          on_confirm(item)
+        end
+      end,
+    })
+  end)
+end
+
+-- Cached GH accounts fetcher (5 h TTL — network call, warmed on session load).
+local get_gh_accounts = cache.wrap("gh.accounts", GH_TTL_MS, function(callback)
   vim.system({ "gh", "auth", "status" }, {}, function(result)
     vim.schedule(function()
       if result.code ~= 0 then
@@ -119,7 +195,55 @@ local function get_gh_accounts(callback)
       callback(accounts)
     end)
   end)
-end
+end)
+
+-- Cached current GH login fetcher (5 h TTL — warmed on session load).
+local fetch_current_login = cache.wrap("gh.current_login", GH_TTL_MS, function(callback)
+  vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(result)
+    vim.schedule(function()
+      local login = result.code == 0 and result.stdout:gsub("%s+", "") or ""
+      callback(login)
+    end)
+  end)
+end)
+
+-- Cached repo name fetcher (5 h TTL — never changes within a session).
+local fetch_repo_name = cache.wrap("gh.repo_name", GH_TTL_MS, function(callback)
+  vim.system({ "gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner" }, {}, function(result)
+    vim.schedule(function()
+      if result.code ~= 0 then
+        callback(nil)
+        return
+      end
+
+      callback(result.stdout:gsub("\n", ""))
+    end)
+  end)
+end)
+
+-- Cached collaborators fetcher (5 h TTL — warmed on session load).
+local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(callback)
+  fetch_repo_name(function(repo)
+    if not repo then
+      callback({})
+      return
+    end
+
+    vim.system({ "gh", "api", "repos/" .. repo .. "/collaborators", "--jq", ".[].login" }, {}, function(collab_result)
+      vim.schedule(function()
+        local items = {}
+
+        if collab_result.code == 0 then
+          for line in collab_result.stdout:gmatch("[^\r\n]+") do
+            table.insert(items, { text = line })
+          end
+        end
+
+        callback(items)
+      end)
+    end)
+  end)
+end)
 
 local PR_FILTERS = {
   { name = "My PRs", search = "author:@me" },
@@ -131,6 +255,7 @@ local pr_filter_idx = 1
 
 local function open_gh_pr()
   local f = PR_FILTERS[pr_filter_idx]
+
   snacks.picker.gh_pr({
     search = f.search,
     title = "  PRs · " .. f.name,
@@ -157,66 +282,67 @@ function M.gh_pr_picker()
 end
 
 function M.gh_switch_account()
-  vim.notify("Loading github accounts...", vim.log.levels.INFO, notify_opts)
+  if not cache.is_cached("gh.accounts") then
+    vim.notify("Loading github accounts...", vim.log.levels.INFO, notify_opts)
+  end
 
   get_gh_accounts(function(accounts)
     if not accounts then
       return
     end
 
-    -- Get current login to exclude from the list
-    vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(result)
-      vim.schedule(function()
-        local current_login = result.code == 0 and result.stdout:gsub("%s+", "") or ""
+    -- Use cached current login to exclude from the list
+    fetch_current_login(function(current_login)
+      local filtered = vim.tbl_filter(function(account)
+        return account ~= current_login
+      end, accounts)
 
-        local filtered = vim.tbl_filter(function(account)
-          return account ~= current_login
-        end, accounts)
+      if #filtered == 0 then
+        vim.notify("No other GitHub accounts to switch to", vim.log.levels.INFO, notify_opts)
+        return
+      end
 
-        if #filtered == 0 then
-          vim.notify("No other GitHub accounts to switch to", vim.log.levels.INFO, notify_opts)
-          return
-        end
+      local items = {}
 
-        local items = {}
+      for _, account in ipairs(filtered) do
+        table.insert(items, { text = account })
+      end
 
-        for _, account in ipairs(filtered) do
-          table.insert(items, { text = account })
-        end
-
-        snacks.picker.pick({
-          finder = function()
-            return items
-          end,
-          format = "text",
+      snacks.picker.pick({
+        finder = function()
+          return items
+        end,
+        format = "text",
+        layout = {
           layout = {
-            layout = {
-              title = "GH Account (" .. current_login .. ")",
-              box = "vertical",
-              position = "float",
-              width = picker_width(0.2, 60),
-              height = 0.15,
-              border = "rounded",
-              { win = "input", height = 1, border = "bottom" },
-              { win = "list" },
-            },
+            title = "GH Account (" .. current_login .. ")",
+            box = "vertical",
+            position = "float",
+            width = picker_width(0.2, 60),
+            height = 0.15,
+            border = "rounded",
+            { win = "input", height = 1, border = "bottom" },
+            { win = "list" },
           },
-          confirm = function(picker, item)
-            picker:close()
+        },
+        confirm = function(picker, item)
+          picker:close()
 
-            if not item then
-              return
-            end
+          if not item then
+            return
+          end
 
-            exec_async({ "gh", "auth", "switch", "-u", item.text }, {
-              notify = notify_opts,
-              info_label = "Switching to " .. item.text .. "...",
-              success_label = "Switched to " .. item.text,
-              failed_label = "Failed to switch account: ",
-            })
-          end,
-        })
-      end)
+          exec_async({ "gh", "auth", "switch", "-u", item.text }, {
+            notify = notify_opts,
+            info_label = "Switching to " .. item.text .. "...",
+            success_label = "Switched to " .. item.text,
+            failed_label = "Failed to switch account: ",
+            on_success = function()
+              cache.invalidate({ "gh.accounts", "gh.current_login" })
+            end,
+          })
+        end,
+      })
     end)
   end)
 end
@@ -233,24 +359,19 @@ function M.create_pr()
 
   -- Helper function: Select base branch
   local function select_base_branch(callback)
-    vim.notify("Loading base branches...", vim.log.levels.INFO, notify_opts)
+    fetch_current_login(function(current_login)
+      local prompt = current_login ~= "" and ("Select base branch (" .. current_login .. "): ")
+        or "Select base branch: "
 
-    vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(login_result)
-      vim.schedule(function()
-        local current_login = login_result.code == 0 and login_result.stdout:gsub("%s+", "") or ""
-        local prompt = current_login ~= "" and ("Select base branch (" .. current_login .. "): ")
-          or "Select base branch: "
+      get_branches(true, true)(function(branches)
+        if not branches then
+          return
+        end
 
-        get_branches(true, true)(function(branches)
-          if not branches then
-            return
+        vim.ui.select(branches, { prompt = prompt }, function(selected)
+          if selected then
+            callback(selected)
           end
-
-          vim.ui.select(branches, { prompt = prompt }, function(selected)
-            if selected then
-              callback(selected)
-            end
-          end)
         end)
       end)
     end)
@@ -295,6 +416,7 @@ function M.create_pr()
       if done then
         return
       end
+
       done = true
 
       local body = ""
@@ -322,9 +444,12 @@ function M.create_pr()
     end, map_opts)
   end
 
-  -- Helper function: Select reviewers (multi-select via Snacks picker)
+  -- Helper function: Select reviewers (multi-select via Snacks picker).
+  -- Collaborators are cached (5 h TTL) to avoid repeated slow gh api calls.
   local function select_reviewers(callback)
-    vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
+    if not cache.is_cached("gh.collaborators") then
+      vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
+    end
 
     local function show_picker(items)
       snacks.picker.pick({
@@ -367,6 +492,7 @@ function M.create_pr()
           end
 
           picker:close()
+
           vim.schedule(function()
             callback(table.concat(reviewers, ","))
           end)
@@ -374,34 +500,7 @@ function M.create_pr()
       })
     end
 
-    vim.system({ "gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner" }, {}, function(repo_result)
-      vim.schedule(function()
-        if repo_result.code ~= 0 then
-          show_picker({})
-          return
-        end
-
-        local repo = repo_result.stdout:gsub("\n", "")
-
-        vim.system(
-          { "gh", "api", "repos/" .. repo .. "/collaborators", "--jq", ".[].login" },
-          {},
-          function(collab_result)
-            vim.schedule(function()
-              local items = {}
-
-              if collab_result.code == 0 then
-                for line in collab_result.stdout:gmatch("[^\r\n]+") do
-                  table.insert(items, { text = line })
-                end
-              end
-
-              show_picker(items)
-            end)
-          end
-        )
-      end)
-    end)
+    fetch_collaborators(show_picker)
   end
 
   -- Helper function: Prompt for label
@@ -440,7 +539,7 @@ function M.create_pr()
 
     exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
       notify = notify_opts,
-      supress_notify = true,
+      suppress_notify = true,
       failed_label = "Failed to push branch: ",
       on_success = function()
         exec_async(args, {
@@ -526,6 +625,7 @@ function M.git_checkout_branch()
       },
       confirm = function(picker, item)
         picker:close()
+
         if item then
           checkout(item.text)
         end
@@ -551,21 +651,46 @@ function M.git_checkout_new_branch()
 end
 
 function M.git_delete_branch()
-  local function on_branch_selected(selected)
-    if selected then
-      exec_async({ "git", "branch", "-d", selected }, {
-        notify = notify_opts,
-        success_label = "Deleted " .. selected,
-        failed_label = "Failed to delete branch (use -D to force): ",
-      })
-    end
-  end
-
   get_branches(true, true)(function(branches)
     if not branches then
       return
     end
-    vim.ui.select(branches, { prompt = "Select branch to delete: " }, on_branch_selected)
+
+    local items = {}
+
+    for _, branch in ipairs(branches) do
+      table.insert(items, { text = branch })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = "text",
+      layout = {
+        layout = {
+          title = "Delete branch",
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.7, 80),
+          height = 0.4,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+
+        if item then
+          exec_async({ "git", "branch", "-d", item.text }, {
+            notify = notify_opts,
+            success_label = "Deleted " .. item.text,
+            failed_label = "Failed to delete branch (use -D to force): ",
+          })
+        end
+      end,
+    })
   end)
 end
 
@@ -574,6 +699,7 @@ function M.git_cherry_pick()
     if selected then
       -- Extract commit hash (first word before space)
       local hash = selected:match("^(%S+)")
+
       exec_async({ "git", "cherry-pick", hash }, {
         notify = notify_opts,
         info_label = "Cherry-picking " .. hash .. "...",
@@ -587,6 +713,7 @@ function M.git_cherry_pick()
     if not commits then
       return
     end
+
     vim.ui.select(commits, { prompt = "Select commit to cherry-pick: " }, on_commit_selected)
   end)
 end
@@ -604,6 +731,7 @@ function M.git_revert()
     if selected then
       -- Extract commit hash (first word before space)
       local hash = selected:match("^(%S+)")
+
       exec_async({ "git", "revert", hash, "--no-edit" }, {
         notify = notify_opts,
         success_label = "Reverted " .. hash,
@@ -616,6 +744,7 @@ function M.git_revert()
     if not commits then
       return
     end
+
     vim.ui.select(commits, { prompt = "Select commit to revert: " }, on_commit_selected)
   end)
 end
@@ -641,12 +770,24 @@ function M.git_status()
   })
 end
 
+function M.git_stash_apply()
+  stash_picker("Apply stash", function(item)
+    exec_async({ "git", "stash", "apply", item.ref }, {
+      notify = notify_opts,
+      success_label = "Stash applied: " .. item.ref,
+      failed_label = "Failed to apply stash: ",
+    })
+  end)
+end
+
 function M.git_stash_drop()
-  exec_async({ "git", "stash", "drop" }, {
-    notify = notify_opts,
-    success_label = "Stash dropped successful",
-    failed_label = "Stash drop failed",
-  })
+  stash_picker("Drop stash", function(item)
+    exec_async({ "git", "stash", "drop", item.ref }, {
+      notify = notify_opts,
+      success_label = "Stash dropped: " .. item.ref,
+      failed_label = "Failed to drop stash: ",
+    })
+  end)
 end
 
 function M.git_reset_hard()
@@ -674,9 +815,18 @@ function M.git_restore_staged()
 end
 
 function M.git_restore_all()
-  vim.fn.system({ "git", "clean", "-f" })
-  vim.fn.system({ "git", "checkout", "." })
-  vim.notify("Git cleaned", vim.log.levels.INFO, { title = "Git" })
+  exec_async({ "git", "clean", "-f" }, {
+    notify = notify_opts,
+    suppress_notify = true,
+    failed_label = "Failed to clean: ",
+    on_success = function()
+      exec_async({ "git", "checkout", "." }, {
+        notify = notify_opts,
+        success_label = "Git cleaned",
+        failed_label = "Failed to checkout: ",
+      })
+    end,
+  })
 end
 
 function M.git_pull()
@@ -771,6 +921,14 @@ function M.git_diff_branch()
 
     vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
   end)
+end
+
+-- Warm GH-related caches in background (called on SessionLoadPost).
+-- Fires all three network fetches concurrently with no-op callbacks.
+function M.warm_gh_cache()
+  get_gh_accounts(function() end)
+  fetch_current_login(function() end)
+  fetch_collaborators(function() end)
 end
 
 return M

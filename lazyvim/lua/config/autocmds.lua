@@ -108,5 +108,11 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
         end
       end
     end
+
+    -- Warm GH caches in background so first picker open is instant.
+    -- Runs after a short delay to not compete with session restore I/O.
+    vim.defer_fn(function()
+      require("config.git-functions").warm_gh_cache()
+    end, 2000)
   end,
 })

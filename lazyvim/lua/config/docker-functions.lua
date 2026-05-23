@@ -1,14 +1,12 @@
-local exec_async = require("config.utils").exec_async
-local term_cmd = require("config.utils").term_cmd
+local utils = require("config.utils")
+local exec_async = utils.exec_async
+local term_cmd = utils.term_cmd
+local picker_width = utils.picker_width
+local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
 local notify_opts = { title = "Docker" }
-
-local function picker_width(fraction, min_cols)
-  local ui = vim.api.nvim_list_uis()[1] or { width = 120 }
-  return math.max(min_cols or 60, math.floor(ui.width * fraction))
-end
 
 local function format_container_ports(str)
   str = str or "N/A"
@@ -55,12 +53,42 @@ local CONTAINER_ACTIONS = {
   { text = " inspect", key = "inspect" },
 }
 
-local function run_container_action(action_key, containers)
-  if action_key == "exec_bash" then
-    local shell = "bash"
+-- Table-driven docker container CLI actions. Each entry produces an
+-- exec_async call against the container ID with consistent notify labels.
+local CONTAINER_CMD_ACTIONS = {
+  stop = { args = { "stop" }, verb = "Stopping", past = "Stopped" },
+  start = { args = { "start" }, verb = "Starting", past = "Started" },
+  restart = { args = { "restart" }, verb = "Restarting", past = "Restarted" },
+  pause = { args = { "pause" }, verb = "Pausing", past = "Paused" },
+  unpause = { args = { "unpause" }, verb = "Unpausing", past = "Unpaused" },
+  remove = { args = { "rm", "-f" }, verb = "Removing", past = "Removed" },
+}
 
+local function run_container_action(action_key, containers)
+  local def = CONTAINER_CMD_ACTIONS[action_key]
+
+  if def then
     for _, c in ipairs(containers) do
-      term_cmd("docker exec -it " .. c.Names .. " " .. shell)
+      local args = vim.list_extend({ "docker" }, def.args)
+      table.insert(args, c.ID)
+
+      exec_async(args, {
+        notify = notify_opts,
+        info_label = def.verb .. " " .. c.Names .. "...",
+        success_label = def.past .. " " .. c.Names,
+        failed_label = "Failed to " .. action_key .. " " .. c.Names .. ": ",
+        on_success = function()
+          cache.invalidate_pattern("docker.containers")
+        end,
+      })
+    end
+
+    return
+  end
+
+  if action_key == "exec_bash" then
+    for _, c in ipairs(containers) do
+      term_cmd("docker exec -it " .. c.Names .. " bash")
     end
   elseif action_key == "view_logs" then
     for _, c in ipairs(containers) do
@@ -72,59 +100,8 @@ local function run_container_action(action_key, containers)
     for _, c in ipairs(containers) do
       table.insert(names, c.Names)
     end
+
     term_cmd("docker stats " .. table.concat(names, " "))
-  elseif action_key == "stop" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "stop", c.ID }, {
-        notify = notify_opts,
-        info_label = "Stopping " .. c.Names .. "...",
-        success_label = "Stopped " .. c.Names,
-        failed_label = "Failed to stop " .. c.Names .. ": ",
-      })
-    end
-  elseif action_key == "start" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "start", c.ID }, {
-        notify = notify_opts,
-        info_label = "Starting " .. c.Names .. "...",
-        success_label = "Started " .. c.Names,
-        failed_label = "Failed to start " .. c.Names .. ": ",
-      })
-    end
-  elseif action_key == "restart" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "restart", c.ID }, {
-        notify = notify_opts,
-        info_label = "Restarting " .. c.Names .. "...",
-        success_label = "Restarted " .. c.Names,
-        failed_label = "Failed to restart " .. c.Names .. ": ",
-      })
-    end
-  elseif action_key == "pause" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "pause", c.ID }, {
-        notify = notify_opts,
-        success_label = "Paused " .. c.Names,
-        failed_label = "Failed to pause " .. c.Names .. ": ",
-      })
-    end
-  elseif action_key == "unpause" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "unpause", c.ID }, {
-        notify = notify_opts,
-        success_label = "Unpaused " .. c.Names,
-        failed_label = "Failed to unpause " .. c.Names .. ": ",
-      })
-    end
-  elseif action_key == "remove" then
-    for _, c in ipairs(containers) do
-      exec_async({ "docker", "rm", "-f", c.ID }, {
-        notify = notify_opts,
-        info_label = "Removing " .. c.Names .. "...",
-        success_label = "Removed " .. c.Names,
-        failed_label = "Failed to remove " .. c.Names .. ": ",
-      })
-    end
   elseif action_key == "inspect" then
     for _, c in ipairs(containers) do
       term_cmd("docker inspect " .. c.Names .. " | less")
@@ -167,7 +144,8 @@ local function show_action_picker(selected_containers, action_list, on_action)
   })
 end
 
-local function get_containers(filter_args, callback)
+-- Raw container fetcher (no cache). Used internally by get_containers.
+local function fetch_containers_raw(filter_args, callback)
   local cmd = vim.list_extend({ "docker", "ps", "--format", "{{json .}}" }, filter_args)
 
   vim.system(cmd, {}, function(result)
@@ -195,6 +173,14 @@ local function get_containers(filter_args, callback)
   end)
 end
 
+-- Cached container fetcher. TTL 10 s per filter combination.
+local function get_containers(filter_args, callback)
+  local key = "docker.containers." .. table.concat(filter_args, "_")
+  cache.wrap(key, 10000, function(cb)
+    fetch_containers_raw(filter_args, cb)
+  end)(callback)
+end
+
 local function container_preview(c)
   return table.concat({
     "ID          " .. c.ID,
@@ -210,7 +196,11 @@ end
 
 local function open_container_picker()
   local f = CONTAINER_FILTERS[container_filter_idx]
-  vim.notify("Loading containers...", vim.log.levels.INFO, notify_opts)
+  local container_key = "docker.containers." .. table.concat(f.args, "_")
+
+  if not cache.is_cached(container_key) then
+    vim.notify("Loading containers...", vim.log.levels.INFO, notify_opts)
+  end
 
   get_containers(f.args, function(containers)
     if not containers then
@@ -234,7 +224,6 @@ local function open_container_picker()
         RunningFor = c.RunningFor,
         CreatedAt = c.CreatedAt,
         Size = c.Size,
-        _state_icon = state_icon,
         preview = { text = container_preview(c), ft = "text" },
       })
     end
@@ -362,6 +351,9 @@ local function run_image_action(action_key, images)
           info_label = "Starting " .. image_ref(img) .. "...",
           success_label = "Container started",
           failed_label = "Failed to start container: ",
+          on_success = function()
+            cache.invalidate_pattern("docker.containers")
+          end,
         })
       end)
     end)
@@ -372,6 +364,9 @@ local function run_image_action(action_key, images)
         info_label = "Force removing " .. image_ref(img) .. "...",
         success_label = "Removed " .. image_ref(img),
         failed_label = "Failed to remove: ",
+        on_success = function()
+          cache.invalidate("docker.images")
+        end,
       })
     end
   elseif action_key == "tag" then
@@ -390,6 +385,9 @@ local function run_image_action(action_key, images)
         notify = notify_opts,
         success_label = "Tagged as " .. new_tag,
         failed_label = "Failed to tag: ",
+        on_success = function()
+          cache.invalidate("docker.images")
+        end,
       })
     end)
   elseif action_key == "inspect" then
@@ -403,7 +401,8 @@ local function run_image_action(action_key, images)
   end
 end
 
-local function get_images(callback)
+-- Cached image fetcher. TTL 30 s.
+local get_images = cache.wrap("docker.images", 30000, function(callback)
   vim.system({ "docker", "images", "--format", "{{json .}}" }, {}, function(result)
     vim.schedule(function()
       if result.code ~= 0 then
@@ -425,7 +424,7 @@ local function get_images(callback)
       callback(images)
     end)
   end)
-end
+end)
 
 local function image_preview(img)
   return table.concat({
@@ -438,7 +437,9 @@ local function image_preview(img)
 end
 
 function M.docker_images()
-  vim.notify("Loading images...", vim.log.levels.INFO, notify_opts)
+  if not cache.is_cached("docker.images") then
+    vim.notify("Loading images...", vim.log.levels.INFO, notify_opts)
+  end
 
   get_images(function(images)
     if not images then

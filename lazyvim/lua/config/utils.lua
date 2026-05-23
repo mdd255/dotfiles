@@ -102,6 +102,7 @@ function M.term_cmd(cmd)
   vim.cmd("tabnew")
   vim.cmd("LualineRenameTab " .. cmd)
   vim.cmd("terminal " .. cmd)
+  vim.cmd("startinsert")
 end
 
 -- Keymap utility functions
@@ -187,6 +188,20 @@ function M.unmap(lhs, modes)
   end
 end
 
+-- Returns a picker column width clamped between min_cols and max_cols.
+-- @param fraction number  - fraction of the terminal width (0–1)
+-- @param min_cols  number - minimum column count (default 60)
+-- @param max_cols  number - optional maximum column count
+-- @return number
+function M.picker_width(fraction, min_cols, max_cols)
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120 }
+  local w = math.max(min_cols or 60, math.floor(ui.width * fraction))
+  if max_cols then
+    w = math.min(w, max_cols)
+  end
+  return w
+end
+
 function M.exec_async(cmd, opts)
   opts = opts
     or {
@@ -194,7 +209,7 @@ function M.exec_async(cmd, opts)
       info_label = nil,
       success_label = "Command executed",
       failed_label = "Command failed: ",
-      supress_notify = false,
+      suppress_notify = false,
     }
 
   if opts.info_label then
@@ -210,7 +225,7 @@ function M.exec_async(cmd, opts)
           message = message .. "\n" .. cmd_result.stdout
         end
 
-        if not opts.supress_notify then
+        if not opts.suppress_notify then
           vim.notify(message, vim.log.levels.INFO, opts.notify)
         end
 

@@ -6,30 +6,6 @@ return {
     "sindrets/diffview.nvim",
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
-      { "gpr", git.gh_pr_picker, desc = "Github PRs (toggle filter with C-Tab)" },
-      { "gdf", git.get_current_file_history, desc = "Diffview current file history" },
-      { "gdb", git.git_diff_branch, desc = "Diff branch" },
-      { "gpl", git.git_pull, desc = "Git pull" },
-      { "gpu", git.git_push, desc = "Git push" },
-      { "gpc", git.create_pr, desc = "Create PR" },
-      { "gpa", git.gh_switch_account, desc = "Switch GitHub account" },
-      { "gss", git.git_stash_push, desc = "Git stash push" },
-      { "gsp", function() Snacks.picker.git_stash({ confirm = "git_stash_apply" }) end, desc = "Git stash" },
-      { "gsd", git.git_stash_drop, desc = "Git stash drop" },
-      { "gaq", git.git_restore_staged, desc = "Git restore --staged" },
-      { "grh", git.git_reset_hard, desc = "Git reset --hard" },
-      { "grs", git.git_reset_soft, desc = "Git reset --soft" },
-      { "gcm", git.git_commit, desc = "Git commit" },
-      { "gca", git.git_commit_amend, desc = "Git commit amend" },
-      { "gst", git.git_status, desc = "Git status" },
-      { "gaa", git.git_add_all, desc = "Git add all" },
-      { "gap", git.git_restore_all, desc = "Git restore all" },
-      { "gbc", git.git_checkout_branch, desc = "Git checkout branch" },
-      { "gbn", git.git_checkout_new_branch, desc = "Git checkout new branch" },
-      { "gbd", git.git_delete_branch, desc = "Git delete branch" },
-      { "gcp", git.git_cherry_pick, desc = "Git cherry-pick" },
-      { "gcd", git.git_cherry_pick_abort, desc = "Git cherry-pick abort" },
-      { "grv", git.git_revert, desc = "Git revert" },
       { "glo", "<cmd>DiffviewFileHistory<Cr>", desc = "Git log" },
       { "gpf", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
     },
@@ -49,7 +25,8 @@ return {
           return
         end
 
-        local files = view.panel:ordered_file_list()
+        local files = view.panel
+
         local total = #files
         if total == 0 then
           return
@@ -125,7 +102,7 @@ return {
             { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
             { "n", "gct", actions.conflict_choose_all("theirs"), { desc = "Git conflict choose theirs" } },
             { "n", "gca", actions.conflict_choose_all("all"), { desc = "Git conflict choose all" } },
-            { "n", "gcn", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
+            { "n", "gcN", actions.conflict_choose_all("none"), { desc = "Git conflict choose none" } },
             { "n", "gcb", actions.conflict_choose_all("base"), { desc = "Git conflict choose base" } },
           },
           file_panel = {
