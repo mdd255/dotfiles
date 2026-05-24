@@ -4,12 +4,12 @@ local git = require("config.git-functions")
 return {
   {
     "sindrets/diffview.nvim",
+    lazy = false,
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
       { "glo", "<cmd>DiffviewFileHistory<Cr>", desc = "Git log" },
       { "gpf", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
     },
-
     config = function()
       local actions = require("diffview.actions")
 
