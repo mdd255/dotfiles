@@ -387,22 +387,22 @@ local PR_FILTERS = {
 
 local pr_filter_idx = 1
 
-local PR_TTL_MS = 60 * 1000 -- 60 s
+local PR_TTL_MS = 120 * 1000 -- 120 s
 
 local MERGE_STATE_ICONS = {
-  CLEAN = "✓",
-  DIRTY = "✗",
-  BEHIND = "↓",
-  BLOCKED = "⊘",
-  UNSTABLE = "⚠",
-  DRAFT = "",
-  UNKNOWN = "?",
+  CLEAN = "",
+  DIRTY = "󰄰",
+  BEHIND = "󰄰",
+  BLOCKED = "",
+  UNSTABLE = "󰄰",
+  DRAFT = "󰄰",
+  UNKNOWN = "󰄰",
 }
 
 local REVIEW_DECISION_ICONS = {
-  APPROVED = "✓",
-  CHANGES_REQUESTED = "✗",
-  REVIEW_REQUIRED = "",
+  APPROVED = " ",
+  CHANGES_REQUESTED = " ",
+  REVIEW_REQUIRED = " ",
 }
 
 local function make_pr_fetcher(filter)
@@ -477,8 +477,27 @@ local function format_pr_items(prs)
         )
       or "—"
 
+    local state_badges = {
+      CLEAN = "> ✅ **CLEAN**",
+      DIRTY = "> ❌ **DIRTY**",
+      BLOCKED = "> ⛔ **BLOCKED**",
+      BEHIND = "> ⬇  **BEHIND**",
+      UNSTABLE = "> ⚠  **UNSTABLE**",
+    }
+    local review_badges = {
+      APPROVED = "✅ APPROVED",
+      CHANGES_REQUESTED = "❌ CHANGES REQUESTED",
+      REVIEW_REQUIRED = "⏳ REVIEW REQUIRED",
+    }
+    local state_str = state_badges[pr.mergeStateStatus or ""]
+      or ("> ❓ **" .. (pr.mergeStateStatus or "UNKNOWN") .. "**")
+    local review_str = review_badges[pr.reviewDecision or ""] or "💬 no review"
+    local draft_str = pr.isDraft and "  ·  📝 **DRAFT**" or ""
+    local status_line = state_str .. "  ·  " .. review_str .. draft_str
+
     local preview_text = string.format(
-      "# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s (%s)  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+      "%s\n\n# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s (%s)  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+      status_line,
       pr.number,
       pr.title,
       pr.author.login,
@@ -527,6 +546,22 @@ local PR_ACTIONS = {
   { text = " Close PR", key = "close" },
   { text = " Convert to draft", key = "to_draft" },
   { text = " Ready to review", key = "ready" },
+}
+
+local PR_ACTION_HLS = {
+  checkout = "DiagnosticOk",
+  browser = "DiagnosticInfo",
+  diff = "DiagnosticInfo",
+  merge = "DiagnosticWarn",
+  squash = "DiagnosticWarn",
+  approve = "DiagnosticOk",
+  comment = "Function",
+  edit_title = "Function",
+  edit_body = "Function",
+  edit_reviewers = "Function",
+  close = "DiagnosticError",
+  to_draft = "Comment",
+  ready = "DiagnosticOk",
 }
 
 local function handle_pr_action(action_key, pr)
@@ -697,36 +732,72 @@ local function show_pr_actions(pr)
       local title = string.format(" #%d · %s %s%s", pr.number, merge_icon, pr.mergeStateStatus or "?", unresolved_str)
 
       local title_hl = ({
-        CLEAN    = "DiagnosticOk",
-        DIRTY    = "DiagnosticError",
-        BLOCKED  = "DiagnosticError",
-        BEHIND   = "DiagnosticWarn",
+        CLEAN = "DiagnosticOk",
+        DIRTY = "DiagnosticError",
+        BLOCKED = "DiagnosticError",
+        BEHIND = "DiagnosticWarn",
         UNSTABLE = "DiagnosticWarn",
       })[pr.mergeStateStatus or ""] or "DiagnosticInfo"
       if pr.isDraft then
         title_hl = "Comment"
       end
 
+      local labels_str = #pr.labels > 0
+          and table.concat(
+            vim.tbl_map(function(l)
+              return l.name
+            end, pr.labels),
+            ", "
+          )
+        or "—"
+
+      local pr_preview = string.format(
+        "# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+        pr.number,
+        pr.title,
+        pr.author.login,
+        pr.headRefName,
+        pr.baseRefName,
+        pr.mergeStateStatus or "UNKNOWN",
+        pr.reviewDecision or "none",
+        labels_str,
+        pr.additions,
+        pr.deletions,
+        pr.changedFiles,
+        pr.body ~= "" and pr.body or "_No description_"
+      )
+
       local items = {}
       for _, a in ipairs(PR_ACTIONS) do
-        table.insert(items, { text = a.text, key = a.key })
+        table.insert(items, {
+          text = a.text,
+          key = a.key,
+          preview = { text = pr_preview, ft = "markdown" },
+        })
       end
 
       snacks.picker.pick({
         finder = function()
           return items
         end,
-        format = "text",
+        format = function(item, _)
+          return { { item.text, PR_ACTION_HLS[item.key] or "Normal" } }
+        end,
+        preview = "preview",
         layout = {
           layout = {
             title = { { title, title_hl } },
             box = "vertical",
             position = "float",
-            width = picker_width(0.25, 45),
+            width = picker_width(0.75, 120),
             height = 0.65,
             border = "rounded",
             { win = "input", height = 1, border = "bottom" },
-            { win = "list" },
+            {
+              box = "horizontal",
+              { win = "list", width = 0.35 },
+              { win = "preview", border = "left" },
+            },
           },
         },
         confirm = function(picker, item)
@@ -759,32 +830,36 @@ local function open_gh_pr()
       end,
       format = function(item, _)
         local pr = item._pr
+
         local status_hl = ({
-          CLEAN    = "DiagnosticOk",
-          DIRTY    = "DiagnosticError",
-          BLOCKED  = "DiagnosticError",
-          BEHIND   = "DiagnosticWarn",
+          CLEAN = "DiagnosticOk",
+          DIRTY = "DiagnosticError",
+          BLOCKED = "DiagnosticError",
+          BEHIND = "DiagnosticWarn",
           UNSTABLE = "DiagnosticWarn",
         })[pr.mergeStateStatus or ""] or "Comment"
+
         if pr.isDraft then
           status_hl = "Comment"
         end
+
         local review_hl = ({
-          APPROVED          = "DiagnosticOk",
+          APPROVED = "DiagnosticOk",
           CHANGES_REQUESTED = "DiagnosticError",
-          REVIEW_REQUIRED   = "DiagnosticWarn",
+          REVIEW_REQUIRED = "DiagnosticWarn",
         })[pr.reviewDecision or ""] or "Comment"
-        local draft_icon  = pr.isDraft and " " or " "
-        local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision or ""] or ""
-        local merge_icon  = MERGE_STATE_ICONS[pr.mergeStateStatus or ""] or "?"
+
+        local draft_icon = pr.isDraft and " " or " "
+        local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision] or " "
+        local merge_icon = MERGE_STATE_ICONS[pr.mergeStateStatus] or "?"
+
         return {
-          { draft_icon .. " ",                                   status_hl },
-          { review_icon .. " ",                                  review_hl },
-          { merge_icon .. " ",                                   status_hl },
-          { string.format("#%-5d ", pr.number),                  "DiagnosticInfo" },
-          { string.format("%-38s", pr.title:sub(1, 36)),         "Normal" },
-          { string.format("  %-20s", pr.headRefName:sub(1, 18)), "Comment" },
-          { "  " .. pr.author.login,                             "Function" },
+          { draft_icon .. " ", status_hl },
+          { merge_icon .. " ", status_hl },
+          { string.format("%-5d ", pr.number), "DiagnosticInfo" },
+          { string.format("%-40s  ", pr.title:sub(1, 40)), "Normal" },
+          { review_icon .. " ", review_hl },
+          { " " .. pr.author.login:sub(1, 15), "Function" },
         }
       end,
       preview = "preview",
@@ -1034,6 +1109,8 @@ function M.git_add_all()
 end
 
 function M.git_checkout_branch()
+  local current_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
   local function checkout(branch)
     exec_async({ "git", "checkout", branch }, {
       notify = notify_opts,
@@ -1058,6 +1135,9 @@ function M.git_checkout_branch()
         return items
       end,
       format = function(item, _)
+        if item.text == current_branch then
+          return { { item.text, "DiagnosticOk" } }
+        end
         local parts = vim.split(item.text, "/")
         if #parts > 1 then
           local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"

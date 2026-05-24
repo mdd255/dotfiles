@@ -24,12 +24,6 @@ local function format_container_ports(str)
   return ports
 end
 
-local function container_ref(c)
-  local state_icon = (c.State == "running") and " " or " "
-  local label = state_icon .. (c.Names or c.ID)
-  return label
-end
-
 -- ── Containers ────────────────────────────────────────────────────────────────
 
 -- Forward declarations — referenced in action callbacks before their definitions.
@@ -204,15 +198,14 @@ end
 
 local function container_preview(c)
   return table.concat({
-    "id:          " .. c.ID,
-    "name:        " .. c.Names,
-    "image:       " .. c.Image,
-    "size:        " .. c.Size,
-    "status:      " .. c.Status,
-    "state:       " .. c.State,
-    "ports:       " .. c.Ports,
-    "running_for: " .. c.RunningFor,
-    "created_at:  " .. c.CreatedAt,
+    "ID:          " .. c.ID,
+    "Name:        " .. c.Names,
+    "Image:       " .. c.Image,
+    "Size:        " .. c.Size,
+    "Status:      " .. c.Status,
+    "State:       " .. c.State,
+    "Ports:       " .. c.Ports,
+    "Date:        " .. c.RunningFor .. " (" .. c.CreatedAt .. ")",
   }, "\n")
 end
 
@@ -237,7 +230,7 @@ open_container_picker = function(filter_idx)
       c.Ports = format_container_ports(c.Ports)
 
       table.insert(items, {
-        text = string.format("%-28s %-9s %s", container_ref(c), c.Size, c.Status or ""),
+        text = string.format("%-28s %-9s %s", c.Names or c.ID, c.Size, c.Status or ""),
         Names = c.Names,
         ID = c.ID,
         Image = c.Image,
@@ -256,14 +249,22 @@ open_container_picker = function(filter_idx)
         return items
       end,
       format = function(item, _)
-        local state_hl = item.State == "running" and "DiagnosticOk" or "DiagnosticWarn"
-        local name_col = string.format("%-28s", container_ref(item))
+        local state_hl = ({
+          running = "DiagnosticOk",
+          created = "DiagnosticInfo",
+          restarting = "DiagnosticWarn",
+          paused = "DiagnosticWarn",
+          exited = "Comment",
+          removing = "DiagnosticError",
+          dead = "DiagnosticError",
+        })[item.State] or "Comment"
+        local name_col = string.format("%-28s", item.Names or item.ID)
         local size_col = string.format("%-9s", item.Size or "")
         local status_col = item.Status or ""
         return {
           { name_col, state_hl },
-          { size_col, "Comment" },
-          { status_col, "String" },
+          { size_col, "Text" },
+          { status_col, "Text" },
         }
       end,
       preview = "preview",
@@ -466,12 +467,11 @@ end)
 
 local function image_preview(img)
   return table.concat({
-    "id:           " .. img.ID,
-    "repository:   " .. img.Repository,
-    "tag:          " .. img.Tag,
-    "size:         " .. img.Size,
-    "created_since: " .. img.CreatedSince,
-    "created_at:   " .. img.CreatedAt,
+    "ID:           " .. img.ID,
+    "Repository:   " .. img.Repository,
+    "Tag:          " .. img.Tag,
+    "Size:         " .. img.Size,
+    "Date:         " .. img.CreatedSince .. " (" .. img.CreatedAt .. ")",
   }, "\n")
 end
 
@@ -514,8 +514,8 @@ open_image_picker = function()
         local date_col = item.CreatedSince or ""
         return {
           { name_col, "Function" },
-          { size_col, "Comment" },
-          { date_col, "DiagnosticInfo" },
+          { size_col, "Text" },
+          { date_col, "Text" },
         }
       end,
       preview = "preview",
