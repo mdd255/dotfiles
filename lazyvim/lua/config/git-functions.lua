@@ -125,7 +125,7 @@ end
 -- Shared stash picker layout factory.
 -- @param title string - picker title
 -- @param on_confirm function - called with selected item
-local function stash_picker(title, on_confirm)
+local function stash_picker(title, on_confirm, title_hl)
   get_stashes()(function(items)
     if not items then
       return
@@ -148,7 +148,7 @@ local function stash_picker(title, on_confirm)
       end,
       layout = {
         layout = {
-          title = title,
+          title = { { " " .. title, title_hl or "DiagnosticInfo" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.7, 80),
@@ -255,6 +255,130 @@ local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(c
   end)
 end)
 
+-- ── Shared PR helpers (module-level so PR picker + create_pr both use them) ───
+
+-- Multi-line floating text editor. default_lines: optional table of strings.
+local function prompt_body(default_lines, callback)
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].filetype = "markdown"
+
+  if default_lines and #default_lines > 0 then
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, default_lines)
+  end
+
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
+  local width = math.floor(ui.width * 0.8)
+  local height = math.floor(ui.height * 0.7)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((ui.height - height) / 2),
+    col = math.floor((ui.width - width) / 2),
+    style = "minimal",
+    border = "rounded",
+    title = " PR Body — <C-CR> confirm, Q cancel ",
+    title_pos = "center",
+  })
+
+  local done = false
+
+  local function finish(submit)
+    if done then
+      return
+    end
+
+    done = true
+
+    local body = ""
+
+    if submit then
+      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+      body = table.concat(lines, "\n")
+    end
+
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_close(win, true)
+    end
+
+    callback(body)
+  end
+
+  local map_opts = { buffer = buf, nowait = true, silent = true }
+
+  vim.keymap.set({ "n", "i" }, "<C-CR>", function()
+    finish(true)
+  end, map_opts)
+
+  vim.keymap.set("n", "q", function()
+    finish(false)
+  end, map_opts)
+end
+
+-- Multi-select reviewer picker. title: optional string override.
+local function select_reviewers(title, callback)
+  if not cache.is_cached("gh.collaborators") then
+    vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
+  end
+
+  local function show_picker(items)
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        return { { item.text, "Function" } }
+      end,
+      layout = {
+        layout = {
+          title = { { title or " Select reviewers", "Function" } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.2, 60),
+          height = 0.3,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      multi = { "confirm" },
+      actions = {
+        select_and_clear = function(picker)
+          picker.list:select()
+          vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
+        end,
+      },
+      win = {
+        input = {
+          keys = {
+            ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
+          },
+        },
+      },
+      confirm = function(picker)
+        local selected = picker:selected()
+        local reviewers = {}
+
+        for _, sel in ipairs(selected) do
+          table.insert(reviewers, sel.text)
+        end
+
+        picker:close()
+
+        vim.schedule(function()
+          callback(table.concat(reviewers, ","))
+        end)
+      end,
+    })
+  end
+
+  fetch_collaborators(show_picker)
+end
+
+-- ── PR picker ─────────────────────────────────────────────────────────────────
+
 local PR_FILTERS = {
   { name = "My PRs", search = "author:@me" },
   { name = "Review requested", search = "user-review-requested:@me" },
@@ -263,28 +387,454 @@ local PR_FILTERS = {
 
 local pr_filter_idx = 1
 
+local PR_TTL_MS = 60 * 1000 -- 60 s
+
+local MERGE_STATE_ICONS = {
+  CLEAN = "✓",
+  DIRTY = "✗",
+  BEHIND = "↓",
+  BLOCKED = "⊘",
+  UNSTABLE = "⚠",
+  DRAFT = "",
+  UNKNOWN = "?",
+}
+
+local REVIEW_DECISION_ICONS = {
+  APPROVED = "✓",
+  CHANGES_REQUESTED = "✗",
+  REVIEW_REQUIRED = "",
+}
+
+local function make_pr_fetcher(filter)
+  return function(callback)
+    local cmd = {
+      "gh",
+      "pr",
+      "list",
+      "--limit",
+      "50",
+      "--json",
+      "number,title,author,headRefName,baseRefName,isDraft,createdAt,updatedAt,reviewDecision,labels,url,body,additions,deletions,changedFiles,mergeable,mergeStateStatus",
+    }
+
+    if filter.search and filter.search ~= "" then
+      vim.list_extend(cmd, { "--search", filter.search })
+    end
+
+    vim.system(cmd, {}, function(result)
+      vim.schedule(function()
+        if result.code ~= 0 then
+          vim.notify("Failed to list PRs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+
+        local ok, data = pcall(vim.json.decode, result.stdout or "[]")
+
+        if not ok or type(data) ~= "table" then
+          vim.notify("Failed to parse PR list", vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+
+        callback(data)
+      end)
+    end)
+  end
+end
+
+local gh_pr_fetchers = {}
+
+for _, f in ipairs(PR_FILTERS) do
+  local key = "gh.prs." .. (f.search ~= "" and f.search or "all")
+  gh_pr_fetchers[f.search ~= "" and f.search or "all"] = cache.wrap(key, PR_TTL_MS, make_pr_fetcher(f))
+end
+
+local function get_gh_prs(filter, callback)
+  local key = filter.search ~= "" and filter.search or "all"
+
+  if not cache.is_cached("gh.prs." .. key) then
+    vim.notify("Loading PRs...", vim.log.levels.INFO, notify_opts)
+  end
+
+  gh_pr_fetchers[key](callback)
+end
+
+local function format_pr_items(prs)
+  local items = {}
+
+  for _, pr in ipairs(prs) do
+    local draft_icon = pr.isDraft and " " or " "
+    local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision or ""] or " "
+    local merge_icon = MERGE_STATE_ICONS[pr.mergeStateStatus or ""] or "?"
+
+    local labels_str = #pr.labels > 0
+        and table.concat(
+          vim.tbl_map(function(l)
+            return l.name
+          end, pr.labels),
+          ", "
+        )
+      or "—"
+
+    local preview_text = string.format(
+      "# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s (%s)  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+      pr.number,
+      pr.title,
+      pr.author.login,
+      pr.headRefName,
+      pr.baseRefName,
+      pr.mergeStateStatus or "UNKNOWN",
+      pr.mergeable or "UNKNOWN",
+      pr.reviewDecision or "none",
+      labels_str,
+      pr.additions,
+      pr.deletions,
+      pr.changedFiles,
+      pr.body ~= "" and pr.body or "_No description_"
+    )
+
+    table.insert(items, {
+      text = string.format(
+        "%s %s %s #%-5d %-38s  %-20s  %s",
+        draft_icon,
+        review_icon,
+        merge_icon,
+        pr.number,
+        pr.title:sub(1, 36),
+        pr.headRefName:sub(1, 18),
+        pr.author.login
+      ),
+      _pr = pr,
+      preview = { text = preview_text, ft = "markdown" },
+    })
+  end
+
+  return items
+end
+
+local PR_ACTIONS = {
+  { text = "󰿄 Checkout", key = "checkout" },
+  { text = "󰊯 Open browser", key = "browser" },
+  { text = " View diff", key = "diff" },
+  { text = " Merge", key = "merge" },
+  { text = " Merge squash", key = "squash" },
+  { text = " Approve", key = "approve" },
+  { text = " Comment", key = "comment" },
+  { text = " Edit title", key = "edit_title" },
+  { text = " Edit body", key = "edit_body" },
+  { text = " Edit reviewers", key = "edit_reviewers" },
+  { text = " Close PR", key = "close" },
+  { text = " Convert to draft", key = "to_draft" },
+  { text = " Ready to review", key = "ready" },
+}
+
+local function handle_pr_action(action_key, pr)
+  local id = tostring(pr.number)
+  local label = "#" .. id .. " " .. pr.title
+
+  if action_key == "checkout" then
+    exec_async({ "gh", "pr", "checkout", id }, {
+      notify = notify_opts,
+      info_label = "Checking out " .. label .. "...",
+      success_label = "Checked out: " .. label,
+      failed_label = "Failed to checkout: ",
+    })
+  elseif action_key == "browser" then
+    exec_async({ "gh", "pr", "view", id, "--web" }, {
+      notify = notify_opts,
+      suppress_notify = true,
+      failed_label = "Failed to open browser: ",
+    })
+  elseif action_key == "diff" then
+    exec_async({ "gh", "pr", "checkout", id }, {
+      notify = notify_opts,
+      suppress_notify = true,
+      failed_label = "Failed to checkout for diff: ",
+      on_success = function()
+        vim.schedule(function()
+          vim.cmd("DiffviewOpen " .. pr.baseRefName .. "...HEAD")
+        end)
+      end,
+    })
+  elseif action_key == "merge" then
+    exec_async({ "gh", "pr", "merge", id, "--merge" }, {
+      notify = notify_opts,
+      info_label = "Merging " .. label .. "...",
+      success_label = "Merged: " .. label,
+      failed_label = "Failed to merge: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "squash" then
+    exec_async({ "gh", "pr", "merge", id, "--squash" }, {
+      notify = notify_opts,
+      info_label = "Squash merging " .. label .. "...",
+      success_label = "Squash merged: " .. label,
+      failed_label = "Failed to squash merge: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "approve" then
+    exec_async({ "gh", "pr", "review", id, "--approve" }, {
+      notify = notify_opts,
+      success_label = "Approved: " .. label,
+      failed_label = "Failed to approve: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "comment" then
+    prompt_body({}, function(body)
+      if body == "" then
+        return
+      end
+      exec_async({ "gh", "pr", "comment", id, "--body", body }, {
+        notify = notify_opts,
+        success_label = "Comment added to: " .. label,
+        failed_label = "Failed to add comment: ",
+      })
+    end)
+  elseif action_key == "edit_title" then
+    snacks.input({ prompt = "Edit title: ", default = pr.title }, function(title)
+      if not title or title == "" then
+        return
+      end
+      exec_async({ "gh", "pr", "edit", id, "--title", title }, {
+        notify = notify_opts,
+        success_label = "Title updated: " .. label,
+        failed_label = "Failed to update title: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.prs")
+        end,
+      })
+    end)
+  elseif action_key == "edit_body" then
+    local default_lines = {}
+    for line in (pr.body or ""):gmatch("[^\n]*") do
+      table.insert(default_lines, line)
+    end
+    prompt_body(default_lines, function(body)
+      exec_async({ "gh", "pr", "edit", id, "--body", body }, {
+        notify = notify_opts,
+        success_label = "Body updated: " .. label,
+        failed_label = "Failed to update body: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.prs")
+        end,
+      })
+    end)
+  elseif action_key == "edit_reviewers" then
+    select_reviewers("Edit reviewers · " .. label, function(reviewers)
+      if reviewers == "" then
+        return
+      end
+      exec_async({ "gh", "pr", "edit", id, "--add-reviewer", reviewers }, {
+        notify = notify_opts,
+        success_label = "Reviewers updated: " .. label,
+        failed_label = "Failed to update reviewers: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.prs")
+        end,
+      })
+    end)
+  elseif action_key == "close" then
+    exec_async({ "gh", "pr", "close", id }, {
+      notify = notify_opts,
+      info_label = "Closing " .. label .. "...",
+      success_label = "Closed: " .. label,
+      failed_label = "Failed to close: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "to_draft" then
+    exec_async({ "gh", "pr", "ready", id, "--undo" }, {
+      notify = notify_opts,
+      success_label = "Converted to draft: " .. label,
+      failed_label = "Failed to convert to draft: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "ready" then
+    exec_async({ "gh", "pr", "ready", id }, {
+      notify = notify_opts,
+      success_label = "Marked ready for review: " .. label,
+      failed_label = "Failed to mark ready: ",
+      on_success = function()
+        cache.invalidate_pattern("gh.prs")
+      end,
+    })
+  elseif action_key == "copy_url" then
+    vim.fn.setreg("+", pr.url)
+    vim.notify("Copied: " .. pr.url, vim.log.levels.INFO, notify_opts)
+  end
+end
+
+-- Fetch unresolved comment count, then show action submenu.
+local function show_pr_actions(pr)
+  vim.system({ "gh", "pr", "view", tostring(pr.number), "--json", "reviewThreads" }, {}, function(result)
+    vim.schedule(function()
+      local unresolved = 0
+
+      if result.code == 0 then
+        local ok, data = pcall(vim.json.decode, result.stdout or "{}")
+
+        if ok and data and data.reviewThreads then
+          for _, t in ipairs(data.reviewThreads) do
+            if not t.isResolved and not t.isOutdated then
+              unresolved = unresolved + 1
+            end
+          end
+        end
+      end
+
+      local merge_icon = MERGE_STATE_ICONS[pr.mergeStateStatus or ""] or "?"
+      local unresolved_str = unresolved > 0 and (" · " .. unresolved .. " unresolved 󰅺") or ""
+      local title = string.format(" #%d · %s %s%s", pr.number, merge_icon, pr.mergeStateStatus or "?", unresolved_str)
+
+      local title_hl = ({
+        CLEAN    = "DiagnosticOk",
+        DIRTY    = "DiagnosticError",
+        BLOCKED  = "DiagnosticError",
+        BEHIND   = "DiagnosticWarn",
+        UNSTABLE = "DiagnosticWarn",
+      })[pr.mergeStateStatus or ""] or "DiagnosticInfo"
+      if pr.isDraft then
+        title_hl = "Comment"
+      end
+
+      local items = {}
+      for _, a in ipairs(PR_ACTIONS) do
+        table.insert(items, { text = a.text, key = a.key })
+      end
+
+      snacks.picker.pick({
+        finder = function()
+          return items
+        end,
+        format = "text",
+        layout = {
+          layout = {
+            title = { { title, title_hl } },
+            box = "vertical",
+            position = "float",
+            width = picker_width(0.25, 45),
+            height = 0.65,
+            border = "rounded",
+            { win = "input", height = 1, border = "bottom" },
+            { win = "list" },
+          },
+        },
+        confirm = function(picker, item)
+          picker:close()
+
+          if item then
+            vim.schedule(function()
+              handle_pr_action(item.key, pr)
+            end)
+          end
+        end,
+      })
+    end)
+  end)
+end
+
 local function open_gh_pr()
   local f = PR_FILTERS[pr_filter_idx]
 
-  snacks.picker.gh_pr({
-    search = f.search,
-    title = "  PRs · " .. f.name,
-    win = {
-      input = {
-        keys = {
-          ["<C-o>"] = {
-            function(picker)
-              pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
-              picker:close()
-              vim.schedule(open_gh_pr)
-            end,
-            mode = { "n", "i" },
-            desc = "Cycle PR filter",
+  get_gh_prs(f, function(prs)
+    if not prs then
+      return
+    end
+
+    local items = format_pr_items(prs)
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        local pr = item._pr
+        local status_hl = ({
+          CLEAN    = "DiagnosticOk",
+          DIRTY    = "DiagnosticError",
+          BLOCKED  = "DiagnosticError",
+          BEHIND   = "DiagnosticWarn",
+          UNSTABLE = "DiagnosticWarn",
+        })[pr.mergeStateStatus or ""] or "Comment"
+        if pr.isDraft then
+          status_hl = "Comment"
+        end
+        local review_hl = ({
+          APPROVED          = "DiagnosticOk",
+          CHANGES_REQUESTED = "DiagnosticError",
+          REVIEW_REQUIRED   = "DiagnosticWarn",
+        })[pr.reviewDecision or ""] or "Comment"
+        local draft_icon  = pr.isDraft and " " or " "
+        local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision or ""] or ""
+        local merge_icon  = MERGE_STATE_ICONS[pr.mergeStateStatus or ""] or "?"
+        return {
+          { draft_icon .. " ",                                   status_hl },
+          { review_icon .. " ",                                  review_hl },
+          { merge_icon .. " ",                                   status_hl },
+          { string.format("#%-5d ", pr.number),                  "DiagnosticInfo" },
+          { string.format("%-38s", pr.title:sub(1, 36)),         "Normal" },
+          { string.format("  %-20s", pr.headRefName:sub(1, 18)), "Comment" },
+          { "  " .. pr.author.login,                             "Function" },
+        }
+      end,
+      preview = "preview",
+      layout = {
+        layout = {
+          title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.9, 120),
+          height = 0.75,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          {
+            box = "horizontal",
+            { win = "list", width = 0.5 },
+            { win = "preview", border = "left" },
           },
         },
       },
-    },
-  })
+      actions = {
+        cycle_filter = function(picker)
+          pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
+          picker:close()
+          vim.schedule(open_gh_pr)
+        end,
+        refresh = function(picker)
+          cache.invalidate_pattern("gh.prs")
+          picker:close()
+          vim.schedule(open_gh_pr)
+        end,
+      },
+      win = {
+        input = {
+          keys = {
+            ["<C-o>"] = { "cycle_filter", mode = { "i", "n" }, desc = "Cycle PR filter" },
+            ["<C-r>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh PRs" },
+          },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+
+        if item then
+          vim.schedule(function()
+            show_pr_actions(item._pr)
+          end)
+        end
+      end,
+    })
+  end)
 end
 
 function M.gh_pr_picker()
@@ -322,10 +872,12 @@ function M.gh_switch_account()
         finder = function()
           return items
         end,
-        format = "text",
+        format = function(item, _)
+          return { { item.text, "Function" } }
+        end,
         layout = {
           layout = {
-            title = "GH Account (" .. current_login .. ")",
+            title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
             box = "vertical",
             position = "float",
             width = picker_width(0.2, 60),
@@ -398,123 +950,6 @@ function M.create_pr()
     end)
   end
 
-  -- Helper function: Prompt for body (multi-line floating textbox)
-  local function prompt_body(callback)
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.bo[buf].bufhidden = "wipe"
-    vim.bo[buf].filetype = "markdown"
-
-    local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
-    local width = math.floor(ui.width * 0.8)
-    local height = math.floor(ui.height * 0.7)
-
-    local win = vim.api.nvim_open_win(buf, true, {
-      relative = "editor",
-      width = width,
-      height = height,
-      row = math.floor((ui.height - height) / 2),
-      col = math.floor((ui.width - width) / 2),
-      style = "minimal",
-      border = "rounded",
-      title = " PR Body — <C-CR> confirm, Q cancel ",
-      title_pos = "center",
-    })
-
-    local done = false
-
-    local function finish(submit)
-      if done then
-        return
-      end
-
-      done = true
-
-      local body = ""
-
-      if submit then
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        body = table.concat(lines, "\n")
-      end
-
-      if vim.api.nvim_win_is_valid(win) then
-        vim.api.nvim_win_close(win, true)
-      end
-
-      callback(body)
-    end
-
-    local map_opts = { buffer = buf, nowait = true, silent = true }
-
-    vim.keymap.set({ "n", "i" }, "<C-CR>", function()
-      finish(true)
-    end, map_opts)
-
-    vim.keymap.set("n", "q", function()
-      finish(false)
-    end, map_opts)
-  end
-
-  -- Helper function: Select reviewers (multi-select via Snacks picker).
-  -- Collaborators are cached (5 h TTL) to avoid repeated slow gh api calls.
-  local function select_reviewers(callback)
-    if not cache.is_cached("gh.collaborators") then
-      vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
-    end
-
-    local function show_picker(items)
-      snacks.picker.pick({
-        finder = function()
-          return items
-        end,
-        format = function(item, _)
-          return { { item.text, "Function" } }
-        end,
-        layout = {
-          layout = {
-            title = "Select reviewers",
-            box = "vertical",
-            position = "float",
-            width = picker_width(0.2, 60),
-            height = 0.3,
-            border = "rounded",
-            { win = "input", height = 1, border = "bottom" },
-            { win = "list" },
-          },
-        },
-        multi = { "confirm" },
-        actions = {
-          select_and_clear = function(picker)
-            picker.list:select()
-            vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-          end,
-        },
-        win = {
-          input = {
-            keys = {
-              ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
-            },
-          },
-        },
-        confirm = function(picker)
-          local selected = picker:selected()
-          local reviewers = {}
-
-          for _, sel in ipairs(selected) do
-            table.insert(reviewers, sel.text)
-          end
-
-          picker:close()
-
-          vim.schedule(function()
-            callback(table.concat(reviewers, ","))
-          end)
-        end,
-      })
-    end
-
-    fetch_collaborators(show_picker)
-  end
-
   -- Helper function: Prompt for label
   local function prompt_label(callback)
     require("snacks").input({ prompt = "Label (optional): ", default = "" }, function(label)
@@ -574,9 +1009,9 @@ function M.create_pr()
     pr_data.base = base
     prompt_title(function(title)
       pr_data.title = title
-      prompt_body(function(body)
+      prompt_body({}, function(body)
         pr_data.body = body
-        select_reviewers(function(reviewers)
+        select_reviewers("Select reviewers", function(reviewers)
           pr_data.reviewers = reviewers
           prompt_label(function(label)
             pr_data.label = label
@@ -636,7 +1071,7 @@ function M.git_checkout_branch()
       end,
       layout = {
         layout = {
-          title = "Select branch",
+          title = { { " Select branch", "DiagnosticInfo" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.7, 80),
@@ -702,7 +1137,7 @@ function M.git_delete_branch()
       end,
       layout = {
         layout = {
-          title = "Delete branch",
+          title = { { " Delete branch", "DiagnosticError" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.7, 80),
@@ -813,7 +1248,7 @@ function M.git_stash_apply()
       success_label = "Stash applied: " .. item.ref,
       failed_label = "Failed to apply stash: ",
     })
-  end)
+  end, "DiagnosticOk")
 end
 
 function M.git_stash_drop()
@@ -826,7 +1261,7 @@ function M.git_stash_drop()
         vim.schedule(M.git_stash_drop)
       end,
     })
-  end)
+  end, "DiagnosticError")
 end
 
 function M.git_reset_hard()

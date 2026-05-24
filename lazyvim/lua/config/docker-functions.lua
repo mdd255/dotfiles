@@ -52,6 +52,7 @@ local CONTAINER_ACTIONS = {
   { text = "󰏤 pause", key = "pause" },
   { text = " unpause", key = "unpause" },
   { text = " remove", key = "remove" },
+  { text = "✏ rename", key = "rename" },
   { text = " inspect", key = "inspect" },
 }
 
@@ -109,6 +110,23 @@ local function run_container_action(action_key, containers)
     for _, c in ipairs(containers) do
       term_cmd("docker inspect " .. c.Names .. " | less")
     end
+  elseif action_key == "rename" then
+    for _, c in ipairs(containers) do
+      snacks.input({ prompt = "Rename " .. c.Names .. ": ", default = c.Names }, function(new_name)
+        if not new_name or new_name == "" or new_name == c.Names then
+          return
+        end
+        exec_async({ "docker", "rename", c.Names, new_name }, {
+          notify = notify_opts,
+          success_label = "Renamed " .. c.Names .. " → " .. new_name,
+          failed_label = "Failed to rename: ",
+          on_success = function()
+            cache.invalidate_pattern("docker.containers")
+            vim.schedule(open_container_picker)
+          end,
+        })
+      end)
+    end
   end
 end
 
@@ -126,7 +144,7 @@ local function show_action_picker(selected_containers, action_list, on_action)
     format = "text",
     layout = {
       layout = {
-        title = "Action",
+        title = { { " Action", "DiagnosticInfo" } },
         box = "vertical",
         position = "float",
         width = picker_width(0.2, 40),
@@ -251,7 +269,7 @@ open_container_picker = function(filter_idx)
       preview = "preview",
       layout = {
         layout = {
-          title = "  Containers · " .. f.name,
+          title = { { "  Containers · " .. f.name, "DiagnosticInfo" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.9, 100),
@@ -503,7 +521,7 @@ open_image_picker = function()
       preview = "preview",
       layout = {
         layout = {
-          title = "  Images",
+          title = { { "  Images", "DiagnosticInfo" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.85, 100),
@@ -632,7 +650,7 @@ local function show_compose_picker(title, options, on_select)
 end
 
 function M.docker_compose_up()
-  show_compose_picker("  Compose Up", COMPOSE_UP_OPTIONS, function(opt)
+  show_compose_picker({ { "  Compose Up", "DiagnosticOk" } }, COMPOSE_UP_OPTIONS, function(opt)
     local is_detached = vim.tbl_contains(opt.args, "-d")
     local base_args = vim.list_extend({ "docker", "compose", "up" }, opt.args)
 
@@ -650,7 +668,7 @@ function M.docker_compose_up()
 end
 
 function M.docker_compose_down()
-  show_compose_picker("  Compose Down", COMPOSE_DOWN_OPTIONS, function(opt)
+  show_compose_picker({ { "  Compose Down", "DiagnosticWarn" } }, COMPOSE_DOWN_OPTIONS, function(opt)
     local args = vim.list_extend({ "docker", "compose", "down" }, opt.args)
 
     exec_async(args, {

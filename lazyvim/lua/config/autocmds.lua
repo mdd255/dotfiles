@@ -113,6 +113,6 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
     -- Runs after a short delay to not compete with session restore I/O.
     vim.defer_fn(function()
       require("config.git-functions").warm_gh_cache()
-    end, 2000)
+    end, 10000)
   end,
 })
