@@ -6,7 +6,7 @@ local snacks = require("snacks")
 local M = {}
 
 local cache = require("config.cache")
-local CACHE_TTL_MS = 60000 -- 60 s in ms
+local CACHE_TTL_MS = 300000 -- 5 min in ms
 
 local notify_opts = { title = "GH Actions" }
 
@@ -384,6 +384,11 @@ local function open_actions_picker()
           picker:close()
           vim.schedule(open_actions_picker)
         end,
+        refresh = function(picker)
+          cache.invalidate_pattern("gh.runs")
+          picker:close()
+          vim.schedule(open_actions_picker)
+        end,
       },
       win = {
         input = {
@@ -393,6 +398,7 @@ local function open_actions_picker()
               mode = { "i", "n" },
               desc = "Cycle filter (Running → Recent → Failed)",
             },
+            ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh runs" },
           },
         },
       },

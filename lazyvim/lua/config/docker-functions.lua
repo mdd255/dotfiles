@@ -191,7 +191,7 @@ end
 -- Cached container fetcher. TTL 10 s per filter combination.
 local function get_containers(filter_args, callback)
   local key = "docker.containers." .. table.concat(filter_args, "_")
-  cache.wrap(key, 10000, function(cb)
+  cache.wrap(key, 30000, function(cb)
     fetch_containers_raw(filter_args, cb)
   end)(callback)
 end
@@ -441,7 +441,7 @@ local function run_image_action(action_key, images)
 end
 
 -- Cached image fetcher. TTL 30 s.
-local get_images = cache.wrap("docker.images", 30000, function(callback)
+local get_images = cache.wrap("docker.images", 100000, function(callback)
   vim.system({ "docker", "images", "--format", "{{json .}}" }, {}, function(result)
     vim.schedule(function()
       if result.code ~= 0 then

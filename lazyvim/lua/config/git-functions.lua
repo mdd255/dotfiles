@@ -387,7 +387,7 @@ local PR_FILTERS = {
 
 local pr_filter_idx = 1
 
-local PR_TTL_MS = 120 * 1000 -- 120 s
+local PR_TTL_MS = 5 * 60 * 1000 -- 5m
 
 local MERGE_STATE_ICONS = {
   CLEAN = "",
@@ -896,6 +896,7 @@ local function open_gh_pr()
           keys = {
             ["<C-o>"] = { "cycle_filter", mode = { "i", "n" }, desc = "Cycle PR filter" },
             ["<C-r>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh PRs" },
+            ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh PRs" },
           },
         },
       },
@@ -975,7 +976,7 @@ function M.gh_switch_account()
             success_label = "Switched to " .. item.text,
             failed_label = "Failed to switch account: ",
             on_success = function()
-              cache.invalidate({ "gh.accounts", "gh.current_login", "gh.prs" })
+              cache.invalidate({ "gh.accounts", "gh.current_login", "gh.prs", "gh.collaborators" })
             end,
           })
         end,
