@@ -43,6 +43,18 @@ local STATUS_ICONS = {
   completed = "",
 }
 
+local CONCLUSION_HLS = {
+  success = "DiagnosticOk",
+  failure = "DiagnosticError",
+  cancelled = "DiagnosticWarn",
+  skipped = "Comment",
+  timed_out = "DiagnosticError",
+  action_required = "DiagnosticWarn",
+  startup_failure = "DiagnosticError",
+  neutral = "Comment",
+  stale = "Comment",
+}
+
 local function run_status_icon(run)
   local status = run.status
 
@@ -133,16 +145,16 @@ local function run_preview(run)
   end
 
   return table.concat({
-    "Run #:       " .. tostring(run.number),
-    "Run ID:      " .. tostring(run.databaseId),
-    "Title:       " .. (run.displayTitle or "N/A"),
-    "Workflow:    " .. (run.workflowName or "N/A"),
-    "Head branch: " .. run.headBranch,
-    "Event:       " .. (run.event or "N/A"),
-    "Status:      " .. status_str,
-    "SHA:         " .. ((run.headSha and run.headSha ~= vim.NIL) and run.headSha:sub(1, 10) or "N/A"),
-    "Created:     " .. run.createdAt,
-    "Updated:     " .. run.updatedAt,
+    "number:   " .. tostring(run.number),
+    "id:       " .. tostring(run.databaseId),
+    "title:    " .. (run.displayTitle or "N/A"),
+    "workflow: " .. (run.workflowName or "N/A"),
+    "branch:   " .. run.headBranch,
+    "event:    " .. (run.event or "N/A"),
+    "status:   " .. status_str,
+    "sha:      " .. ((run.headSha and run.headSha ~= vim.NIL) and run.headSha:sub(1, 10) or "N/A"),
+    "created:  " .. run.createdAt,
+    "updated:  " .. run.updatedAt,
   }, "\n")
 end
 
@@ -268,10 +280,14 @@ local function show_action_picker(run)
     finder = function()
       return items
     end,
-    format = "text",
+    format = function(item, _)
+      local danger = { cancel = true, delete = true }
+      local hl = danger[item.key] and "DiagnosticError" or "Text"
+      return { { item.text, hl } }
+    end,
     layout = {
       layout = {
-        title = "  Action",
+        title = { { "  Action", "DiagnosticInfo" } },
         box = "vertical",
         position = "float",
         width = picker_width(0.22, 40),
@@ -318,7 +334,7 @@ local function open_actions_picker()
           run.startedAt
         ),
         _run = run,
-        preview = { text = run_preview(run), ft = "text" },
+        preview = { text = run_preview(run), ft = "yaml" },
       })
     end
 
@@ -326,11 +342,29 @@ local function open_actions_picker()
       finder = function()
         return items
       end,
-      format = "text",
+      format = function(item, _)
+        local run = item._run
+        local conclusion = run.conclusion
+        local hl = (conclusion and conclusion ~= "" and conclusion ~= vim.NIL)
+            and (CONCLUSION_HLS[conclusion] or "Text")
+          or "DiagnosticInfo"
+        local icon_col = run_icon(run) .. " "
+        local title_col = string.format("%-28s", run.displayTitle:sub(1, 26))
+        local status_col = run_status_icon(run) .. "   "
+        local branch_col = string.format("%-18s", run.headBranch:sub(1, 15))
+        local date_col = run.startedAt or ""
+        return {
+          { icon_col, hl },
+          { title_col, hl },
+          { status_col, "DiagnosticInfo" },
+          { branch_col, "Function" },
+          { date_col, "Comment" },
+        }
+      end,
       preview = "preview",
       layout = {
         layout = {
-          title = "  Actions · " .. f.name,
+          title = { { "  Actions · " .. f.name, "DiagnosticInfo" } },
           box = "vertical",
           position = "float",
           width = picker_width(0.9, 110),

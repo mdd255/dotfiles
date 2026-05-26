@@ -102,14 +102,14 @@ function M.invalidate(keys)
   end
 end
 
---- Invalidate all keys starting with prefix and async-reload each.
+--- Invalidate all keys starting with prefix (plain string, not a Lua pattern) and async-reload each.
 -- Same in-flight guard as invalidate() — avoids overlapping fetchers.
--- @param prefix string  e.g. "docker.containers"
+-- @param prefix string  e.g. "docker.containers" or "gh.runs"
 function M.invalidate_pattern(prefix)
   local to_reload = {}
 
   for k, entry in pairs(_cache) do
-    if k:find("^" .. prefix) then
+    if k:sub(1, #prefix) == prefix then
       if not entry.inflight then
         table.insert(to_reload, k)
       end

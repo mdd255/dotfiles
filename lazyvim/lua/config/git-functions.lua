@@ -975,7 +975,7 @@ function M.gh_switch_account()
             success_label = "Switched to " .. item.text,
             failed_label = "Failed to switch account: ",
             on_success = function()
-              cache.invalidate({ "gh.accounts", "gh.current_login" })
+              cache.invalidate({ "gh.accounts", "gh.current_login", "gh.prs" })
             end,
           })
         end,
