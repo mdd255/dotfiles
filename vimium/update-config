@@ -1,0 +1,18 @@
+const { writeFileSync } = require('node:fs')
+const configs = ["abd", "aa"]
+
+configs.forEach(workspace => {
+  const filename = `${workspace}.json`
+  const source = require('./base.json')
+  const keymaps = source.customKeyMaps[workspace]
+
+  writeFileSync(filename, JSON.stringify({
+    ...source,
+    keyMappings: [
+      ...source.keyMappings,
+      ...keymaps
+    ]
+  }, null, 2))
+})
+
+console.log('Done!')
