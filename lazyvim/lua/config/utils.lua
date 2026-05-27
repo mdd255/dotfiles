@@ -216,7 +216,7 @@ function M.exec_async(cmd, opts)
     vim.notify(opts.info_label, vim.log.levels.INFO, opts.notify)
   end
 
-  vim.system(cmd, {}, function(cmd_result)
+  vim.system(cmd, { env = opts.env }, function(cmd_result)
     vim.schedule(function()
       if cmd_result.code == 0 then
         local message = opts.success_label or ""

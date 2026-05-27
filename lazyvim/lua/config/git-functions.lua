@@ -1384,13 +1384,51 @@ function M.git_restore_all()
   })
 end
 
+-- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
+-- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
+local function with_ssh_passphrase(fn)
+  -- inputsecret masks each char as *; Esc and empty Enter both return ""
+  local passphrase = vim.fn.inputsecret("SSH passphrase (empty = skip): ")
+
+  if passphrase == "" then
+    fn(nil, function() end)
+    return
+  end
+
+  local tmp = vim.fn.tempname() .. ".sh"
+  local f = io.open(tmp, "w")
+
+  if not f then
+    vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
+    return
+  end
+
+  -- Use printf to safely echo passphrase; escape single quotes in passphrase.
+  local safe = passphrase:gsub("'", "'\\''")
+  f:write("#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
+  f:close()
+  vim.fn.system({ "chmod", "+x", tmp })
+
+  local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
+  local cleanup = function()
+    os.remove(tmp)
+  end
+
+  fn(env, cleanup)
+end
+
 function M.git_pull()
-  exec_async({ "git", "pull" }, {
-    notify = notify_opts,
-    info_label = "Pulling...",
-    success_label = "Pull successful",
-    failed_label = "Pull failed: ",
-  })
+  with_ssh_passphrase(function(env, cleanup)
+    exec_async({ "git", "pull" }, {
+      notify = notify_opts,
+      env = env,
+      info_label = "Pulling...",
+      success_label = "Pull successful",
+      failed_label = "Pull failed: ",
+      on_success = cleanup,
+      on_failure = cleanup,
+    })
+  end)
 end
 
 function M.close_diffview()
@@ -1406,12 +1444,17 @@ function M.git_push(force)
     table.insert(push_args, "--force")
   end
 
-  exec_async(push_args, {
-    notify = notify_opts,
-    info_label = "Pushing to: " .. branch .. "...",
-    success_label = "Pushed to: " .. branch,
-    failed_label = "Failed to push: ",
-  })
+  with_ssh_passphrase(function(env, cleanup)
+    exec_async(push_args, {
+      notify = notify_opts,
+      env = env,
+      info_label = "Pushing to: " .. branch .. "...",
+      success_label = "Pushed to: " .. branch,
+      failed_label = "Failed to push: ",
+      on_success = cleanup,
+      on_failure = cleanup,
+    })
+  end)
 end
 
 function M.git_commit(amend)
