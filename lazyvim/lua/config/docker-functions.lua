@@ -30,6 +30,16 @@ end
 local open_container_picker
 local open_image_picker
 
+local function container_mutate_success()
+  cache.invalidate_pattern("docker.containers")
+  vim.schedule(open_container_picker)
+end
+
+local function image_mutate_success()
+  cache.invalidate("docker.images")
+  vim.schedule(open_image_picker)
+end
+
 local CONTAINER_FILTERS = {
   { name = "All", args = { "-a" } },
   { name = "Running", args = {} },
@@ -74,10 +84,7 @@ local function run_container_action(action_key, containers)
         info_label = def.verb .. " " .. c.Names .. "...",
         success_label = def.past .. " " .. c.Names,
         failed_label = "Failed to " .. action_key .. " " .. c.Names .. ": ",
-        on_success = function()
-          cache.invalidate_pattern("docker.containers")
-          vim.schedule(open_container_picker)
-        end,
+        on_success = container_mutate_success,
       })
     end
 
@@ -114,10 +121,7 @@ local function run_container_action(action_key, containers)
           notify = notify_opts,
           success_label = "Renamed " .. c.Names .. " → " .. new_name,
           failed_label = "Failed to rename: ",
-          on_success = function()
-            cache.invalidate_pattern("docker.containers")
-            vim.schedule(open_container_picker)
-          end,
+          on_success = container_mutate_success,
         })
       end)
     end
@@ -188,12 +192,19 @@ local function fetch_containers_raw(filter_args, callback)
   end)
 end
 
--- Cached container fetcher. TTL 10 s per filter combination.
+-- Cached container fetchers — one per filter, registered once at load time.
+local _container_fetchers = {}
+
+for _, f in ipairs(CONTAINER_FILTERS) do
+  local key = "docker.containers." .. table.concat(f.args, "_")
+  _container_fetchers[key] = cache.wrap(key, 30000, function(cb)
+    fetch_containers_raw(f.args, cb)
+  end)
+end
+
 local function get_containers(filter_args, callback)
   local key = "docker.containers." .. table.concat(filter_args, "_")
-  cache.wrap(key, 30000, function(cb)
-    fetch_containers_raw(filter_args, cb)
-  end)(callback)
+  _container_fetchers[key](callback)
 end
 
 local function container_preview(c)
@@ -387,10 +398,7 @@ local function run_image_action(action_key, images)
           info_label = "Starting " .. image_ref(img) .. "...",
           success_label = "Container started",
           failed_label = "Failed to start container: ",
-          on_success = function()
-            cache.invalidate_pattern("docker.containers")
-            vim.schedule(open_container_picker)
-          end,
+          on_success = container_mutate_success,
         })
       end)
     end)
@@ -401,10 +409,7 @@ local function run_image_action(action_key, images)
         info_label = "Force removing " .. image_ref(img) .. "...",
         success_label = "Removed " .. image_ref(img),
         failed_label = "Failed to remove: ",
-        on_success = function()
-          cache.invalidate("docker.images")
-          vim.schedule(open_image_picker)
-        end,
+        on_success = image_mutate_success,
       })
     end
   elseif action_key == "tag" then
@@ -423,10 +428,7 @@ local function run_image_action(action_key, images)
         notify = notify_opts,
         success_label = "Tagged as " .. new_tag,
         failed_label = "Failed to tag: ",
-        on_success = function()
-          cache.invalidate("docker.images")
-          vim.schedule(open_image_picker)
-        end,
+        on_success = image_mutate_success,
       })
     end)
   elseif action_key == "inspect" then

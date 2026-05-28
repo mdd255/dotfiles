@@ -188,6 +188,10 @@ local RUN_ACTIONS = {
   { text = "delete  ⚠", key = "delete" },
 }
 
+local function run_mutate_success()
+  cache.invalidate_pattern("gh.runs")
+end
+
 local function run_action(action_key, run)
   if not run then
     return
@@ -202,9 +206,7 @@ local function run_action(action_key, run)
       info_label = "Re-running " .. label .. "...",
       success_label = "Re-run triggered: " .. label,
       failed_label = "Failed to re-run: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.runs")
-      end,
+      on_success = run_mutate_success,
     })
   elseif action_key == "rerun_failed" then
     exec_async({ "gh", "run", "rerun", "--failed", id }, {
@@ -212,9 +214,7 @@ local function run_action(action_key, run)
       info_label = "Re-running failed jobs for " .. label .. "...",
       success_label = "Re-run failed jobs triggered: " .. label,
       failed_label = "Failed to re-run failed jobs: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.runs")
-      end,
+      on_success = run_mutate_success,
     })
   elseif action_key == "view_log" then
     term_cmd("gh run view " .. id .. " --log 2>&1 | less -R")

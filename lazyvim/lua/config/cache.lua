@@ -88,29 +88,49 @@ function M.invalidate(keys)
 
   for _, k in ipairs(keys) do
     local entry = _cache[k]
-    local inflight = entry and entry.inflight
     _cache[k] = nil
 
-    local reg = _registry[k]
+    if entry and entry.inflight then
+      for _, w in ipairs(entry.waiters or {}) do
+        vim.schedule(function() w(nil) end)
+      end
+    else
+      local reg = _registry[k]
+      if reg then
+        local key, fn = k, reg.fn
+        vim.schedule(function()
+          _do_fetch(key, fn)
+        end)
+      end
+    end
+  end
+end
 
-    if reg and not inflight then
-      local key, fn = k, reg.fn
-      vim.schedule(function()
-        _do_fetch(key, fn)
-      end)
+--- Evict all keys starting with prefix without scheduling a background reload.
+-- Use when the next caller should fetch fresh data lazily (e.g. after create-PR where
+-- a background fetch would race GitHub's API before the new PR is indexed).
+-- @param prefix string  e.g. "gh.prs"
+function M.evict_pattern(prefix)
+  for k, entry in pairs(_cache) do
+    if k:sub(1, #prefix) == prefix and not entry.inflight then
+      _cache[k] = nil
     end
   end
 end
 
 --- Invalidate all keys starting with prefix (plain string, not a Lua pattern) and async-reload each.
--- Same in-flight guard as invalidate() — avoids overlapping fetchers.
+-- Inflight entries: drain their waiters with nil (so callers don't hang), then clear and reload.
 -- @param prefix string  e.g. "docker.containers" or "gh.runs"
 function M.invalidate_pattern(prefix)
   local to_reload = {}
 
   for k, entry in pairs(_cache) do
     if k:sub(1, #prefix) == prefix then
-      if not entry.inflight then
+      if entry.inflight then
+        for _, w in ipairs(entry.waiters or {}) do
+          vim.schedule(function() w(nil) end)
+        end
+      else
         table.insert(to_reload, k)
       end
       _cache[k] = nil

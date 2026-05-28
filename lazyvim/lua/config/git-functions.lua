@@ -11,6 +11,57 @@ local notify_opts = {
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
+-- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
+-- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
+local function with_ssh_passphrase(fn)
+  -- inputsecret masks each char as *; Esc and empty Enter both return ""
+  local passphrase = vim.fn.inputsecret("SSH passphrase: ")
+
+  if passphrase == "" then
+    fn(nil, function() end)
+    return
+  end
+
+  local tmp = vim.fn.tempname() .. ".sh"
+  local f = io.open(tmp, "w")
+
+  if not f then
+    vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
+    return
+  end
+
+  -- Use printf to safely echo passphrase; escape single quotes in passphrase.
+  local safe = passphrase:gsub("'", "'\\''")
+  f:write("#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
+  f:close()
+  vim.fn.system({ "chmod", "+x", tmp })
+
+  local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
+
+  local cleanup = function()
+    os.remove(tmp)
+  end
+
+  fn(env, cleanup)
+end
+
+-- Shared async shell helper: runs cmd, calls parse_fn(stdout) on success.
+-- Returns function(callback) matching the pattern used by get_* helpers.
+local function system_async(cmd, err_msg, parse_fn)
+  return function(callback)
+    vim.system(cmd, {}, function(result)
+      vim.schedule(function()
+        if result.code ~= 0 then
+          vim.notify(err_msg, vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+        callback(parse_fn(result.stdout))
+      end)
+    end)
+  end
+end
+
 -- Helper function to get list of branches (no cache — cheap local command).
 -- @param exclude_current: boolean - whether to exclude current branch
 -- @param unique: boolean - whether to ensure unique values
@@ -62,64 +113,36 @@ local function get_branches(exclude_current, unique)
   end
 end
 
--- Helper function to get list of recent commits (no cache — cheap local command).
--- @param limit: number - how many recent commits to fetch
--- @return function that takes a callback
 local function get_recent_commits(limit)
-  return function(callback)
-    vim.system({ "git", "log", "--oneline", "--max-count=" .. (limit or 30) }, {}, function(result)
-      vim.schedule(function()
-        if result.code ~= 0 then
-          vim.notify("Failed to get commits", vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
+  return system_async(
+    { "git", "log", "--oneline", "--max-count=" .. (limit or 30) },
+    "Failed to get commits",
+    function(out)
+      local commits = {}
+      for line in out:gmatch("[^\r\n]+") do
+        if line ~= "" then
+          table.insert(commits, line)
         end
-
-        local commits = {}
-
-        for line in result.stdout:gmatch("[^\r\n]+") do
-          if line ~= "" then
-            table.insert(commits, line)
-          end
-        end
-
-        callback(commits)
-      end)
-    end)
-  end
+      end
+      return commits
+    end
+  )
 end
 
--- Helper function to get list of stashes (no cache — cheap local command).
--- @return function that takes a callback
 local function get_stashes()
-  return function(callback)
-    vim.system({ "git", "stash", "list" }, {}, function(result)
-      vim.schedule(function()
-        if result.code ~= 0 then
-          vim.notify("Failed to get stashes", vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-
-        local items = {}
-
-        for line in result.stdout:gmatch("[^\r\n]+") do
-          if line ~= "" then
-            local ref = line:match("^(stash@{%d+})")
-            table.insert(items, { text = line, ref = ref })
-          end
-        end
-
-        if #items == 0 then
-          vim.notify("No stashes found", vim.log.levels.INFO, notify_opts)
-          callback(nil)
-          return
-        end
-
-        callback(items)
-      end)
-    end)
-  end
+  return system_async({ "git", "stash", "list" }, "Failed to get stashes", function(out)
+    local items = {}
+    for line in out:gmatch("[^\r\n]+") do
+      if line ~= "" then
+        table.insert(items, { text = line, ref = line:match("^(stash@{%d+})") })
+      end
+    end
+    if #items == 0 then
+      vim.notify("No stashes found", vim.log.levels.INFO, notify_opts)
+      return nil
+    end
+    return items
+  end)
 end
 
 -- Shared stash picker layout factory.
@@ -380,9 +403,9 @@ end
 -- ── PR picker ─────────────────────────────────────────────────────────────────
 
 local PR_FILTERS = {
+  { name = "All open", search = "" },
   { name = "My PRs", search = "author:@me" },
   { name = "Review requested", search = "user-review-requested:@me" },
-  { name = "All open", search = "" },
 }
 
 local pr_filter_idx = 1
@@ -532,36 +555,24 @@ local function format_pr_items(prs)
   return items
 end
 
-local PR_ACTIONS = {
-  { text = "󰿄 Checkout", key = "checkout" },
-  { text = "󰊯 Open browser", key = "browser" },
-  { text = " View diff", key = "diff" },
-  { text = " Merge", key = "merge" },
-  { text = " Merge squash", key = "squash" },
-  { text = " Approve", key = "approve" },
-  { text = " Comment", key = "comment" },
-  { text = " Edit title", key = "edit_title" },
-  { text = " Edit body", key = "edit_body" },
-  { text = " Edit reviewers", key = "edit_reviewers" },
-  { text = " Close PR", key = "close" },
-  { text = " Convert to draft", key = "to_draft" },
-  { text = " Ready to review", key = "ready" },
-}
+local pr_mutate_success = function()
+  cache.invalidate_pattern("gh.prs")
+end
 
-local PR_ACTION_HLS = {
-  checkout = "DiagnosticOk",
-  browser = "DiagnosticInfo",
-  diff = "DiagnosticInfo",
-  merge = "DiagnosticWarn",
-  squash = "DiagnosticWarn",
-  approve = "DiagnosticOk",
-  comment = "Function",
-  edit_title = "Function",
-  edit_body = "Function",
-  edit_reviewers = "Function",
-  close = "DiagnosticError",
-  to_draft = "Comment",
-  ready = "DiagnosticOk",
+local PR_ACTIONS = {
+  { text = "󰿄 Checkout", key = "checkout", hl = "DiagnosticOk" },
+  { text = "󰊯 Open browser", key = "browser", hl = "DiagnosticInfo" },
+  { text = " View diff", key = "diff", hl = "DiagnosticInfo" },
+  { text = " Merge", key = "merge", hl = "DiagnosticWarn" },
+  { text = " Merge squash", key = "squash", hl = "DiagnosticWarn" },
+  { text = " Approve", key = "approve", hl = "DiagnosticOk" },
+  { text = " Comment", key = "comment", hl = "Function" },
+  { text = " Edit title", key = "edit_title", hl = "Function" },
+  { text = " Edit body", key = "edit_body", hl = "Function" },
+  { text = " Edit reviewers", key = "edit_reviewers", hl = "Function" },
+  { text = " Close PR", key = "close", hl = "DiagnosticError" },
+  { text = " Convert to draft", key = "to_draft", hl = "Comment" },
+  { text = " Ready to review", key = "ready", hl = "DiagnosticOk" },
 }
 
 local function handle_pr_action(action_key, pr)
@@ -569,12 +580,17 @@ local function handle_pr_action(action_key, pr)
   local label = "#" .. id .. " " .. pr.title
 
   if action_key == "checkout" then
-    exec_async({ "gh", "pr", "checkout", id }, {
-      notify = notify_opts,
-      info_label = "Checking out " .. label .. "...",
-      success_label = "Checked out: " .. label,
-      failed_label = "Failed to checkout: ",
-    })
+    with_ssh_passphrase(function(env, cleanup)
+      exec_async({ "gh", "pr", "checkout", id }, {
+        notify = notify_opts,
+        env = env,
+        info_label = "Checking out " .. label .. "...",
+        success_label = "Checked out: " .. label,
+        failed_label = "Failed to checkout: ",
+        on_success = cleanup,
+        on_failure = cleanup,
+      })
+    end)
   elseif action_key == "browser" then
     exec_async({ "gh", "pr", "view", id, "--web" }, {
       notify = notify_opts,
@@ -598,9 +614,7 @@ local function handle_pr_action(action_key, pr)
       info_label = "Merging " .. label .. "...",
       success_label = "Merged: " .. label,
       failed_label = "Failed to merge: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "squash" then
     exec_async({ "gh", "pr", "merge", id, "--squash" }, {
@@ -608,18 +622,14 @@ local function handle_pr_action(action_key, pr)
       info_label = "Squash merging " .. label .. "...",
       success_label = "Squash merged: " .. label,
       failed_label = "Failed to squash merge: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "approve" then
     exec_async({ "gh", "pr", "review", id, "--approve" }, {
       notify = notify_opts,
       success_label = "Approved: " .. label,
       failed_label = "Failed to approve: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "comment" then
     prompt_body({}, function(body)
@@ -641,9 +651,7 @@ local function handle_pr_action(action_key, pr)
         notify = notify_opts,
         success_label = "Title updated: " .. label,
         failed_label = "Failed to update title: ",
-        on_success = function()
-          cache.invalidate_pattern("gh.prs")
-        end,
+        on_success = pr_mutate_success,
       })
     end)
   elseif action_key == "edit_body" then
@@ -656,9 +664,7 @@ local function handle_pr_action(action_key, pr)
         notify = notify_opts,
         success_label = "Body updated: " .. label,
         failed_label = "Failed to update body: ",
-        on_success = function()
-          cache.invalidate_pattern("gh.prs")
-        end,
+        on_success = pr_mutate_success,
       })
     end)
   elseif action_key == "edit_reviewers" then
@@ -670,9 +676,7 @@ local function handle_pr_action(action_key, pr)
         notify = notify_opts,
         success_label = "Reviewers updated: " .. label,
         failed_label = "Failed to update reviewers: ",
-        on_success = function()
-          cache.invalidate_pattern("gh.prs")
-        end,
+        on_success = pr_mutate_success,
       })
     end)
   elseif action_key == "close" then
@@ -681,27 +685,21 @@ local function handle_pr_action(action_key, pr)
       info_label = "Closing " .. label .. "...",
       success_label = "Closed: " .. label,
       failed_label = "Failed to close: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "to_draft" then
     exec_async({ "gh", "pr", "ready", id, "--undo" }, {
       notify = notify_opts,
       success_label = "Converted to draft: " .. label,
       failed_label = "Failed to convert to draft: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "ready" then
     exec_async({ "gh", "pr", "ready", id }, {
       notify = notify_opts,
       success_label = "Marked ready for review: " .. label,
       failed_label = "Failed to mark ready: ",
-      on_success = function()
-        cache.invalidate_pattern("gh.prs")
-      end,
+      on_success = pr_mutate_success,
     })
   elseif action_key == "copy_url" then
     vim.fn.setreg("+", pr.url)
@@ -772,6 +770,7 @@ local function show_pr_actions(pr)
         table.insert(items, {
           text = a.text,
           key = a.key,
+          hl = a.hl,
           preview = { text = pr_preview, ft = "markdown" },
         })
       end
@@ -781,7 +780,7 @@ local function show_pr_actions(pr)
           return items
         end,
         format = function(item, _)
-          return { { item.text, PR_ACTION_HLS[item.key] or "Normal" } }
+          return { { item.text, item.hl or "Normal" } }
         end,
         preview = "preview",
         layout = {
@@ -976,7 +975,9 @@ function M.gh_switch_account()
             success_label = "Switched to " .. item.text,
             failed_label = "Failed to switch account: ",
             on_success = function()
-              cache.invalidate({ "gh.accounts", "gh.current_login", "gh.prs", "gh.collaborators" })
+              cache.invalidate({ "gh.current_login" })
+              cache.invalidate_pattern("gh.prs")
+              cache.invalidate_pattern("gh.collaborators")
             end,
           })
         end,
@@ -1039,7 +1040,7 @@ function M.create_pr()
     local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
 
     table.insert(args, "--body")
-    table.insert(args, '"' .. data.body .. '"')
+    table.insert(args, data.body)
 
     if data.assignee ~= "" then
       table.insert(args, "--assignee")
@@ -1058,26 +1059,32 @@ function M.create_pr()
 
     local cmd_str = table.concat(args, " ")
 
-    vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+    with_ssh_passphrase(function(env, cleanup)
+      exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
+        notify = notify_opts,
+        env = env,
+        suppress_notify = true,
+        failed_label = "Failed to push branch: ",
+        on_success = function()
+          vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+          cleanup()
 
-    exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
-      notify = notify_opts,
-      suppress_notify = true,
-      failed_label = "Failed to push branch: ",
-      on_success = function()
-        exec_async(args, {
-          notify = notify_opts,
-          success_label = "PR created successfully: ",
-          failed_label = "Failed to create PR: ",
-          on_success = function()
-            vim.cmd("stopinsert")
-          end,
-          on_failure = function()
-            vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
-          end,
-        })
-      end,
-    })
+          exec_async(args, {
+            notify = notify_opts,
+            success_label = "PR created successfully: ",
+            failed_label = "Failed to create PR: ",
+            on_success = function()
+              vim.cmd("stopinsert")
+              cache.evict_pattern("gh.prs")
+            end,
+            on_failure = function()
+              vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
+            end,
+          })
+        end,
+        on_failure = cleanup,
+      })
+    end)
   end
 
   -- Start the workflow
@@ -1382,39 +1389,6 @@ function M.git_restore_all()
       })
     end,
   })
-end
-
--- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
--- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
-local function with_ssh_passphrase(fn)
-  -- inputsecret masks each char as *; Esc and empty Enter both return ""
-  local passphrase = vim.fn.inputsecret("SSH passphrase (empty = skip): ")
-
-  if passphrase == "" then
-    fn(nil, function() end)
-    return
-  end
-
-  local tmp = vim.fn.tempname() .. ".sh"
-  local f = io.open(tmp, "w")
-
-  if not f then
-    vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
-    return
-  end
-
-  -- Use printf to safely echo passphrase; escape single quotes in passphrase.
-  local safe = passphrase:gsub("'", "'\\''")
-  f:write("#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
-  f:close()
-  vim.fn.system({ "chmod", "+x", tmp })
-
-  local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
-  local cleanup = function()
-    os.remove(tmp)
-  end
-
-  fn(env, cleanup)
 end
 
 function M.git_pull()
