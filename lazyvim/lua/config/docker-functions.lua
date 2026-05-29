@@ -2,6 +2,8 @@ local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
 local picker_width = utils.picker_width
+local picker_selection = utils.picker_selection
+local parse_json_lines = utils.parse_json_lines
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -100,11 +102,9 @@ local function run_container_action(action_key, containers)
       term_cmd("docker logs -f --tail=100 " .. c.Names)
     end
   elseif action_key == "stats" then
-    local names = {}
-
-    for _, c in ipairs(containers) do
-      table.insert(names, c.Names)
-    end
+    local names = vim.tbl_map(function(c)
+      return c.Names
+    end, containers)
 
     term_cmd("docker stats " .. table.concat(names, " "))
   elseif action_key == "inspect" then
@@ -129,15 +129,9 @@ local function run_container_action(action_key, containers)
 end
 
 local function show_action_picker(selected_containers, action_list, on_action)
-  local items = {}
-
-  for _, a in ipairs(action_list) do
-    table.insert(items, { text = a.text, key = a.key })
-  end
-
   snacks.picker.pick({
     finder = function()
-      return items
+      return action_list
     end,
     format = "text",
     layout = {
@@ -175,19 +169,7 @@ local function fetch_containers_raw(filter_args, callback)
         return
       end
 
-      local containers = {}
-
-      for line in result.stdout:gmatch("[^\r\n]+") do
-        if line ~= "" then
-          local ok, data = pcall(vim.json.decode, line)
-
-          if ok and data then
-            table.insert(containers, data)
-          end
-        end
-      end
-
-      callback(containers)
+      callback(parse_json_lines(result.stdout))
     end)
   end)
 end
@@ -318,16 +300,7 @@ open_container_picker = function(filter_idx)
         },
       },
       confirm = function(picker)
-        local selected = picker:selected()
-
-        if #selected == 0 then
-          local item = picker:current()
-
-          if item then
-            selected = { item }
-          end
-        end
-
+        local selected = picker_selection(picker)
         picker:close()
 
         if #selected == 0 then
@@ -357,11 +330,25 @@ local IMAGE_ACTIONS = {
   { text = "󰋚 history", key = "history" },
 }
 
-local function image_ref(img)
+-- Display label: short last path segment (registry/namespace stripped) for the
+-- picker rows only.
+local function image_label(img)
   if img.Repository and img.Repository ~= "<none>" then
     local tag = (img.Tag and img.Tag ~= "<none>") and img.Tag or "latest"
     local labels = vim.split(img.Repository, "/")
     return labels[#labels] .. ":" .. tag
+  end
+
+  return img.ID
+end
+
+-- Command-safe reference: keep the FULL repository path (registry + namespace)
+-- so `docker run/tag/history` resolve. `myorg/img` or `ghcr.io/org/img` must not
+-- be truncated to the last segment. Falls back to the image ID when untagged.
+local function image_ref(img)
+  if img.Repository and img.Repository ~= "<none>" then
+    local tag = (img.Tag and img.Tag ~= "<none>") and img.Tag or "latest"
+    return img.Repository .. ":" .. tag
   end
 
   return img.ID
@@ -442,7 +429,7 @@ local function run_image_action(action_key, images)
   end
 end
 
--- Cached image fetcher. TTL 30 s.
+-- Cached image fetcher. TTL 100 s.
 local get_images = cache.wrap("docker.images", 100000, function(callback)
   vim.system({ "docker", "images", "--format", "{{json .}}" }, {}, function(result)
     vim.schedule(function()
@@ -452,17 +439,7 @@ local get_images = cache.wrap("docker.images", 100000, function(callback)
         return
       end
 
-      local images = {}
-
-      for line in result.stdout:gmatch("[^\r\n]+") do
-        if line ~= "" then
-          local ok, data = pcall(vim.json.decode, line)
-          if ok and data then
-            table.insert(images, data)
-          end
-        end
-      end
-      callback(images)
+      callback(parse_json_lines(result.stdout))
     end)
   end)
 end)
@@ -495,7 +472,7 @@ open_image_picker = function()
       img.Size = img.Size or "N/A"
 
       table.insert(items, {
-        text = string.format("%-25s %-9s %s", image_ref(img), img.Size or "", img.CreatedSince or ""),
+        text = string.format("%-25s %-9s %s", image_label(img), img.Size or "", img.CreatedSince or ""),
         ID = img.ID,
         Repository = img.Repository,
         Tag = img.Tag,
@@ -511,7 +488,7 @@ open_image_picker = function()
         return items
       end,
       format = function(item, _)
-        local name_col = string.format("%-25s", image_ref(item))
+        local name_col = string.format("%-25s", image_label(item))
         local size_col = string.format("%-9s", item.Size or "")
         local date_col = item.CreatedSince or ""
         return {
@@ -553,16 +530,7 @@ open_image_picker = function()
         },
       },
       confirm = function(picker)
-        local selected = picker:selected()
-
-        if #selected == 0 then
-          local item = picker:current()
-
-          if item then
-            selected = { item }
-          end
-        end
-
+        local selected = picker_selection(picker)
         picker:close()
 
         if #selected == 0 then

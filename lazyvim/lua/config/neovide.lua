@@ -13,6 +13,9 @@ vim.g.neovide_cursor_vfx_mode = "pixiedust"
 -- keymaps
 vim.keymap.set("t", "<A-c>", '<C-\\><C-N>"+yi')
 vim.keymap.set("t", "<A-v>", '<C-\\><C-N>"+Pa')
+vim.keymap.set("n", "<A-v>", '"+p')
+vim.keymap.set("i", "<A-v>", '<C-r>+')
+vim.keymap.set("c", "<A-v>", '<C-r>+')
 
 -- auto cmds
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {

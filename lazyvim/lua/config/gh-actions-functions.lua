@@ -65,6 +65,15 @@ local function run_status_icon(run)
   return "?"
 end
 
+-- gh `--json` fields can be missing or JSON null (decoded to vim.NIL); coerce to
+-- a safe string before :sub() to avoid nil-index crashes on odd runs.
+local function safe_str(v)
+  if v == nil or v == vim.NIL then
+    return "N/A"
+  end
+  return tostring(v)
+end
+
 local function run_icon(run)
   local conclusion = run.conclusion
 
@@ -149,12 +158,14 @@ local function run_preview(run)
     "id:       " .. tostring(run.databaseId),
     "title:    " .. (run.displayTitle or "N/A"),
     "workflow: " .. (run.workflowName or "N/A"),
-    "branch:   " .. run.headBranch,
+    -- safe_str everywhere: gh --json fields can be missing or vim.NIL (null),
+    -- and raw concat against vim.NIL throws.
+    "branch:   " .. safe_str(run.headBranch),
     "event:    " .. (run.event or "N/A"),
     "status:   " .. status_str,
     "sha:      " .. ((run.headSha and run.headSha ~= vim.NIL) and run.headSha:sub(1, 10) or "N/A"),
-    "created:  " .. run.createdAt,
-    "updated:  " .. run.updatedAt,
+    "created:  " .. safe_str(run.createdAt),
+    "updated:  " .. safe_str(run.updatedAt),
   }, "\n")
 end
 
@@ -270,15 +281,9 @@ end
 -- ── Action submenu picker ──────────────────────────────────────────────────────
 
 local function show_action_picker(run)
-  local items = {}
-
-  for _, a in ipairs(RUN_ACTIONS) do
-    table.insert(items, { text = a.text, key = a.key })
-  end
-
   snacks.picker.pick({
     finder = function()
-      return items
+      return RUN_ACTIONS
     end,
     format = function(item, _)
       local danger = { cancel = true, delete = true }
@@ -328,10 +333,10 @@ local function open_actions_picker()
         text = string.format(
           "%s %-28s %s   %-18s %s",
           conclusion_icon,
-          run.displayTitle:sub(1, 26),
+          safe_str(run.displayTitle):sub(1, 26),
           status_icon,
-          run.headBranch:sub(1, 15),
-          run.startedAt
+          safe_str(run.headBranch):sub(1, 15),
+          safe_str(run.startedAt)
         ),
         _run = run,
         preview = { text = run_preview(run), ft = "yaml" },
@@ -349,9 +354,9 @@ local function open_actions_picker()
             and (CONCLUSION_HLS[conclusion] or "Text")
           or "DiagnosticInfo"
         local icon_col = run_icon(run) .. " "
-        local title_col = string.format("%-28s", run.displayTitle:sub(1, 26))
+        local title_col = string.format("%-28s", safe_str(run.displayTitle):sub(1, 26))
         local status_col = run_status_icon(run) .. "   "
-        local branch_col = string.format("%-18s", run.headBranch:sub(1, 15))
+        local branch_col = string.format("%-18s", safe_str(run.headBranch):sub(1, 15))
         local date_col = run.startedAt or ""
         return {
           { icon_col, hl },

@@ -119,6 +119,13 @@ end
 --   {"<cr>", ":", { modes = {"n"} }}
 -- })
 function M.map(lhs, rhs, opts)
+  -- String form: map("H", rhs, opts) — normalise to the table-of-configs shape
+  -- the loop below expects, so the documented single-keymap usage works.
+  if type(lhs) == "string" then
+    lhs = { { lhs, rhs, opts } }
+    opts = nil
+  end
+
   local default_opts = opts or {}
 
   for _, item in ipairs(lhs) do
@@ -200,6 +207,37 @@ function M.picker_width(fraction, min_cols, max_cols)
     w = math.min(w, max_cols)
   end
   return w
+end
+
+-- Parse newline-delimited JSON (one object per line, e.g. `docker ... --format
+-- '{{json .}}'`). Bad lines are skipped silently. Returns a list table.
+-- @param stdout string|nil
+-- @return table
+function M.parse_json_lines(stdout)
+  local out = {}
+  for line in (stdout or ""):gmatch("[^\r\n]+") do
+    local ok, data = pcall(vim.json.decode, line)
+    if ok and data then
+      out[#out + 1] = data
+    end
+  end
+  return out
+end
+
+-- Resolve a multi-select picker's effective selection: the explicit multi
+-- selection if any, else the item under the cursor, else empty. Centralises the
+-- "selected → current → bail" fallback repeated across pickers.
+-- @param picker table
+-- @return table list of items (possibly empty)
+function M.picker_selection(picker)
+  local selected = picker:selected()
+  if #selected == 0 then
+    local item = picker:current()
+    if item then
+      selected = { item }
+    end
+  end
+  return selected
 end
 
 function M.exec_async(cmd, opts)

@@ -27,6 +27,9 @@ local function with_ssh_passphrase(fn)
 
   if not f then
     vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
+    -- Fall back to the no-askpass path instead of stranding the caller: fn must
+    -- still fire or the push/pull/checkout that awaits it hangs forever.
+    fn(nil, function() end)
     return
   end
 
@@ -76,21 +79,18 @@ local function get_branches(exclude_current, unique)
           return
         end
 
-        local current_branch = nil
-
-        if exclude_current then
-          for line in result.stdout:gmatch("[^\r\n]+") do
-            if line:match("^%*") then
-              current_branch = line:gsub("^%s*%*%s*", ""):gsub("^remotes/origin/", "")
-              break
-            end
-          end
-        end
-
+        -- Single pass: `git branch -a` lists the local `* current` entry before
+        -- its `remotes/origin/<current>` duplicate, so the current branch is
+        -- always discovered before exclude_current needs to compare against it.
         local branches = {}
         local seen = {}
+        local current_branch = nil
 
         for line in result.stdout:gmatch("[^\r\n]+") do
+          if line:match("^%*") then
+            current_branch = line:gsub("^%s*%*%s*", ""):gsub("^remotes/origin/", "")
+          end
+
           local branch = line:gsub("^%s*%*?%s*", ""):gsub("^remotes/origin/", "")
 
           local should_include = branch ~= ""
@@ -483,6 +483,38 @@ local function get_gh_prs(filter, callback)
   gh_pr_fetchers[key](callback)
 end
 
+-- Highlight maps keyed by mergeStateStatus / reviewDecision — module-level so
+-- the picker format fn doesn't rebuild them for every rendered row.
+local PR_STATE_HLS = {
+  CLEAN = "DiagnosticOk",
+  DIRTY = "DiagnosticError",
+  BLOCKED = "DiagnosticError",
+  BEHIND = "DiagnosticWarn",
+  UNSTABLE = "DiagnosticWarn",
+}
+
+local PR_REVIEW_HLS = {
+  APPROVED = "DiagnosticOk",
+  CHANGES_REQUESTED = "DiagnosticError",
+  REVIEW_REQUIRED = "DiagnosticWarn",
+}
+
+-- Preview badge strings — module-level so format_pr_items doesn't rebuild these
+-- literal tables for every PR row.
+local PR_STATE_BADGES = {
+  CLEAN = "> ✅ **CLEAN**",
+  DIRTY = "> ❌ **DIRTY**",
+  BLOCKED = "> ⛔ **BLOCKED**",
+  BEHIND = "> ⬇  **BEHIND**",
+  UNSTABLE = "> ⚠  **UNSTABLE**",
+}
+
+local PR_REVIEW_BADGES = {
+  APPROVED = "✅ APPROVED",
+  CHANGES_REQUESTED = "❌ CHANGES REQUESTED",
+  REVIEW_REQUIRED = "⏳ REVIEW REQUIRED",
+}
+
 local function format_pr_items(prs)
   local items = {}
 
@@ -500,21 +532,9 @@ local function format_pr_items(prs)
         )
       or "—"
 
-    local state_badges = {
-      CLEAN = "> ✅ **CLEAN**",
-      DIRTY = "> ❌ **DIRTY**",
-      BLOCKED = "> ⛔ **BLOCKED**",
-      BEHIND = "> ⬇  **BEHIND**",
-      UNSTABLE = "> ⚠  **UNSTABLE**",
-    }
-    local review_badges = {
-      APPROVED = "✅ APPROVED",
-      CHANGES_REQUESTED = "❌ CHANGES REQUESTED",
-      REVIEW_REQUIRED = "⏳ REVIEW REQUIRED",
-    }
-    local state_str = state_badges[pr.mergeStateStatus or ""]
+    local state_str = PR_STATE_BADGES[pr.mergeStateStatus or ""]
       or ("> ❓ **" .. (pr.mergeStateStatus or "UNKNOWN") .. "**")
-    local review_str = review_badges[pr.reviewDecision or ""] or "💬 no review"
+    local review_str = PR_REVIEW_BADGES[pr.reviewDecision or ""] or "💬 no review"
     local draft_str = pr.isDraft and "  ·  📝 **DRAFT**" or ""
     local status_line = state_str .. "  ·  " .. review_str .. draft_str
 
@@ -562,6 +582,7 @@ end
 local PR_ACTIONS = {
   { text = "󰿄 Checkout", key = "checkout", hl = "DiagnosticOk" },
   { text = "󰊯 Open browser", key = "browser", hl = "DiagnosticInfo" },
+  { text = " Copy URL", key = "copy_url", hl = "DiagnosticInfo" },
   { text = " View diff", key = "diff", hl = "DiagnosticInfo" },
   { text = " Merge", key = "merge", hl = "DiagnosticWarn" },
   { text = " Merge squash", key = "squash", hl = "DiagnosticWarn" },
@@ -655,10 +676,9 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_body" then
-    local default_lines = {}
-    for line in (pr.body or ""):gmatch("[^\n]*") do
-      table.insert(default_lines, line)
-    end
+    -- vim.split with plain=true: `gmatch("[^\n]*")` matches the empty string
+    -- between every newline, injecting phantom blank lines into the editor.
+    local default_lines = vim.split(pr.body or "", "\n", { plain = true })
     prompt_body(default_lines, function(body)
       exec_async({ "gh", "pr", "edit", id, "--body", body }, {
         notify = notify_opts,
@@ -729,13 +749,7 @@ local function show_pr_actions(pr)
       local unresolved_str = unresolved > 0 and (" · " .. unresolved .. " unresolved 󰅺") or ""
       local title = string.format(" #%d · %s %s%s", pr.number, merge_icon, pr.mergeStateStatus or "?", unresolved_str)
 
-      local title_hl = ({
-        CLEAN = "DiagnosticOk",
-        DIRTY = "DiagnosticError",
-        BLOCKED = "DiagnosticError",
-        BEHIND = "DiagnosticWarn",
-        UNSTABLE = "DiagnosticWarn",
-      })[pr.mergeStateStatus or ""] or "DiagnosticInfo"
+      local title_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or "DiagnosticInfo"
       if pr.isDraft then
         title_hl = "Comment"
       end
@@ -830,23 +844,13 @@ local function open_gh_pr()
       format = function(item, _)
         local pr = item._pr
 
-        local status_hl = ({
-          CLEAN = "DiagnosticOk",
-          DIRTY = "DiagnosticError",
-          BLOCKED = "DiagnosticError",
-          BEHIND = "DiagnosticWarn",
-          UNSTABLE = "DiagnosticWarn",
-        })[pr.mergeStateStatus or ""] or "Comment"
+        local status_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or "Comment"
 
         if pr.isDraft then
           status_hl = "Comment"
         end
 
-        local review_hl = ({
-          APPROVED = "DiagnosticOk",
-          CHANGES_REQUESTED = "DiagnosticError",
-          REVIEW_REQUIRED = "DiagnosticWarn",
-        })[pr.reviewDecision or ""] or "Comment"
+        local review_hl = PR_REVIEW_HLS[pr.reviewDecision or ""] or "Comment"
 
         local draft_icon = pr.isDraft and " " or " "
         local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision] or " "
