@@ -9,6 +9,15 @@ map({
   { "gpo", git.gh_switch_account, { desc = "Switch Github account" } },
   { "gpc", git.create_pr, { desc = "Create PR" } },
   { "gpa", gh_actions.gh_actions_picker, { desc = "GH Actions picker" } },
+  { "gpw", gh_actions.gh_workflow_dispatch, { desc = "GH workflow dispatch" } },
+  {
+    "gpb",
+    function()
+      Snacks.gitbrowse()
+    end,
+    { modes = { "n", "x" }, desc = "Git browse on remote" },
+  },
+  { "gpf", git.git_fetch, { desc = "Git fetch --prune" } },
 
   -- Git diff
   { "gdf", git.get_current_file_history, { desc = "Diffview current file history" } },
@@ -42,6 +51,11 @@ map({
   { "gbc", git.git_checkout_branch, { desc = "Git checkout branch" } },
   { "gbn", git.git_checkout_new_branch, { desc = "Git checkout new branch" } },
   { "gbd", git.git_delete_branch, { desc = "Git delete branch" } },
+  { "gbm", git.git_merge_branch, { desc = "Git merge branch into current" } },
+
+  -- Git log / blame
+  { "gl", git.git_log, { desc = "Git commit log browser" } },
+  { "gB", git.git_blame, { desc = "Git blame current line" } },
 
   -- Git cherry-pick
   { "gcp", git.git_cherry_pick, { desc = "Git cherry-pick" } },

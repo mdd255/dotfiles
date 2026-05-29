@@ -324,6 +324,38 @@ return {
         end,
         desc = "Flash yank around",
       },
+      {
+        "S",
+        mode = { "n", "o", "x" },
+        function()
+          Flash.treesitter()
+        end,
+        desc = "Flash treesitter select",
+      },
+      {
+        "<C-s>",
+        mode = { "c" },
+        function()
+          Flash.toggle()
+        end,
+        desc = "Toggle flash in search",
+      },
+      {
+        "r",
+        mode = { "o" },
+        function()
+          Flash.remote()
+        end,
+        desc = "Flash remote (operator)",
+      },
+      {
+        "gs",
+        mode = { "n", "o", "x" },
+        function()
+          Flash.treesitter_search()
+        end,
+        desc = "Flash treesitter search",
+      },
     }
   end,
 }

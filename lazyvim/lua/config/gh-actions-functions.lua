@@ -2,6 +2,7 @@ local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
 local picker_width = utils.picker_width
+local HL = utils.HL
 local snacks = require("snacks")
 local M = {}
 
@@ -96,7 +97,7 @@ local function make_runs_fetcher(filter)
       "--limit",
       "30",
       "--json",
-      "databaseId,displayTitle,headBranch,status,conclusion,workflowName,event,createdAt,updatedAt,number,headSha,startedAt",
+      "databaseId,displayTitle,headBranch,status,conclusion,workflowName,event,createdAt,updatedAt,number,headSha,startedAt,url",
     }
 
     if filter.status then
@@ -171,32 +172,23 @@ end
 
 -- ── Confirmation prompt ───────────────────────────────────────────────────────
 
----Prompt user to type "yes" before executing a dangerous action.
----@param prompt string
----@param on_confirm function
-local function confirm_dangerous(prompt, on_confirm)
-  snacks.input({ prompt = prompt .. "  Type yes to confirm: " }, function(input)
-    if input and input:lower() == "yes" then
-      on_confirm()
-    else
-      vim.notify("Action cancelled", vim.log.levels.INFO, notify_opts)
-    end
-  end)
-end
+-- Shared "type yes" guard lives in utils now so git / docker guard identically.
+local confirm_dangerous = utils.confirm_dangerous
 
 -- ── Actions ───────────────────────────────────────────────────────────────────
 
 local RUN_ACTIONS = {
-  { text = "re-run", key = "rerun" },
-  { text = "re-run failed jobs", key = "rerun_failed" },
-  { text = "view log", key = "view_log" },
-  { text = "view log (failed)", key = "view_log_failed" },
-  { text = "watch live", key = "watch" },
-  { text = "view jobs", key = "view_jobs" },
-  { text = "open in browser", key = "browser" },
-  { text = "download artifacts", key = "download" },
-  { text = "cancel  ⚠", key = "cancel" },
-  { text = "delete  ⚠", key = "delete" },
+  { text = "󰑓 re-run", key = "rerun", hl = HL.ok },
+  { text = "󰑓 re-run failed jobs", key = "rerun_failed", hl = HL.warn },
+  { text = " view log", key = "view_log", hl = HL.info },
+  { text = " view log (failed)", key = "view_log_failed", hl = HL.info },
+  { text = " watch live", key = "watch", hl = HL.info },
+  { text = "󰹪 view jobs", key = "view_jobs", hl = HL.info },
+  { text = "󰊯 open in browser", key = "browser", hl = HL.info },
+  { text = " copy URL", key = "copy_url", hl = HL.info },
+  { text = " download artifacts", key = "download", hl = HL.info },
+  { text = "󰜺 cancel", key = "cancel", hl = HL.err },
+  { text = " delete", key = "delete", hl = HL.err },
 }
 
 local function run_mutate_success()
@@ -275,23 +267,27 @@ local function run_action(action_key, run)
         end,
       })
     end)
+  elseif action_key == "copy_url" then
+    if run.url and run.url ~= vim.NIL and run.url ~= "" then
+      vim.fn.setreg("+", run.url)
+      vim.notify("Copied: " .. run.url, vim.log.levels.INFO, notify_opts)
+    else
+      vim.notify("No URL for this run", vim.log.levels.WARN, notify_opts)
+    end
   end
 end
 
 -- ── Action submenu picker ──────────────────────────────────────────────────────
 
 local function show_action_picker(run)
+  -- No format override: menu_picker now colours each row by its `.hl` field.
   utils.menu_picker(RUN_ACTIONS, function(item)
     run_action(item.key, run)
   end, {
     title = "  Action",
     width_frac = 0.22,
+    width_max = 44,
     height = 0.55,
-    format = function(item, _)
-      local danger = { cancel = true, delete = true }
-      local hl = danger[item.key] and "DiagnosticError" or "Text"
-      return { { item.text, hl } }
-    end,
   })
 end
 
@@ -405,6 +401,60 @@ end
 function M.gh_actions_picker()
   run_filter_idx = 1
   open_actions_picker()
+end
+
+-- ── Workflow dispatch ───────────────────────────────────────────────────────
+-- List repo workflows, pick one, trigger it on the current branch. Covers the
+-- "start a run" gap — gh_actions_picker can only act on runs that already exist.
+function M.gh_workflow_dispatch()
+  vim.notify("Loading workflows...", vim.log.levels.INFO, notify_opts)
+
+  vim.system({ "gh", "workflow", "list", "--json", "name,id,state" }, {}, function(result)
+    vim.schedule(function()
+      if result.code ~= 0 then
+        vim.notify("Failed to list workflows: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
+        return
+      end
+
+      local ok, data = pcall(vim.json.decode, result.stdout or "[]")
+
+      if not ok or type(data) ~= "table" or #data == 0 then
+        vim.notify("No workflows found", vim.log.levels.WARN, notify_opts)
+        return
+      end
+
+      local items = {}
+
+      for _, wf in ipairs(data) do
+        table.insert(items, {
+          text = (wf.state == "active" and " " or " ") .. wf.name,
+          _id = tostring(wf.id),
+          _name = wf.name,
+          -- Disabled workflows can't be dispatched — mute them so it's obvious.
+          hl = wf.state == "active" and HL.ok or HL.muted,
+        })
+      end
+
+      utils.menu_picker(items, function(item)
+        local branch = vim.fn.system("git branch --show-current"):gsub("%s+", "")
+
+        exec_async({ "gh", "workflow", "run", item._id, "--ref", branch }, {
+          notify = notify_opts,
+          info_label = "Dispatching " .. item._name .. " on " .. branch .. "...",
+          success_label = "Triggered " .. item._name .. " on " .. branch,
+          failed_label = "Failed to dispatch workflow: ",
+          on_success = function()
+            cache.invalidate_pattern("gh.runs")
+          end,
+        })
+      end, {
+        title = "  Run workflow",
+        width_frac = 0.3,
+        width_max = 60,
+        height = 0.4,
+      })
+    end)
+  end)
 end
 
 return M

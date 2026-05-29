@@ -47,6 +47,9 @@ local tabs = {
   "tabs",
   mode = 1,
   fmt = shorten_filename,
+  max_length = function()
+    return vim.o.columns * 0.65
+  end,
 }
 
 local mode = {

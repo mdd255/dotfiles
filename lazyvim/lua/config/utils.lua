@@ -1,5 +1,34 @@
 local M = {}
 
+-- Shared semantic highlight palette. Keep label colours consistent across the
+-- git / gh-actions / docker pickers: ok = success/safe, err = destructive/failed,
+-- warn = caution, info = neutral/title, muted = de-emphasised, ident = name/author,
+-- text = plain body. Reference these names instead of hardcoding "Diagnostic*".
+M.HL = {
+  ok = "DiagnosticOk",
+  err = "DiagnosticError",
+  warn = "DiagnosticWarn",
+  info = "DiagnosticInfo",
+  muted = "Comment",
+  ident = "Function",
+  text = "Text",
+}
+
+-- Prompt the user to type "yes" before running a destructive action. Shared by
+-- the git / gh-actions / docker pickers so every irreversible op guards the same
+-- way. on_confirm fires only on an exact (case-insensitive) "yes".
+-- @param prompt string
+-- @param on_confirm function
+function M.confirm_dangerous(prompt, on_confirm)
+  require("snacks").input({ prompt = prompt .. "  Type yes to confirm: " }, function(input)
+    if input and input:lower() == "yes" then
+      on_confirm()
+    else
+      vim.notify("Action cancelled", vim.log.levels.INFO, { title = "Confirm" })
+    end
+  end)
+end
+
 -- Treesitter incremental selection (history-based expand/shrink)
 local _ts_history = {}
 
@@ -252,6 +281,13 @@ end
 -- @param items list - finder items (each needs `.text`; `.hl` honoured by default format)
 -- @param on_confirm function(item) - runs scheduled, after the picker closes
 -- @param opts? table - { title, title_hl, width_frac, width_max, height, format }
+-- Default action-row renderer: colour each row by its `.hl` (falling back to the
+-- shared `text` group). Items embed their own icon in `.text`, so a single
+-- `{ text, hl }` segment keeps every action menu visually identical.
+local function menu_default_format(item)
+  return { { item.text, item.hl or M.HL.text } }
+end
+
 function M.menu_picker(items, on_confirm, opts)
   opts = opts or {}
 
@@ -259,7 +295,7 @@ function M.menu_picker(items, on_confirm, opts)
     finder = function()
       return items
     end,
-    format = opts.format or "text",
+    format = opts.format or menu_default_format,
     layout = {
       layout = {
         title = { { opts.title or " Action", opts.title_hl or "DiagnosticInfo" } },

@@ -148,6 +148,11 @@ return {
     map("n", "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", { desc = "Find keymaps" })
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
+    map({ "n", "x" }, "fw", "<cmd>lua Snacks.picker.grep_word()<Cr>", { desc = "Grep word/selection" })
+    map("n", "fd", "<cmd>lua Snacks.picker.command_history()<Cr>", { desc = "Find command history" })
+    map("n", "fg", "<cmd>lua Snacks.picker.commands()<Cr>", { desc = "Find commands" })
+    map("n", "fu", "<cmd>lua Snacks.picker.undo()<Cr>", { desc = "Find undo history" })
+    map("n", "fn", "<cmd>lua Snacks.picker.notifications()<Cr>", { desc = "Find notifications" })
 
     vim.api.nvim_create_autocmd("WinEnter", {
       callback = function()
@@ -200,6 +205,8 @@ return {
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
     map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
+    map("n", "bd", "<cmd>lua Snacks.bufdelete()<Cr>", { desc = "Delete buffer (keep layout)" })
+    map("n", "sr", "<cmd>lua Snacks.rename.rename_file()<Cr>", { desc = "Rename file (LSP-aware)" })
 
     -- LSP keymaps
     map("n", "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", { desc = "Go to next diagnostics" })
@@ -208,6 +215,7 @@ return {
     map("n", "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", { desc = "LSP hover" })
     map("n", "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", { desc = "LSP rename" })
     map("n", "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", { desc = "Go to definitions" })
+    map("n", "ti", "<cmd>lua Snacks.picker.lsp_implementations()<Cr>", { desc = "Go to implementations" })
     map("n", "td", "<cmd>lua Snacks.picker.lsp_type_definitions()<Cr>", { desc = "Go to type definitions" })
     map("n", "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", { desc = "Go to references" })
     map("n", "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", { desc = "LSP symbols" })

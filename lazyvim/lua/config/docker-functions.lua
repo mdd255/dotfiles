@@ -4,6 +4,7 @@ local term_cmd = utils.term_cmd
 local picker_width = utils.picker_width
 local picker_selection = utils.picker_selection
 local parse_json_lines = utils.parse_json_lines
+local HL = utils.HL
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -49,17 +50,18 @@ local CONTAINER_FILTERS = {
 }
 
 local CONTAINER_ACTIONS = {
-  { text = " exec", key = "exec_bash" },
-  { text = "󰦪 view logs", key = "view_logs" },
-  { text = " stats", key = "stats" },
-  { text = " stop", key = "stop" },
-  { text = " start", key = "start" },
-  { text = " restart", key = "restart" },
-  { text = "󰏤 pause", key = "pause" },
-  { text = " unpause", key = "unpause" },
-  { text = " remove", key = "remove" },
-  { text = "✏ rename", key = "rename" },
-  { text = " inspect", key = "inspect" },
+  { text = " exec", key = "exec_bash", hl = HL.ok },
+  { text = "󰦪 view logs", key = "view_logs", hl = HL.info },
+  { text = " stats", key = "stats", hl = HL.info },
+  { text = " stop", key = "stop", hl = HL.warn },
+  { text = " start", key = "start", hl = HL.ok },
+  { text = " restart", key = "restart", hl = HL.warn },
+  { text = "󰏤 pause", key = "pause", hl = HL.warn },
+  { text = " unpause", key = "unpause", hl = HL.ok },
+  { text = " remove", key = "remove", hl = HL.err },
+  { text = "✏ rename", key = "rename", hl = HL.ident },
+  { text = " inspect", key = "inspect", hl = HL.info },
+  { text = " copy name", key = "copy_name", hl = HL.info },
 }
 
 -- Table-driven docker container CLI actions. Each entry produces an
@@ -77,17 +79,26 @@ local function run_container_action(action_key, containers)
   local def = CONTAINER_CMD_ACTIONS[action_key]
 
   if def then
-    for _, c in ipairs(containers) do
-      local args = vim.list_extend({ "docker" }, def.args)
-      table.insert(args, c.ID)
+    local function run_all()
+      for _, c in ipairs(containers) do
+        local args = vim.list_extend({ "docker" }, def.args)
+        table.insert(args, c.ID)
 
-      exec_async(args, {
-        notify = notify_opts,
-        info_label = def.verb .. " " .. c.Names .. "...",
-        success_label = def.past .. " " .. c.Names,
-        failed_label = "Failed to " .. action_key .. " " .. c.Names .. ": ",
-        on_success = container_mutate_success,
-      })
+        exec_async(args, {
+          notify = notify_opts,
+          info_label = def.verb .. " " .. c.Names .. "...",
+          success_label = def.past .. " " .. c.Names,
+          failed_label = "Failed to " .. action_key .. " " .. c.Names .. ": ",
+          on_success = container_mutate_success,
+        })
+      end
+    end
+
+    -- `remove` is irreversible (docker rm -f) — gate it behind a yes prompt.
+    if action_key == "remove" then
+      utils.confirm_dangerous("Remove " .. #containers .. " container(s)?", run_all)
+    else
+      run_all()
     end
 
     return
@@ -125,6 +136,13 @@ local function run_container_action(action_key, containers)
         })
       end)
     end
+  elseif action_key == "copy_name" then
+    local names = vim.tbl_map(function(c)
+      return c.Names
+    end, containers)
+    local joined = table.concat(names, "\n")
+    vim.fn.setreg("+", joined)
+    vim.notify("Copied: " .. joined, vim.log.levels.INFO, notify_opts)
   end
 end
 
@@ -267,12 +285,20 @@ open_container_picker = function(filter_idx)
             open_container_picker(next_idx)
           end)
         end,
+        refresh = function(picker)
+          cache.invalidate_pattern("docker.containers")
+          picker:close()
+          vim.schedule(function()
+            open_container_picker(filter_idx)
+          end)
+        end,
       },
       win = {
         input = {
           keys = {
             ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
             ["<C-o>"] = { "cycle_filter", mode = { "i", "n" }, desc = "Cycle filter" },
+            ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh containers" },
           },
         },
       },
@@ -299,12 +325,12 @@ end
 -- ── Images ────────────────────────────────────────────────────────────────────
 
 local IMAGE_ACTIONS = {
-  { text = " run (interactive)", key = "run_interactive" },
-  { text = " run (detached)", key = "run_detached" },
-  { text = " remove", key = "remove_force" },
-  { text = "󰓼 tag", key = "tag" },
-  { text = " inspect", key = "inspect" },
-  { text = "󰋚 history", key = "history" },
+  { text = " run (interactive)", key = "run_interactive", hl = HL.ok },
+  { text = " run (detached)", key = "run_detached", hl = HL.ok },
+  { text = " remove", key = "remove_force", hl = HL.err },
+  { text = "󰓼 tag", key = "tag", hl = HL.ident },
+  { text = " inspect", key = "inspect", hl = HL.info },
+  { text = "󰋚 history", key = "history", hl = HL.info },
 }
 
 -- Display label: short last path segment (registry/namespace stripped) for the
@@ -367,15 +393,17 @@ local function run_image_action(action_key, images)
       end)
     end)
   elseif action_key == "remove_force" then
-    for _, img in ipairs(images) do
-      exec_async({ "docker", "rmi", "-f", img.ID }, {
-        notify = notify_opts,
-        info_label = "Force removing " .. image_ref(img) .. "...",
-        success_label = "Removed " .. image_ref(img),
-        failed_label = "Failed to remove: ",
-        on_success = image_mutate_success,
-      })
-    end
+    utils.confirm_dangerous("Force-remove " .. #images .. " image(s)?", function()
+      for _, img in ipairs(images) do
+        exec_async({ "docker", "rmi", "-f", img.ID }, {
+          notify = notify_opts,
+          info_label = "Force removing " .. image_ref(img) .. "...",
+          success_label = "Removed " .. image_ref(img),
+          failed_label = "Failed to remove: ",
+          on_success = image_mutate_success,
+        })
+      end
+    end)
   elseif action_key == "tag" then
     local img = images[1]
 
@@ -498,11 +526,17 @@ open_image_picker = function()
           picker.list:move(1)
           vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
         end,
+        refresh = function(picker)
+          cache.invalidate("docker.images")
+          picker:close()
+          vim.schedule(open_image_picker)
+        end,
       },
       win = {
         input = {
           keys = {
             ["<Tab>"] = { "select_and_clear", mode = { "i", "n" } },
+            ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh images" },
           },
         },
       },
@@ -624,6 +658,44 @@ function M.docker_compose_down()
       success_label = "Compose down done",
       failed_label = "Compose down failed: ",
     })
+  end)
+end
+
+-- Stream compose logs in a terminal tab (the missing daily companion to up/down).
+function M.docker_compose_logs()
+  term_cmd("docker compose logs -f --tail=100")
+end
+
+-- ── Prune / Pull ──────────────────────────────────────────────────────────────
+
+-- Every entry deletes data, so all are gated by confirm_dangerous. `-f` skips
+-- docker's own y/N because the yes-prompt already covers consent. err = wipes
+-- reusable data (images/volumes), warn = clears regenerable cruft.
+local PRUNE_OPTIONS = {
+  { text = "dangling images", args = { "image", "prune", "-f" }, hl = HL.warn },
+  { text = "all unused images", args = { "image", "prune", "-a", "-f" }, hl = HL.err },
+  { text = "stopped containers", args = { "container", "prune", "-f" }, hl = HL.warn },
+  { text = "unused volumes", args = { "volume", "prune", "-f" }, hl = HL.err },
+  { text = "build cache", args = { "builder", "prune", "-f" }, hl = HL.warn },
+  { text = "system (all unused)", args = { "system", "prune", "-f" }, hl = HL.err },
+}
+
+function M.docker_prune()
+  utils.menu_picker(PRUNE_OPTIONS, function(item)
+    utils.confirm_dangerous("Prune " .. item.text .. "?", function()
+      -- term_cmd so the reclaimed-space report is visible.
+      term_cmd("docker " .. table.concat(item.args, " "))
+    end)
+  end, { title = "  Prune", width_frac = 0.3, width_max = 50, height = 0.4 })
+end
+
+function M.docker_pull()
+  snacks.input({ prompt = "Image to pull (e.g. nginx:latest): " }, function(ref)
+    if not ref or ref == "" then
+      return
+    end
+    -- Stream pull progress in a terminal; refresh the image picker with <C-k>.
+    term_cmd("docker pull " .. vim.fn.shellescape(ref))
   end)
 end
 

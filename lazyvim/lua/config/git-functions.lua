@@ -1,6 +1,7 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
 local picker_width = utils.picker_width
+local HL = utils.HL
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -585,7 +586,7 @@ end
 local PR_ACTIONS = {
   { text = "󰿄 Checkout", key = "checkout", hl = "DiagnosticOk" },
   { text = "󰊯 Open browser", key = "browser", hl = "DiagnosticInfo" },
-  { text = " Copy URL", key = "copy_url", hl = "DiagnosticInfo" },
+  { text = " Copy URL", key = "copy_url", hl = "DiagnosticInfo" },
   { text = " View diff", key = "diff", hl = "DiagnosticInfo" },
   { text = " Merge", key = "merge", hl = "DiagnosticWarn" },
   { text = " Merge squash", key = "squash", hl = "DiagnosticWarn" },
@@ -597,6 +598,10 @@ local PR_ACTIONS = {
   { text = " Close PR", key = "close", hl = "DiagnosticError" },
   { text = " Convert to draft", key = "to_draft", hl = "Comment" },
   { text = " Ready to review", key = "ready", hl = "DiagnosticOk" },
+  { text = " View checks", key = "checks", hl = "DiagnosticInfo" },
+  { text = " Request changes", key = "request_changes", hl = "DiagnosticError" },
+  { text = " Add label", key = "add_label", hl = "Function" },
+  { text = "󰑓 Reopen", key = "reopen", hl = "DiagnosticOk" },
 }
 
 local function handle_pr_action(action_key, pr)
@@ -722,6 +727,40 @@ local function handle_pr_action(action_key, pr)
       notify = notify_opts,
       success_label = "Marked ready for review: " .. label,
       failed_label = "Failed to mark ready: ",
+      on_success = pr_mutate_success,
+    })
+  elseif action_key == "request_changes" then
+    prompt_body({}, function(body)
+      if body == "" then
+        return
+      end
+      exec_async({ "gh", "pr", "review", id, "--request-changes", "--body", body }, {
+        notify = notify_opts,
+        success_label = "Requested changes: " .. label,
+        failed_label = "Failed to request changes: ",
+        on_success = pr_mutate_success,
+      })
+    end)
+  elseif action_key == "checks" then
+    -- Stream CI status in a terminal; gh --watch blocks until checks settle.
+    utils.term_cmd("gh pr checks " .. id .. " --watch")
+  elseif action_key == "add_label" then
+    snacks.input({ prompt = "Label(s), comma-separated: " }, function(lbl)
+      if not lbl or lbl == "" then
+        return
+      end
+      exec_async({ "gh", "pr", "edit", id, "--add-label", lbl }, {
+        notify = notify_opts,
+        success_label = "Label(s) added: " .. label,
+        failed_label = "Failed to add label: ",
+        on_success = pr_mutate_success,
+      })
+    end)
+  elseif action_key == "reopen" then
+    exec_async({ "gh", "pr", "reopen", id }, {
+      notify = notify_opts,
+      success_label = "Reopened: " .. label,
+      failed_label = "Failed to reopen: ",
       on_success = pr_mutate_success,
     })
   elseif action_key == "copy_url" then
@@ -901,7 +940,6 @@ local function open_gh_pr()
         input = {
           keys = {
             ["<C-o>"] = { "cycle_filter", mode = { "i", "n" }, desc = "Cycle PR filter" },
-            ["<C-r>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh PRs" },
             ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh PRs" },
           },
         },
@@ -1360,11 +1398,13 @@ function M.git_stash_drop()
 end
 
 function M.git_reset_hard()
-  exec_async({ "git", "reset", "--hard", "HEAD" }, {
-    notify = notify_opts,
-    success_label = "Hard reset to HEAD successful",
-    failed_label = "Hard reset to HEAD failed",
-  })
+  utils.confirm_dangerous("git reset --hard HEAD discards uncommitted changes.", function()
+    exec_async({ "git", "reset", "--hard", "HEAD" }, {
+      notify = notify_opts,
+      success_label = "Hard reset to HEAD successful",
+      failed_label = "Hard reset to HEAD failed",
+    })
+  end)
 end
 
 function M.git_reset_soft()
@@ -1384,18 +1424,20 @@ function M.git_restore_staged()
 end
 
 function M.git_restore_all()
-  exec_async({ "git", "clean", "-f" }, {
-    notify = notify_opts,
-    suppress_notify = true,
-    failed_label = "Failed to clean: ",
-    on_success = function()
-      exec_async({ "git", "checkout", "." }, {
-        notify = notify_opts,
-        success_label = "Git cleaned",
-        failed_label = "Failed to checkout: ",
-      })
-    end,
-  })
+  utils.confirm_dangerous("Discard ALL changes (git clean -f + checkout .)?", function()
+    exec_async({ "git", "clean", "-f" }, {
+      notify = notify_opts,
+      suppress_notify = true,
+      failed_label = "Failed to clean: ",
+      on_success = function()
+        exec_async({ "git", "checkout", "." }, {
+          notify = notify_opts,
+          success_label = "Git cleaned",
+          failed_label = "Failed to checkout: ",
+        })
+      end,
+    })
+  end)
 end
 
 function M.git_pull()
@@ -1501,6 +1543,165 @@ function M.git_diff_branch()
     end
 
     vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
+  end)
+end
+
+function M.git_fetch()
+  with_ssh_passphrase(function(env, cleanup)
+    exec_async({ "git", "fetch", "--prune" }, {
+      notify = notify_opts,
+      env = env,
+      info_label = "Fetching (prune)...",
+      success_label = "Fetched and pruned remote-tracking refs",
+      failed_label = "Fetch failed: ",
+      on_success = cleanup,
+      on_failure = cleanup,
+    })
+  end)
+end
+
+function M.git_merge_branch()
+  get_branches(true, true)(function(branches)
+    if not branches then
+      return
+    end
+
+    vim.ui.select(branches, { prompt = "Merge branch into current: " }, function(selected)
+      if selected then
+        exec_async({ "git", "merge", selected }, {
+          notify = notify_opts,
+          info_label = "Merging " .. selected .. "...",
+          success_label = "Merged " .. selected,
+          failed_label = "Merge failed (resolve conflicts): ",
+        })
+      end
+    end)
+  end)
+end
+
+-- Line blame for the cursor position — lightweight notify, no extra window.
+function M.git_blame()
+  local file = vim.fn.expand("%:.")
+
+  if file == "" then
+    vim.notify("No file in buffer", vim.log.levels.WARN, notify_opts)
+    return
+  end
+
+  local line = vim.fn.line(".")
+
+  vim.system({ "git", "blame", "-L", line .. "," .. line, "--", file }, {}, function(res)
+    vim.schedule(function()
+      if res.code ~= 0 then
+        vim.notify("Blame failed: " .. (res.stderr or "unknown error"), vim.log.levels.ERROR, notify_opts)
+        return
+      end
+
+      vim.notify(vim.trim(res.stdout or ""), vim.log.levels.INFO, notify_opts)
+    end)
+  end)
+end
+
+-- ── Commit log browser ────────────────────────────────────────────────────────
+
+local COMMIT_ACTIONS = {
+  { text = " View diff", key = "diff", hl = HL.info },
+  { text = " Copy hash", key = "copy", hl = HL.info },
+  { text = "󰿄 Checkout", key = "checkout", hl = HL.ok },
+  { text = " Cherry-pick", key = "cherry", hl = HL.warn },
+  { text = " Revert", key = "revert", hl = HL.warn },
+  { text = "󰑓 Reset --hard here", key = "reset_hard", hl = HL.err },
+}
+
+local function handle_commit_action(action_key, hash)
+  if action_key == "diff" then
+    -- `<hash>^!` is git shorthand for "this commit vs its parent".
+    vim.cmd("DiffviewOpen " .. hash .. "^!")
+  elseif action_key == "copy" then
+    vim.fn.setreg("+", hash)
+    vim.notify("Copied: " .. hash, vim.log.levels.INFO, notify_opts)
+  elseif action_key == "checkout" then
+    exec_async({ "git", "checkout", hash }, {
+      notify = notify_opts,
+      success_label = "Checked out " .. hash,
+      failed_label = "Failed to checkout: ",
+    })
+  elseif action_key == "cherry" then
+    exec_async({ "git", "cherry-pick", hash }, {
+      notify = notify_opts,
+      info_label = "Cherry-picking " .. hash .. "...",
+      success_label = "Cherry-picked " .. hash,
+      failed_label = "Failed to cherry-pick: ",
+    })
+  elseif action_key == "revert" then
+    exec_async({ "git", "revert", hash, "--no-edit" }, {
+      notify = notify_opts,
+      success_label = "Reverted " .. hash,
+      failed_label = "Failed to revert: ",
+    })
+  elseif action_key == "reset_hard" then
+    utils.confirm_dangerous("git reset --hard " .. hash .. " drops every commit after it.", function()
+      exec_async({ "git", "reset", "--hard", hash }, {
+        notify = notify_opts,
+        success_label = "Reset --hard to " .. hash,
+        failed_label = "Failed to reset: ",
+      })
+    end)
+  end
+end
+
+function M.git_log()
+  get_recent_commits(50)(function(commits)
+    if not commits then
+      return
+    end
+
+    local items = {}
+
+    for _, line in ipairs(commits) do
+      table.insert(items, { text = line, _hash = line:match("^(%S+)") })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        local hash, rest = item.text:match("^(%S+)%s+(.*)$")
+        return {
+          { (hash or item.text) .. " ", "DiagnosticInfo" },
+          { rest or "", "Normal" },
+        }
+      end,
+      layout = {
+        layout = {
+          title = { { "  Commit log", "DiagnosticInfo" } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.8, 100),
+          height = 0.6,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+
+        if item and item._hash then
+          vim.schedule(function()
+            utils.menu_picker(COMMIT_ACTIONS, function(a)
+              handle_commit_action(a.key, item._hash)
+            end, {
+              title = "  Commit " .. item._hash,
+              width_frac = 0.3,
+              width_max = 50,
+              height = 0.4,
+            })
+          end)
+        end
+      end,
+    })
   end)
 end
 
