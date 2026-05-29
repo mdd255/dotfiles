@@ -241,14 +241,13 @@ function M.picker_selection(picker)
 end
 
 function M.exec_async(cmd, opts)
-  opts = opts
-    or {
-      notify = { title = "CMD" },
-      info_label = nil,
-      success_label = "Command executed",
-      failed_label = "Command failed: ",
-      suppress_notify = false,
-    }
+  opts = vim.tbl_extend("keep", opts or {}, {
+    notify = { title = "CMD" },
+    info_label = nil,
+    success_label = "Command executed",
+    failed_label = "Command failed: ",
+    suppress_notify = false,
+  })
 
   if opts.info_label then
     vim.notify(opts.info_label, vim.log.levels.INFO, opts.notify)

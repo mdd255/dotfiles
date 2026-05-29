@@ -63,6 +63,7 @@ return {
             ["<C-e>"] = { "list_up", mode = { "n", "i" } },
             ["<C-p>"] = { "list_up", mode = { "n", "i" } },
             ["<C-h>"] = { "preview_scroll_down", mode = { "n", "i" } },
+            -- <C-i> and <Tab> share the same keycode in terminals but are distinct in Neovide — intentional.
             ["<C-i>"] = { "preview_scroll_up", mode = { "n", "i" } },
           },
         },

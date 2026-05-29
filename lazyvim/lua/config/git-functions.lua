@@ -1466,6 +1466,8 @@ function M.git_commit(amend)
           success_label = "Committed successfully",
           failed_label = "Commit failed: ",
           on_success = function()
+            -- Intentional: always push after commit. Amend passes force=true → git push --force.
+            -- Uses --force (not --force-with-lease) by design; acceptable on personal branches.
             M.git_push(amend)
           end,
         })

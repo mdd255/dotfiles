@@ -1,3 +1,6 @@
+-- Seed once at load time so _uuid/_email/_phone vary per session.
+math.randomseed(os.time())
+
 return {
   {
     "mistweaverco/kulala.nvim",

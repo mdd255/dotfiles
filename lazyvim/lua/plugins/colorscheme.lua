@@ -1,4 +1,4 @@
-local color = require("config/color")
+local color = require("config.color")
 
 local hi = {
   black = color.black,

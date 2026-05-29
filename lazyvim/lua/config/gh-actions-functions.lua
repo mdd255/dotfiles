@@ -401,7 +401,7 @@ local function open_actions_picker()
             ["<C-o>"] = {
               "cycle_filter",
               mode = { "i", "n" },
-              desc = "Cycle filter (Running → Recent → Failed)",
+              desc = "Cycle filter (Recent → Running → Failed)",
             },
             ["<C-k>"] = { "refresh", mode = { "i", "n" }, desc = "Refresh runs" },
           },

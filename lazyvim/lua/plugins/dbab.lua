@@ -28,7 +28,7 @@ return {
         show_system_schemas = false,
       },
       history = {
-        show = true,
+        show = false,
         width = 0.25,
       },
       editor = {
@@ -41,7 +41,7 @@ return {
         show_line_numbers = false,
         style = "vertical",
         header_align = "full",
-        height = 0.75,
+        height = 1,
       },
       keymaps = {
         execute = "<Cr>",

@@ -1,4 +1,4 @@
-local color = require("config/color")
+local color = require("config.color")
 
 local theme = {
   normal = {
@@ -93,7 +93,7 @@ local lsp_status = {
 }
 
 local project_name = function()
-  local cwd = vim.loop.cwd()
+  local cwd = (vim.uv or vim.loop).cwd()
   return " " .. string.gsub(cwd, "^.*/", "")
 end
 
@@ -103,9 +103,6 @@ return {
     local recorder = require("recorder")
 
     require("lualine").setup({
-      disabled_filetypes = {
-        statusline = {},
-      },
       sections = {
         lualine_a = {},
         lualine_b = { mode },

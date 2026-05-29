@@ -19,8 +19,9 @@ vim.keymap.set("c", "<A-v>", '<C-r>+')
 
 -- auto cmds
 vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  group = vim.api.nvim_create_augroup("NeovideTitle", { clear = true }),
   callback = function()
-    local cwd = vim.loop.cwd()
+    local cwd = (vim.uv or vim.loop).cwd()
     local project_name = string.gsub(cwd, "^.*/", "")
     vim.o.titlestring = " " .. project_name
   end,

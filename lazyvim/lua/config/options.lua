@@ -1,3 +1,4 @@
+-- "t" also used as plain mapping prefix (LSP: tn/te/tt etc.) but those are explicit maps, not <localleader> expansions — no conflict.
 vim.g.maplocalleader = "t"
 vim.opt.timeoutlen = 350
 vim.opt.winborder = "rounded"

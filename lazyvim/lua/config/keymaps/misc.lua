@@ -16,7 +16,7 @@ map({
     "sy",
     function()
       local filename = vim.fn.expand("%:t")
-      if filename ~= nil and #filename >= 4 then
+      if filename ~= nil and filename ~= "" then
         vim.fn.setreg("+", filename)
         vim.notify("Copied: " .. filename .. " to clipboard")
       else
@@ -30,7 +30,7 @@ map({
     "sY",
     function()
       local filename = vim.fn.expand("%:.")
-      if filename ~= nil and #filename >= 4 then
+      if filename ~= nil and filename ~= "" then
         vim.fn.setreg("+", filename)
         vim.notify("Copied: " .. filename .. " to clipboard")
       else

@@ -3,6 +3,8 @@ return {
     "saghen/blink.cmp",
     dependencies = {
       "supermaven-inc/supermaven-nvim",
+      -- zerochae/dbab.nvim provides blink_dbab completion source (autocomplete).
+      -- mdd255/dbab.nvim (plugins/dbab.lua) is the full DB client UI. Different repos, same short name — not a conflict.
       "zerochae/dbab.nvim",
       {
         "Huijiro/blink-cmp-supermaven",

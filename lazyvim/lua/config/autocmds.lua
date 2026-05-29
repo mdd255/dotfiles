@@ -62,6 +62,7 @@ end
 
 -- Enable cursorline and relativenumber for specific filetypes
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FileType" }, {
+  group = vim.api.nvim_create_augroup("CursorOptionsEnter", { clear = true }),
   callback = function()
     if not vim.g.diffview_active then
       setup_cursor_options()
@@ -70,6 +71,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FileType" }, {
 })
 
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
+  group = vim.api.nvim_create_augroup("CursorOptionsLeave", { clear = true }),
   callback = function()
     if not vim.g.diffview_active then
       vim.opt_local.relativenumber = false
@@ -79,6 +81,7 @@ vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave" }, {
 })
 
 vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("TSConsoleLog", { clear = true }),
   pattern = "typescript",
   callback = function()
     local function console_log()
@@ -95,6 +98,7 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_autocmd("SessionLoadPost", {
+  group = vim.api.nvim_create_augroup("SessionLoadPostHook", { clear = true }),
   callback = function()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) and not vim.bo[buf].modified then
