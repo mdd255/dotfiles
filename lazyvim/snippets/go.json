@@ -104,19 +104,19 @@
    },
    "uint8": {
       "prefix": ["u"],
-      "body": "int8"
+      "body": "uint8"
    },
    "uint16": {
       "prefix": ["2u"],
-      "body": "int16"
+      "body": "uint16"
    },
    "uint32": {
       "prefix": ["3u"],
-      "body": "int32"
+      "body": "uint32"
    },
    "uint64": {
       "prefix": ["4u"],
-      "body": "int64"
+      "body": "uint64"
    },
    "float32": {
       "prefix": ["f"],

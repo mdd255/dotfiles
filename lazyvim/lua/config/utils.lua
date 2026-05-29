@@ -215,11 +215,17 @@ end
 -- @return table
 function M.parse_json_lines(stdout)
   local out = {}
+  local skipped = 0
   for line in (stdout or ""):gmatch("[^\r\n]+") do
     local ok, data = pcall(vim.json.decode, line)
     if ok and data then
       out[#out + 1] = data
+    else
+      skipped = skipped + 1
     end
+  end
+  if skipped > 0 then
+    vim.notify(skipped .. " malformed JSON line(s) skipped", vim.log.levels.DEBUG, { title = "parse_json_lines" })
   end
   return out
 end
@@ -240,6 +246,43 @@ function M.picker_selection(picker)
   return selected
 end
 
+-- Shared single-column floating "action submenu" picker. Used by the docker /
+-- gh-actions / package pickers, which were all hand-rolling the same finder +
+-- vertical float layout + scheduled-confirm shape.
+-- @param items list - finder items (each needs `.text`; `.hl` honoured by default format)
+-- @param on_confirm function(item) - runs scheduled, after the picker closes
+-- @param opts? table - { title, title_hl, width_frac, width_max, height, format }
+function M.menu_picker(items, on_confirm, opts)
+  opts = opts or {}
+
+  require("snacks").picker.pick({
+    finder = function()
+      return items
+    end,
+    format = opts.format or "text",
+    layout = {
+      layout = {
+        title = { { opts.title or " Action", opts.title_hl or "DiagnosticInfo" } },
+        box = "vertical",
+        position = "float",
+        width = M.picker_width(opts.width_frac or 0.2, opts.width_max or 40),
+        height = opts.height or 0.4,
+        border = "rounded",
+        { win = "input", height = 1, border = "bottom" },
+        { win = "list" },
+      },
+    },
+    confirm = function(picker, item)
+      picker:close()
+      if item then
+        vim.schedule(function()
+          on_confirm(item)
+        end)
+      end
+    end,
+  })
+end
+
 function M.exec_async(cmd, opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     notify = { title = "CMD" },
@@ -253,7 +296,7 @@ function M.exec_async(cmd, opts)
     vim.notify(opts.info_label, vim.log.levels.INFO, opts.notify)
   end
 
-  vim.system(cmd, { env = opts.env }, function(cmd_result)
+  vim.system(cmd, { env = opts.env, timeout = opts.timeout }, function(cmd_result)
     vim.schedule(function()
       if cmd_result.code == 0 then
         local message = opts.success_label or ""

@@ -23,9 +23,13 @@ local function with_ssh_passphrase(fn)
   end
 
   local tmp = vim.fn.tempname() .. ".sh"
-  local f = io.open(tmp, "w")
+  local uv = vim.uv or vim.loop
+  -- Create owner-only (0700) from birth via fs_open: the file holds the SSH
+  -- passphrase in plaintext, so it must never be group/world-readable. io.open
+  -- would create it 0644 and a later `chmod +x` leaves a brief readable window.
+  local fd = uv.fs_open(tmp, "w", tonumber("700", 8))
 
-  if not f then
+  if not fd then
     vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
     -- Fall back to the no-askpass path instead of stranding the caller: fn must
     -- still fire or the push/pull/checkout that awaits it hangs forever.
@@ -35,9 +39,8 @@ local function with_ssh_passphrase(fn)
 
   -- Use printf to safely echo passphrase; escape single quotes in passphrase.
   local safe = passphrase:gsub("'", "'\\''")
-  f:write("#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
-  f:close()
-  vim.fn.system({ "chmod", "+x", tmp })
+  uv.fs_write(fd, "#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
+  uv.fs_close(fd)
 
   local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
 
@@ -1314,7 +1317,7 @@ end
 
 function M.get_current_file_history()
   local current_file = vim.fn.expand("%:.")
-  vim.cmd("DiffviewFileHistory " .. current_file)
+  vim.cmd("DiffviewFileHistory " .. vim.fn.fnameescape(current_file))
 end
 
 function M.git_stash_push()
@@ -1488,7 +1491,7 @@ end
 function M.git_diff_branch()
   local function on_branch_selected(selected)
     if selected then
-      vim.cmd("DiffviewOpen " .. selected)
+      vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(selected))
     end
   end
 

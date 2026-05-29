@@ -228,13 +228,13 @@ local function run_action(action_key, run)
       on_success = run_mutate_success,
     })
   elseif action_key == "view_log" then
-    term_cmd("gh run view " .. id .. " --log 2>&1 | less -R")
+    term_cmd("gh run view " .. vim.fn.shellescape(id) .. " --log 2>&1 | less -R")
   elseif action_key == "view_log_failed" then
-    term_cmd("gh run view " .. id .. " --log-failed 2>&1 | less -R")
+    term_cmd("gh run view " .. vim.fn.shellescape(id) .. " --log-failed 2>&1 | less -R")
   elseif action_key == "watch" then
-    term_cmd("gh run watch " .. id)
+    term_cmd("gh run watch " .. vim.fn.shellescape(id))
   elseif action_key == "view_jobs" then
-    term_cmd("gh run view " .. id .. " 2>&1 | less")
+    term_cmd("gh run view " .. vim.fn.shellescape(id) .. " 2>&1 | less")
   elseif action_key == "browser" then
     exec_async({ "gh", "run", "view", id, "--web" }, {
       notify = notify_opts,
@@ -281,34 +281,16 @@ end
 -- ── Action submenu picker ──────────────────────────────────────────────────────
 
 local function show_action_picker(run)
-  snacks.picker.pick({
-    finder = function()
-      return RUN_ACTIONS
-    end,
+  utils.menu_picker(RUN_ACTIONS, function(item)
+    run_action(item.key, run)
+  end, {
+    title = "  Action",
+    width_frac = 0.22,
+    height = 0.55,
     format = function(item, _)
       local danger = { cancel = true, delete = true }
       local hl = danger[item.key] and "DiagnosticError" or "Text"
       return { { item.text, hl } }
-    end,
-    layout = {
-      layout = {
-        title = { { "  Action", "DiagnosticInfo" } },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.22, 40),
-        height = 0.55,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list" },
-      },
-    },
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        vim.schedule(function()
-          run_action(item.key, run)
-        end)
-      end
     end,
   })
 end

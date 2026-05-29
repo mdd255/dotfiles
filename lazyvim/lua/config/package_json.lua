@@ -35,7 +35,11 @@ local function read_json(path)
   local content = f:read("*a")
   f:close()
   local ok, data = pcall(vim.json.decode, content)
-  return ok and data or nil
+  if not ok then
+    vim.notify("Failed to parse JSON: " .. path, vim.log.levels.DEBUG, notify_opts)
+    return nil
+  end
+  return data
 end
 
 local function get_pkg_manager(root)
@@ -248,32 +252,9 @@ local function run_package_action(action_key, packages, root, pm)
 end
 
 local function show_action_picker(selected, root, pm)
-  snacks.picker.pick({
-    finder = function()
-      return PACKAGE_ACTIONS
-    end,
-    format = "text",
-    layout = {
-      layout = {
-        title = { { " Action", "DiagnosticInfo" } },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.2, 40),
-        height = 0.4,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list" },
-      },
-    },
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        vim.schedule(function()
-          run_package_action(item.key, selected, root, pm)
-        end)
-      end
-    end,
-  })
+  utils.menu_picker(PACKAGE_ACTIONS, function(item)
+    run_package_action(item.key, selected, root, pm)
+  end)
 end
 
 open_packages_picker = function()

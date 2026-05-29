@@ -95,21 +95,21 @@ local function run_container_action(action_key, containers)
 
   if action_key == "exec_bash" then
     for _, c in ipairs(containers) do
-      term_cmd("docker exec -it " .. c.Names .. " bash")
+      term_cmd("docker exec -it " .. vim.fn.shellescape(c.Names) .. " bash")
     end
   elseif action_key == "view_logs" then
     for _, c in ipairs(containers) do
-      term_cmd("docker logs -f --tail=100 " .. c.Names)
+      term_cmd("docker logs -f --tail=100 " .. vim.fn.shellescape(c.Names))
     end
   elseif action_key == "stats" then
     local names = vim.tbl_map(function(c)
-      return c.Names
+      return vim.fn.shellescape(c.Names)
     end, containers)
 
     term_cmd("docker stats " .. table.concat(names, " "))
   elseif action_key == "inspect" then
     for _, c in ipairs(containers) do
-      term_cmd("docker inspect " .. c.Names .. " | less")
+      term_cmd("docker inspect " .. vim.fn.shellescape(c.Names) .. " | less")
     end
   elseif action_key == "rename" then
     for _, c in ipairs(containers) do
@@ -129,32 +129,9 @@ local function run_container_action(action_key, containers)
 end
 
 local function show_action_picker(selected_containers, action_list, on_action)
-  snacks.picker.pick({
-    finder = function()
-      return action_list
-    end,
-    format = "text",
-    layout = {
-      layout = {
-        title = { { " Action", "DiagnosticInfo" } },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.2, 40),
-        height = 0.5,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list" },
-      },
-    },
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        vim.schedule(function()
-          on_action(item.key, selected_containers)
-        end)
-      end
-    end,
-  })
+  utils.menu_picker(action_list, function(item)
+    on_action(item.key, selected_containers)
+  end, { height = 0.5 })
 end
 
 -- Raw container fetcher (no cache). Used internally by get_containers.
@@ -357,7 +334,7 @@ end
 local function run_image_action(action_key, images)
   if action_key == "run_interactive" then
     for _, img in ipairs(images) do
-      term_cmd("docker run -it --rm " .. image_ref(img) .. " bash")
+      term_cmd("docker run -it --rm " .. vim.fn.shellescape(image_ref(img)) .. " bash")
     end
   elseif action_key == "run_detached" then
     local img = images[1]
@@ -420,11 +397,11 @@ local function run_image_action(action_key, images)
     end)
   elseif action_key == "inspect" then
     for _, img in ipairs(images) do
-      term_cmd("docker inspect " .. img.ID .. " | less")
+      term_cmd("docker inspect " .. vim.fn.shellescape(img.ID) .. " | less")
     end
   elseif action_key == "history" then
     for _, img in ipairs(images) do
-      term_cmd("docker history " .. image_ref(img))
+      term_cmd("docker history " .. vim.fn.shellescape(image_ref(img)))
     end
   end
 end
@@ -564,7 +541,7 @@ function M.docker_build()
         return
       end
 
-      term_cmd("docker build -t " .. tag .. " -f " .. dockerfile .. " .")
+      term_cmd("docker build -t " .. vim.fn.shellescape(tag) .. " -f " .. vim.fn.shellescape(dockerfile) .. " .")
     end)
   end)
 end

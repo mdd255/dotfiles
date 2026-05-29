@@ -9,7 +9,7 @@
     "prefix": [
       "up"
     ],
-    "body": "UPDATE $1 SET ${2:key} = ${3:value} WHERE id = '${3}'"
+    "body": "UPDATE $1 SET ${2:key} = ${3:value} WHERE id = '${4:id}'"
   },
   "delete": {
     "prefix": [

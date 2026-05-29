@@ -127,7 +127,7 @@
 		"prefix": ["pb"],
 		"body": "Boolean($1)"
 	},
-	"parseNmber": {
+	"parseNumber": {
 		"prefix": ["pn"],
 		"body": "Number($1)"
 	},
