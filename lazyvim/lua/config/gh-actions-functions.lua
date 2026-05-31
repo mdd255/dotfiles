@@ -72,6 +72,7 @@ local function safe_str(v)
   if v == nil or v == vim.NIL then
     return "N/A"
   end
+
   return tostring(v)
 end
 

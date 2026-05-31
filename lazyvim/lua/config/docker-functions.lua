@@ -128,6 +128,7 @@ local function run_container_action(action_key, containers)
         if not new_name or new_name == "" or new_name == c.Names then
           return
         end
+
         exec_async({ "docker", "rename", c.Names, new_name }, {
           notify = notify_opts,
           success_label = "Renamed " .. c.Names .. " → " .. new_name,
