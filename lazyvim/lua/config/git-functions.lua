@@ -6,6 +6,22 @@ local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
+local function format_branch(item, current_branch)
+  if current_branch and item.text == current_branch then
+    return { { item.text, "DiagnosticOk" } }
+  end
+  local parts = vim.split(item.text, "/")
+  if #parts > 1 then
+    local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
+    return {
+      { prefix, "Comment" },
+      { parts[#parts], "Function" },
+    }
+  end
+  local is_main = item.text == "main" or item.text == "master"
+  return { { item.text, is_main and "DiagnosticWarn" or "Function" } }
+end
+
 local notify_opts = {
   title = "Git",
 }
@@ -672,7 +688,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_title" then
-    snacks.input({ prompt = "Edit title: ", default = pr.title }, function(title)
+    snacks.input({ prompt = "Edit title: ", default = pr.title, row = 0.45 }, function(title)
       if not title or title == "" then
         return
       end
@@ -745,7 +761,7 @@ local function handle_pr_action(action_key, pr)
     -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
-    snacks.input({ prompt = "Label(s), comma-separated: " }, function(lbl)
+    snacks.input({ prompt = "Label(s), comma-separated: ", row = 0.45 }, function(lbl)
       if not lbl or lbl == "" then
         return
       end
@@ -1044,19 +1060,45 @@ function M.create_pr()
   -- Helper function: Select base branch
   local function select_base_branch(callback)
     fetch_current_login(function(current_login)
-      local prompt = current_login ~= "" and ("Select base branch (" .. current_login .. "): ")
-        or "Select base branch: "
+      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")")
+        or " Select base branch"
 
       get_branches(true, true)(function(branches)
         if not branches then
           return
         end
 
-        vim.ui.select(branches, { prompt = prompt }, function(selected)
-          if selected then
-            callback(selected)
-          end
-        end)
+        local items = {}
+        for _, branch in ipairs(branches) do
+          table.insert(items, { text = branch })
+        end
+
+        snacks.picker.pick({
+          finder = function()
+            return items
+          end,
+          format = function(item, _)
+            return format_branch(item)
+          end,
+          layout = {
+            layout = {
+              title = { { title, "DiagnosticInfo" } },
+              box = "vertical",
+              position = "float",
+              width = picker_width(0.7, 80),
+              height = 0.4,
+              border = "rounded",
+              { win = "input", height = 1, border = "bottom" },
+              { win = "list" },
+            },
+          },
+          confirm = function(picker, item)
+            picker:close()
+            if item then
+              callback(item.text)
+            end
+          end,
+        })
       end)
     end)
   end
@@ -1065,7 +1107,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    snacks.input({ prompt = "PR Title: ", default = default_title }, function(title)
+    snacks.input({ prompt = "PR Title: ", default = default_title, row = 0.45 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1074,7 +1116,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for label
   local function prompt_label(callback)
-    require("snacks").input({ prompt = "Label (optional): ", default = "" }, function(label)
+    require("snacks").input({ prompt = "Label (optional): ", default = "", row = 0.45 }, function(label)
       callback(label or "")
     end)
   end
@@ -1188,19 +1230,7 @@ function M.git_checkout_branch()
         return items
       end,
       format = function(item, _)
-        if item.text == current_branch then
-          return { { item.text, "DiagnosticOk" } }
-        end
-        local parts = vim.split(item.text, "/")
-        if #parts > 1 then
-          local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
-          return {
-            { prefix, "Comment" },
-            { parts[#parts], "Function" },
-          }
-        end
-        local is_main = item.text == "main" or item.text == "master"
-        return { { item.text, is_main and "DiagnosticWarn" or "Function" } }
+        return format_branch(item, current_branch)
       end,
       layout = {
         layout = {
@@ -1238,6 +1268,7 @@ function M.git_checkout_new_branch()
 
   snacks.input({
     prompt = "New branch name: ",
+    row = 0.45,
   }, on_input)
 end
 
@@ -1523,6 +1554,7 @@ function M.git_commit(amend)
   snacks.input({
     prompt = amend and "Amend commit: " or "Commit to: " .. branch .. " :",
     default = default_msg,
+    row = 0.45,
   }, on_input)
 end
 
@@ -1531,18 +1563,42 @@ function M.git_commit_amend()
 end
 
 function M.git_diff_branch()
-  local function on_branch_selected(selected)
-    if selected then
-      vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(selected))
-    end
-  end
-
   get_branches(false, true)(function(branches)
     if not branches then
       return
     end
 
-    vim.ui.select(branches, { prompt = "Select branch to diff: " }, on_branch_selected)
+    local items = {}
+    for _, branch in ipairs(branches) do
+      table.insert(items, { text = branch })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        return format_branch(item)
+      end,
+      layout = {
+        layout = {
+          title = { { " Diff branch", "DiagnosticInfo" } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.7, 80),
+          height = 0.4,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+        if item then
+          vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(item.text))
+        end
+      end,
+    })
   end)
 end
 
@@ -1566,16 +1622,42 @@ function M.git_merge_branch()
       return
     end
 
-    vim.ui.select(branches, { prompt = "Merge branch into current: " }, function(selected)
-      if selected then
-        exec_async({ "git", "merge", selected }, {
-          notify = notify_opts,
-          info_label = "Merging " .. selected .. "...",
-          success_label = "Merged " .. selected,
-          failed_label = "Merge failed (resolve conflicts): ",
-        })
-      end
-    end)
+    local items = {}
+    for _, branch in ipairs(branches) do
+      table.insert(items, { text = branch })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        return format_branch(item)
+      end,
+      layout = {
+        layout = {
+          title = { { " Merge branch", "DiagnosticInfo" } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.7, 80),
+          height = 0.4,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+        if item then
+          exec_async({ "git", "merge", item.text }, {
+            notify = notify_opts,
+            info_label = "Merging " .. item.text .. "...",
+            success_label = "Merged " .. item.text,
+            failed_label = "Merge failed (resolve conflicts): ",
+          })
+        end
+      end,
+    })
   end)
 end
 
