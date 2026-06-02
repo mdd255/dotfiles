@@ -28,44 +28,123 @@ local notify_opts = {
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
+-- Centered floating input. opts: { secret?: bool, default?: string }
+-- secret=true masks each char as * via extmark conceal.
+local function float_input(prompt, opts, callback)
+  local buf = vim.api.nvim_create_buf(false, true)
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
+  local width = opts.width or 60
+  local row = math.floor((ui.height - 3) / 2)
+  local col = math.floor((ui.width - width) / 2)
+
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].buftype = "prompt"
+  vim.fn.prompt_setprompt(buf, "")
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = 1,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " " .. prompt .. " ",
+    title_pos = "center",
+  })
+
+  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
+
+  if opts.secret then
+    local ns = vim.api.nvim_create_namespace("float_input_mask")
+    -- conceallevel=2: extmarks with conceal char replace their range in the display.
+    -- concealcursor=nicv: conceal active in all modes so * shows even while typing.
+    vim.wo[win].conceallevel = 2
+    vim.wo[win].concealcursor = "nicv"
+
+    vim.api.nvim_create_autocmd({ "TextChangedI", "TextChanged" }, {
+      buffer = buf,
+      callback = function()
+        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+        local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
+        for i = 1, #line do
+          vim.api.nvim_buf_set_extmark(buf, ns, 0, i - 1, { end_col = i, conceal = "*" })
+        end
+      end,
+    })
+  end
+
+  if opts.default and opts.default ~= "" then
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { opts.default })
+  end
+
+  local done = false
+  local function finish(value)
+    if done then
+      return
+    end
+    done = true
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_close(win, true)
+    end
+    vim.schedule(function()
+      callback(value or "")
+    end)
+  end
+
+  vim.fn.prompt_setcallback(buf, function(text)
+    finish(text)
+  end)
+  vim.fn.prompt_setinterrupt(buf, function()
+    finish("")
+  end)
+
+  vim.keymap.set({ "n", "i" }, "<Esc>", function()
+    finish("")
+  end, { buffer = buf, silent = true })
+
+  vim.schedule(function()
+    vim.cmd("startinsert!")
+  end)
+end
+
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
-  -- inputsecret masks each char as *; Esc and empty Enter both return ""
-  local passphrase = vim.fn.inputsecret("SSH passphrase: ")
+  float_input("SSH passphrase:", { secret = true }, function(passphrase)
+    if passphrase == "" then
+      fn(nil, function() end)
+      return
+    end
 
-  if passphrase == "" then
-    fn(nil, function() end)
-    return
-  end
+    local tmp = vim.fn.tempname() .. ".sh"
+    local uv = vim.uv or vim.loop
+    -- Create owner-only (0700) from birth via fs_open: the file holds the SSH
+    -- passphrase in plaintext, so it must never be group/world-readable. io.open
+    -- would create it 0644 and a later `chmod +x` leaves a brief readable window.
+    local fd = uv.fs_open(tmp, "w", tonumber("700", 8))
 
-  local tmp = vim.fn.tempname() .. ".sh"
-  local uv = vim.uv or vim.loop
-  -- Create owner-only (0700) from birth via fs_open: the file holds the SSH
-  -- passphrase in plaintext, so it must never be group/world-readable. io.open
-  -- would create it 0644 and a later `chmod +x` leaves a brief readable window.
-  local fd = uv.fs_open(tmp, "w", tonumber("700", 8))
+    if not fd then
+      vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
+      -- Fall back to the no-askpass path instead of stranding the caller: fn must
+      -- still fire or the push/pull/checkout that awaits it hangs forever.
+      fn(nil, function() end)
+      return
+    end
 
-  if not fd then
-    vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
-    -- Fall back to the no-askpass path instead of stranding the caller: fn must
-    -- still fire or the push/pull/checkout that awaits it hangs forever.
-    fn(nil, function() end)
-    return
-  end
+    -- Use printf to safely echo passphrase; escape single quotes in passphrase.
+    local safe = passphrase:gsub("'", "'\\''")
+    uv.fs_write(fd, "#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
+    uv.fs_close(fd)
 
-  -- Use printf to safely echo passphrase; escape single quotes in passphrase.
-  local safe = passphrase:gsub("'", "'\\''")
-  uv.fs_write(fd, "#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
-  uv.fs_close(fd)
+    local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
 
-  local env = { SSH_ASKPASS = tmp, SSH_ASKPASS_REQUIRE = "force", DISPLAY = ":0" }
+    local cleanup = function()
+      os.remove(tmp)
+    end
 
-  local cleanup = function()
-    os.remove(tmp)
-  end
-
-  fn(env, cleanup)
+    fn(env, cleanup)
+  end)
 end
 
 -- Shared async shell helper: runs cmd, calls parse_fn(stdout) on success.
@@ -325,6 +404,9 @@ local function prompt_body(default_lines, callback)
     title = " PR Body — <C-CR> confirm, Q cancel ",
     title_pos = "center",
   })
+
+  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
+  vim.cmd("startinsert")
 
   local done = false
 
@@ -688,7 +770,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_title" then
-    snacks.input({ prompt = "Edit title: ", default = pr.title, row = 0.45 }, function(title)
+    float_input("Edit title:", { default = pr.title }, function(title)
       if not title or title == "" then
         return
       end
@@ -761,7 +843,7 @@ local function handle_pr_action(action_key, pr)
     -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
-    snacks.input({ prompt = "Label(s), comma-separated: ", row = 0.45 }, function(lbl)
+    float_input("Label(s), comma-separated:", {}, function(lbl)
       if not lbl or lbl == "" then
         return
       end
@@ -1107,7 +1189,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    snacks.input({ prompt = "PR Title: ", default = default_title, row = 0.45 }, function(title)
+    float_input("PR Title:", { default = default_title, width = 90 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1116,7 +1198,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for label
   local function prompt_label(callback)
-    require("snacks").input({ prompt = "Label (optional): ", default = "", row = 0.45 }, function(label)
+    float_input("Label (optional):", {}, function(label)
       callback(label or "")
     end)
   end
