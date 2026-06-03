@@ -111,4 +111,5 @@ alias psn="
    cursor --list-extensions>Code/User/extensions;
    ggu \"feat: automate commit\";
    cd ~; omz update;
+   omarchy-update;
 "
