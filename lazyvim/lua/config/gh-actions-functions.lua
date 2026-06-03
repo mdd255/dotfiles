@@ -3,6 +3,7 @@ local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
 local picker_width = utils.picker_width
 local HL = utils.HL
+local float_input = utils.float_input
 local snacks = require("snacks")
 local M = {}
 
@@ -235,7 +236,7 @@ local function run_action(action_key, run)
       failed_label = "Failed to open browser: ",
     })
   elseif action_key == "download" then
-    snacks.input({ prompt = "Download dir: ", default = "." }, function(dir)
+    float_input("Download dir:", { default = "." }, function(dir)
       local target = (dir and dir ~= "") and dir or "."
       exec_async({ "gh", "run", "download", id, "-D", target }, {
         notify = notify_opts,

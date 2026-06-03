@@ -5,6 +5,7 @@ local picker_width = utils.picker_width
 local picker_selection = utils.picker_selection
 local parse_json_lines = utils.parse_json_lines
 local HL = utils.HL
+local float_input = utils.float_input
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -124,7 +125,7 @@ local function run_container_action(action_key, containers)
     end
   elseif action_key == "rename" then
     for _, c in ipairs(containers) do
-      snacks.input({ prompt = "Rename " .. c.Names .. ": ", default = c.Names }, function(new_name)
+      float_input("Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
         if not new_name or new_name == "" or new_name == c.Names then
           return
         end
@@ -370,8 +371,8 @@ local function run_image_action(action_key, images)
       return
     end
 
-    snacks.input({ prompt = "Container name (optional): " }, function(name)
-      snacks.input({ prompt = "Ports e.g. 8080:80 (optional): " }, function(ports)
+    float_input("Container name (optional):", {}, function(name)
+      float_input("Ports e.g. 8080:80 (optional):", {}, function(ports)
         local args = { "docker", "run", "-d" }
 
         if name and name ~= "" then
@@ -412,7 +413,7 @@ local function run_image_action(action_key, images)
       return
     end
 
-    snacks.input({ prompt = "New tag: ", default = image_ref(img) }, function(new_tag)
+    float_input("New tag:", { default = image_ref(img) }, function(new_tag)
       if not new_tag or new_tag == "" then
         return
       end
@@ -566,12 +567,12 @@ end
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
-  snacks.input({ prompt = "Image tag: ", default = default_tag }, function(tag)
+  float_input("Image tag:", { default = default_tag }, function(tag)
     if not tag or tag == "" then
       return
     end
 
-    snacks.input({ prompt = "Dockerfile path: ", default = "Dockerfile" }, function(dockerfile)
+    float_input("Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
       if not dockerfile or dockerfile == "" then
         return
       end
@@ -691,7 +692,7 @@ function M.docker_prune()
 end
 
 function M.docker_pull()
-  snacks.input({ prompt = "Image to pull (e.g. nginx:latest): " }, function(ref)
+  float_input("Image to pull (e.g. nginx:latest):", {}, function(ref)
     if not ref or ref == "" then
       return
     end

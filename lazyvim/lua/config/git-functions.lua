@@ -2,6 +2,7 @@ local utils = require("config.utils")
 local exec_async = utils.exec_async
 local picker_width = utils.picker_width
 local HL = utils.HL
+local float_input = utils.float_input
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -28,85 +29,6 @@ local notify_opts = {
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
--- Centered floating input. opts: { secret?: bool, default?: string }
--- secret=true masks each char as * via extmark conceal.
-local function float_input(prompt, opts, callback)
-  local buf = vim.api.nvim_create_buf(false, true)
-  local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
-  local width = opts.width or 60
-  local row = math.floor((ui.height - 3) / 2)
-  local col = math.floor((ui.width - width) / 2)
-
-  vim.bo[buf].bufhidden = "wipe"
-  vim.bo[buf].buftype = "prompt"
-  vim.fn.prompt_setprompt(buf, "")
-
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = 1,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-    title = " " .. prompt .. " ",
-    title_pos = "center",
-  })
-
-  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
-
-  if opts.secret then
-    local ns = vim.api.nvim_create_namespace("float_input_mask")
-    -- conceallevel=2: extmarks with conceal char replace their range in the display.
-    -- concealcursor=nicv: conceal active in all modes so * shows even while typing.
-    vim.wo[win].conceallevel = 2
-    vim.wo[win].concealcursor = "nicv"
-
-    vim.api.nvim_create_autocmd({ "TextChangedI", "TextChanged" }, {
-      buffer = buf,
-      callback = function()
-        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
-        local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
-        for i = 1, #line do
-          vim.api.nvim_buf_set_extmark(buf, ns, 0, i - 1, { end_col = i, conceal = "*" })
-        end
-      end,
-    })
-  end
-
-  if opts.default and opts.default ~= "" then
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { opts.default })
-  end
-
-  local done = false
-  local function finish(value)
-    if done then
-      return
-    end
-    done = true
-    if vim.api.nvim_win_is_valid(win) then
-      vim.api.nvim_win_close(win, true)
-    end
-    vim.schedule(function()
-      callback(value or "")
-    end)
-  end
-
-  vim.fn.prompt_setcallback(buf, function(text)
-    finish(text)
-  end)
-  vim.fn.prompt_setinterrupt(buf, function()
-    finish("")
-  end)
-
-  vim.keymap.set({ "n", "i" }, "<Esc>", function()
-    finish("")
-  end, { buffer = buf, silent = true })
-
-  vim.schedule(function()
-    vim.cmd("startinsert!")
-  end)
-end
 
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
@@ -1348,10 +1270,7 @@ function M.git_checkout_new_branch()
     end
   end
 
-  snacks.input({
-    prompt = "New branch name: ",
-    row = 0.45,
-  }, on_input)
+  float_input("New branch name:", {}, on_input)
 end
 
 function M.git_delete_branch()
@@ -1633,11 +1552,7 @@ function M.git_commit(amend)
     end
   end
 
-  snacks.input({
-    prompt = amend and "Amend commit: " or "Commit to: " .. branch .. " :",
-    default = default_msg,
-    row = 0.45,
-  }, on_input)
+  float_input(amend and "Amend commit:" or "Commit to " .. branch .. ":", { default = default_msg, width = 90 }, on_input)
 end
 
 function M.git_commit_amend()

@@ -14,13 +14,93 @@ M.HL = {
   text = "Text",
 }
 
+-- Centered floating single-line input. opts: { secret?: bool, default?: string, width?: number }
+-- secret=true masks each char as * via extmark conceal.
+function M.float_input(prompt, opts, callback)
+  local buf = vim.api.nvim_create_buf(false, true)
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
+  local width = opts.width or 60
+  local row = math.floor((ui.height - 3) / 2.5)
+  local col = math.floor((ui.width - width) / 2)
+
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].buftype = "prompt"
+  vim.fn.prompt_setprompt(buf, "")
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = 1,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " " .. prompt .. " ",
+    title_pos = "center",
+  })
+
+  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
+
+  if opts.secret then
+    local ns = vim.api.nvim_create_namespace("float_input_mask")
+    -- conceallevel=2: extmarks with conceal char replace their range in the display.
+    -- concealcursor=nicv: conceal active in all modes so * shows even while typing.
+    vim.wo[win].conceallevel = 2
+    vim.wo[win].concealcursor = "nicv"
+
+    vim.api.nvim_create_autocmd({ "TextChangedI", "TextChanged" }, {
+      buffer = buf,
+      callback = function()
+        vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+        local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
+        for i = 1, #line do
+          vim.api.nvim_buf_set_extmark(buf, ns, 0, i - 1, { end_col = i, conceal = "*" })
+        end
+      end,
+    })
+  end
+
+  if opts.default and opts.default ~= "" then
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { opts.default })
+  end
+
+  local done = false
+  local function finish(value)
+    if done then
+      return
+    end
+    done = true
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_close(win, true)
+    end
+    vim.schedule(function()
+      callback(value or "")
+    end)
+  end
+
+  vim.fn.prompt_setcallback(buf, function(text)
+    finish(text)
+  end)
+  vim.fn.prompt_setinterrupt(buf, function()
+    finish("")
+  end)
+
+  vim.keymap.set({ "n", "i" }, "<Esc>", function()
+    finish("")
+  end, { buffer = buf, silent = true })
+
+  vim.schedule(function()
+    vim.cmd("startinsert!")
+  end)
+end
+
 -- Prompt the user to type "yes" before running a destructive action. Shared by
 -- the git / gh-actions / docker pickers so every irreversible op guards the same
 -- way. on_confirm fires only on an exact (case-insensitive) "yes".
 -- @param prompt string
 -- @param on_confirm function
 function M.confirm_dangerous(prompt, on_confirm)
-  require("snacks").input({ prompt = prompt .. "  Type yes to confirm: " }, function(input)
+  M.float_input(prompt .. "  Type yes to confirm:", {}, function(input)
     if input and input:lower() == "yes" then
       on_confirm()
     else
