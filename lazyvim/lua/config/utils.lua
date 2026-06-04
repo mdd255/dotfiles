@@ -25,7 +25,8 @@ function M.float_input(prompt, opts, callback)
 
   vim.bo[buf].bufhidden = "wipe"
   vim.bo[buf].buftype = "prompt"
-  vim.fn.prompt_setprompt(buf, "")
+  local prompt_str = " "
+  vim.fn.prompt_setprompt(buf, prompt_str)
 
   local win = vim.api.nvim_open_win(buf, true, {
     relative = "editor",
@@ -39,7 +40,8 @@ function M.float_input(prompt, opts, callback)
     title_pos = "center",
   })
 
-  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
+  local border_hl = opts.border_hl or "SnacksInputBorder"
+  vim.wo[win].winhighlight = "FloatBorder:" .. border_hl .. ",NormalFloat:SnacksInput"
 
   if opts.secret then
     local ns = vim.api.nvim_create_namespace("float_input_mask")
@@ -53,7 +55,8 @@ function M.float_input(prompt, opts, callback)
       callback = function()
         vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
         local line = vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] or ""
-        for i = 1, #line do
+        local plen = #prompt_str
+        for i = plen + 1, #line do
           vim.api.nvim_buf_set_extmark(buf, ns, 0, i - 1, { end_col = i, conceal = "*" })
         end
       end,

@@ -8,7 +8,21 @@ return {
     keys = {
       { "gdi", "<cmd>DiffviewOpen<Cr>", desc = "Diffview open" },
       { "glo", "<cmd>DiffviewFileHistory<Cr>", desc = "Git log" },
-      { "gpf", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
+      { "gpb", "<cmd>lua Snacks.gitbrowse()<Cr>", desc = "Git open file in browser" },
+      {
+        "gpf",
+        function()
+          git.git_push(true)
+        end,
+        desc = "Git push force",
+      },
+      {
+        "gpp",
+        function()
+          git.git_fetch()
+        end,
+        desc = "Git fetch prune",
+      },
     },
     config = function()
       local actions = require("diffview.actions")
@@ -122,6 +136,22 @@ return {
       }
 
       require("diffview").setup(opts)
+
+      local function set_diff_hl()
+        -- GitHub dark: bg only, no fg override
+        vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#003320" })
+        vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3d0000" })
+        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2d1f00" })
+        vim.api.nvim_set_hl(0, "DiffText", { bg = "#5a3500" })
+        -- diffview-specific overrides
+        vim.api.nvim_set_hl(0, "DiffviewDiffAdd", { bg = "#003320" })
+        vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { bg = "#3d0000" })
+        vim.api.nvim_set_hl(0, "DiffviewDiffChange", { bg = "#2d1f00" })
+        vim.api.nvim_set_hl(0, "DiffviewDiffText", { bg = "#5a3500" })
+      end
+
+      set_diff_hl()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = set_diff_hl })
     end,
   },
   {

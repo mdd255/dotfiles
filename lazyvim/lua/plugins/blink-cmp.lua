@@ -1,3 +1,8 @@
+local supermaven_ft_blacklist = {
+  snacks_input = true,
+  sql = true,
+}
+
 return {
   {
     "saghen/blink.cmp",
@@ -9,7 +14,11 @@ return {
       {
         "Huijiro/blink-cmp-supermaven",
         config = function()
-          require("supermaven-nvim").setup({})
+          require("supermaven-nvim").setup({
+            condition = function()
+              return not supermaven_ft_blacklist[vim.bo.filetype]
+            end,
+          })
         end,
       },
     },
@@ -63,10 +72,18 @@ return {
           sql = { "snippets", "dbab", "buffer" },
           mysql = { "snippets", "dbab", "buffer" },
           psql = { "snippets", "dbab", "buffer" },
+          snacks_input = { "snippets", "buffer" },
         },
         providers = {
           dbab = { name = "DA", module = "blink_dbab" },
-          supermaven = { name = "supermaven", module = "blink-cmp-supermaven", async = true },
+          supermaven = {
+            name = "supermaven",
+            module = "blink-cmp-supermaven",
+            async = true,
+            enabled = function()
+              return not supermaven_ft_blacklist[vim.bo.filetype]
+            end,
+          },
         },
       },
       cmdline = {

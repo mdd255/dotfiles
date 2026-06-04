@@ -29,11 +29,10 @@ local notify_opts = {
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
-
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
-  float_input("SSH passphrase:", { secret = true }, function(passphrase)
+  float_input("SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
       fn(nil, function() end)
       return
@@ -106,13 +105,19 @@ local function get_branches(exclude_current, unique)
         local branches = {}
         local seen = {}
         local current_branch = nil
+        local worktree_set = {}
 
         for line in result.stdout:gmatch("[^\r\n]+") do
           if line:match("^%*") then
             current_branch = line:gsub("^%s*%*%s*", ""):gsub("^remotes/origin/", "")
           end
 
-          local branch = line:gsub("^%s*%*?%s*", ""):gsub("^remotes/origin/", "")
+          if line:match("^%+") then
+            local wt = line:gsub("^%s*%+%s*", ""):gsub("^remotes/origin/", "")
+            worktree_set[wt] = true
+          end
+
+          local branch = line:gsub("^%s*[%*%+]?%s*", ""):gsub("^remotes/origin/", "")
 
           local should_include = branch ~= ""
             and not branch:match("HEAD")
@@ -128,7 +133,7 @@ local function get_branches(exclude_current, unique)
           end
         end
 
-        callback(branches)
+        callback(branches, worktree_set)
       end)
     end)
   end
@@ -327,7 +332,6 @@ local function prompt_body(default_lines, callback)
     title_pos = "center",
   })
 
-  vim.wo[win].winhighlight = "FloatBorder:SnacksInputBorder,NormalFloat:SnacksInput"
   vim.cmd("startinsert")
 
   local done = false
@@ -1064,8 +1068,7 @@ function M.create_pr()
   -- Helper function: Select base branch
   local function select_base_branch(callback)
     fetch_current_login(function(current_login)
-      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")")
-        or " Select base branch"
+      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")") or " Select base branch"
 
       get_branches(true, true)(function(branches)
         if not branches then
@@ -1111,7 +1114,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    float_input("PR Title:", { default = default_title, width = 90 }, function(title)
+    float_input("PR Title:", { default = default_title, width = 120 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1218,7 +1221,7 @@ function M.git_checkout_branch()
     })
   end
 
-  get_branches(false, true)(function(branches)
+  get_branches(false, true)(function(branches, worktree_set)
     if not branches then
       return
     end
@@ -1226,7 +1229,7 @@ function M.git_checkout_branch()
     local items = {}
 
     for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch })
+      table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
     end
 
     snacks.picker.pick({
@@ -1234,7 +1237,11 @@ function M.git_checkout_branch()
         return items
       end,
       format = function(item, _)
-        return format_branch(item, current_branch)
+        local chunks = format_branch(item, current_branch)
+        if item._in_worktree then
+          table.insert(chunks, { "  worktree", "Comment" })
+        end
+        return chunks
       end,
       layout = {
         layout = {
@@ -1429,22 +1436,73 @@ function M.git_stash_drop()
   end, "DiagnosticError")
 end
 
-function M.git_reset_hard()
-  utils.confirm_dangerous("git reset --hard HEAD discards uncommitted changes.", function()
-    exec_async({ "git", "reset", "--hard", "HEAD" }, {
-      notify = notify_opts,
-      success_label = "Hard reset to HEAD successful",
-      failed_label = "Hard reset to HEAD failed",
+local function reset_picker(title, title_hl, on_confirm)
+  get_recent_commits(30)(function(commits)
+    if not commits then
+      return
+    end
+
+    local items = { { text = "HEAD  (current)", _hash = "HEAD" } }
+    for _, line in ipairs(commits) do
+      table.insert(items, { text = line, _hash = line:match("^(%S+)") })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        if item._hash == "HEAD" then
+          return { { item.text, "DiagnosticWarn" } }
+        end
+        local hash, rest = item.text:match("^(%S+)%s+(.*)$")
+        return {
+          { (hash or item.text) .. " ", "DiagnosticInfo" },
+          { rest or "", "Normal" },
+        }
+      end,
+      layout = {
+        layout = {
+          title = { { title, title_hl } },
+          box = "vertical",
+          position = "float",
+          width = picker_width(0.8, 100),
+          height = 0.5,
+          border = "rounded",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list" },
+        },
+      },
+      confirm = function(picker, item)
+        picker:close()
+        if item then
+          on_confirm(item._hash)
+        end
+      end,
     })
   end)
 end
 
+function M.git_reset_hard()
+  reset_picker(" Reset --hard", "DiagnosticError", function(hash)
+    utils.confirm_dangerous("git reset --hard " .. hash .. " discards all changes after this commit.", function()
+      exec_async({ "git", "reset", "--hard", hash }, {
+        notify = notify_opts,
+        success_label = "Hard reset to " .. hash .. " successful",
+        failed_label = "Hard reset failed: ",
+      })
+    end)
+  end)
+end
+
 function M.git_reset_soft()
-  exec_async({ "git", "reset", "--soft", "HEAD" }, {
-    notify = notify_opts,
-    success_label = "Soft reset to HEAD successful",
-    failed_label = "Soft reset to HEAD failed",
-  })
+  reset_picker(" Reset --soft", "DiagnosticWarn", function(hash)
+    exec_async({ "git", "reset", "--soft", hash }, {
+      notify = notify_opts,
+      success_label = "Soft reset to " .. hash .. " successful",
+      failed_label = "Soft reset failed: ",
+    })
+  end)
 end
 
 function M.git_restore_staged()
@@ -1552,7 +1610,11 @@ function M.git_commit(amend)
     end
   end
 
-  float_input(amend and "Amend commit:" or "Commit to " .. branch .. ":", { default = default_msg, width = 90 }, on_input)
+  float_input(
+    amend and "Amend commit:" or "Commit to " .. branch .. ":",
+    { default = default_msg, width = 90 },
+    on_input
+  )
 end
 
 function M.git_commit_amend()

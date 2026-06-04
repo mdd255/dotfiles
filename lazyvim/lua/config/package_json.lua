@@ -17,28 +17,36 @@ local function find_pkg_root()
   -- the cwd is usually the repo root, so `.;` would always resolve the root
   -- package.json even when editing packages/foo/*. Anchor to the buffer's dir.
   local base = vim.fn.expand("%:p:h")
+
   if base == "" then
     base = "."
   end
+
   local path = vim.fn.findfile("package.json", base .. ";")
+
   if path == "" then
     return nil
   end
+
   return vim.fn.fnamemodify(path, ":p:h")
 end
 
 local function read_json(path)
   local f = io.open(path, "r")
+
   if not f then
     return nil
   end
+
   local content = f:read("*a")
   f:close()
   local ok, data = pcall(vim.json.decode, content)
+
   if not ok then
     vim.notify("Failed to parse JSON: " .. path, vim.log.levels.DEBUG, notify_opts)
     return nil
   end
+
   return data
 end
 
@@ -46,9 +54,11 @@ local function get_pkg_manager(root)
   if vim.fn.filereadable(root .. "/yarn.lock") == 1 then
     return "yarn"
   end
+
   if vim.fn.filereadable(root .. "/pnpm-lock.yaml") == 1 then
     return "pnpm"
   end
+
   return "npm"
 end
 
@@ -59,6 +69,7 @@ local function open_url(url)
     local opener = vim.fn.has("mac") == 1 and "open" or "xdg-open"
     vim.fn.jobstart({ opener, url }, { detach = true })
   end
+
   vim.notify("Opening " .. url, vim.log.levels.INFO, notify_opts)
 end
 
@@ -70,6 +81,7 @@ end
 
 local function save_history(h)
   local f = io.open(HISTORY_FILE, "w")
+
   if f then
     f:write(vim.json.encode(h))
     f:close()
@@ -84,6 +96,7 @@ local function add_to_history(key, args)
   if args == "" then
     return
   end
+
   local h = load_history()
   h[key] = h[key] or {}
 
@@ -143,7 +156,7 @@ local function run_with_output(root, cmd, title)
   -- dismissed once the output popup is ready. Call snacks.notifier directly —
   -- vim.notify is intercepted by noice, so snacks.notifier.hide() can't match
   -- the id and the toast would expire on noice's own timeout instead.
-  snacks.notifier.notify("▶ " .. table.concat(cmd, " "), "info", {
+  snacks.notifier.notify(" " .. table.concat(cmd, " "), "info", {
     id = notif_id,
     timeout = false,
     title = notify_opts.title,
@@ -164,18 +177,13 @@ local function run_with_output(root, cmd, title)
 end
 
 local function build_run_cmd(pm, script, args)
-  local cmd = pm == "npm" and { "npm", "run", script }
-    or pm == "yarn" and { "yarn", script }
-    or { "pnpm", "run", script }
-
   if args ~= "" then
-    table.insert(cmd, "--")
-    for _, a in ipairs(vim.split(args, "%s+", { trimempty = true })) do
-      table.insert(cmd, a)
-    end
+    local s = vim.fn.shellescape(script)
+    local base = pm == "npm" and ("npm run " .. s) or pm == "yarn" and ("yarn " .. s) or ("pnpm run " .. s)
+    return { "sh", "-c", base .. " -- " .. args }
   end
 
-  return cmd
+  return pm == "npm" and { "npm", "run", script } or pm == "yarn" and { "yarn", script } or { "pnpm", "run", script }
 end
 
 -- ── Packages ──────────────────────────────────────────────────────────────────
@@ -205,10 +213,10 @@ local function package_preview(p)
 end
 
 local PACKAGE_ACTIONS = {
-  { text = " open on npm", key = "npm" },
+  { text = "󰊯 open on npm", key = "npm" },
   { text = "󰚰 update", key = "update" },
-  { text = " uninstall", key = "uninstall" },
-  { text = " homepage", key = "homepage" },
+  { text = " uninstall", key = "uninstall" },
+  { text = " homepage", key = "homepage" },
 }
 
 local function build_pkg_mutate_cmd(pm, action, names)
@@ -276,6 +284,7 @@ open_packages_picker = function()
     for name, spec in pairs(deps or {}) do
       local info = read_json(root .. "/node_modules/" .. name .. "/package.json")
       local repo = info and info.repository
+
       local homepage = (info and info.homepage)
         or (type(repo) == "string" and repo)
         or (type(repo) == "table" and repo.url)
@@ -408,7 +417,9 @@ local function pick_args_and_run(root, pm, script)
     finder = function()
       return items
     end,
-    format = "text",
+    format = function(item, _)
+      return { { item.text, "DiagnosticInfo" } }
+    end,
     -- Keep the picker open with an empty list (no history yet). Without this,
     -- picker.lua closes + warns "No results" before the input is usable.
     show_empty = true,
@@ -445,12 +456,14 @@ end
 
 function M.pick_scripts()
   local root = find_pkg_root()
+
   if not root then
     vim.notify("No package.json found", vim.log.levels.WARN, notify_opts)
     return
   end
 
   local pkg = read_json(root .. "/package.json")
+
   if not pkg or not pkg.scripts or next(pkg.scripts) == nil then
     vim.notify("No scripts in package.json", vim.log.levels.WARN, notify_opts)
     return
@@ -459,6 +472,7 @@ function M.pick_scripts()
   local pm = get_pkg_manager(root)
 
   local items = {}
+
   for name, cmd in pairs(pkg.scripts) do
     table.insert(items, {
       name = name,
@@ -476,7 +490,11 @@ function M.pick_scripts()
     finder = function()
       return items
     end,
-    format = "text",
+    format = function(item, _)
+      return {
+        { string.format("%-28s ", item.name), "Function" },
+      }
+    end,
     preview = "preview",
     layout = {
       layout = {
@@ -489,7 +507,7 @@ function M.pick_scripts()
         { win = "input", height = 1, border = "bottom" },
         {
           box = "horizontal",
-          { win = "list", width = 0.4 },
+          { win = "list", width = 0.3 },
           { win = "preview", border = "left" },
         },
       },
@@ -510,14 +528,15 @@ end
 function M.setup()
   vim.api.nvim_create_autocmd("FileType", {
     group = vim.api.nvim_create_augroup("PkgJsonKeymaps", { clear = true }),
-    pattern = { "typescript", "javascript", "typescriptreact", "javascriptreact" },
+    pattern = { "typescript", "javascript", "typescriptreact", "javascriptreact", "json" },
     callback = function(ev)
       if not find_pkg_root() then
         return
       end
+
       local o = { buffer = ev.buf, silent = true }
-      vim.keymap.set("n", "<leader>pp", M.pick_packages, vim.tbl_extend("force", o, { desc = "npm: packages" }))
-      vim.keymap.set("n", "<leader>ps", M.pick_scripts, vim.tbl_extend("force", o, { desc = "npm: scripts" }))
+      vim.keymap.set("n", "<Leader>pp", M.pick_packages, vim.tbl_extend("force", o, { desc = "npm: packages" }))
+      vim.keymap.set("n", "<Leader>ps", M.pick_scripts, vim.tbl_extend("force", o, { desc = "npm: scripts" }))
     end,
   })
 end
