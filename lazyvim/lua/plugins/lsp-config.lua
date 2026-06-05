@@ -10,12 +10,16 @@ return {
         tailwindcss = {
           filetypes = { "typescriptreact", "javascriptreact" },
         },
+        lua_ls = {
+          cmd = { "lua-language-server", "--maxMemoryUsage=1024" },
+        },
         clangd = {
           on_attach = function(client, _)
             client.server_capabilities.inlayHintProvider = false
           end,
         },
         tsgo = {
+          cmd_env = { GOMEMLIMIT = "4GiB" },
           on_attach = function(client, _)
             client.server_capabilities.documentFormattingProvider = false
             client.server_capabilities.documentRangeFormattingProvider = false

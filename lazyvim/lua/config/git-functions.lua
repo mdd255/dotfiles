@@ -11,14 +11,7 @@ local function format_branch(item, current_branch)
   if current_branch and item.text == current_branch then
     return { { item.text, "DiagnosticOk" } }
   end
-  local parts = vim.split(item.text, "/")
-  if #parts > 1 then
-    local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
-    return {
-      { prefix, "Comment" },
-      { parts[#parts], "Function" },
-    }
-  end
+
   local is_main = item.text == "main" or item.text == "master"
   return { { item.text, is_main and "DiagnosticWarn" or "Function" } }
 end
@@ -91,7 +84,7 @@ end
 -- @return function that takes a callback
 local function get_branches(exclude_current, unique)
   return function(callback)
-    vim.system({ "git", "branch", "-a" }, {}, function(result)
+    vim.system({ "git", "branch", "-a", "--sort=-committerdate" }, {}, function(result)
       vim.schedule(function()
         if result.code ~= 0 then
           vim.notify("Failed to get branches", vim.log.levels.ERROR, notify_opts)
@@ -630,7 +623,8 @@ local PR_ACTIONS = {
 
 local function handle_pr_action(action_key, pr)
   local id = tostring(pr.number)
-  local label = "#" .. id .. " " .. pr.title
+  local pr_num = "#" .. id
+  local label = pr_num .. " " .. pr.title
 
   if action_key == "checkout" then
     with_ssh_passphrase(function(env, cleanup)
@@ -720,7 +714,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_reviewers" then
-    select_reviewers("Edit reviewers · " .. label, function(reviewers)
+    select_reviewers("Edit reviewers · " .. pr_num, function(reviewers)
       if reviewers == "" then
         return
       end
@@ -1114,7 +1108,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    float_input("PR Title:", { default = default_title, width = 120 }, function(title)
+    float_input("PR Title:", { default = default_title, width = 110 }, function(title)
       if title and title ~= "" then
         callback(title)
       end

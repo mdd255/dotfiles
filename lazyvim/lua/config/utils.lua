@@ -19,7 +19,7 @@ M.HL = {
 function M.float_input(prompt, opts, callback)
   local buf = vim.api.nvim_create_buf(false, true)
   local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
-  local width = opts.width or 60
+  local width = math.min(opts.width or 50, math.floor(ui.width * 0.9))
   local row = math.floor((ui.height - 3) / 2.5)
   local col = math.floor((ui.width - width) / 2)
 
@@ -40,7 +40,7 @@ function M.float_input(prompt, opts, callback)
     title_pos = "center",
   })
 
-  local border_hl = opts.border_hl or "SnacksInputBorder"
+  local border_hl = opts.border_hl or "FloatBorder"
   vim.wo[win].winhighlight = "FloatBorder:" .. border_hl .. ",NormalFloat:SnacksInput"
 
   if opts.secret then
@@ -64,7 +64,7 @@ function M.float_input(prompt, opts, callback)
   end
 
   if opts.default and opts.default ~= "" then
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { opts.default })
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { prompt_str .. opts.default })
   end
 
   local done = false
@@ -318,7 +318,7 @@ function M.picker_width(fraction, min_cols, max_cols)
   if max_cols then
     w = math.min(w, max_cols)
   end
-  return w
+  return math.min(w, math.floor(ui.width * 0.9))
 end
 
 -- Parse newline-delimited JSON (one object per line, e.g. `docker ... --format

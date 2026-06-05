@@ -123,8 +123,8 @@ local function show_output(title, lines)
     lines = { "(no output)" }
   end
 
-  local width = picker_width(0.82, 80)
-  local height = math.min(math.floor(vim.o.lines * 0.72), #lines + 2)
+  local width = picker_width(0.95, 1)
+  local height = math.min(math.floor(vim.o.lines * 0.9), #lines + 2)
 
   snacks.win({
     title = " " .. title .. " ",
@@ -132,6 +132,7 @@ local function show_output(title, lines)
     -- Pass lines as a table (set directly, no concat+resplit). No `ft`: a
     -- filetype makes snacks attach treesitter/syntax to the whole buffer, which
     -- is what made huge output (70k+ lines) lag badly.
+    ft = "log",
     text = lines,
     width = width,
     height = height,
