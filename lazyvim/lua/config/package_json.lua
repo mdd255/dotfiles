@@ -116,6 +116,14 @@ local function add_to_history(key, args)
   save_history(h)
 end
 
+local function add_to_script_order(root, script)
+  add_to_history(root .. "|__script_order__", script)
+end
+
+local function get_script_order(root)
+  return get_history(root .. "|__script_order__")
+end
+
 -- ── Output popup ────────────────────────────────────────────────────────────
 
 local function show_output(title, lines)
@@ -411,6 +419,7 @@ local function pick_args_and_run(root, pm, script)
 
     local args = typed ~= "" and typed or (item and item.text) or ""
     add_to_history(key, args)
+    add_to_script_order(root, script)
     run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script)
   end
 
@@ -429,7 +438,7 @@ local function pick_args_and_run(root, pm, script)
       layout = {
         title = {
           {
-            "  Args · " .. pm .. " run " .. script .. "  (type new / pick history / <CR> empty = none)",
+            "  Args · " .. pm .. " run " .. script,
             "DiagnosticInfo",
           },
         },
@@ -483,7 +492,23 @@ function M.pick_scripts()
     })
   end
 
+  local order = get_script_order(root)
+  local rank = {}
+  for i, name in ipairs(order) do
+    rank[name] = i
+  end
+
   table.sort(items, function(a, b)
+    local ra, rb = rank[a.name], rank[b.name]
+    if ra and rb then
+      return ra < rb
+    end
+    if ra then
+      return true
+    end
+    if rb then
+      return false
+    end
     return a.name < b.name
   end)
 

@@ -45,6 +45,9 @@ return {
         enabled = true,
       },
       views = {
+        cmdline_popup = {
+          position = { row = "40%", col = "50%" },
+        },
         popupmenu = { scrollbar = false },
         notify = {
           replace = true,

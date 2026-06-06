@@ -1,5 +1,16 @@
 local utils = require("config.utils")
 
+local function set_noice_hls()
+  vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { link = "FloatBorder" })
+end
+
+set_noice_hls()
+
+vim.api.nvim_create_autocmd("ColorScheme", {
+  group = vim.api.nvim_create_augroup("NoiceHlOverrides", { clear = true }),
+  callback = set_noice_hls,
+})
+
 local function setup_cursor_options()
   local ft = vim.bo.filetype
 

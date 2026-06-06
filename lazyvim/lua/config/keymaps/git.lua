@@ -17,7 +17,6 @@ map({
     end,
     { modes = { "n", "x" }, desc = "Git browse on remote" },
   },
-  { "gpf", git.git_fetch, { desc = "Git fetch --prune" } },
 
   -- Git diff
   { "gdf", git.get_current_file_history, { desc = "Diffview current file history" } },
