@@ -35,7 +35,6 @@ map({
   { "_", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<Cr>", { desc = "Close current window" } },
-  { "<Leader>Q", "<cmd>tabclose<Cr>", { desc = "Close current tab" } },
   { "ss", "<cmd>w<Cr>", { desc = "Save" } },
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },
@@ -59,8 +58,20 @@ map({
   { "zo", "zm", { modes = { "n", "v" }, desc = "Close all folds" } },
 
   -- expand select
-  { "<Tab>", function() utils.ts_expand() end, { modes = { "n", "v" }, desc = "Expand selection" } },
-  { "<S-Tab>", function() utils.ts_shrink() end, { modes = { "v" }, desc = "Shrink selection" } },
+  {
+    "<Tab>",
+    function()
+      utils.ts_expand()
+    end,
+    { modes = { "n", "v" }, desc = "Expand selection" },
+  },
+  {
+    "<S-Tab>",
+    function()
+      utils.ts_shrink()
+    end,
+    { modes = { "v" }, desc = "Shrink selection" },
+  },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")

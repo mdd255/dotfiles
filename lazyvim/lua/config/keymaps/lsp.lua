@@ -6,7 +6,7 @@ local unmap = utils.unmap
 unmap({
   -- Misc
   { "<Leader>up" },
-  { "<Leader>w0" },
+  { "<Leader>uG" },
   { "gO" },
   -- LSP
   { "gra" },
@@ -14,5 +14,5 @@ unmap({
   { "grn" },
   { "grr" },
   { "grt" },
+  { "grx" },
 })
-

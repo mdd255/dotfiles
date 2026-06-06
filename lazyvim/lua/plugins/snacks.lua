@@ -4,25 +4,34 @@ return {
   "folke/snacks.nvim",
   lazy = false,
   keys = {
-    { "<leader>ff", false },
-    { "<leader>fb", false },
-    { "<leader>fB", false },
-    { "<leader>fc", false },
-    { "<leader>fe", false },
-    { "<leader>fE", false },
-    { "<leader>fF", false },
-    { "<leader>fg", false },
-    { "<leader>fp", false },
-    { "<leader>fr", false },
-    { "<leader>fR", false },
-    { "<leader>un", false },
-    { "<leader>uC", false },
-    { "<leader>/", false },
-    { "<leader>.", false },
-    { "<leader>,", false },
-    { "<leader>S", false },
-    { "<leader>Q", false },
-    { "<leader>:", false },
+    { "<Leader>ff", false },
+    { "<Leader>fb", false },
+    { "<Leader>fB", false },
+    { "<Leader>fc", false },
+    { "<Leader>fe", false },
+    { "<Leader>fE", false },
+    { "<Leader>fF", false },
+    { "<Leader>fg", false },
+    { "<Leader>fp", false },
+    { "<Leader>fr", false },
+    { "<Leader>fR", false },
+    { "<Leader>un", false },
+    { "<Leader>uC", false },
+    { "<Leader>/", false },
+    { "<Leader>.", false },
+    { "<Leader>,", false },
+    { "<Leader>S", false },
+    { "<Leader>Q", false },
+    { "<Leader>:", false },
+    { "<Leader>gd", false },
+    { "<Leader>gD", false },
+    { "<Leader>gi", false },
+    { "<Leader>gI", false },
+    { "<Leader>gp", false },
+    { "<Leader>gP", false },
+    { "<Leader>gs", false },
+    { "<Leader>gS", false },
+    { "<Leader>dps", false },
   },
   opts = {
     toggle = { enabled = false },
@@ -40,6 +49,12 @@ return {
     explorer = { enabled = true },
     indent = { enabled = true, char = "▏" },
     picker = {
+      layout = {
+        layout = {
+          width = 0.9,
+          height = 0.8,
+        },
+      },
       formatters = {
         file = {
           show_idx = false,
@@ -73,7 +88,7 @@ return {
       sources = {
         lsp_symbols = {},
         projects = {
-          format = "file",
+          format = "project_name",
           recent = true,
           confirm = "load_session",
           patterns = {
@@ -87,9 +102,31 @@ return {
             "~/Projects/hipages/",
             "~/Projects/accelerator-app/",
           },
+          layout = {
+            layout = {
+              width = 0.4,
+              height = 0.4,
+              box = "vertical",
+              border = "rounded",
+              title = "  Projects",
+              title_pos = "center",
+              { win = "input", height = 1, border = "bottom" },
+              { win = "list", border = "none" },
+            },
+          },
         },
-        files = { hidden = true },
-        grep = { hidden = true },
+        files = {
+          hidden = true,
+          layout = {
+            layout = { title = " Files" },
+          },
+        },
+        grep = {
+          hidden = true,
+          layout = {
+            layout = { title = " Search" },
+          },
+        },
         explorer = {
           hidden = true,
           ignored = false,
@@ -125,6 +162,12 @@ return {
   },
   config = function(_, opts)
     require("snacks").setup(opts)
+
+    Snacks.picker.format.project_name = function(item, _opts)
+      local path = item.file or item.cwd or ""
+      local name = vim.fn.fnamemodify(path, ":t")
+      return { { name, "SnacksPickerFile" } }
+    end
 
     Snacks.picker.format.ui_select = function(_opts)
       _opts = _opts or {}

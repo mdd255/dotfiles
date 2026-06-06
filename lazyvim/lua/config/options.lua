@@ -21,8 +21,8 @@ vim.opt.signcolumn = "yes"
 vim.opt.statuscolumn = "%=%{v:relnum==0?v:lnum:v:relnum}%s"
 
 vim.opt.fillchars = {
-  diff = "",
-  fold = " ",
+  diff = " ",
+  fold = "",
 }
 
 vim.opt.guicursor = "n-v:block-nCursor,i-ci-ve:ver25-iCursor,c:ver25-cCursor,t:block-tCursor,r-cr-o:hor20-nCursor"
