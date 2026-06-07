@@ -284,7 +284,7 @@ local function show_action_picker(run)
   utils.menu_picker(RUN_ACTIONS, function(item)
     run_action(item.key, run)
   end, {
-    title = "  Action",
+    title = " Action",
     width_frac = 0.22,
     width_max = 44,
     height = 0.55,
@@ -350,7 +350,7 @@ local function open_actions_picker()
       end,
       preview = "preview",
       layout = picker_layout({
-        title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
+        title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
         width_frac = 0.9,
         width_min = 110,
         height = 0.75,
@@ -443,7 +443,7 @@ function M.gh_workflow_dispatch()
           end,
         })
       end, {
-        title = "  Run workflow",
+        title = " Run workflow",
         width_frac = 0.3,
         width_max = 60,
         height = 0.4,

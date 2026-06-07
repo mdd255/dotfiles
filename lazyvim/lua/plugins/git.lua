@@ -47,6 +47,7 @@ return {
 
         local files = {}
         vim.list_extend(files, file_dict.working or {})
+        vim.list_extend(files, file_dict.staged or {})
         vim.list_extend(files, file_dict.conflicting or {})
 
         local total = #files
@@ -55,20 +56,23 @@ return {
           return
         end
 
-        local cur = view.panel.cur_file
+        -- diffview API varies by version: panel.cur_file or view.cur_file
+        local cur = view.panel.cur_file or view.cur_file
 
         if cur then
           for i, f in ipairs(files) do
-            if f == cur or (f.path and cur.path and f.path == cur.path) then
+            local path_match = f.path and cur.path and f.path == cur.path
+            local abs_match = f.absolute_path and cur.absolute_path and f.absolute_path == cur.absolute_path
+            if f == cur or path_match or abs_match then
               vim.g.diffview_progress = "[" .. i .. "/" .. total .. "]"
-              vim.cmd("redrawstatus!")
+              vim.cmd("redrawtabline")
               return
             end
           end
         end
 
         vim.g.diffview_progress = "[1/" .. total .. "]"
-        vim.cmd("redrawstatus!")
+        vim.cmd("redrawtabline")
       end
 
       local blame_was_on = false

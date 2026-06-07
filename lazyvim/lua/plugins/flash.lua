@@ -136,12 +136,10 @@ return {
       end
     end
 
-    local function start_of_word(forward)
+    local function start_of_word()
       Flash.jump({
         search = {
           mode = "search",
-          forward = forward,
-          wrap = false,
         },
         label = {
           after = true,
@@ -156,12 +154,10 @@ return {
       })
     end
 
-    local function end_of_word(forward)
+    local function end_of_word()
       Flash.jump({
         search = {
           mode = "search",
-          forward = forward,
-          wrap = false,
         },
         label = {
           after = true,
@@ -197,33 +193,17 @@ return {
         "w",
         mode = { "n" },
         function()
-          start_of_word(true)
+          start_of_word()
         end,
-        desc = "Flash to start of word (forward)",
-      },
-      {
-        "W",
-        mode = { "n" },
-        function()
-          start_of_word(false)
-        end,
-        desc = "Flash to start of word (backward)",
+        desc = "Flash to start of word",
       },
       {
         "b",
         mode = { "n" },
         function()
-          end_of_word(true)
+          end_of_word()
         end,
-        desc = "Flash to end of word (forward)",
-      },
-      {
-        "B",
-        mode = { "n" },
-        function()
-          end_of_word(false)
-        end,
-        desc = "Flash to end of word (backward)",
+        desc = "Flash to end of word",
       },
       {
         "l",

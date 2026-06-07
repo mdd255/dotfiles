@@ -254,9 +254,11 @@ open_container_picker = function(filter_idx)
           removing = "DiagnosticError",
           dead = "DiagnosticError",
         })[item.State] or "Comment"
+
         local name_col = string.format("%-28s", item.Names or item.ID)
         local size_col = string.format("%-9s", item.Size or "")
         local status_col = item.Status or ""
+
         return {
           { name_col, state_hl },
           { size_col, "Text" },
@@ -265,7 +267,7 @@ open_container_picker = function(filter_idx)
       end,
       preview = "preview",
       layout = picker_layout({
-        title = { { " Containers · " .. f.name, "DiagnosticInfo" } },
+        title = { { " Containers · " .. f.name, "DiagnosticInfo" } },
         width_frac = 0.9,
         width_min = 100,
         height = 0.75,
@@ -274,9 +276,11 @@ open_container_picker = function(filter_idx)
       multi = { "confirm" },
       actions = {
         select_and_clear = select_and_clear_action(),
+
         cycle_filter = function(picker)
           local next_idx = filter_idx % #CONTAINER_FILTERS + 1
           picker:close()
+
           vim.schedule(function()
             open_container_picker(next_idx)
           end)
@@ -319,11 +323,11 @@ end
 -- ── Images ────────────────────────────────────────────────────────────────────
 
 local IMAGE_ACTIONS = {
-  { text = " run (interactive)", key = "run_interactive", hl = HL.ok },
-  { text = " run (detached)", key = "run_detached", hl = HL.ok },
-  { text = " remove", key = "remove_force", hl = HL.err },
+  { text = " run (interactive)", key = "run_interactive", hl = HL.ok },
+  { text = " run (detached)", key = "run_detached", hl = HL.ok },
+  { text = " remove", key = "remove_force", hl = HL.err },
   { text = "󰓼 tag", key = "tag", hl = HL.ident },
-  { text = " inspect", key = "inspect", hl = HL.info },
+  { text = " inspect", key = "inspect", hl = HL.info },
   { text = "󰋚 history", key = "history", hl = HL.info },
 }
 
@@ -504,7 +508,7 @@ open_image_picker = function()
       end,
       preview = "preview",
       layout = picker_layout({
-        title = { { " Images", "DiagnosticInfo" } },
+        title = { { "  Images", "DiagnosticInfo" } },
         width_frac = 0.85,
         width_min = 100,
         height = 0.75,
@@ -550,12 +554,12 @@ end
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
-  float_input("Image tag:", { default = default_tag }, function(tag)
+  float_input(" Image tag:", { default = default_tag }, function(tag)
     if not tag or tag == "" then
       return
     end
 
-    float_input("Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
+    float_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
       if not dockerfile or dockerfile == "" then
         return
       end
@@ -665,11 +669,11 @@ function M.docker_prune()
       -- term_cmd so the reclaimed-space report is visible.
       term_cmd("docker " .. table.concat(item.args, " "))
     end)
-  end, { title = "  Prune", width_frac = 0.3, width_max = 50, height = 0.4 })
+  end, { title = "  Prune", width_frac = 0.3, width_max = 50, height = 0.4 })
 end
 
 function M.docker_pull()
-  float_input("Image to pull (e.g. nginx:latest):", {}, function(ref)
+  float_input(" Image to pull (e.g. nginx:latest):", {}, function(ref)
     if not ref or ref == "" then
       return
     end

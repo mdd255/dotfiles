@@ -27,7 +27,7 @@ local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
-  float_input("SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
+  float_input(" SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
       fn(nil, function() end)
       return
@@ -192,7 +192,8 @@ local function stash_picker(title, on_confirm, title_hl)
       end,
       layout = picker_layout({
         title = { { " " .. title, title_hl or "DiagnosticInfo" } },
-        width_frac = 0.7, width_min = 80,
+        width_frac = 0.7,
+        width_min = 80,
         height = 0.4,
       }),
       confirm = function(picker, item)
@@ -316,7 +317,7 @@ local function prompt_body(default_lines, callback)
     col = math.floor((ui.width - width) / 2),
     style = "minimal",
     border = "rounded",
-    title = " PR Body — <C-CR> confirm, Q cancel ",
+    title = " PR Body — <C-CR> confirm",
     title_pos = "center",
   })
 
@@ -372,7 +373,8 @@ local function select_reviewers(title, callback)
       end,
       layout = picker_layout({
         title = { { title or " Select reviewers", "Function" } },
-        width_frac = 0.2, width_min = 60,
+        width_frac = 0.2,
+        width_min = 60,
         height = 0.3,
       }),
       multi = { "confirm" },
@@ -472,9 +474,9 @@ local function make_pr_fetcher(filter)
   end
 end
 
-local gh_pr_fetchers = cache.wrap_filters(PR_FILTERS, PR_TTL_MS,
-  function(f) return "gh.prs." .. (f.search ~= "" and f.search or "all") end,
-  make_pr_fetcher)
+local gh_pr_fetchers = cache.wrap_filters(PR_FILTERS, PR_TTL_MS, function(f)
+  return "gh.prs." .. (f.search ~= "" and f.search or "all")
+end, make_pr_fetcher)
 
 local function get_gh_prs(filter, callback)
   local key = "gh.prs." .. (filter.search ~= "" and filter.search or "all")
@@ -672,7 +674,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_title" then
-    float_input("Edit title:", { default = pr.title }, function(title)
+    float_input(" Edit title:", { default = pr.title }, function(title)
       if not title or title == "" then
         return
       end
@@ -696,7 +698,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_reviewers" then
-    select_reviewers("Edit reviewers · " .. pr_num, function(reviewers)
+    select_reviewers("󰭖 Edit reviewers · " .. pr_num, function(reviewers)
       if reviewers == "" then
         return
       end
@@ -745,7 +747,7 @@ local function handle_pr_action(action_key, pr)
     -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
-    float_input("Label(s), comma-separated:", {}, function(lbl)
+    float_input(" Labels:", {}, function(lbl)
       if not lbl or lbl == "" then
         return
       end
@@ -841,7 +843,8 @@ local function show_pr_actions(pr)
         preview = "preview",
         layout = picker_layout({
           title = { { title, title_hl } },
-          width_frac = 0.75, width_min = 120,
+          width_frac = 0.75,
+          width_min = 120,
           height = 0.65,
           list_width = 0.35,
         }),
@@ -900,7 +903,8 @@ local function open_gh_pr()
       preview = "preview",
       layout = picker_layout({
         title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
-        width_frac = 0.9, width_min = 120,
+        width_frac = 0.9,
+        width_min = 120,
         height = 0.75,
         list_width = 0.5,
       }),
@@ -910,11 +914,13 @@ local function open_gh_pr()
           picker:close()
           vim.schedule(open_gh_pr)
         end,
-        refresh = make_refresh_action(
-          function() cache.invalidate_pattern("gh.prs") end,
-          function(cb) get_gh_prs(f, cb) end,
-          function(data) items = format_pr_items(data) end
-        ),
+        refresh = make_refresh_action(function()
+          cache.invalidate_pattern("gh.prs")
+        end, function(cb)
+          get_gh_prs(f, cb)
+        end, function(data)
+          items = format_pr_items(data)
+        end),
       },
       win = {
         input = {
@@ -976,8 +982,9 @@ function M.gh_switch_account()
           return { { item.text, "Function" } }
         end,
         layout = picker_layout({
-          title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
-          width_frac = 0.2, width_min = 60,
+          title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
+          width_frac = 0.2,
+          width_min = 60,
           height = 0.15,
         }),
         confirm = function(picker, item)
@@ -1017,7 +1024,8 @@ function M.create_pr()
   -- Helper function: Select base branch
   local function select_base_branch(callback)
     fetch_current_login(function(current_login)
-      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")") or " Select base branch"
+      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")")
+        or " Select base branch"
 
       get_branches(true, true)(function(branches)
         if not branches then
@@ -1038,7 +1046,8 @@ function M.create_pr()
           end,
           layout = picker_layout({
             title = { { title, "DiagnosticInfo" } },
-            width_frac = 0.7, width_min = 80,
+            width_frac = 0.7,
+            width_min = 80,
             height = 0.4,
           }),
           confirm = function(picker, item)
@@ -1056,7 +1065,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    float_input("PR Title:", { default = default_title, width = 110 }, function(title)
+    float_input(" PR Title:", { default = default_title, width = 110 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1065,7 +1074,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for label
   local function prompt_label(callback)
-    float_input("Label (optional):", {}, function(label)
+    float_input(" Label (optional):", {}, function(label)
       callback(label or "")
     end)
   end
@@ -1130,7 +1139,7 @@ function M.create_pr()
       pr_data.title = title
       prompt_body({}, function(body)
         pr_data.body = body
-        select_reviewers("Select reviewers", function(reviewers)
+        select_reviewers("󰭖 Select reviewers", function(reviewers)
           pr_data.reviewers = reviewers
           prompt_label(function(label)
             pr_data.label = label
@@ -1186,8 +1195,9 @@ function M.git_checkout_branch()
         return chunks
       end,
       layout = picker_layout({
-        title = { { " Select branch", "DiagnosticInfo" } },
-        width_frac = 0.4, width_min = 60,
+        title = { { " Select branch", "DiagnosticInfo" } },
+        width_frac = 0.4,
+        width_min = 60,
         height = 0.4,
       }),
       confirm = function(picker, item)
@@ -1212,7 +1222,7 @@ function M.git_checkout_new_branch()
     end
   end
 
-  float_input("New branch name:", {}, on_input)
+  float_input(" New branch name:", {}, on_input)
 end
 
 function M.git_delete_branch()
@@ -1244,7 +1254,8 @@ function M.git_delete_branch()
       end,
       layout = picker_layout({
         title = { { " Delete branch", "DiagnosticError" } },
-        width_frac = 0.7, width_min = 80,
+        width_frac = 0.7,
+        width_min = 80,
         height = 0.4,
       }),
       confirm = function(picker, item)
@@ -1285,7 +1296,7 @@ function M.git_cherry_pick()
       return
     end
 
-    vim.ui.select(commits, { prompt = "Select commit to cherry-pick: " }, on_commit_selected)
+    vim.ui.select(commits, { prompt = " Select commit to cherry-pick: " }, on_commit_selected)
   end)
 end
 
@@ -1391,7 +1402,8 @@ local function reset_picker(title, title_hl, on_confirm)
       end,
       layout = picker_layout({
         title = { { title, title_hl } },
-        width_frac = 0.8, width_min = 100,
+        width_frac = 0.8,
+        width_min = 100,
         height = 0.5,
       }),
       confirm = function(picker, item)
@@ -1561,12 +1573,14 @@ function M.git_diff_branch()
         return format_branch(item)
       end,
       layout = picker_layout({
-        title = { { " Diff branch", "DiagnosticInfo" } },
-        width_frac = 0.7, width_min = 80,
+        title = { { " Diff branch", "DiagnosticInfo" } },
+        width_frac = 0.7,
+        width_min = 80,
         height = 0.4,
       }),
       confirm = function(picker, item)
         picker:close()
+
         if item then
           vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(item.text))
         end
@@ -1608,8 +1622,9 @@ function M.git_merge_branch()
         return format_branch(item)
       end,
       layout = picker_layout({
-        title = { { " Merge branch", "DiagnosticInfo" } },
-        width_frac = 0.7, width_min = 80,
+        title = { { " Merge branch", "DiagnosticInfo" } },
+        width_frac = 0.7,
+        width_min = 80,
         height = 0.4,
       }),
       confirm = function(picker, item)
@@ -1722,8 +1737,9 @@ function M.git_log()
         }
       end,
       layout = picker_layout({
-        title = { { "  Commit log", "DiagnosticInfo" } },
-        width_frac = 0.8, width_min = 100,
+        title = { { " Commit log", "DiagnosticInfo" } },
+        width_frac = 0.8,
+        width_min = 100,
         height = 0.6,
       }),
       confirm = function(picker, item)
@@ -1734,7 +1750,7 @@ function M.git_log()
             utils.menu_picker(COMMIT_ACTIONS, function(a)
               handle_commit_action(a.key, item._hash)
             end, {
-              title = "  Commit " .. item._hash,
+              title = " Commit " .. item._hash,
               width_frac = 0.3,
               width_max = 50,
               height = 0.4,

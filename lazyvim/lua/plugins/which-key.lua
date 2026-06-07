@@ -18,7 +18,7 @@ return {
       { "f", group = " Find" },
       { "g", group = " Goto" },
       { "s", group = " Search/Replace" },
-      { "q", group = " Navigation" },
+      { "q", group = " Run macro" },
       { "<Leader>", group = " Leader" },
       { "<Leader>d", group = " DB UI" },
       { "<Leader>s", group = " Diffview open" },

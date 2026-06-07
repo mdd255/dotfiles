@@ -432,8 +432,9 @@ local function pick_args_and_run(root, pm, script)
     end,
     -- Keep the picker open with an empty list (no history yet). Without this,
     -- picker.lua closes + warns "No results" before the input is usable.
+    -- No `live = true`: finder runs once on open so history shows immediately,
+    -- LRU first. Typing still filters the static item list.
     show_empty = true,
-    live = true,
     layout = {
       layout = {
         title = {
