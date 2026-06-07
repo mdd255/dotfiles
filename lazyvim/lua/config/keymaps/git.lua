@@ -42,7 +42,13 @@ map({
   { "gca", git.git_commit_amend, { desc = "Git commit amend" } },
 
   -- Git misc
-  { "gst", git.git_status, { desc = "Git status" } },
+  {
+    "gst",
+    function()
+      Snacks.picker.git_status()
+    end,
+    { desc = "Git status" },
+  },
   { "gaa", git.git_add_all, { desc = "Git add all" } },
   { "gap", git.git_restore_all, { desc = "Git restore all" } },
 

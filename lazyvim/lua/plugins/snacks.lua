@@ -38,6 +38,7 @@ return {
     scope = { enabled = false },
     image = { enabled = false },
     zen = { enabled = false },
+    win = { enabled = false },
     scratch = { enabled = true },
     words = { enabled = false },
     animate = { enabled = true },
@@ -51,8 +52,13 @@ return {
     picker = {
       layout = {
         layout = {
+          box = "vertical",
           width = 0.9,
           height = 0.8,
+          border = "rounded",
+          title = "{title} {live} {flags}",
+          { win = "input", height = 1, border = "bottom" },
+          { win = "list", border = "none" },
         },
       },
       formatters = {
@@ -194,12 +200,14 @@ return {
     map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
     map({ "n", "x" }, "fw", "<cmd>lua Snacks.picker.grep_word()<Cr>", { desc = "Grep word/selection" })
-    map("n", "fd", "<cmd>lua Snacks.picker.command_history()<Cr>", { desc = "Find command history" })
-    map("n", "fg", "<cmd>lua Snacks.picker.commands()<Cr>", { desc = "Find commands" })
+    map("n", "fo", "<cmd>lua Snacks.picker.command_history()<Cr>", { desc = "Find command history" })
     map("n", "fu", "<cmd>lua Snacks.picker.undo()<Cr>", { desc = "Find undo history" })
     map("n", "fn", "<cmd>lua Snacks.picker.notifications()<Cr>", { desc = "Find notifications" })
 
+    local snacks_augroup = vim.api.nvim_create_augroup("SnacksConfig", { clear = true })
+
     vim.api.nvim_create_autocmd("WinEnter", {
+      group = snacks_augroup,
       callback = function()
         if vim.bo.filetype == "snacks_picker_input" and vim.fn.mode():sub(1, 1) ~= "i" then
           vim.schedule(function()
@@ -212,9 +220,10 @@ return {
     })
 
     vim.api.nvim_create_autocmd("FileType", {
+      group = snacks_augroup,
       pattern = "claudecode",
       callback = function(ev)
-        vim.keymap.set("t", "<C-Cr>", function()
+        map("t", "<C-Cr>", function()
           Snacks.scratch()
 
           vim.schedule(function()
@@ -234,10 +243,9 @@ return {
             end
 
             local map_opts = { buffer = buf, nowait = true, silent = true }
-            vim.keymap.set({ "i", "n" }, "<C-Cr>", accept_scratch, map_opts)
-            vim.keymap.set("n", "<C-Cr>", accept_scratch, map_opts)
+            map({ "i", "n" }, "<C-Cr>", accept_scratch, map_opts)
 
-            vim.keymap.set("n", "<Esc>", function()
+            map("n", "<Esc>", function()
               vim.cmd("close")
             end, map_opts)
           end)

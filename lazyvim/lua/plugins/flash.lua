@@ -136,10 +136,12 @@ return {
       end
     end
 
-    local function start_of_word()
+    local function start_of_word(forward)
       Flash.jump({
         search = {
           mode = "search",
+          forward = forward,
+          wrap = false,
         },
         label = {
           after = true,
@@ -154,10 +156,12 @@ return {
       })
     end
 
-    local function end_of_word()
+    local function end_of_word(forward)
       Flash.jump({
         search = {
           mode = "search",
+          forward = forward,
+          wrap = false,
         },
         label = {
           after = true,
@@ -172,43 +176,86 @@ return {
       })
     end
 
+    local function f_motion(forward)
+      Flash.jump({
+        search = {
+          mode = "search",
+          wrap = false,
+          max_length = 1,
+          forward = forward,
+        },
+        label = {
+          after = true,
+          before = false,
+          current = true,
+        },
+      })
+    end
+
     return {
       {
         "w",
         mode = { "n" },
-        start_of_word,
-        desc = "Flash to start of word",
+        function()
+          start_of_word(true)
+        end,
+        desc = "Flash to start of word (forward)",
+      },
+      {
+        "W",
+        mode = { "n" },
+        function()
+          start_of_word(false)
+        end,
+        desc = "Flash to start of word (backward)",
       },
       {
         "b",
         mode = { "n" },
-        end_of_word,
-        desc = "Flash to beginning of word",
+        function()
+          end_of_word(true)
+        end,
+        desc = "Flash to end of word (forward)",
+      },
+      {
+        "B",
+        mode = { "n" },
+        function()
+          end_of_word(false)
+        end,
+        desc = "Flash to end of word (backward)",
       },
       {
         "l",
         mode = { "v", "o" },
-        end_of_word,
-        desc = "Flash to end of word",
+        function()
+          end_of_word(true)
+        end,
+        desc = "Flash to end of word (forward)",
+      },
+      {
+        "L",
+        mode = { "v", "o" },
+        function()
+          end_of_word(false)
+        end,
+        desc = "Flash to end of word (backward)",
       },
       {
         "l",
         mode = { "n" },
         function()
-          Flash.jump({
-            search = {
-              mode = "search",
-              wrap = true,
-              max_length = 1,
-            },
-            label = {
-              after = true,
-              before = false,
-              current = true,
-            },
-          })
+          f_motion(true)
         end,
-        desc = "Flash f-motion on current line (both directions)",
+        desc = "Flash f-motion forward",
+      },
+      {
+        "L",
+        mode = { "n" },
+        function()
+          f_motion(false)
+        end,
+        desc = "Flash f-motion backward",
       },
       {
         "dn",

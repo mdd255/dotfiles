@@ -321,6 +321,35 @@ function M.picker_width(fraction, min_cols, max_cols)
   return math.min(w, math.floor(ui.width * 0.9))
 end
 
+-- Build a snacks picker `layout` table from declarative options.
+-- opts.title: chunk list e.g. { { " text", "HL" } }
+-- opts.list_width: when set, splits list + preview horizontally at this fraction.
+function M.picker_layout(opts)
+  opts = opts or {}
+  local content
+  if opts.list_width then
+    content = {
+      box = "horizontal",
+      { win = "list", width = opts.list_width },
+      { win = "preview", border = "left" },
+    }
+  else
+    content = { win = "list" }
+  end
+  return {
+    layout = {
+      title = opts.title,
+      box = "vertical",
+      position = "float",
+      width = M.picker_width(opts.width_frac or 0.5, opts.width_min or 60),
+      height = opts.height or 0.4,
+      border = "rounded",
+      { win = "input", height = 1, border = "bottom" },
+      content,
+    },
+  }
+end
+
 -- Parse newline-delimited JSON (one object per line, e.g. `docker ... --format
 -- '{{json .}}'`). Bad lines are skipped silently. Returns a list table.
 -- @param stdout string|nil
@@ -400,6 +429,35 @@ function M.menu_picker(items, on_confirm, opts)
       end
     end,
   })
+end
+
+-- Returns a `select_and_clear` action for multi-select pickers: toggles the item
+-- under the cursor and clears the filter input so the next keystroke starts fresh.
+-- advance=true: also moves the cursor down one row (used by the image picker).
+function M.select_and_clear_action(advance)
+  return function(picker)
+    picker.list:select()
+    if advance then
+      picker.list:move(1)
+    end
+    vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
+  end
+end
+
+-- Returns a `refresh` action for cached pickers.
+-- invalidate_fn() evicts the cache; fetch_fn(cb) is pre-bound with any filter
+-- args; populate_fn(data) rebuilds the items upvalue from the fresh payload.
+function M.make_refresh_action(invalidate_fn, fetch_fn, populate_fn)
+  return function(picker)
+    invalidate_fn()
+    fetch_fn(function(new_data)
+      if not new_data then
+        return
+      end
+      populate_fn(new_data)
+      picker:refresh()
+    end)
+  end
 end
 
 function M.exec_async(cmd, opts)

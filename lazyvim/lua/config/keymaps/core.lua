@@ -1,6 +1,7 @@
 ---@diagnostic disable: undefined-global
 local utils = require("config.utils")
 local map = utils.map
+local unmap = utils.unmap
 
 -- Core navigation and editing keymaps
 map({
@@ -32,7 +33,7 @@ map({
 
   -- Misc
   { "V", "v$", { desc = "Visual to end of line" } },
-  { "_", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
+  { "go", "%", { modes = { "n", "v" }, desc = "Goto matching pair" } },
   { "U", "<C-r>", { desc = "Redo" } },
   { "<Leader>q", "<cmd>q<Cr>", { desc = "Close current window" } },
   { "ss", "<cmd>w<Cr>", { desc = "Save" } },
@@ -72,6 +73,14 @@ map({
     end,
     { modes = { "v" }, desc = "Shrink selection" },
   },
+})
+
+unmap({
+  { "j" },
+  { "&" },
+  { "<C-f>" },
+  { "<C-b>" },
+  { "<C-l>" },
 })
 
 vim.cmd("nnoremap T :LualineRenameTab ")

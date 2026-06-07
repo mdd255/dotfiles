@@ -77,6 +77,22 @@ function M.wrap(key, ttl_ms, fn)
   end
 end
 
+--- Build a table of cached fetchers, one per filter entry.
+-- key_fn(f) → string used as BOTH the cache key and the table index.
+-- fetcher_fn(f) → function(callback) — the async fetcher for that filter.
+-- @param filters    table   list of filter descriptors
+-- @param ttl        number  TTL in milliseconds, shared by all entries
+-- @param key_fn     function(f) → string
+-- @param fetcher_fn function(f) → function(callback)
+function M.wrap_filters(filters, ttl, key_fn, fetcher_fn)
+  local fetchers = {}
+  for _, f in ipairs(filters) do
+    local key = key_fn(f)
+    fetchers[key] = M.wrap(key, ttl, fetcher_fn(f))
+  end
+  return fetchers
+end
+
 --- Invalidate one or more exact cache keys and async-reload them in background.
 -- If a fetch is already in flight for a key, skip rescheduling — the in-flight
 -- result will land into a fresh entry shortly anyway.

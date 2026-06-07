@@ -39,9 +39,18 @@ return {
           return
         end
 
-        local files = view.panel
+        local file_dict = view.panel.files
+
+        if not file_dict then
+          return
+        end
+
+        local files = {}
+        vim.list_extend(files, file_dict.working or {})
+        vim.list_extend(files, file_dict.conflicting or {})
 
         local total = #files
+
         if total == 0 then
           return
         end
@@ -52,13 +61,17 @@ return {
           for i, f in ipairs(files) do
             if f == cur or (f.path and cur.path and f.path == cur.path) then
               vim.g.diffview_progress = "[" .. i .. "/" .. total .. "]"
+              vim.cmd("redrawstatus!")
               return
             end
           end
         end
 
         vim.g.diffview_progress = "[1/" .. total .. "]"
+        vim.cmd("redrawstatus!")
       end
+
+      local blame_was_on = false
 
       local opts = {
         enhanced_diff_hl = true,
@@ -69,6 +82,17 @@ return {
             vim.defer_fn(function()
               vim.g.diffview_active = true
               update_diffview_progress()
+
+              local gs_ok, gs = pcall(require, "gitsigns")
+              if gs_ok then
+                local cfg_ok, cfg = pcall(require, "gitsigns.config")
+                if cfg_ok then
+                  blame_was_on = cfg.config.current_line_blame
+                  if blame_was_on then
+                    gs.toggle_current_line_blame()
+                  end
+                end
+              end
 
               for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
                 vim.api.nvim_set_option_value("number", false, { win = win })
@@ -92,6 +116,14 @@ return {
             vim.g.diffview_active = false
             vim.g.diffview_progress = nil
             vim.g.diffview_tab = nil
+
+            if blame_was_on then
+              local gs_ok, gs = pcall(require, "gitsigns")
+              if gs_ok then
+                gs.toggle_current_line_blame()
+              end
+              blame_was_on = false
+            end
           end,
         },
         view = {
@@ -111,6 +143,24 @@ return {
             { "n", "<Leader>q", git.close_diffview, { desc = "DiffviewClose" } },
             { "n", "-", actions.toggle_files, { desc = "Toggle file explorer" } },
             { "n", "S", stage_all, { desc = "Stage all" } },
+            {
+              "n",
+              "<Tab>",
+              function()
+                actions.select_next_entry()
+                vim.schedule(update_diffview_progress)
+              end,
+              { desc = "Next file" },
+            },
+            {
+              "n",
+              "<S-Tab>",
+              function()
+                actions.select_prev_entry()
+                vim.schedule(update_diffview_progress)
+              end,
+              { desc = "Prev file" },
+            },
             { "n", "gcn", actions.next_conflict, { desc = "Goto next conflict" } },
             { "n", "gce", actions.prev_conflict, { desc = "Goto prev conflict" } },
             { "n", "gco", actions.conflict_choose_all("ours"), { desc = "Git conflict choose ours" } },
@@ -139,15 +189,15 @@ return {
 
       local function set_diff_hl()
         -- GitHub dark: bg only, no fg override
-        vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#003320" })
-        vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3d0000" })
-        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2d1f00" })
-        vim.api.nvim_set_hl(0, "DiffText", { bg = "#5a3500" })
+        vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#003320", underline = false })
+        vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3d0000", underline = false })
+        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2d1f00", underline = false })
+        vim.api.nvim_set_hl(0, "DiffText", { bg = "#5a3500", underline = false })
         -- diffview-specific overrides
-        vim.api.nvim_set_hl(0, "DiffviewDiffAdd", { bg = "#003320" })
-        vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { bg = "#3d0000" })
-        vim.api.nvim_set_hl(0, "DiffviewDiffChange", { bg = "#2d1f00" })
-        vim.api.nvim_set_hl(0, "DiffviewDiffText", { bg = "#5a3500" })
+        vim.api.nvim_set_hl(0, "DiffviewDiffAdd", { bg = "#003320", underline = false })
+        vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { bg = "#3d0000", underline = false })
+        vim.api.nvim_set_hl(0, "DiffviewDiffChange", { bg = "#2d1f00", underline = false })
+        vim.api.nvim_set_hl(0, "DiffviewDiffText", { bg = "#5a3500", underline = false })
       end
 
       set_diff_hl()

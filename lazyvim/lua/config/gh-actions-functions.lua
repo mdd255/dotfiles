@@ -1,7 +1,8 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
-local picker_width = utils.picker_width
+local picker_layout = utils.picker_layout
+local make_refresh_action = utils.make_refresh_action
 local HL = utils.HL
 local float_input = utils.float_input
 local snacks = require("snacks")
@@ -38,11 +39,11 @@ local CONCLUSION_ICONS = {
 
 local STATUS_ICONS = {
   in_progress = "󱦟",
-  queued = "",
-  waiting = "",
-  requested = "",
-  pending = "",
-  completed = "",
+  queued = "",
+  waiting = "",
+  requested = "",
+  pending = "",
+  completed = "",
 }
 
 local CONCLUSION_HLS = {
@@ -129,17 +130,14 @@ local function make_runs_fetcher(filter)
 end
 
 -- One cache.wrap entry per filter — inflight deduplication + TTL per filter key.
-local gh_runs_fetchers = {}
-
-for _, f in ipairs(RUN_FILTERS) do
-  local key = "gh.runs." .. (f.status or "recent")
-  gh_runs_fetchers[f.status or "recent"] = cache.wrap(key, CACHE_TTL_MS, make_runs_fetcher(f))
-end
+local gh_runs_fetchers = cache.wrap_filters(RUN_FILTERS, CACHE_TTL_MS, function(f)
+  return "gh.runs." .. (f.status or "recent")
+end, make_runs_fetcher)
 
 local function get_gh_runs(filter, callback)
-  local key = filter.status or "recent"
+  local key = "gh.runs." .. (filter.status or "recent")
 
-  if not cache.is_cached("gh.runs." .. key) then
+  if not cache.is_cached(key) then
     vim.notify("Loading runs...", vim.log.levels.INFO, notify_opts)
   end
 
@@ -297,14 +295,10 @@ end
 
 local function open_actions_picker()
   local f = RUN_FILTERS[run_filter_idx]
+  local items = {}
 
-  get_gh_runs(f, function(runs)
-    if not runs then
-      return
-    end
-
-    local items = {}
-
+  local function populate_items(runs)
+    items = {}
     for _, run in ipairs(runs) do
       local conclusion_icon = run_icon(run)
       local status_icon = run_status_icon(run)
@@ -322,6 +316,14 @@ local function open_actions_picker()
         preview = { text = run_preview(run), ft = "yaml" },
       })
     end
+  end
+
+  get_gh_runs(f, function(runs)
+    if not runs then
+      return
+    end
+
+    populate_items(runs)
 
     snacks.picker.pick({
       finder = function()
@@ -347,33 +349,24 @@ local function open_actions_picker()
         }
       end,
       preview = "preview",
-      layout = {
-        layout = {
-          title = { { "  Actions · " .. f.name, "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.9, 110),
-          height = 0.75,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          {
-            box = "horizontal",
-            { win = "list", width = 0.55 },
-            { win = "preview", border = "left" },
-          },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
+        width_frac = 0.9,
+        width_min = 110,
+        height = 0.75,
+        list_width = 0.55,
+      }),
       actions = {
         cycle_filter = function(picker)
           run_filter_idx = run_filter_idx % #RUN_FILTERS + 1
           picker:close()
           vim.schedule(open_actions_picker)
         end,
-        refresh = function(picker)
+        refresh = make_refresh_action(function()
           cache.invalidate_pattern("gh.runs")
-          picker:close()
-          vim.schedule(open_actions_picker)
-        end,
+        end, function(cb)
+          get_gh_runs(f, cb)
+        end, populate_items),
       },
       win = {
         input = {

@@ -1,6 +1,8 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
-local picker_width = utils.picker_width
+local picker_layout = utils.picker_layout
+local select_and_clear_action = utils.select_and_clear_action
+local make_refresh_action = utils.make_refresh_action
 local HL = utils.HL
 local float_input = utils.float_input
 local cache = require("config.cache")
@@ -188,18 +190,11 @@ local function stash_picker(title, on_confirm, title_hl)
         end
         return { { item.text, "Comment" } }
       end,
-      layout = {
-        layout = {
-          title = { { " " .. title, title_hl or "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.7, 80),
-          height = 0.4,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { " " .. title, title_hl or "DiagnosticInfo" } },
+        width_frac = 0.7, width_min = 80,
+        height = 0.4,
+      }),
       confirm = function(picker, item)
         picker:close()
 
@@ -375,24 +370,14 @@ local function select_reviewers(title, callback)
       format = function(item, _)
         return { { item.text, "Function" } }
       end,
-      layout = {
-        layout = {
-          title = { { title or " Select reviewers", "Function" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.2, 60),
-          height = 0.3,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { title or " Select reviewers", "Function" } },
+        width_frac = 0.2, width_min = 60,
+        height = 0.3,
+      }),
       multi = { "confirm" },
       actions = {
-        select_and_clear = function(picker)
-          picker.list:select()
-          vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-        end,
+        select_and_clear = select_and_clear_action(),
       },
       win = {
         input = {
@@ -487,17 +472,14 @@ local function make_pr_fetcher(filter)
   end
 end
 
-local gh_pr_fetchers = {}
-
-for _, f in ipairs(PR_FILTERS) do
-  local key = "gh.prs." .. (f.search ~= "" and f.search or "all")
-  gh_pr_fetchers[f.search ~= "" and f.search or "all"] = cache.wrap(key, PR_TTL_MS, make_pr_fetcher(f))
-end
+local gh_pr_fetchers = cache.wrap_filters(PR_FILTERS, PR_TTL_MS,
+  function(f) return "gh.prs." .. (f.search ~= "" and f.search or "all") end,
+  make_pr_fetcher)
 
 local function get_gh_prs(filter, callback)
-  local key = filter.search ~= "" and filter.search or "all"
+  local key = "gh.prs." .. (filter.search ~= "" and filter.search or "all")
 
-  if not cache.is_cached("gh.prs." .. key) then
+  if not cache.is_cached(key) then
     vim.notify("Loading PRs...", vim.log.levels.INFO, notify_opts)
   end
 
@@ -857,22 +839,12 @@ local function show_pr_actions(pr)
           return { { item.text, item.hl or "Normal" } }
         end,
         preview = "preview",
-        layout = {
-          layout = {
-            title = { { title, title_hl } },
-            box = "vertical",
-            position = "float",
-            width = picker_width(0.75, 120),
-            height = 0.65,
-            border = "rounded",
-            { win = "input", height = 1, border = "bottom" },
-            {
-              box = "horizontal",
-              { win = "list", width = 0.35 },
-              { win = "preview", border = "left" },
-            },
-          },
-        },
+        layout = picker_layout({
+          title = { { title, title_hl } },
+          width_frac = 0.75, width_min = 120,
+          height = 0.65,
+          list_width = 0.35,
+        }),
         confirm = function(picker, item)
           picker:close()
 
@@ -926,33 +898,23 @@ local function open_gh_pr()
         }
       end,
       preview = "preview",
-      layout = {
-        layout = {
-          title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.9, 120),
-          height = 0.75,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          {
-            box = "horizontal",
-            { win = "list", width = 0.5 },
-            { win = "preview", border = "left" },
-          },
-        },
-      },
+      layout = picker_layout({
+        title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
+        width_frac = 0.9, width_min = 120,
+        height = 0.75,
+        list_width = 0.5,
+      }),
       actions = {
         cycle_filter = function(picker)
           pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
           picker:close()
           vim.schedule(open_gh_pr)
         end,
-        refresh = function(picker)
-          cache.invalidate_pattern("gh.prs")
-          picker:close()
-          vim.schedule(open_gh_pr)
-        end,
+        refresh = make_refresh_action(
+          function() cache.invalidate_pattern("gh.prs") end,
+          function(cb) get_gh_prs(f, cb) end,
+          function(data) items = format_pr_items(data) end
+        ),
       },
       win = {
         input = {
@@ -1013,18 +975,11 @@ function M.gh_switch_account()
         format = function(item, _)
           return { { item.text, "Function" } }
         end,
-        layout = {
-          layout = {
-            title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
-            box = "vertical",
-            position = "float",
-            width = picker_width(0.2, 60),
-            height = 0.15,
-            border = "rounded",
-            { win = "input", height = 1, border = "bottom" },
-            { win = "list" },
-          },
-        },
+        layout = picker_layout({
+          title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
+          width_frac = 0.2, width_min = 60,
+          height = 0.15,
+        }),
         confirm = function(picker, item)
           picker:close()
 
@@ -1081,18 +1036,11 @@ function M.create_pr()
           format = function(item, _)
             return format_branch(item)
           end,
-          layout = {
-            layout = {
-              title = { { title, "DiagnosticInfo" } },
-              box = "vertical",
-              position = "float",
-              width = picker_width(0.7, 80),
-              height = 0.4,
-              border = "rounded",
-              { win = "input", height = 1, border = "bottom" },
-              { win = "list" },
-            },
-          },
+          layout = picker_layout({
+            title = { { title, "DiagnosticInfo" } },
+            width_frac = 0.7, width_min = 80,
+            height = 0.4,
+          }),
           confirm = function(picker, item)
             picker:close()
             if item then
@@ -1237,18 +1185,11 @@ function M.git_checkout_branch()
         end
         return chunks
       end,
-      layout = {
-        layout = {
-          title = { { " Select branch", "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.7, 80),
-          height = 0.4,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Select branch", "DiagnosticInfo" } },
+        width_frac = 0.4, width_min = 60,
+        height = 0.4,
+      }),
       confirm = function(picker, item)
         picker:close()
 
@@ -1301,18 +1242,11 @@ function M.git_delete_branch()
         end
         return { { item.text, "DiagnosticError" } }
       end,
-      layout = {
-        layout = {
-          title = { { " Delete branch", "DiagnosticError" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.7, 80),
-          height = 0.4,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Delete branch", "DiagnosticError" } },
+        width_frac = 0.7, width_min = 80,
+        height = 0.4,
+      }),
       confirm = function(picker, item)
         picker:close()
 
@@ -1455,18 +1389,11 @@ local function reset_picker(title, title_hl, on_confirm)
           { rest or "", "Normal" },
         }
       end,
-      layout = {
-        layout = {
-          title = { { title, title_hl } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.8, 100),
-          height = 0.5,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { title, title_hl } },
+        width_frac = 0.8, width_min = 100,
+        height = 0.5,
+      }),
       confirm = function(picker, item)
         picker:close()
         if item then
@@ -1633,18 +1560,11 @@ function M.git_diff_branch()
       format = function(item, _)
         return format_branch(item)
       end,
-      layout = {
-        layout = {
-          title = { { " Diff branch", "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.7, 80),
-          height = 0.4,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Diff branch", "DiagnosticInfo" } },
+        width_frac = 0.7, width_min = 80,
+        height = 0.4,
+      }),
       confirm = function(picker, item)
         picker:close()
         if item then
@@ -1687,18 +1607,11 @@ function M.git_merge_branch()
       format = function(item, _)
         return format_branch(item)
       end,
-      layout = {
-        layout = {
-          title = { { " Merge branch", "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.7, 80),
-          height = 0.4,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Merge branch", "DiagnosticInfo" } },
+        width_frac = 0.7, width_min = 80,
+        height = 0.4,
+      }),
       confirm = function(picker, item)
         picker:close()
         if item then
@@ -1808,18 +1721,11 @@ function M.git_log()
           { rest or "", "Normal" },
         }
       end,
-      layout = {
-        layout = {
-          title = { { "  Commit log", "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.8, 100),
-          height = 0.6,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list" },
-        },
-      },
+      layout = picker_layout({
+        title = { { "  Commit log", "DiagnosticInfo" } },
+        width_frac = 0.8, width_min = 100,
+        height = 0.6,
+      }),
       confirm = function(picker, item)
         picker:close()
 

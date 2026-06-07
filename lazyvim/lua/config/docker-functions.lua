@@ -1,11 +1,13 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
-local picker_width = utils.picker_width
+local picker_layout = utils.picker_layout
 local picker_selection = utils.picker_selection
 local parse_json_lines = utils.parse_json_lines
 local HL = utils.HL
 local float_input = utils.float_input
+local select_and_clear_action = utils.select_and_clear_action
+local make_refresh_action = utils.make_refresh_action
 local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
@@ -40,7 +42,7 @@ local function container_mutate_success()
 end
 
 local function image_mutate_success()
-  cache.invalidate("docker.images")
+  cache.invalidate_pattern("docker.images")
   vim.schedule(open_image_picker)
 end
 
@@ -172,14 +174,13 @@ local function fetch_containers_raw(filter_args, callback)
 end
 
 -- Cached container fetchers — one per filter, registered once at load time.
-local _container_fetchers = {}
-
-for _, f in ipairs(CONTAINER_FILTERS) do
-  local key = "docker.containers." .. table.concat(f.args, "_")
-  _container_fetchers[key] = cache.wrap(key, 30000, function(cb)
+local _container_fetchers = cache.wrap_filters(CONTAINER_FILTERS, 30000, function(f)
+  return "docker.containers." .. table.concat(f.args, "_")
+end, function(f)
+  return function(cb)
     fetch_containers_raw(f.args, cb)
-  end)
-end
+  end
+end)
 
 local function get_containers(filter_args, callback)
   local key = "docker.containers." .. table.concat(filter_args, "_")
@@ -208,13 +209,10 @@ open_container_picker = function(filter_idx)
     vim.notify("Loading containers...", vim.log.levels.INFO, notify_opts)
   end
 
-  get_containers(f.args, function(containers)
-    if not containers then
-      return
-    end
+  local items = {}
 
-    local items = {}
-
+  local function populate_items(containers)
+    items = {}
     for _, c in ipairs(containers) do
       c.Size = vim.split(c.Size, " ")[1]
       c.Ports = format_container_ports(c.Ports)
@@ -233,6 +231,14 @@ open_container_picker = function(filter_idx)
         preview = { text = container_preview(c), ft = "yaml" },
       })
     end
+  end
+
+  get_containers(f.args, function(containers)
+    if not containers then
+      return
+    end
+
+    populate_items(containers)
 
     snacks.picker.pick({
       finder = function()
@@ -258,28 +264,16 @@ open_container_picker = function(filter_idx)
         }
       end,
       preview = "preview",
-      layout = {
-        layout = {
-          title = { { "  Containers · " .. f.name, "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.9, 100),
-          height = 0.75,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          {
-            box = "horizontal",
-            { win = "list", width = 0.45 },
-            { win = "preview", border = "left" },
-          },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Containers · " .. f.name, "DiagnosticInfo" } },
+        width_frac = 0.9,
+        width_min = 100,
+        height = 0.75,
+        list_width = 0.45,
+      }),
       multi = { "confirm" },
       actions = {
-        select_and_clear = function(picker)
-          picker.list:select()
-          vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-        end,
+        select_and_clear = select_and_clear_action(),
         cycle_filter = function(picker)
           local next_idx = filter_idx % #CONTAINER_FILTERS + 1
           picker:close()
@@ -287,13 +281,11 @@ open_container_picker = function(filter_idx)
             open_container_picker(next_idx)
           end)
         end,
-        refresh = function(picker)
+        refresh = make_refresh_action(function()
           cache.invalidate_pattern("docker.containers")
-          picker:close()
-          vim.schedule(function()
-            open_container_picker(filter_idx)
-          end)
-        end,
+        end, function(cb)
+          get_containers(f.args, cb)
+        end, populate_items),
       },
       win = {
         input = {
@@ -308,7 +300,7 @@ open_container_picker = function(filter_idx)
         local selected = picker_selection(picker)
         picker:close()
 
-        if #selected == 0 then
+        if not selected or #selected == 0 then
           return
         end
 
@@ -327,11 +319,11 @@ end
 -- ── Images ────────────────────────────────────────────────────────────────────
 
 local IMAGE_ACTIONS = {
-  { text = " run (interactive)", key = "run_interactive", hl = HL.ok },
-  { text = " run (detached)", key = "run_detached", hl = HL.ok },
-  { text = " remove", key = "remove_force", hl = HL.err },
+  { text = " run (interactive)", key = "run_interactive", hl = HL.ok },
+  { text = " run (detached)", key = "run_detached", hl = HL.ok },
+  { text = " remove", key = "remove_force", hl = HL.err },
   { text = "󰓼 tag", key = "tag", hl = HL.ident },
-  { text = " inspect", key = "inspect", hl = HL.info },
+  { text = " inspect", key = "inspect", hl = HL.info },
   { text = "󰋚 history", key = "history", hl = HL.info },
 }
 
@@ -466,12 +458,10 @@ open_image_picker = function()
     vim.notify("Loading images...", vim.log.levels.INFO, notify_opts)
   end
 
-  get_images(function(images)
-    if not images then
-      return
-    end
+  local items = {}
 
-    local items = {}
+  local function populate_items(images)
+    items = {}
 
     for _, img in ipairs(images) do
       img.Repository = img.Repository or "N/A"
@@ -489,6 +479,14 @@ open_image_picker = function()
         preview = { text = image_preview(img), ft = "yaml" },
       })
     end
+  end
+
+  get_images(function(images)
+    if not images then
+      return
+    end
+
+    populate_items(images)
 
     snacks.picker.pick({
       finder = function()
@@ -505,34 +503,19 @@ open_image_picker = function()
         }
       end,
       preview = "preview",
-      layout = {
-        layout = {
-          title = { { "  Images", "DiagnosticInfo" } },
-          box = "vertical",
-          position = "float",
-          width = picker_width(0.85, 100),
-          height = 0.75,
-          border = "rounded",
-          { win = "input", height = 1, border = "bottom" },
-          {
-            box = "horizontal",
-            { win = "list", width = 0.4 },
-            { win = "preview", border = "left" },
-          },
-        },
-      },
+      layout = picker_layout({
+        title = { { " Images", "DiagnosticInfo" } },
+        width_frac = 0.85,
+        width_min = 100,
+        height = 0.75,
+        list_width = 0.4,
+      }),
       multi = { "confirm" },
       actions = {
-        select_and_clear = function(picker)
-          picker.list:select()
-          picker.list:move(1)
-          vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-        end,
-        refresh = function(picker)
+        select_and_clear = select_and_clear_action(true),
+        refresh = make_refresh_action(function()
           cache.invalidate("docker.images")
-          picker:close()
-          vim.schedule(open_image_picker)
-        end,
+        end, get_images, populate_items),
       },
       win = {
         input = {
@@ -546,7 +529,7 @@ open_image_picker = function()
         local selected = picker_selection(picker)
         picker:close()
 
-        if #selected == 0 then
+        if not selected or #selected == 0 then
           return
         end
 
@@ -610,18 +593,12 @@ local function show_compose_picker(title, options, on_select)
       return items
     end,
     format = "text",
-    layout = {
-      layout = {
-        title = title,
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.3, 50),
-        height = 0.25,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list" },
-      },
-    },
+    layout = picker_layout({
+      title = title,
+      width_frac = 0.3,
+      width_min = 50,
+      height = 0.25,
+    }),
     confirm = function(picker, item)
       picker:close()
 

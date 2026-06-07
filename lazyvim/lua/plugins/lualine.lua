@@ -25,10 +25,6 @@ local shorten_filename = function(full_filename, context)
 
   local filename = trim_ft(full_filename)
 
-  if filename:len() > 15 then
-    filename = filename:sub(1, 15) .. "_"
-  end
-
   if vim.g.diffview_progress and context and vim.g.diffview_tab == context.tabnr then
     return filename .. " " .. vim.g.diffview_progress
   end
