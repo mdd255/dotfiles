@@ -903,13 +903,12 @@ local function open_gh_pr()
         cycle_filter = function(picker)
           pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
           picker:close()
-          picker:refresh()
           vim.schedule(open_gh_pr)
         end,
         refresh = make_refresh_action(function()
           cache.invalidate_pattern("gh.prs")
         end, function(cb)
-          get_gh_prs(f, cb)
+          get_gh_prs(PR_FILTERS[pr_filter_idx], cb)
         end, function(data)
           items = format_pr_items(data)
         end),
