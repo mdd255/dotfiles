@@ -234,7 +234,7 @@ local function run_action(action_key, run)
       failed_label = "Failed to open browser: ",
     })
   elseif action_key == "download" then
-    custom_input("Download dir:", { default = "." }, function(dir)
+    custom_input(" Download dir:", { default = "." }, function(dir)
       local target = (dir and dir ~= "") and dir or "."
       exec_async({ "gh", "run", "download", id, "-D", target }, {
         notify = notify_opts,

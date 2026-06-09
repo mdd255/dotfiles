@@ -126,7 +126,7 @@ local function run_container_action(action_key, containers)
     end
   elseif action_key == "rename" then
     for _, c in ipairs(containers) do
-      custom_input("Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
+      custom_input(" Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
         if not new_name or new_name == "" or new_name == c.Names then
           return
         end
@@ -363,8 +363,8 @@ local function run_image_action(action_key, images)
       return
     end
 
-    custom_input("Container name (optional):", {}, function(name)
-      custom_input("Ports e.g. 8080:80 (optional):", {}, function(ports)
+    custom_input(" Container name (optional):", {}, function(name)
+      custom_input(" Ports e.g. 8080:80 (optional):", {}, function(ports)
         local args = { "docker", "run", "-d" }
 
         if name and name ~= "" then
@@ -405,7 +405,7 @@ local function run_image_action(action_key, images)
       return
     end
 
-    custom_input("New tag:", { default = image_ref(img) }, function(new_tag)
+    custom_input(" New tag:", { default = image_ref(img) }, function(new_tag)
       if not new_tag or new_tag == "" then
         return
       end
@@ -552,7 +552,7 @@ function M.docker_build()
       return
     end
 
-    custom_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
+    custom_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
       if not dockerfile or dockerfile == "" then
         return
       end

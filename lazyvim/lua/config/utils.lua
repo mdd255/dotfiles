@@ -111,7 +111,7 @@ function M.float_input(prompt, opts, callback)
     col = col,
     style = "minimal",
     border = "rounded",
-    title = " " .. prompt .. "",
+    title = prompt,
     title_pos = "center",
   })
 
@@ -181,10 +181,10 @@ end
 -- Responsive single-line float input — like float_input but width adapts to
 -- screen size via flex_picker_size. Use for all inputs except the SSH passphrase
 -- prompt (which has secret masking and its own border_hl).
--- opts: same as float_input, plus optional width_frac (0–1, default 0.3).
+-- opts: same as float_input, plus optional width_frac (0–1, default 0.5).
 function M.custom_input(prompt, opts, callback)
   opts = opts or {}
-  local size = M.flex_picker_size({ width = opts.width_frac or 0.3 })
+  local size = M.flex_picker_size({ width = opts.width_frac or 0.5 })
   local merged = vim.tbl_extend("force", opts, { width = size.width })
   merged.width_frac = nil
   M.float_input(prompt, merged, callback)
@@ -196,7 +196,7 @@ end
 -- @param prompt string
 -- @param on_confirm function
 function M.confirm_dangerous(prompt, on_confirm)
-  M.float_input(prompt .. "  Type y to confirm:", {}, function(input)
+  M.float_input(prompt .. " Type y to confirm:", {}, function(input)
     if input and input:lower() == "y" then
       on_confirm()
     else

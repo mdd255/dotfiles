@@ -27,7 +27,7 @@ local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
-  float_input("SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
+  float_input(" SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
       fn(nil, function() end)
       return
@@ -1524,7 +1524,7 @@ function M.git_commit(amend)
     end
   end
 
-  custom_input(amend and "Amend commit:" or "Commit to " .. branch .. ":", { default = default_msg }, on_input)
+  custom_input(amend and " Amend commit:" or " Commit to " .. branch .. ":", { default = default_msg }, on_input)
 end
 
 function M.git_commit_amend()
