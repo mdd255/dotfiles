@@ -1,7 +1,7 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
-local picker_layout = utils.picker_layout
-local select_and_clear_action = utils.select_and_clear_action
+local custom_layout = utils.custom_layout
+local custom_input = utils.custom_input
 local make_refresh_action = utils.make_refresh_action
 local HL = utils.HL
 local float_input = utils.float_input
@@ -190,11 +190,9 @@ local function stash_picker(title, on_confirm, title_hl)
         end
         return { { item.text, "Comment" } }
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " " .. title, title_hl or "DiagnosticInfo" } },
-        width_frac = 0.7,
-        width_min = 80,
-        height = 0.4,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -371,16 +369,11 @@ local function select_reviewers(title, callback)
       format = function(item, _)
         return { { item.text, "Function" } }
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { title or " Select reviewers", "Function" } },
-        width_frac = 0.2,
-        width_min = 60,
-        height = 0.3,
+        width = 0.3,
       }),
       multi = { "confirm" },
-      actions = {
-        select_and_clear = select_and_clear_action(),
-      },
       win = {
         input = {
           keys = {
@@ -674,7 +667,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_title" then
-    float_input(" Edit title:", { default = pr.title }, function(title)
+    custom_input(" Edit title:", { default = pr.title }, function(title)
       if not title or title == "" then
         return
       end
@@ -747,7 +740,7 @@ local function handle_pr_action(action_key, pr)
     -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
-    float_input(" Labels:", {}, function(lbl)
+    custom_input(" Labels:", {}, function(lbl)
       if not lbl or lbl == "" then
         return
       end
@@ -841,12 +834,11 @@ local function show_pr_actions(pr)
           return { { item.text, item.hl or "Normal" } }
         end,
         preview = "preview",
-        layout = picker_layout({
+        layout = custom_layout({
           title = { { title, title_hl } },
-          width_frac = 0.75,
-          width_min = 120,
+          width = 0.8,
           height = 0.65,
-          list_width = 0.35,
+          preview = true,
         }),
         confirm = function(picker, item)
           picker:close()
@@ -901,17 +893,17 @@ local function open_gh_pr()
         }
       end,
       preview = "preview",
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
-        width_frac = 0.9,
-        width_min = 120,
+        width = 0.8,
         height = 0.75,
-        list_width = 0.5,
+        preview = true,
       }),
       actions = {
         cycle_filter = function(picker)
           pr_filter_idx = pr_filter_idx % #PR_FILTERS + 1
           picker:close()
+          picker:refresh()
           vim.schedule(open_gh_pr)
         end,
         refresh = make_refresh_action(function()
@@ -981,11 +973,9 @@ function M.gh_switch_account()
         format = function(item, _)
           return { { item.text, "Function" } }
         end,
-        layout = picker_layout({
+        layout = custom_layout({
           title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
-          width_frac = 0.2,
-          width_min = 60,
-          height = 0.15,
+          width = 0.3,
         }),
         confirm = function(picker, item)
           picker:close()
@@ -1044,11 +1034,9 @@ function M.create_pr()
           format = function(item, _)
             return format_branch(item)
           end,
-          layout = picker_layout({
+          layout = custom_layout({
             title = { { title, "DiagnosticInfo" } },
-            width_frac = 0.7,
-            width_min = 80,
-            height = 0.4,
+            width = 0.55,
           }),
           confirm = function(picker, item)
             picker:close()
@@ -1065,7 +1053,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    float_input(" PR Title:", { default = default_title, width = 110 }, function(title)
+    custom_input(" PR Title:", { default = default_title, width_frac = 0.5 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1074,7 +1062,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for label
   local function prompt_label(callback)
-    float_input(" Label (optional):", {}, function(label)
+    custom_input(" Label (optional):", {}, function(label)
       callback(label or "")
     end)
   end
@@ -1194,11 +1182,9 @@ function M.git_checkout_branch()
         end
         return chunks
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Select branch", "DiagnosticInfo" } },
-        width_frac = 0.4,
-        width_min = 60,
-        height = 0.4,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1222,7 +1208,7 @@ function M.git_checkout_new_branch()
     end
   end
 
-  float_input(" New branch name:", {}, on_input)
+  custom_input(" New branch name:", {}, on_input)
 end
 
 function M.git_delete_branch()
@@ -1252,11 +1238,9 @@ function M.git_delete_branch()
         end
         return { { item.text, "DiagnosticError" } }
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Delete branch", "DiagnosticError" } },
-        width_frac = 0.7,
-        width_min = 80,
-        height = 0.4,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1400,11 +1384,9 @@ local function reset_picker(title, title_hl, on_confirm)
           { rest or "", "Normal" },
         }
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { title, title_hl } },
-        width_frac = 0.8,
-        width_min = 100,
-        height = 0.5,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1543,11 +1525,7 @@ function M.git_commit(amend)
     end
   end
 
-  float_input(
-    amend and "Amend commit:" or "Commit to " .. branch .. ":",
-    { default = default_msg, width = 90 },
-    on_input
-  )
+  custom_input(amend and "Amend commit:" or "Commit to " .. branch .. ":", { default = default_msg }, on_input)
 end
 
 function M.git_commit_amend()
@@ -1572,11 +1550,9 @@ function M.git_diff_branch()
       format = function(item, _)
         return format_branch(item)
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Diff branch", "DiagnosticInfo" } },
-        width_frac = 0.7,
-        width_min = 80,
-        height = 0.4,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1621,11 +1597,9 @@ function M.git_merge_branch()
       format = function(item, _)
         return format_branch(item)
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Merge branch", "DiagnosticInfo" } },
-        width_frac = 0.7,
-        width_min = 80,
-        height = 0.4,
+        width = 0.55,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1736,11 +1710,9 @@ function M.git_log()
           { rest or "", "Normal" },
         }
       end,
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Commit log", "DiagnosticInfo" } },
-        width_frac = 0.8,
-        width_min = 100,
-        height = 0.6,
+        width = 0.8,
       }),
       confirm = function(picker, item)
         picker:close()
@@ -1751,8 +1723,6 @@ function M.git_log()
               handle_commit_action(a.key, item._hash)
             end, {
               title = " Commit " .. item._hash,
-              width_frac = 0.3,
-              width_max = 50,
               height = 0.4,
             })
           end)

@@ -1,4 +1,5 @@
 local logo = require("config.logo")
+local custom_layout = require("config.utils").custom_layout
 
 return {
   "folke/snacks.nvim",
@@ -49,17 +50,21 @@ return {
     terminal = { enabled = true },
     explorer = { enabled = true },
     indent = { enabled = true, char = "▏" },
+    styles = { notification = { wo = { wrap = true } } },
     picker = {
-      layout = {
-        layout = {
-          box = "vertical",
-          width = 0.9,
-          height = 0.8,
-          border = "rounded",
-          title = "{title} {live} {flags}",
-          { win = "input", height = 1, border = "bottom" },
-          { win = "list", border = "none" },
-        },
+      prompt = " ",
+      actions = {
+        select_and_clear = function(picker)
+          picker.list:select()
+          vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
+        end,
+        clear_input = function(p)
+          p.input:set("")
+        end,
+        clear_and_focus_list = function(p)
+          p.input:set("")
+          p:focus("list")
+        end,
       },
       formatters = {
         file = {
@@ -71,16 +76,17 @@ return {
         frecency = true,
       },
       win = {
+        list = {
+          minimal = true,
+        },
         preview = {
+          minimal = true,
           wo = {
-            number = false,
-            relativenumber = false,
+            wrap = true,
           },
         },
         input = {
-          wo = {
-            signcolumn = "yes:1",
-          },
+          minimal = true,
           keys = {
             ["<Esc>"] = { "close", mode = { "n", "i" } },
             ["<C-n>"] = { "list_down", mode = { "n", "i" } },
@@ -108,30 +114,58 @@ return {
             "~/Projects/hipages/",
             "~/Projects/accelerator-app/",
           },
-          layout = {
-            layout = {
-              width = 0.4,
-              height = 0.4,
-              box = "vertical",
-              border = "rounded",
-              title = "  Projects",
-              title_pos = "center",
-              { win = "input", height = 1, border = "bottom" },
-              { win = "list", border = "none" },
-            },
-          },
+          layout = custom_layout({
+            title = " Projects",
+            width = 0.3,
+          }),
+        },
+        command_history = {
+          layout = custom_layout({
+            title = " Cmd history",
+            width = 0.3,
+          }),
         },
         files = {
+          layout = custom_layout({
+            title = " Files",
+            width = 0.55,
+          }),
           hidden = true,
-          layout = {
-            layout = { title = " Files" },
-          },
+        },
+        buffers = {
+          layout = custom_layout({
+            title = " Buffers",
+            width = 0.55,
+          }),
+        },
+        highlights = {
+          layout = custom_layout({
+            title = " Highlights",
+            width = 0.8,
+            preview = true,
+          }),
         },
         grep = {
           hidden = true,
-          layout = {
-            layout = { title = " Search" },
-          },
+          layout = custom_layout({
+            title = " Search",
+            preview = true,
+            fullscreen = true,
+          }),
+        },
+        git_status = {
+          layout = custom_layout({
+            title = " Git status",
+            preview = true,
+            fullscreen = true,
+          }),
+        },
+        notifications = {
+          layout = custom_layout({
+            title = " Notifications",
+            preview = true,
+            fullscreen = true,
+          }),
         },
         explorer = {
           hidden = true,
@@ -139,12 +173,27 @@ return {
           diagnostics = false,
           replace_netrw = true,
           layout = {
+            fullscreen = false,
             layout = {
-              width = 40,
-              position = "left",
+              width = 45,
+              position = "right",
               box = "vertical",
-              { win = "list" },
-              { win = "input", height = 1 },
+            },
+          },
+          win = {
+            list = {
+              keys = {
+                ["<C-f>"] = { "focus_input", mode = { "n" } },
+                ["m"] = { "list_scroll_down", mode = { "n" } },
+                ["M"] = { "list_scroll_up", mode = { "n" } },
+                ["u"] = { "explorer_move", mode = { "n" } },
+              },
+            },
+            input = {
+              layout = { border = "rounded" },
+              keys = {
+                ["<Esc>"] = { "clear_and_focus_list", mode = { "i" } },
+              },
             },
           },
         },
@@ -197,7 +246,6 @@ return {
     map("n", "fr", "<cmd>lua Snacks.picker.recent()<Cr>", { desc = "Find recents" })
     map("n", "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" })
     map("n", "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", { desc = "Find keymaps" })
-    map("n", "fm", "<cmd>lua Snacks.picker.marks()<Cr>", { desc = "Find marks" })
     map("n", "fh", "<cmd>lua Snacks.picker.highlights()<Cr>", { desc = "Find highlights" })
     map({ "n", "x" }, "fw", "<cmd>lua Snacks.picker.grep_word()<Cr>", { desc = "Grep word/selection" })
     map("n", "fo", "<cmd>lua Snacks.picker.command_history()<Cr>", { desc = "Find command history" })

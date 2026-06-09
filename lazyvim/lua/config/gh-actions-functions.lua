@@ -1,10 +1,10 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
-local picker_layout = utils.picker_layout
+local custom_layout = utils.custom_layout
 local make_refresh_action = utils.make_refresh_action
 local HL = utils.HL
-local float_input = utils.float_input
+local custom_input = utils.custom_input
 local snacks = require("snacks")
 local M = {}
 
@@ -234,7 +234,7 @@ local function run_action(action_key, run)
       failed_label = "Failed to open browser: ",
     })
   elseif action_key == "download" then
-    float_input("Download dir:", { default = "." }, function(dir)
+    custom_input("Download dir:", { default = "." }, function(dir)
       local target = (dir and dir ~= "") and dir or "."
       exec_async({ "gh", "run", "download", id, "-D", target }, {
         notify = notify_opts,
@@ -285,8 +285,6 @@ local function show_action_picker(run)
     run_action(item.key, run)
   end, {
     title = " Action",
-    width_frac = 0.22,
-    width_max = 44,
     height = 0.55,
   })
 end
@@ -349,12 +347,11 @@ local function open_actions_picker()
         }
       end,
       preview = "preview",
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
-        width_frac = 0.9,
-        width_min = 110,
+        width = 0.8,
         height = 0.75,
-        list_width = 0.55,
+        preview = true,
       }),
       actions = {
         cycle_filter = function(picker)
@@ -444,8 +441,6 @@ function M.gh_workflow_dispatch()
         })
       end, {
         title = " Run workflow",
-        width_frac = 0.3,
-        width_max = 60,
         height = 0.4,
       })
     end)

@@ -1,12 +1,11 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
 local term_cmd = utils.term_cmd
-local picker_layout = utils.picker_layout
+local custom_layout = utils.custom_layout
 local picker_selection = utils.picker_selection
 local parse_json_lines = utils.parse_json_lines
 local HL = utils.HL
-local float_input = utils.float_input
-local select_and_clear_action = utils.select_and_clear_action
+local custom_input = utils.custom_input
 local make_refresh_action = utils.make_refresh_action
 local cache = require("config.cache")
 local snacks = require("snacks")
@@ -127,7 +126,7 @@ local function run_container_action(action_key, containers)
     end
   elseif action_key == "rename" then
     for _, c in ipairs(containers) do
-      float_input("Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
+      custom_input("Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
         if not new_name or new_name == "" or new_name == c.Names then
           return
         end
@@ -266,17 +265,14 @@ open_container_picker = function(filter_idx)
         }
       end,
       preview = "preview",
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { " Containers · " .. f.name, "DiagnosticInfo" } },
-        width_frac = 0.9,
-        width_min = 100,
-        height = 0.75,
-        list_width = 0.45,
+        width = 0.8,
+        preview_ratio = 0.5,
+        preview = true,
       }),
       multi = { "confirm" },
       actions = {
-        select_and_clear = select_and_clear_action(),
-
         cycle_filter = function(picker)
           local next_idx = filter_idx % #CONTAINER_FILTERS + 1
           picker:close()
@@ -367,8 +363,8 @@ local function run_image_action(action_key, images)
       return
     end
 
-    float_input("Container name (optional):", {}, function(name)
-      float_input("Ports e.g. 8080:80 (optional):", {}, function(ports)
+    custom_input("Container name (optional):", {}, function(name)
+      custom_input("Ports e.g. 8080:80 (optional):", {}, function(ports)
         local args = { "docker", "run", "-d" }
 
         if name and name ~= "" then
@@ -409,7 +405,7 @@ local function run_image_action(action_key, images)
       return
     end
 
-    float_input("New tag:", { default = image_ref(img) }, function(new_tag)
+    custom_input("New tag:", { default = image_ref(img) }, function(new_tag)
       if not new_tag or new_tag == "" then
         return
       end
@@ -507,16 +503,13 @@ open_image_picker = function()
         }
       end,
       preview = "preview",
-      layout = picker_layout({
+      layout = custom_layout({
         title = { { "  Images", "DiagnosticInfo" } },
-        width_frac = 0.85,
-        width_min = 100,
-        height = 0.75,
-        list_width = 0.4,
+        width = 0.8,
+        preview = true,
       }),
       multi = { "confirm" },
       actions = {
-        select_and_clear = select_and_clear_action(true),
         refresh = make_refresh_action(function()
           cache.invalidate("docker.images")
         end, get_images, populate_items),
@@ -554,12 +547,12 @@ end
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
-  float_input(" Image tag:", { default = default_tag }, function(tag)
+  custom_input(" Image tag:", { default = default_tag }, function(tag)
     if not tag or tag == "" then
       return
     end
 
-    float_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
+    custom_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
       if not dockerfile or dockerfile == "" then
         return
       end
@@ -597,10 +590,9 @@ local function show_compose_picker(title, options, on_select)
       return items
     end,
     format = "text",
-    layout = picker_layout({
+    layout = custom_layout({
       title = title,
-      width_frac = 0.3,
-      width_min = 50,
+      width = 0.3,
       height = 0.25,
     }),
     confirm = function(picker, item)
@@ -669,11 +661,11 @@ function M.docker_prune()
       -- term_cmd so the reclaimed-space report is visible.
       term_cmd("docker " .. table.concat(item.args, " "))
     end)
-  end, { title = "  Prune", width_frac = 0.3, width_max = 50, height = 0.4 })
+  end, { title = "  Prune", height = 0.4 })
 end
 
 function M.docker_pull()
-  float_input(" Image to pull (e.g. nginx:latest):", {}, function(ref)
+  custom_input(" Image to pull (e.g. nginx:latest):", {}, function(ref)
     if not ref or ref == "" then
       return
     end

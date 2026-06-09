@@ -1,6 +1,7 @@
 local utils = require("config.utils")
 local exec_async = utils.exec_async
-local picker_width = utils.picker_width
+local custom_layout = utils.custom_layout
+local flex_picker_size = utils.flex_picker_size
 local picker_selection = utils.picker_selection
 local snacks = require("snacks")
 
@@ -131,7 +132,7 @@ local function show_output(title, lines)
     lines = { "(no output)" }
   end
 
-  local width = picker_width(0.95, 1)
+  local width = flex_picker_size({ width = 0.95 }).width
   local height = math.min(math.floor(vim.o.lines * 0.9), #lines + 2)
 
   snacks.win({
@@ -344,34 +345,13 @@ open_packages_picker = function()
       }
     end,
     preview = "preview",
-    layout = {
-      layout = {
-        title = {
-          {
-            string.format("  Packages · %s · %d deps", pm, #items),
-            "DiagnosticInfo",
-          },
-        },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.9, 100),
-        height = 0.75,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        {
-          box = "horizontal",
-          { win = "list", width = 0.5 },
-          { win = "preview", border = "left" },
-        },
-      },
-    },
+    layout = custom_layout({
+      title = { { string.format(" Packages · %s · %d deps", pm, #items), "DiagnosticInfo" } },
+      width = 0.8,
+      preview = true,
+      preview_ratio = 0.5,
+    }),
     multi = { "confirm" },
-    actions = {
-      select_and_clear = function(picker)
-        picker.list:select()
-        vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
-      end,
-    },
     win = {
       input = {
         keys = {
@@ -382,6 +362,7 @@ open_packages_picker = function()
     confirm = function(picker)
       local selected = picker_selection(picker)
       picker:close()
+
       if #selected == 0 then
         return
       end
@@ -435,23 +416,10 @@ local function pick_args_and_run(root, pm, script)
     -- No `live = true`: finder runs once on open so history shows immediately,
     -- LRU first. Typing still filters the static item list.
     show_empty = true,
-    layout = {
-      layout = {
-        title = {
-          {
-            "  Args · " .. pm .. " run " .. script,
-            "DiagnosticInfo",
-          },
-        },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.5, 60),
-        height = 0.4,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list" },
-      },
-    },
+    layout = custom_layout({
+      title = { { "  Args · " .. pm .. " run " .. script, "DiagnosticInfo" } },
+      width = 0.8,
+    }),
     actions = {
       run_args = run_args,
     },
@@ -481,7 +449,6 @@ function M.pick_scripts()
   end
 
   local pm = get_pkg_manager(root)
-
   local items = {}
 
   for name, cmd in pairs(pkg.scripts) do
@@ -495,21 +462,26 @@ function M.pick_scripts()
 
   local order = get_script_order(root)
   local rank = {}
+
   for i, name in ipairs(order) do
     rank[name] = i
   end
 
   table.sort(items, function(a, b)
     local ra, rb = rank[a.name], rank[b.name]
+
     if ra and rb then
       return ra < rb
     end
+
     if ra then
       return true
     end
+
     if rb then
       return false
     end
+
     return a.name < b.name
   end)
 
@@ -523,22 +495,12 @@ function M.pick_scripts()
       }
     end,
     preview = "preview",
-    layout = {
-      layout = {
-        title = { { "  Scripts · " .. pm, "DiagnosticInfo" } },
-        box = "vertical",
-        position = "float",
-        width = picker_width(0.8, 90),
-        height = 0.6,
-        border = "rounded",
-        { win = "input", height = 1, border = "bottom" },
-        {
-          box = "horizontal",
-          { win = "list", width = 0.3 },
-          { win = "preview", border = "left" },
-        },
-      },
-    },
+    layout = custom_layout({
+      title = { { " Scripts · " .. pm, "DiagnosticInfo" } },
+      width = 0.8,
+      preview = true,
+      preview_ratio = 0.7,
+    }),
     confirm = function(picker, item)
       picker:close()
       if item then

@@ -80,9 +80,6 @@ return {
             name = "supermaven",
             module = "blink-cmp-supermaven",
             async = true,
-            enabled = function()
-              return not supermaven_ft_blacklist[vim.bo.filetype]
-            end,
           },
         },
       },
