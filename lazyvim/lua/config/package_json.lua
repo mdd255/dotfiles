@@ -499,7 +499,7 @@ function M.pick_scripts()
       title = { { " Scripts · " .. pm, "DiagnosticInfo" } },
       width = 0.8,
       preview = true,
-      preview_ratio = 0.7,
+      preview_ratio = 0.75,
     }),
     confirm = function(picker, item)
       picker:close()

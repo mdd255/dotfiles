@@ -12,7 +12,7 @@ local M = {}
 
 ---@param opts SnacksLayoutOpts
 function M.custom_layout(opts)
-  local preview_ratio = opts.preview_ratio or 0.65
+  local preview_ratio = opts.preview_ratio or 0.75
 
   local size = M.flex_picker_size({
     width = opts.width,
@@ -61,7 +61,7 @@ function M.custom_layout(opts)
       local adjusted_height = layout.layout.height * preview_ratio
 
       if opts.fullscreen then
-        adjusted_height = adjusted_height * 2.8
+        adjusted_height = adjusted_height * 2.5
       end
 
       table.insert(layout.layout, {

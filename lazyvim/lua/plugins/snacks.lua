@@ -151,6 +151,7 @@ return {
           layout = custom_layout({
             title = " Search",
             preview = true,
+            preview_ratio = 0.75,
             fullscreen = true,
           }),
         },
@@ -164,6 +165,27 @@ return {
         notifications = {
           layout = custom_layout({
             title = " Notifications",
+            preview = true,
+            fullscreen = true,
+          }),
+        },
+        undo = {
+          layout = custom_layout({
+            title = " Undo",
+            preview = true,
+            fullscreen = true,
+          }),
+        },
+        grep_word = {
+          layout = custom_layout({
+            title = " Search",
+            preview = true,
+            fullscreen = true,
+          }),
+        },
+        keymaps = {
+          layout = custom_layout({
+            title = " Keymaps",
             preview = true,
             fullscreen = true,
           }),
