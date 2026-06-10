@@ -887,17 +887,17 @@ local function open_gh_pr()
           { draft_icon .. " ", status_hl },
           { merge_icon .. " ", status_hl },
           { string.format("%-5d ", pr.number), "DiagnosticInfo" },
-          { string.format("%-40s  ", pr.title:sub(1, 40)), "Normal" },
+          { string.format("%-55s  ", pr.title:sub(1, 55)), "Normal" },
           { review_icon .. " ", review_hl },
-          { " " .. pr.author.login:sub(1, 15), "Function" },
+          { " " .. pr.author.login:sub(1, 25), "Function" },
         }
       end,
       preview = "preview",
       layout = custom_layout({
         title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
-        width = 0.8,
-        height = 0.75,
+        fullscreen = true,
         preview = true,
+        preview_ratio = 0.5,
       }),
       actions = {
         cycle_filter = function(picker)

@@ -56,12 +56,10 @@ function M.custom_layout(opts)
     })
 
     if opts.preview then
-      layout.layout.height = layout.layout.height * 3
-
       local adjusted_height = layout.layout.height * preview_ratio
 
       if opts.fullscreen then
-        adjusted_height = adjusted_height * 2.5
+        adjusted_height = adjusted_height * 3
       end
 
       table.insert(layout.layout, {
@@ -426,7 +424,7 @@ function M.flex_picker_size(opts)
   -- vertical screen
   return {
     width = math.min(math.floor(max_width * width * 2.1), max_width),
-    height = math.min(math.floor(max_height * height / 2.5), max_height),
+    height = math.min(math.floor(max_height * height), max_height),
     is_wide_screen = is_wide_screen,
   }
 end
@@ -495,12 +493,15 @@ function M.menu_picker(items, on_confirm, opts)
     finder = function()
       return items
     end,
+
     format = opts.format or menu_default_format,
+
     layout = M.custom_layout({
-      title = opts.title and { { opts.title, opts.title_hl or "DiagnosticInfo" } } or nil,
-      width = 0.3,
+      title = opts.title or "󱇬 Picker",
+      width = opts.width or 0.3,
       height = opts.height or 0.4,
     }),
+
     confirm = function(picker, item)
       picker:close()
 

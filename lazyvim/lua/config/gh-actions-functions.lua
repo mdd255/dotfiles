@@ -311,7 +311,7 @@ local function open_actions_picker()
           safe_str(run.startedAt)
         ),
         _run = run,
-        preview = { text = run_preview(run), ft = "yaml" },
+        preview = { text = run_preview(run), ft = "text" },
       })
     end
   end
@@ -334,9 +334,9 @@ local function open_actions_picker()
             and (CONCLUSION_HLS[conclusion] or "Text")
           or "DiagnosticInfo"
         local icon_col = run_icon(run) .. " "
-        local title_col = string.format("%-28s", safe_str(run.displayTitle):sub(1, 26))
+        local title_col = string.format("%-67s", safe_str(run.displayTitle):sub(1, 65))
         local status_col = run_status_icon(run) .. "   "
-        local branch_col = string.format("%-18s", safe_str(run.headBranch):sub(1, 15))
+        local branch_col = string.format("%-27s", safe_str(run.headBranch):sub(1, 25))
         local date_col = run.startedAt or ""
         return {
           { icon_col, hl },
@@ -349,9 +349,9 @@ local function open_actions_picker()
       preview = "preview",
       layout = custom_layout({
         title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
-        width = 0.8,
-        height = 0.75,
+        fullscreen = true,
         preview = true,
+        preview_ratio = 0.4,
       }),
       actions = {
         cycle_filter = function(picker)
