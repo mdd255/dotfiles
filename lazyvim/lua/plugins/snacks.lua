@@ -136,7 +136,14 @@ return {
           }),
           hidden = true,
           ignored = true,
-          exclude = { "node_modules", ".git", "package-lock.json", "yarn.lock", "dist" },
+          exclude = {
+            "node_modules",
+            ".git",
+            "package-lock.json",
+            "yarn.lock",
+            "dist",
+            "build",
+          },
         },
         recent = {
           layout = custom_layout({
@@ -162,7 +169,14 @@ return {
         grep = {
           hidden = true,
           ignored = true,
-          exclude = { "node_modules", ".git", "package-lock.json", "yarn.lock", "dist" },
+          exclude = {
+            "node_modules",
+            ".git",
+            "package-lock.json",
+            "yarn.lock",
+            "dist",
+            "build",
+          },
           layout = custom_layout({
             title = " Search",
             preview = true,

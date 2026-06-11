@@ -34,6 +34,7 @@ map({
   -- Git restore/reset
   { "gaq", git.git_restore_staged, { desc = "Git restore --staged" } },
   { "grh", git.git_reset_hard, { desc = "Git reset --hard" } },
+  { "grb", git.git_reset_to_branch, { desc = "Git reset --hard to branch" } },
   { "grs", git.git_reset_soft, { desc = "Git reset --soft" } },
   { "grv", git.git_revert, { desc = "Git revert" } },
 

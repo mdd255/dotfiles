@@ -88,7 +88,7 @@ local function open_lsp_picker()
     end,
     preview = "preview",
     layout = custom_layout({
-      title = { { "󰼷 LSP Clients", " DiagnosticInfo" } },
+      title = { { "󰼷 LSP Clients", "DiagnosticInfo" } },
       width = 0.55,
       preview_ratio = 0.7,
       preview = true,

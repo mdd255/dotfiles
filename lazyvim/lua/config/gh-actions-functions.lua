@@ -319,7 +319,7 @@ local function open_actions_picker()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "  Actions · " .. f.name, " DiagnosticInfo" } },
+        title = { { "  Actions · " .. f.name, "DiagnosticInfo" } },
         fullscreen = true,
         preview = true,
         preview_ratio = 0.4,

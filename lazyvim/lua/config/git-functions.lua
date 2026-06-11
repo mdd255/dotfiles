@@ -134,6 +134,62 @@ local function get_branches(exclude_current, unique)
   end
 end
 
+-- Shared branch picker. Fetches branches, renders them with the standard branch
+-- formatting (current = green, main/master = warn, worktree tag), then calls
+-- on_confirm(branch) with the selected branch name.
+-- @param opts table:
+--   title           string   - picker title text
+--   title_hl        string   - title highlight group (default "DiagnosticInfo")
+--   exclude_current boolean  - drop the current branch from the list
+--   on_confirm      function - called with the selected branch name
+--   format          function - optional (item, current_branch) chunk override;
+--                              replaces the default branch + worktree formatting
+local function branch_picker(opts)
+  local current_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+
+  get_branches(opts.exclude_current, true)(function(branches, worktree_set)
+    if not branches then
+      return
+    end
+
+    local items = {}
+
+    for _, branch in ipairs(branches) do
+      table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
+    end
+
+    snacks.picker.pick({
+      finder = function()
+        return items
+      end,
+      format = function(item, _)
+        if opts.format then
+          return opts.format(item, current_branch)
+        end
+
+        local chunks = format_branch(item, current_branch)
+
+        if item._in_worktree then
+          table.insert(chunks, { "  worktree", "Comment" })
+        end
+
+        return chunks
+      end,
+      layout = custom_layout({
+        title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
+        width = 0.55,
+      }),
+      confirm = function(picker, item)
+        picker:close()
+
+        if item then
+          opts.on_confirm(item.text)
+        end
+      end,
+    })
+  end)
+end
+
 local function get_recent_commits(limit)
   return system_async(
     { "git", "log", "--oneline", "--max-count=" .. (limit or 30) },
@@ -894,7 +950,7 @@ local function open_gh_pr()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "  PRs · " .. f.name, " DiagnosticInfo" } },
+        title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
         fullscreen = true,
         preview = true,
         preview_ratio = 0.5,
@@ -1016,35 +1072,11 @@ function M.create_pr()
       local title = current_login ~= "" and ("  Select base branch (" .. current_login .. ") ")
         or "  Select base branch "
 
-      get_branches(true, true)(function(branches)
-        if not branches then
-          return
-        end
-
-        local items = {}
-        for _, branch in ipairs(branches) do
-          table.insert(items, { text = branch })
-        end
-
-        snacks.picker.pick({
-          finder = function()
-            return items
-          end,
-          format = function(item, _)
-            return format_branch(item)
-          end,
-          layout = custom_layout({
-            title = { { title, "DiagnosticInfo" } },
-            width = 0.55,
-          }),
-          confirm = function(picker, item)
-            picker:close()
-            if item then
-              callback(item.text)
-            end
-          end,
-        })
-      end)
+      branch_picker({
+        title = title,
+        exclude_current = true,
+        on_confirm = callback,
+      })
     end)
   end
 
@@ -1149,51 +1181,16 @@ function M.git_add_all()
 end
 
 function M.git_checkout_branch()
-  local current_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-
-  local function checkout(branch)
-    exec_async({ "git", "checkout", branch }, {
-      notify = notify_opts,
-      success_label = "Checked out " .. branch,
-      failed_label = "Failed to checkout branch: ",
-    })
-  end
-
-  get_branches(false, true)(function(branches, worktree_set)
-    if not branches then
-      return
-    end
-
-    local items = {}
-
-    for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
-    end
-
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
-      format = function(item, _)
-        local chunks = format_branch(item, current_branch)
-        if item._in_worktree then
-          table.insert(chunks, { "  worktree", "Comment" })
-        end
-        return chunks
-      end,
-      layout = custom_layout({
-        title = { { "  Select branch ", "DiagnosticInfo" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          checkout(item.text)
-        end
-      end,
-    })
-  end)
+  branch_picker({
+    title = "  Select branch ",
+    on_confirm = function(branch)
+      exec_async({ "git", "checkout", branch }, {
+        notify = notify_opts,
+        success_label = "Checked out " .. branch,
+        failed_label = "Failed to checkout branch: ",
+      })
+    end,
+  })
 end
 
 function M.git_checkout_new_branch()
@@ -1211,52 +1208,32 @@ function M.git_checkout_new_branch()
 end
 
 function M.git_delete_branch()
-  get_branches(true, true)(function(branches)
-    if not branches then
-      return
-    end
-
-    local items = {}
-
-    for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch })
-    end
-
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
-      format = function(item, _)
-        local parts = vim.split(item.text, "/")
-        if #parts > 1 then
-          local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
-          return {
-            { prefix, "Comment" },
-            { parts[#parts], "DiagnosticError" },
-          }
-        end
-        return { { item.text, "DiagnosticError" } }
-      end,
-      layout = custom_layout({
-        title = { { "  Delete branch ", "DiagnosticError" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          exec_async({ "git", "branch", "-d", item.text }, {
-            notify = notify_opts,
-            success_label = "Deleted " .. item.text,
-            failed_label = "Failed to delete branch (use -D to force): ",
-            on_success = function()
-              vim.schedule(M.git_delete_branch)
-            end,
-          })
-        end
-      end,
-    })
-  end)
+  branch_picker({
+    title = "  Delete branch ",
+    title_hl = "DiagnosticError",
+    exclude_current = true,
+    format = function(item, _)
+      local parts = vim.split(item.text, "/")
+      if #parts > 1 then
+        local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
+        return {
+          { prefix, "Comment" },
+          { parts[#parts], "DiagnosticError" },
+        }
+      end
+      return { { item.text, "DiagnosticError" } }
+    end,
+    on_confirm = function(branch)
+      exec_async({ "git", "branch", "-d", branch }, {
+        notify = notify_opts,
+        success_label = "Deleted " .. branch,
+        failed_label = "Failed to delete branch (use -D to force): ",
+        on_success = function()
+          vim.schedule(M.git_delete_branch)
+        end,
+      })
+    end,
+  })
 end
 
 function M.git_cherry_pick()
@@ -1364,7 +1341,8 @@ local function reset_picker(title, title_hl, on_confirm)
       return
     end
 
-    local items = { { text = "HEAD  (current)", _hash = "HEAD" } }
+    local items = {}
+
     for _, line in ipairs(commits) do
       table.insert(items, { text = line, _hash = line:match("^(%S+)") })
     end
@@ -1377,7 +1355,9 @@ local function reset_picker(title, title_hl, on_confirm)
         if item._hash == "HEAD" then
           return { { item.text, "DiagnosticWarn" } }
         end
+
         local hash, rest = item.text:match("^(%S+)%s+(.*)$")
+
         return {
           { (hash or item.text) .. " ", "DiagnosticInfo" },
           { rest or "", "Normal" },
@@ -1389,6 +1369,7 @@ local function reset_picker(title, title_hl, on_confirm)
       }),
       confirm = function(picker, item)
         picker:close()
+
         if item then
           on_confirm(item._hash)
         end
@@ -1407,6 +1388,23 @@ function M.git_reset_hard()
       })
     end)
   end)
+end
+
+function M.git_reset_to_branch()
+  branch_picker({
+    title = " Reset --hard to branch",
+    title_hl = "DiagnosticError",
+    exclude_current = true,
+    on_confirm = function(branch)
+      utils.confirm_dangerous("  git reset --hard " .. branch .. "?", function()
+        exec_async({ "git", "reset", "--hard", branch }, {
+          notify = notify_opts,
+          success_label = "Hard reset to " .. branch .. " successful",
+          failed_label = "Hard reset failed: ",
+        })
+      end)
+    end,
+  })
 end
 
 function M.git_reset_soft()
@@ -1536,36 +1534,12 @@ function M.git_commit_amend()
 end
 
 function M.git_diff_branch()
-  get_branches(false, true)(function(branches)
-    if not branches then
-      return
-    end
-
-    local items = {}
-    for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch })
-    end
-
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
-      format = function(item, _)
-        return format_branch(item)
-      end,
-      layout = custom_layout({
-        title = { { "  Diff branch ", "DiagnosticInfo" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(item.text))
-        end
-      end,
-    })
-  end)
+  branch_picker({
+    title = "  Diff branch ",
+    on_confirm = function(branch)
+      vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(branch))
+    end,
+  })
 end
 
 function M.git_fetch()
@@ -1583,40 +1557,18 @@ function M.git_fetch()
 end
 
 function M.git_merge_branch()
-  get_branches(true, true)(function(branches)
-    if not branches then
-      return
-    end
-
-    local items = {}
-    for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch })
-    end
-
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
-      format = function(item, _)
-        return format_branch(item)
-      end,
-      layout = custom_layout({
-        title = { { "  Merge branch ", "DiagnosticInfo" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-        if item then
-          exec_async({ "git", "merge", item.text }, {
-            notify = notify_opts,
-            info_label = "Merging " .. item.text .. "...",
-            success_label = "Merged " .. item.text,
-            failed_label = "Merge failed (resolve conflicts): ",
-          })
-        end
-      end,
-    })
-  end)
+  branch_picker({
+    title = "  Merge branch ",
+    exclude_current = true,
+    on_confirm = function(branch)
+      exec_async({ "git", "merge", branch }, {
+        notify = notify_opts,
+        info_label = "Merging " .. branch .. "...",
+        success_label = "Merged " .. branch,
+        failed_label = "Merge failed (resolve conflicts): ",
+      })
+    end,
+  })
 end
 
 -- Line blame for the cursor position — lightweight notify, no extra window.
@@ -1740,7 +1692,6 @@ end
 function M.warm_gh_cache()
   get_gh_accounts(function() end)
   fetch_current_login(function() end)
-  fetch_collaborators(function() end)
 end
 
 return M
