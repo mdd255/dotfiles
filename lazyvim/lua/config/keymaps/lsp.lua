@@ -19,4 +19,4 @@ unmap({
 })
 
 -- LSP clients picker
-vim.keymap.set("n", "<Leader>cs", lsp_functions.lsp_clients, { noremap = true, silent = true, desc = "LSP Clients" })
+vim.keymap.set("n", "<Leader>k", lsp_functions.lsp_clients, { noremap = true, silent = true, desc = "LSP Clients" })

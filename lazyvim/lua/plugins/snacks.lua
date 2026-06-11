@@ -100,7 +100,9 @@ return {
         },
       },
       sources = {
-        lsp_symbols = {},
+        lsp_references = {
+          include_declaration = false,
+        },
         projects = {
           format = "project_name",
           recent = true,
@@ -133,6 +135,16 @@ return {
             width = 0.55,
           }),
           hidden = true,
+          ignored = true,
+          exclude = { "node_modules", ".git", "package-lock.json", "yarn.lock", "dist" },
+        },
+        recent = {
+          layout = custom_layout({
+            title = " Recent",
+            preview = true,
+            preview_ratio = 0.7,
+            fullscreen = true,
+          }),
         },
         buffers = {
           layout = custom_layout({
@@ -149,6 +161,8 @@ return {
         },
         grep = {
           hidden = true,
+          ignored = true,
+          exclude = { "node_modules", ".git", "package-lock.json", "yarn.lock", "dist" },
           layout = custom_layout({
             title = " Search",
             preview = true,
