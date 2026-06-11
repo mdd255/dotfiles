@@ -11,7 +11,7 @@ local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
-local notify_opts = { title = "Docker" }
+local notify_opts = { title = " Docker" }
 
 local function format_container_ports(str)
   str = str or "N/A"
@@ -98,7 +98,7 @@ local function run_container_action(action_key, containers)
 
     -- `remove` is irreversible (docker rm -f) — gate it behind a yes prompt.
     if action_key == "remove" then
-      utils.confirm_dangerous("Remove " .. #containers .. " container(s)?", run_all)
+      utils.confirm_dangerous(" 󰧧 Remove " .. #containers .. " container(s)?", run_all)
     else
       run_all()
     end
@@ -126,7 +126,7 @@ local function run_container_action(action_key, containers)
     end
   elseif action_key == "rename" then
     for _, c in ipairs(containers) do
-      custom_input(" Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
+      custom_input("  Rename " .. c.Names .. ":", { default = c.Names }, function(new_name)
         if not new_name or new_name == "" or new_name == c.Names then
           return
         end
@@ -213,7 +213,7 @@ open_container_picker = function(filter_idx)
   local function populate_items(containers)
     items = {}
     for _, c in ipairs(containers) do
-      c.Size = vim.split(c.Size, " ")[1]
+      c.Size = vim.split(c.Size or "", " ")[1] or ""
       c.Ports = format_container_ports(c.Ports)
 
       table.insert(items, {
@@ -266,7 +266,7 @@ open_container_picker = function(filter_idx)
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { " Containers · " .. f.name, "DiagnosticInfo" } },
+        title = { { "  Containers · " .. f.name, " DiagnosticInfo" } },
         width = 0.8,
         preview_ratio = 0.5,
         preview = true,
@@ -363,8 +363,8 @@ local function run_image_action(action_key, images)
       return
     end
 
-    custom_input(" Container name (optional):", {}, function(name)
-      custom_input(" Ports e.g. 8080:80 (optional):", {}, function(ports)
+    custom_input("  Container name ", {}, function(name)
+      custom_input("  Ports ", {}, function(ports)
         local args = { "docker", "run", "-d" }
 
         if name and name ~= "" then
@@ -387,7 +387,7 @@ local function run_image_action(action_key, images)
       end)
     end)
   elseif action_key == "remove_force" then
-    utils.confirm_dangerous("Force-remove " .. #images .. " image(s)?", function()
+    utils.confirm_dangerous(" 󰧧 Force-remove " .. #images .. " image(s)?", function()
       for _, img in ipairs(images) do
         exec_async({ "docker", "rmi", "-f", img.ID }, {
           notify = notify_opts,
@@ -405,7 +405,7 @@ local function run_image_action(action_key, images)
       return
     end
 
-    custom_input(" New tag:", { default = image_ref(img) }, function(new_tag)
+    custom_input("  New tag ", { default = image_ref(img) }, function(new_tag)
       if not new_tag or new_tag == "" then
         return
       end
@@ -504,7 +504,7 @@ open_image_picker = function()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "  Images", "DiagnosticInfo" } },
+        title = { { "   Images", " DiagnosticInfo" } },
         width = 0.8,
         preview = true,
       }),
@@ -547,12 +547,12 @@ end
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
-  custom_input(" Image tag:", { default = default_tag }, function(tag)
+  custom_input("  Image tag ", { default = default_tag }, function(tag)
     if not tag or tag == "" then
       return
     end
 
-    custom_input(" Dockerfile path:", { default = "Dockerfile" }, function(dockerfile)
+    custom_input("  Dockerfile path ", { default = "Dockerfile" }, function(dockerfile)
       if not dockerfile or dockerfile == "" then
         return
       end
@@ -657,15 +657,15 @@ local PRUNE_OPTIONS = {
 
 function M.docker_prune()
   utils.menu_picker(PRUNE_OPTIONS, function(item)
-    utils.confirm_dangerous("Prune " .. item.text .. "?", function()
+    utils.confirm_dangerous(" 󰧧 Prune " .. item.text .. "?", function()
       -- term_cmd so the reclaimed-space report is visible.
       term_cmd("docker " .. table.concat(item.args, " "))
     end)
-  end, { title = "  Prune", height = 0.4 })
+  end, { title = "   Prune ", height = 0.4 })
 end
 
 function M.docker_pull()
-  custom_input(" Image to pull (e.g. nginx:latest):", {}, function(ref)
+  custom_input("  Image to pull ", {}, function(ref)
     if not ref or ref == "" then
       return
     end

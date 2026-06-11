@@ -154,10 +154,11 @@ return {
       })
     end
 
-    local function end_of_word()
+    local function end_of_word(forward)
       Flash.jump({
         search = {
           mode = "search",
+          forward = forward,
         },
         label = {
           after = true,

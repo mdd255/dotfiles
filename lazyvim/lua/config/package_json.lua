@@ -417,7 +417,7 @@ local function pick_args_and_run(root, pm, script)
     -- LRU first. Typing still filters the static item list.
     show_empty = true,
     layout = custom_layout({
-      title = { { "  Args · " .. pm .. " run " .. script, "DiagnosticInfo" } },
+      title = { { " Args · " .. pm .. " run " .. script, " DiagnosticInfo" } },
       width = 0.8,
     }),
     actions = {

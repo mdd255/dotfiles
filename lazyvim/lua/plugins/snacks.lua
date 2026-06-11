@@ -24,6 +24,7 @@ return {
     { "<Leader>S", false },
     { "<Leader>Q", false },
     { "<Leader>:", false },
+    { "<Leader>E", false },
     { "<Leader>gd", false },
     { "<Leader>gD", false },
     { "<Leader>gi", false },

@@ -11,7 +11,7 @@ local M = {}
 local cache = require("config.cache")
 local CACHE_TTL_MS = 300000 -- 5 min in ms
 
-local notify_opts = { title = "GH Actions" }
+local notify_opts = { title = " GH Actions" }
 
 -- ── Filters ───────────────────────────────────────────────────────────────────
 
@@ -24,18 +24,6 @@ local RUN_FILTERS = {
 local run_filter_idx = 1
 
 -- ── Status / conclusion icons ──────────────────────────────────────────────────
-
-local CONCLUSION_ICONS = {
-  success = "✓",
-  failure = "✗",
-  cancelled = "⊘",
-  skipped = "–",
-  timed_out = "⏱",
-  action_required = "!",
-  startup_failure = "✗",
-  neutral = "~",
-  stale = "~",
-}
 
 local STATUS_ICONS = {
   in_progress = "󱦟",
@@ -76,16 +64,6 @@ local function safe_str(v)
   end
 
   return tostring(v)
-end
-
-local function run_icon(run)
-  local conclusion = run.conclusion
-
-  if conclusion and conclusion ~= "" and conclusion ~= vim.NIL then
-    return CONCLUSION_ICONS[conclusion] or "?"
-  end
-
-  return STATUS_ICONS[run.status] or "?"
 end
 
 -- ── Fetch runs ────────────────────────────────────────────────────────────────
@@ -234,7 +212,7 @@ local function run_action(action_key, run)
       failed_label = "Failed to open browser: ",
     })
   elseif action_key == "download" then
-    custom_input(" Download dir:", { default = "." }, function(dir)
+    custom_input("  Download dir ", { default = "." }, function(dir)
       local target = (dir and dir ~= "") and dir or "."
       exec_async({ "gh", "run", "download", id, "-D", target }, {
         notify = notify_opts,
@@ -244,7 +222,7 @@ local function run_action(action_key, run)
       })
     end)
   elseif action_key == "cancel" then
-    confirm_dangerous("Cancel run " .. label .. "?", function()
+    confirm_dangerous(" 󰜺 Cancel run " .. label .. "?", function()
       exec_async({ "gh", "run", "cancel", id }, {
         notify = notify_opts,
         info_label = "Cancelling " .. label .. "...",
@@ -256,7 +234,7 @@ local function run_action(action_key, run)
       })
     end)
   elseif action_key == "delete" then
-    confirm_dangerous("Permanently DELETE run " .. label .. "?", function()
+    confirm_dangerous(" 󰧧 DELETE run " .. label .. "?", function()
       exec_async({ "gh", "run", "delete", id }, {
         notify = notify_opts,
         info_label = "Deleting " .. label .. "...",
@@ -284,7 +262,7 @@ local function show_action_picker(run)
   utils.menu_picker(RUN_ACTIONS, function(item)
     run_action(item.key, run)
   end, {
-    title = " Action",
+    title = "  Action ",
     height = 0.55,
   })
 end
@@ -298,15 +276,10 @@ local function open_actions_picker()
   local function populate_items(runs)
     items = {}
     for _, run in ipairs(runs) do
-      local conclusion_icon = run_icon(run)
-      local status_icon = run_status_icon(run)
-
       table.insert(items, {
         text = string.format(
-          "%s %-28s %s   %-18s %s",
-          conclusion_icon,
+          "%-28s   %-18s %s",
           safe_str(run.displayTitle):sub(1, 26),
-          status_icon,
           safe_str(run.headBranch):sub(1, 15),
           safe_str(run.startedAt)
         ),
@@ -333,13 +306,11 @@ local function open_actions_picker()
         local hl = (conclusion and conclusion ~= "" and conclusion ~= vim.NIL)
             and (CONCLUSION_HLS[conclusion] or "Text")
           or "DiagnosticInfo"
-        local icon_col = run_icon(run) .. " "
         local title_col = string.format("%-67s", safe_str(run.displayTitle):sub(1, 65))
         local status_col = run_status_icon(run) .. "   "
         local branch_col = string.format("%-27s", safe_str(run.headBranch):sub(1, 25))
         local date_col = run.startedAt or ""
         return {
-          { icon_col, hl },
           { title_col, hl },
           { status_col, "DiagnosticInfo" },
           { branch_col, "Function" },
@@ -348,7 +319,7 @@ local function open_actions_picker()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { " Actions · " .. f.name, "DiagnosticInfo" } },
+        title = { { "  Actions · " .. f.name, " DiagnosticInfo" } },
         fullscreen = true,
         preview = true,
         preview_ratio = 0.4,
@@ -440,7 +411,7 @@ function M.gh_workflow_dispatch()
           end,
         })
       end, {
-        title = " Run workflow",
+        title = "  Run workflow ",
         height = 0.4,
       })
     end)

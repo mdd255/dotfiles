@@ -19,7 +19,7 @@ local function format_branch(item, current_branch)
 end
 
 local notify_opts = {
-  title = "Git",
+  title = " Git",
 }
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
@@ -27,7 +27,7 @@ local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
-  float_input(" SSH passphrase:", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
+  float_input("  SSH passphrase ", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
       fn(nil, function() end)
       return
@@ -315,7 +315,7 @@ local function prompt_body(default_lines, callback)
     col = math.floor((ui.width - width) / 2),
     style = "minimal",
     border = "rounded",
-    title = " PR Body — <C-CR> confirm",
+    title = "  PR Body — <C-CR> confirm ",
     title_pos = "center",
   })
 
@@ -370,7 +370,7 @@ local function select_reviewers(title, callback)
         return { { item.text, "Function" } }
       end,
       layout = custom_layout({
-        title = { { title or " Select reviewers", "Function" } },
+        title = { { title or "  Select reviewers ", "Function" } },
         width = 0.3,
       }),
       multi = { "confirm" },
@@ -667,7 +667,7 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_title" then
-    custom_input(" Edit title:", { default = pr.title }, function(title)
+    custom_input("  Edit title ", { default = pr.title }, function(title)
       if not title or title == "" then
         return
       end
@@ -740,7 +740,7 @@ local function handle_pr_action(action_key, pr)
     -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
-    custom_input(" Labels:", {}, function(lbl)
+    custom_input("  Labels ", {}, function(lbl)
       if not lbl or lbl == "" then
         return
       end
@@ -894,7 +894,7 @@ local function open_gh_pr()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "  PRs · " .. f.name, "DiagnosticInfo" } },
+        title = { { "  PRs · " .. f.name, " DiagnosticInfo" } },
         fullscreen = true,
         preview = true,
         preview_ratio = 0.5,
@@ -973,7 +973,7 @@ function M.gh_switch_account()
           return { { item.text, "Function" } }
         end,
         layout = custom_layout({
-          title = { { " GH Account (" .. current_login .. ")", "DiagnosticWarn" } },
+          title = { { "  GH Account (" .. current_login .. ") ", "DiagnosticWarn" } },
           width = 0.3,
         }),
         confirm = function(picker, item)
@@ -1013,8 +1013,8 @@ function M.create_pr()
   -- Helper function: Select base branch
   local function select_base_branch(callback)
     fetch_current_login(function(current_login)
-      local title = current_login ~= "" and (" Select base branch (" .. current_login .. ")")
-        or " Select base branch"
+      local title = current_login ~= "" and ("  Select base branch (" .. current_login .. ") ")
+        or "  Select base branch "
 
       get_branches(true, true)(function(branches)
         if not branches then
@@ -1052,7 +1052,7 @@ function M.create_pr()
   local function prompt_title(callback)
     local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
 
-    custom_input(" PR Title:", { default = default_title, width_frac = 0.5 }, function(title)
+    custom_input("  PR Title ", { default = default_title, width_frac = 0.5 }, function(title)
       if title and title ~= "" then
         callback(title)
       end
@@ -1061,7 +1061,7 @@ function M.create_pr()
 
   -- Helper function: Prompt for label
   local function prompt_label(callback)
-    custom_input(" Label (optional):", {}, function(label)
+    custom_input("  Label ", {}, function(label)
       callback(label or "")
     end)
   end
@@ -1126,7 +1126,7 @@ function M.create_pr()
       pr_data.title = title
       prompt_body({}, function(body)
         pr_data.body = body
-        select_reviewers("󰭖 Select reviewers", function(reviewers)
+        select_reviewers(" 󰭖 Select reviewers ", function(reviewers)
           pr_data.reviewers = reviewers
           prompt_label(function(label)
             pr_data.label = label
@@ -1182,7 +1182,7 @@ function M.git_checkout_branch()
         return chunks
       end,
       layout = custom_layout({
-        title = { { " Select branch", "DiagnosticInfo" } },
+        title = { { "  Select branch ", "DiagnosticInfo" } },
         width = 0.55,
       }),
       confirm = function(picker, item)
@@ -1207,7 +1207,7 @@ function M.git_checkout_new_branch()
     end
   end
 
-  custom_input(" New branch name:", {}, on_input)
+  custom_input("  New branch name ", {}, on_input)
 end
 
 function M.git_delete_branch()
@@ -1238,7 +1238,7 @@ function M.git_delete_branch()
         return { { item.text, "DiagnosticError" } }
       end,
       layout = custom_layout({
-        title = { { " Delete branch", "DiagnosticError" } },
+        title = { { "  Delete branch ", "DiagnosticError" } },
         width = 0.55,
       }),
       confirm = function(picker, item)
@@ -1399,7 +1399,7 @@ end
 
 function M.git_reset_hard()
   reset_picker(" Reset --hard", "DiagnosticError", function(hash)
-    utils.confirm_dangerous("git reset --hard " .. hash .. " discards all changes after this commit.", function()
+    utils.confirm_dangerous("  git reset --hard " .. hash .. "?", function()
       exec_async({ "git", "reset", "--hard", hash }, {
         notify = notify_opts,
         success_label = "Hard reset to " .. hash .. " successful",
@@ -1428,7 +1428,7 @@ function M.git_restore_staged()
 end
 
 function M.git_restore_all()
-  utils.confirm_dangerous("Discard ALL changes (git clean -f + checkout .)?", function()
+  utils.confirm_dangerous(" 󰅝 git clean -f + checkout ?", function()
     exec_async({ "git", "clean", "-f" }, {
       notify = notify_opts,
       suppress_notify = true,
@@ -1524,7 +1524,11 @@ function M.git_commit(amend)
     end
   end
 
-  custom_input(amend and " Amend commit:" or " Commit to " .. branch .. ":", { default = default_msg }, on_input)
+  custom_input(
+    amend and "  Amend commit " or "  Commit to " .. branch .. " ",
+    { default = default_msg },
+    on_input
+  )
 end
 
 function M.git_commit_amend()
@@ -1550,7 +1554,7 @@ function M.git_diff_branch()
         return format_branch(item)
       end,
       layout = custom_layout({
-        title = { { " Diff branch", "DiagnosticInfo" } },
+        title = { { "  Diff branch ", "DiagnosticInfo" } },
         width = 0.55,
       }),
       confirm = function(picker, item)
@@ -1597,7 +1601,7 @@ function M.git_merge_branch()
         return format_branch(item)
       end,
       layout = custom_layout({
-        title = { { " Merge branch", "DiagnosticInfo" } },
+        title = { { "  Merge branch ", "DiagnosticInfo" } },
         width = 0.55,
       }),
       confirm = function(picker, item)
@@ -1676,7 +1680,7 @@ local function handle_commit_action(action_key, hash)
       failed_label = "Failed to revert: ",
     })
   elseif action_key == "reset_hard" then
-    utils.confirm_dangerous("git reset --hard " .. hash .. " drops every commit after it.", function()
+    utils.confirm_dangerous(" 󱄌 git reset --hard " .. hash .. "?", function()
       exec_async({ "git", "reset", "--hard", hash }, {
         notify = notify_opts,
         success_label = "Reset --hard to " .. hash,
@@ -1710,7 +1714,7 @@ function M.git_log()
         }
       end,
       layout = custom_layout({
-        title = { { " Commit log", "DiagnosticInfo" } },
+        title = { { "  Commit log ", "DiagnosticInfo" } },
         width = 0.8,
       }),
       confirm = function(picker, item)
@@ -1721,7 +1725,7 @@ function M.git_log()
             utils.menu_picker(COMMIT_ACTIONS, function(a)
               handle_commit_action(a.key, item._hash)
             end, {
-              title = " Commit " .. item._hash,
+              title = "  Commit " .. item._hash,
               height = 0.4,
             })
           end)

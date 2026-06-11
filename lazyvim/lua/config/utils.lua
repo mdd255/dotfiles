@@ -1,8 +1,8 @@
 local M = {}
 
 ---@class PickerSize
----@field width number
----@field height number
+---@field width? number
+---@field height? number
 
 ---@class SnacksLayoutOpts: PickerSize
 ---@field title? string
@@ -194,7 +194,7 @@ end
 -- @param prompt string
 -- @param on_confirm function
 function M.confirm_dangerous(prompt, on_confirm)
-  M.float_input(prompt .. " Type y to confirm:", {}, function(input)
+  M.float_input(prompt .. " Y confirm ", {}, function(input)
     if input and input:lower() == "y" then
       on_confirm()
     else
@@ -376,6 +376,10 @@ end
 -- unmap({"H", "I", "m"}) -- unmap multiple keys in normal mode
 -- unmap({{"H", {"n", "v"}}, {"I", "n"}, "m"}) -- mixed: H in n+v, I in n, m in default
 function M.unmap(lhs, modes)
+  if type(lhs) == "string" then
+    lhs = { lhs }
+  end
+
   local default_modes = modes or { "n" }
 
   if type(default_modes) ~= "table" then
@@ -423,7 +427,7 @@ function M.flex_picker_size(opts)
 
   -- vertical screen
   return {
-    width = math.min(math.floor(max_width * width * 2.1), max_width),
+    width = math.min(math.floor(max_width * width * 1.7), max_width),
     height = math.min(math.floor(max_height * height), max_height),
     is_wide_screen = is_wide_screen,
   }
