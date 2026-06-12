@@ -1048,6 +1048,7 @@ function M.gh_switch_account()
               cache.invalidate({ "gh.current_login" })
               cache.invalidate_pattern("gh.prs")
               cache.invalidate_pattern("gh.collaborators")
+              fetch_collaborators(function() end)
             end,
           })
         end,
@@ -1692,6 +1693,7 @@ end
 function M.warm_gh_cache()
   get_gh_accounts(function() end)
   fetch_current_login(function() end)
+  fetch_collaborators(function() end)
 end
 
 return M
