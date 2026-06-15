@@ -512,6 +512,28 @@ function M.pick_scripts()
   })
 end
 
+function M.rerun_last()
+  local root = find_pkg_root()
+
+  if not root then
+    vim.notify("No package.json found", vim.log.levels.WARN, notify_opts)
+    return
+  end
+
+  local order = get_script_order(root)
+
+  if #order == 0 then
+    vim.notify("No script run yet", vim.log.levels.WARN, notify_opts)
+    return
+  end
+
+  local script = order[1]
+  local pm = get_pkg_manager(root)
+  local args = get_history(root .. "|" .. script)[1] or ""
+
+  run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script)
+end
+
 -- ── Setup ─────────────────────────────────────────────────────────────────────
 
 function M.setup()
@@ -526,6 +548,7 @@ function M.setup()
       local o = { buffer = ev.buf, silent = true }
       vim.keymap.set("n", "<Leader>pp", M.pick_packages, vim.tbl_extend("force", o, { desc = "npm: packages" }))
       vim.keymap.set("n", "<Leader>ps", M.pick_scripts, vim.tbl_extend("force", o, { desc = "npm: scripts" }))
+      vim.keymap.set("n", "<Leader>pr", M.rerun_last, vim.tbl_extend("force", o, { desc = "npm: rerun last" }))
     end,
   })
 end
