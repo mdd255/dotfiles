@@ -545,10 +545,10 @@ function M.setup()
         return
       end
 
-      local o = { buffer = ev.buf, silent = true }
-      vim.keymap.set("n", "<Leader>pp", M.pick_packages, vim.tbl_extend("force", o, { desc = "npm: packages" }))
-      vim.keymap.set("n", "<Leader>ps", M.pick_scripts, vim.tbl_extend("force", o, { desc = "npm: scripts" }))
-      vim.keymap.set("n", "<Leader>pr", M.rerun_last, vim.tbl_extend("force", o, { desc = "npm: rerun last" }))
+      local buf = { buffer = ev.buf, silent = true }
+      vim.keymap.set("n", "<Leader>pp", M.pick_packages, vim.tbl_extend("force", buf, { desc = "npm: packages" }))
+      vim.keymap.set("n", "<Leader>ps", M.pick_scripts, vim.tbl_extend("force", buf, { desc = "npm: scripts" }))
+      vim.keymap.set("n", "<Leader>po", M.rerun_last, vim.tbl_extend("force", buf, { desc = "npm: rerun last" }))
     end,
   })
 end

@@ -124,6 +124,7 @@ return {
           }),
         },
         command_history = {
+          confirm = "cmd_execute",
           layout = custom_layout({
             title = " Cmd history",
             width = 0.3,
