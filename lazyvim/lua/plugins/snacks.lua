@@ -66,6 +66,14 @@ return {
           p.input:set("")
           p:focus("list")
         end,
+        cmd_execute = function(picker, item)
+          picker:close()
+          if item and item.cmd then
+            vim.schedule(function()
+              vim.cmd(item.cmd)
+            end)
+          end
+        end,
       },
       formatters = {
         file = {
