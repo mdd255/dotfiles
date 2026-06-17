@@ -3,6 +3,19 @@ local utils = require("config.utils")
 local map = utils.map
 local unmap = utils.unmap
 
+local function smart_resize(grow)
+  local step = 3
+  local cur = vim.fn.winnr()
+  local has_h = vim.fn.winnr("h") ~= cur
+  local has_l = vim.fn.winnr("l") ~= cur
+
+  if has_h or has_l then
+    vim.cmd((grow and "vertical resize +" or "vertical resize -") .. step)
+  else
+    vim.cmd((grow and "resize +" or "resize -") .. step)
+  end
+end
+
 -- Core navigation and editing keymaps
 map({
   -- Jump
@@ -23,6 +36,22 @@ map({
   { "<Leader>e", "<C-w>k", { desc = "To upper win" } },
   { "<Leader>i", "<C-w>l", { desc = "To right win" } },
 
+  -- Window resize (smart: vertical resize for vsplit, horizontal for split)
+  {
+    "<C-h>",
+    function()
+      smart_resize(false)
+    end,
+    { modes = { "n", "i", "v" }, desc = "Shrink window" },
+  },
+  {
+    "<C-i>",
+    function()
+      smart_resize(true)
+    end,
+    { modes = { "n", "i", "v" }, desc = "Expand window" },
+  },
+
   -- Split
   { "sn", "<cmd>split<cr>", { desc = "Split horizontally" } },
   { "se", "<cmd>vsplit<cr>", { desc = "Split vertically" } },
@@ -40,7 +69,6 @@ map({
   { "<Leader>v", "V", { desc = "Visual line mode", silent = false } },
   { "0", "^" },
   { "<C-Esc>", "<C-\\><C-n>", { modes = { "t" }, desc = "Exit terminal mode" } },
-  { "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { modes = { "t" }, desc = "Toggle terminal" } },
   { "<Leader><Tab>", "<cmd>tabnew<Cr>", { desc = "Create new tab" } },
   { "<Leader>l", "<cmd>Lazy<Cr>", { desc = "Plugins manager" } },
   { "st", "<cmd>Inspect<Cr>", { desc = "Show current TS highlight" } },

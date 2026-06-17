@@ -5,7 +5,7 @@ local gh_actions = require("config.gh-actions-functions")
 
 map({
   -- Github
-  { "gpr", git.gh_pr_picker, { desc = "Github PRs (toggle filter with C-o)" } },
+  { "gpr", git.gh_pr_picker, { desc = "Github PRs" } },
   { "gpo", git.gh_switch_account, { desc = "Switch Github account" } },
   { "gpc", git.create_pr, { desc = "Create PR" } },
   { "gpa", gh_actions.gh_actions_picker, { desc = "GH Actions picker" } },

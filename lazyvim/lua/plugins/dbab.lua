@@ -5,6 +5,7 @@ end
 
 return {
   "mdd255/dbab.nvim",
+  lazy = true,
   keys = {
     { "<Leader>d", DB, { desc = "Open DB" } },
   },

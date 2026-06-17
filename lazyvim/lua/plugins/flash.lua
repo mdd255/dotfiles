@@ -173,13 +173,11 @@ return {
       })
     end
 
-    local function f_motion(forward)
+    local function f_motion()
       Flash.jump({
         search = {
-          mode = "search",
           wrap = false,
           max_length = 1,
-          forward = forward,
         },
         label = {
           after = true,
@@ -193,50 +191,20 @@ return {
       {
         "w",
         mode = { "n" },
-        function()
-          start_of_word()
-        end,
+        start_of_word,
         desc = "Flash to start of word",
       },
       {
         "b",
         mode = { "n" },
-        function()
-          end_of_word()
-        end,
+        end_of_word,
         desc = "Flash to end of word",
       },
       {
         "l",
-        mode = { "v", "o" },
-        function()
-          end_of_word(true)
-        end,
-        desc = "Flash to end of word (forward)",
-      },
-      {
-        "L",
-        mode = { "v", "o" },
-        function()
-          end_of_word(false)
-        end,
-        desc = "Flash to end of word (backward)",
-      },
-      {
-        "l",
         mode = { "n" },
-        function()
-          f_motion(true)
-        end,
+        f_motion,
         desc = "Flash f-motion forward",
-      },
-      {
-        "L",
-        mode = { "n" },
-        function()
-          f_motion(false)
-        end,
-        desc = "Flash f-motion backward",
       },
       {
         "dn",

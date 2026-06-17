@@ -16,7 +16,7 @@ return {
         config = function()
           require("supermaven-nvim").setup({
             condition = function()
-              return not supermaven_ft_blacklist[vim.bo.filetype]
+              return supermaven_ft_blacklist[vim.bo.filetype] == true
             end,
           })
         end,

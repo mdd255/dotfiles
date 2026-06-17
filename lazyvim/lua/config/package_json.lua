@@ -127,15 +127,14 @@ end
 
 -- ── Output popup ────────────────────────────────────────────────────────────
 
-local function show_output(title, lines)
-  if #lines == 0 then
-    lines = { "(no output)" }
-  end
+local _last_output = nil
+local _last_win = nil
 
+local function make_output_win(title, lines)
   local width = flex_picker_size({ width = 0.95 }).width
   local height = math.min(math.floor(vim.o.lines * 0.9), #lines + 2)
 
-  snacks.win({
+  _last_win = snacks.win({
     title = " " .. title .. " ",
     title_pos = "center",
     -- Pass lines as a table (set directly, no concat+resplit). No `ft`: a
@@ -146,7 +145,7 @@ local function show_output(title, lines)
     width = width,
     height = height,
     border = "rounded",
-    wo = { wrap = false, cursorline = false, number = false },
+    wo = { wrap = true, cursorline = false, number = false },
     keys = {
       q = "close",
       ["<Esc>"] = "close",
@@ -154,11 +153,22 @@ local function show_output(title, lines)
   })
 end
 
+local function show_output(title, lines)
+  if #lines == 0 then
+    lines = { "(no output)" }
+  end
+  _last_output = { title = title, lines = lines }
+  if _last_win and _last_win.win and vim.api.nvim_win_is_valid(_last_win.win) then
+    _last_win:close()
+  end
+  make_output_win(title, lines)
+end
+
 -- ── Async command runner (with output popup) ──────────────────────────────────
 
 local _run_seq = 0
 
-local function run_with_output(root, cmd, title)
+local function run_with_output(root, cmd, title, label)
   _run_seq = _run_seq + 1
   local notif_id = "pkgjson_run_" .. _run_seq
 
@@ -166,7 +176,8 @@ local function run_with_output(root, cmd, title)
   -- dismissed once the output popup is ready. Call snacks.notifier directly —
   -- vim.notify is intercepted by noice, so snacks.notifier.hide() can't match
   -- the id and the toast would expire on noice's own timeout instead.
-  snacks.notifier.notify(" " .. table.concat(cmd, " "), "info", {
+  local display = label or (cmd[1] == "sh" and cmd[2] == "-c") and cmd[3] or table.concat(cmd, " ")
+  snacks.notifier.notify(" " .. display, "info", {
     id = notif_id,
     timeout = false,
     title = notify_opts.title,
@@ -255,6 +266,7 @@ local function run_package_action(action_key, packages, root, pm)
     local names = vim.tbl_map(function(p)
       return p.name
     end, packages)
+
     local verb = action_key == "uninstall" and "Uninstalling" or "Updating"
 
     exec_async(build_pkg_mutate_cmd(pm, action_key, names), {
@@ -324,6 +336,7 @@ open_packages_picker = function()
     if a.is_dev ~= b.is_dev then
       return not a.is_dev
     end
+
     return a.name < b.name
   end)
 
@@ -401,7 +414,8 @@ local function pick_args_and_run(root, pm, script)
     local args = typed ~= "" and typed or (item and item.text) or ""
     add_to_history(key, args)
     add_to_script_order(root, script)
-    run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script)
+    local label = script .. (args ~= "" and (" -- " .. args) or "")
+    run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script, label)
   end
 
   snacks.picker.pick({
@@ -531,7 +545,22 @@ function M.rerun_last()
   local pm = get_pkg_manager(root)
   local args = get_history(root .. "|" .. script)[1] or ""
 
-  run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script)
+  local label = script .. (args ~= "" and (" -- " .. args) or "")
+  run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script, label)
+end
+
+function M.toggle_output()
+  if not _last_output then
+    vim.notify("No output yet", vim.log.levels.WARN, notify_opts)
+    return
+  end
+
+  if _last_win and _last_win.win and vim.api.nvim_win_is_valid(_last_win.win) then
+    _last_win:close()
+    _last_win = nil
+  else
+    make_output_win(_last_output.title, _last_output.lines)
+  end
 end
 
 -- ── Setup ─────────────────────────────────────────────────────────────────────
@@ -549,6 +578,7 @@ function M.setup()
       vim.keymap.set("n", "<Leader>pp", M.pick_packages, vim.tbl_extend("force", buf, { desc = "npm: packages" }))
       vim.keymap.set("n", "<Leader>ps", M.pick_scripts, vim.tbl_extend("force", buf, { desc = "npm: scripts" }))
       vim.keymap.set("n", "<Leader>po", M.rerun_last, vim.tbl_extend("force", buf, { desc = "npm: rerun last" }))
+      vim.keymap.set("n", "<Leader>pl", M.toggle_output, vim.tbl_extend("force", buf, { desc = "npm: toggle output" }))
     end,
   })
 end

@@ -25,20 +25,4 @@ return {
       },
     },
   },
-  {
-    "2kabhishek/nerdy.nvim",
-    dependencies = {
-      "folke/snacks.nvim",
-    },
-    cmd = "Nerdy",
-    keys = {
-      { "<Leader>t", "<cmd>Nerdy list<Cr>", desc = "Symbols" },
-    },
-    opts = {
-      max_recents = 20,
-      add_default_keybindings = false,
-      copy_to_clipboard = false,
-      copy_register = "+",
-    },
-  },
 }

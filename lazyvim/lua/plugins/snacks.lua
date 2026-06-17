@@ -48,7 +48,12 @@ return {
     notifier = { enabled = true },
     scroll = { enabled = true },
     statuscolumn = { enabled = false },
-    terminal = { enabled = true },
+    terminal = {
+      enabled = true,
+      start_insert = true,
+      auto_insert = false,
+      auto_close = true,
+    },
     explorer = { enabled = true },
     indent = { enabled = true, char = "▏" },
     styles = { notification = { wo = { wrap = true } } },
@@ -110,6 +115,12 @@ return {
       sources = {
         lsp_references = {
           include_declaration = false,
+        },
+        icons = {
+          layout = custom_layout({
+            title = " Icons",
+            width = 0.5,
+          }),
         },
         projects = {
           format = "project_name",
@@ -301,6 +312,7 @@ return {
 
     -- finder keys
     map("n", "ff", "<cmd>lua Snacks.picker.files()<Cr>", { desc = "Find files" })
+    map("n", "fi", "<cmd>lua Snacks.picker.icons()<Cr>", { desc = "Find icons" })
     map("n", "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", { desc = "Find buffers" })
     map("n", "fc", findConfigFileCmd, { desc = "Find config files" })
     map("n", "fs", "<cmd>lua Snacks.picker.grep()<Cr>", { desc = "Grep" })
@@ -363,7 +375,7 @@ return {
     })
 
     -- misc keymaps
-    map("n", "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
+    map({ "n", "i", "t" }, "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
     map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
