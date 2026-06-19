@@ -42,14 +42,15 @@ map({
     function()
       smart_resize(false)
     end,
-    { modes = { "n", "i", "v" }, desc = "Shrink window" },
+    { desc = "Shrink window" },
   },
+
   {
     "<C-i>",
     function()
       smart_resize(true)
     end,
-    { modes = { "n", "i", "v" }, desc = "Expand window" },
+    { desc = "Expand window" },
   },
 
   -- Split
@@ -113,3 +114,6 @@ unmap({
 
 vim.cmd("nnoremap T :LualineRenameTab ")
 vim.cmd("nnoremap <Cr> :")
+
+vim.cmd("nnoremap sh :!")
+vim.cmd("nnoremap si :%s/")

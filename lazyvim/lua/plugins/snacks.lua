@@ -71,8 +71,14 @@ return {
           p.input:set("")
           p:focus("list")
         end,
+        select_all = function(picker)
+          local items = picker.list.items
+          local all_selected = #picker.list.selected == #items
+          picker.list:set_selected(all_selected and {} or items)
+        end,
         cmd_execute = function(picker, item)
           picker:close()
+
           if item and item.cmd then
             vim.schedule(function()
               vim.cmd(item.cmd)
@@ -102,13 +108,14 @@ return {
         input = {
           minimal = true,
           keys = {
+            -- <C-i> and <Tab> share the same keycode in terminals but are distinct in Neovide — intentional.
+            ["<C-i>"] = { "preview_scroll_up", mode = { "n", "i" } },
             ["<Esc>"] = { "close", mode = { "n", "i" } },
             ["<C-n>"] = { "list_down", mode = { "n", "i" } },
             ["<C-e>"] = { "list_up", mode = { "n", "i" } },
             ["<C-h>"] = { "preview_scroll_down", mode = { "n", "i" } },
-            -- <C-i> and <Tab> share the same keycode in terminals but are distinct in Neovide — intentional.
-            ["<C-i>"] = { "preview_scroll_up", mode = { "n", "i" } },
             ["<C-l>"] = { "clear_input", mode = { "i" } },
+            ["<C-a>"] = { "select_all", mode = { "i" } },
           },
         },
       },
@@ -315,7 +322,6 @@ return {
     map("n", "fi", "<cmd>lua Snacks.picker.icons()<Cr>", { desc = "Find icons" })
     map("n", "fb", "<cmd>lua Snacks.picker.buffers()<Cr>", { desc = "Find buffers" })
     map("n", "fc", findConfigFileCmd, { desc = "Find config files" })
-    map("n", "fs", "<cmd>lua Snacks.picker.grep()<Cr>", { desc = "Grep" })
     map("n", "fr", "<cmd>lua Snacks.picker.recent()<Cr>", { desc = "Find recents" })
     map("n", "fp", "<cmd>lua Snacks.picker.projects()<Cr>", { desc = "Find projects" })
     map("n", "fk", "<cmd>lua Snacks.picker.keymaps()<Cr>", { desc = "Find keymaps" })
