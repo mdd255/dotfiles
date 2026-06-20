@@ -8,8 +8,7 @@ local M = {}
 local notify_opts = { title = "󰼷 LSP" }
 
 local LSP_ACTIONS = {
-  { text = " start", key = "start", hl = HL.ok },
-  { text = " stop", key = "stop", hl = HL.warn },
+  { text = " stop", key = "stop", hl = HL.warn },
   { text = "󰦛 restart", key = "restart", hl = HL.warn },
 }
 
@@ -28,22 +27,19 @@ local function client_preview(client)
 end
 
 local function run_lsp_action(action_key, clients)
-  if action_key == "start" then
-    for _, client in ipairs(clients) do
-      vim.notify("LSP " .. client.name .. " cannot be restarted from stopped state", vim.log.levels.WARN, notify_opts)
-    end
-  elseif action_key == "stop" then
+  if action_key == "stop" then
     for _, client in ipairs(clients) do
       vim.lsp.stop_client(client.id, true)
       vim.notify("Stopped LSP " .. client.name, vim.log.levels.INFO, notify_opts)
     end
   elseif action_key == "restart" then
     for _, client in ipairs(clients) do
+      local name = client.name
       vim.lsp.stop_client(client.id, true)
-      vim.schedule(function()
+      vim.defer_fn(function()
         vim.cmd("e")
-      end)
-      vim.notify("Restarted LSP " .. client.name, vim.log.levels.INFO, notify_opts)
+        vim.notify("Restarted LSP " .. name, vim.log.levels.INFO, notify_opts)
+      end, 200)
     end
   end
 end

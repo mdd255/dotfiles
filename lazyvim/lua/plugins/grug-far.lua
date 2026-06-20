@@ -45,7 +45,7 @@ return {
       callback = function(ev)
         vim.schedule(function()
           for _, win in ipairs(vim.fn.win_findbuf(ev.buf)) do
-            vim.api.nvim_win_set_option(win, "cursorline", true)
+            vim.api.nvim_set_option_value("cursorline", true, { win = win })
             vim.api.nvim_win_set_hl_ns(win, ns)
           end
         end)

@@ -9,6 +9,20 @@ local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
+-- Runs a chain of async steps sequentially without nesting.
+-- Each step: function(data, continue) — call continue(data) to advance.
+local function step_chain(steps, initial_data)
+  local function go(i, data)
+    if i > #steps then
+      return
+    end
+    steps[i](data, function(d)
+      go(i + 1, d)
+    end)
+  end
+  go(1, initial_data)
+end
+
 local function format_branch(item, current_branch)
   if current_branch and item.text == current_branch then
     return { { item.text, "DiagnosticOk" } }
@@ -523,12 +537,14 @@ local function make_pr_fetcher(filter)
   end
 end
 
-local gh_pr_fetchers = cache.wrap_filters(PR_FILTERS, PR_TTL_MS, function(f)
+local function pr_cache_key(f)
   return "gh.prs." .. (f.search ~= "" and f.search or "all")
-end, make_pr_fetcher)
+end
+
+local gh_pr_fetchers = cache.wrap_filters(PR_FILTERS, PR_TTL_MS, pr_cache_key, make_pr_fetcher)
 
 local function get_gh_prs(filter, callback)
-  local key = "gh.prs." .. (filter.search ~= "" and filter.search or "all")
+  local key = pr_cache_key(filter)
 
   if not cache.is_cached(key) then
     vim.notify("Loading PRs...", vim.log.levels.INFO, notify_opts)
@@ -1058,50 +1074,8 @@ function M.gh_switch_account()
 end
 
 function M.create_pr()
-  local pr_data = {
-    assignee = "@me",
-    base = nil,
-    title = nil,
-    body = nil,
-    reviewers = "",
-    label = "",
-  }
-
-  -- Helper function: Select base branch
-  local function select_base_branch(callback)
-    fetch_current_login(function(current_login)
-      local title = current_login ~= "" and ("  Select base branch (" .. current_login .. ") ")
-        or "  Select base branch "
-
-      branch_picker({
-        title = title,
-        exclude_current = true,
-        on_confirm = callback,
-      })
-    end)
-  end
-
-  -- Helper function: Prompt for title
-  local function prompt_title(callback)
-    local default_title = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
-
-    custom_input("  PR Title ", { default = default_title, width_frac = 0.5 }, function(title)
-      if title and title ~= "" then
-        callback(title)
-      end
-    end)
-  end
-
-  -- Helper function: Prompt for label
-  local function prompt_label(callback)
-    custom_input("  Label ", {}, function(label)
-      callback(label or "")
-    end)
-  end
-
-  -- Helper function: Create PR with gh
   local function create_pr_with_gh(data)
-    local head_branch = vim.fn.system("git branch --show-current"):gsub("\n", "")
+    local head_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
     local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
 
     table.insert(args, "--body")
@@ -1152,23 +1126,56 @@ function M.create_pr()
     end)
   end
 
-  -- Start the workflow
-  select_base_branch(function(base)
-    pr_data.base = base
-    prompt_title(function(title)
-      pr_data.title = title
-      prompt_body({}, function(body)
-        pr_data.body = body
-        select_reviewers(" 󰭖 Select reviewers ", function(reviewers)
-          pr_data.reviewers = reviewers
-          prompt_label(function(label)
-            pr_data.label = label
-            create_pr_with_gh(pr_data)
+  step_chain({
+    function(d, next)
+      fetch_current_login(function(current_login)
+        local title = current_login ~= "" and ("  Select base branch (" .. current_login .. ") ")
+          or "  Select base branch "
+        branch_picker({
+          title = title,
+          exclude_current = true,
+          on_confirm = function(base)
+            d.base = base
+            next(d)
+          end,
+        })
+      end)
+    end,
+    function(d, next)
+      vim.system({ "git", "log", "-1", "--pretty=%s" }, {}, function(result)
+        vim.schedule(function()
+          local default_title = result.code == 0 and vim.trim(result.stdout or "") or ""
+          custom_input("  PR Title ", { default = default_title, width_frac = 0.5 }, function(title)
+            if title and title ~= "" then
+              d.title = title
+              next(d)
+            end
           end)
         end)
       end)
-    end)
-  end)
+    end,
+    function(d, next)
+      prompt_body({}, function(body)
+        d.body = body
+        next(d)
+      end)
+    end,
+    function(d, next)
+      select_reviewers(" 󰭖 Select reviewers ", function(reviewers)
+        d.reviewers = reviewers
+        next(d)
+      end)
+    end,
+    function(d, next)
+      custom_input("  Label ", {}, function(label)
+        d.label = label or ""
+        next(d)
+      end)
+    end,
+    function(d, _)
+      create_pr_with_gh(d)
+    end,
+  }, { assignee = "@me", base = nil, title = nil, body = nil, reviewers = "", label = "" })
 end
 
 -- Exported functions

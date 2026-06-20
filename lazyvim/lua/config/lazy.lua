@@ -53,7 +53,6 @@ require("lazy").setup({
         "vimball",
         "vimballPlugin",
         "zip",
-        "zipPlugin",
       },
     },
   },

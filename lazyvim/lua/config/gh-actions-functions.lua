@@ -23,6 +23,10 @@ local RUN_FILTERS = {
 
 local run_filter_idx = 1
 
+local function run_cache_key(f)
+  return "gh.runs." .. (f.status or "recent")
+end
+
 -- ── Status / conclusion icons ──────────────────────────────────────────────────
 
 local STATUS_ICONS = {
@@ -48,12 +52,7 @@ local CONCLUSION_HLS = {
 
 local function run_status_icon(run)
   local status = run.status
-
-  if status and status ~= "" and status ~= vim.NIL then
-    return STATUS_ICONS[status] or "?"
-  end
-
-  return "?"
+  return (status and status ~= vim.NIL and STATUS_ICONS[status]) or "?"
 end
 
 -- gh `--json` fields can be missing or JSON null (decoded to vim.NIL); coerce to
@@ -108,12 +107,10 @@ local function make_runs_fetcher(filter)
 end
 
 -- One cache.wrap entry per filter — inflight deduplication + TTL per filter key.
-local gh_runs_fetchers = cache.wrap_filters(RUN_FILTERS, CACHE_TTL_MS, function(f)
-  return "gh.runs." .. (f.status or "recent")
-end, make_runs_fetcher)
+local gh_runs_fetchers = cache.wrap_filters(RUN_FILTERS, CACHE_TTL_MS, run_cache_key, make_runs_fetcher)
 
 local function get_gh_runs(filter, callback)
-  local key = "gh.runs." .. (filter.status or "recent")
+  local key = run_cache_key(filter)
 
   if not cache.is_cached(key) then
     vim.notify("Loading runs...", vim.log.levels.INFO, notify_opts)
@@ -228,9 +225,7 @@ local function run_action(action_key, run)
         info_label = "Cancelling " .. label .. "...",
         success_label = "Cancelled: " .. label,
         failed_label = "Failed to cancel: ",
-        on_success = function()
-          cache.invalidate_pattern("gh.runs")
-        end,
+        on_success = run_mutate_success,
       })
     end)
   elseif action_key == "delete" then
@@ -240,9 +235,7 @@ local function run_action(action_key, run)
         info_label = "Deleting " .. label .. "...",
         success_label = "Deleted: " .. label,
         failed_label = "Failed to delete: ",
-        on_success = function()
-          cache.invalidate_pattern("gh.runs")
-        end,
+        on_success = run_mutate_success,
       })
     end)
   elseif action_key == "copy_url" then
@@ -369,52 +362,63 @@ end
 -- ── Workflow dispatch ───────────────────────────────────────────────────────
 -- List repo workflows, pick one, trigger it on the current branch. Covers the
 -- "start a run" gap — gh_actions_picker can only act on runs that already exist.
-function M.gh_workflow_dispatch()
-  vim.notify("Loading workflows...", vim.log.levels.INFO, notify_opts)
 
+local get_workflows = cache.wrap("gh.workflows", CACHE_TTL_MS, function(callback)
   vim.system({ "gh", "workflow", "list", "--json", "name,id,state" }, {}, function(result)
     vim.schedule(function()
       if result.code ~= 0 then
         vim.notify("Failed to list workflows: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
+        callback(nil)
         return
       end
-
       local ok, data = pcall(vim.json.decode, result.stdout or "[]")
-
       if not ok or type(data) ~= "table" or #data == 0 then
-        vim.notify("No workflows found", vim.log.levels.WARN, notify_opts)
+        callback(nil)
         return
       end
-
-      local items = {}
-
-      for _, wf in ipairs(data) do
-        table.insert(items, {
-          text = (wf.state == "active" and " " or " ") .. wf.name,
-          _id = tostring(wf.id),
-          _name = wf.name,
-          -- Disabled workflows can't be dispatched — mute them so it's obvious.
-          hl = wf.state == "active" and HL.ok or HL.muted,
-        })
-      end
-
-      utils.menu_picker(items, function(item)
-        local branch = vim.fn.system("git branch --show-current"):gsub("%s+", "")
-
-        exec_async({ "gh", "workflow", "run", item._id, "--ref", branch }, {
-          notify = notify_opts,
-          info_label = "Dispatching " .. item._name .. " on " .. branch .. "...",
-          success_label = "Triggered " .. item._name .. " on " .. branch,
-          failed_label = "Failed to dispatch workflow: ",
-          on_success = function()
-            cache.invalidate_pattern("gh.runs")
-          end,
-        })
-      end, {
-        title = "  Run workflow ",
-        height = 0.4,
-      })
+      callback(data)
     end)
+  end)
+end)
+
+function M.gh_workflow_dispatch()
+  if not cache.is_cached("gh.workflows") then
+    vim.notify("Loading workflows...", vim.log.levels.INFO, notify_opts)
+  end
+
+  get_workflows(function(data)
+    if not data then
+      vim.notify("No workflows found", vim.log.levels.WARN, notify_opts)
+      return
+    end
+
+    local items = {}
+    for _, wf in ipairs(data) do
+      table.insert(items, {
+        text = (wf.state == "active" and "  " or "  ") .. wf.name,
+        _id = tostring(wf.id),
+        _name = wf.name,
+        -- Disabled workflows can't be dispatched — mute them so it's obvious.
+        hl = wf.state == "active" and HL.ok or HL.muted,
+      })
+    end
+
+    utils.menu_picker(items, function(item)
+      local branch = vim.b.gitsigns_head or vim.trim(vim.fn.system("git branch --show-current"))
+
+      exec_async({ "gh", "workflow", "run", item._id, "--ref", branch }, {
+        notify = notify_opts,
+        info_label = "Dispatching " .. item._name .. " on " .. branch .. "...",
+        success_label = "Triggered " .. item._name .. " on " .. branch,
+        failed_label = "Failed to dispatch workflow: ",
+        on_success = function()
+          cache.invalidate_pattern("gh.runs")
+        end,
+      })
+    end, {
+      title = "  Run workflow ",
+      height = 0.4,
+    })
   end)
 end
 

@@ -36,12 +36,12 @@ local open_container_picker
 local open_image_picker
 
 local function container_mutate_success()
-  cache.invalidate_pattern("docker.containers")
+  cache.evict_pattern("docker.containers")
   vim.schedule(open_container_picker)
 end
 
 local function image_mutate_success()
-  cache.invalidate_pattern("docker.images")
+  cache.evict_pattern("docker.images")
   vim.schedule(open_image_picker)
 end
 
@@ -108,7 +108,7 @@ local function run_container_action(action_key, containers)
 
   if action_key == "exec_bash" then
     for _, c in ipairs(containers) do
-      term_cmd("docker exec -it " .. vim.fn.shellescape(c.Names) .. " bash")
+      term_cmd("docker exec -it " .. vim.fn.shellescape(c.Names) .. " sh")
     end
   elseif action_key == "view_logs" then
     for _, c in ipairs(containers) do
@@ -266,7 +266,7 @@ open_container_picker = function(filter_idx)
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "  Containers · " .. f.name, " DiagnosticInfo" } },
+        title = { { "  Containers · " .. f.name, "DiagnosticInfo" } },
         width = 0.8,
         preview_ratio = 0.5,
         preview = true,
@@ -504,7 +504,7 @@ open_image_picker = function()
       end,
       preview = "preview",
       layout = custom_layout({
-        title = { { "   Images", " DiagnosticInfo" } },
+        title = { { "   Images", "DiagnosticInfo" } },
         width = 0.8,
         preview = true,
       }),
@@ -579,30 +579,12 @@ local COMPOSE_DOWN_OPTIONS = {
 }
 
 local function show_compose_picker(title, options, on_select)
-  local items = {}
-
-  for i, opt in ipairs(options) do
-    table.insert(items, { text = opt.text, _idx = i })
-  end
-
-  snacks.picker.pick({
-    finder = function()
-      return items
-    end,
-    format = "text",
-    layout = custom_layout({
-      title = title,
-      width = 0.3,
-      height = 0.25,
-    }),
-    confirm = function(picker, item)
-      picker:close()
-
-      if item then
-        on_select(options[item._idx])
-      end
-    end,
-  })
+  local items = vim.tbl_map(function(opt)
+    return { text = opt.text, _args = opt.args }
+  end, options)
+  utils.menu_picker(items, function(item)
+    on_select({ text = item.text, args = item._args })
+  end, { title = title, width = 0.3, height = 0.25 })
 end
 
 function M.docker_compose_up()

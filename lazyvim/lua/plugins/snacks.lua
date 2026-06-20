@@ -447,20 +447,5 @@ return {
     map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
     map("n", "sr", "<cmd>lua Snacks.rename.rename_file()<Cr>", { desc = "Rename file (LSP-aware)" })
-
-    -- LSP keymaps
-    map("n", "tn", "<cmd>lua vim.diagnostic.goto_next()<Cr>", { desc = "Go to next diagnostics" })
-    map("n", "te", "<cmd>lua vim.diagnostic.goto_prev()<Cr>", { desc = "Go to prev diagnostics" })
-    map("n", "t<Cr>", "<cmd>lua vim.lsp.buf.code_action()<Cr>", { desc = "Code action" })
-    map("n", "th", "<cmd>lua vim.lsp.buf.hover({border='rounded'})<Cr>", { desc = "LSP hover" })
-    map("n", "tr", "<cmd>lua vim.lsp.buf.rename()<Cr>", { desc = "LSP rename" })
-    map("n", "tt", "<cmd>lua Snacks.picker.lsp_definitions()<Cr>", { desc = "Go to definitions" })
-    map("n", "ti", "<cmd>lua Snacks.picker.lsp_implementations()<Cr>", { desc = "Go to implementations" })
-    map("n", "td", "<cmd>lua Snacks.picker.lsp_type_definitions()<Cr>", { desc = "Go to type definitions" })
-    map("n", "tf", "<cmd>lua Snacks.picker.lsp_references()<Cr>", { desc = "Go to references" })
-    map("n", "ts", "<cmd>lua Snacks.picker.lsp_symbols()<Cr>", { desc = "LSP symbols" })
-    map("n", "tS", "<cmd>lua Snacks.picker.lsp_workspace_symbols()<Cr>", { desc = "Workspace LSP symbols" })
-    map("n", "ta", "<cmd>lua Snacks.picker.diagnostics_buffer()<Cr>", { desc = "LSP diagnostics" })
-    map("n", "tA", "<cmd>lua Snacks.picker.diagnostics()<Cr>", { desc = "Workspace LSP diagnostics" })
   end,
 }

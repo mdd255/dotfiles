@@ -190,22 +190,6 @@ return {
       }
 
       require("diffview").setup(opts)
-
-      local function set_diff_hl()
-        -- GitHub dark: bg only, no fg override
-        vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#003320", underline = false })
-        vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#3d0000", underline = false })
-        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2d1f00", underline = false })
-        vim.api.nvim_set_hl(0, "DiffText", { bg = "#5a3500", underline = false })
-        -- diffview-specific overrides
-        vim.api.nvim_set_hl(0, "DiffviewDiffAdd", { bg = "#003320", underline = false })
-        vim.api.nvim_set_hl(0, "DiffviewDiffDelete", { bg = "#3d0000", underline = false })
-        vim.api.nvim_set_hl(0, "DiffviewDiffChange", { bg = "#2d1f00", underline = false })
-        vim.api.nvim_set_hl(0, "DiffviewDiffText", { bg = "#5a3500", underline = false })
-      end
-
-      set_diff_hl()
-      vim.api.nvim_create_autocmd("ColorScheme", { callback = set_diff_hl })
     end,
   },
   {

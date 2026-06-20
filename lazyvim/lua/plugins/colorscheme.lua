@@ -98,19 +98,19 @@ return {
           IblWhitespace = { fg = hi.dark_gray },
           WinSeparator = { fg = hi.blue },
 
-          -- gitsign & diffview
+          -- gitsigns & diffview
           GitSignsCurrentLineBlame = { bg = hi.black, fg = hi.comment },
           GitSignsAdd = { fg = hi.green },
           GitSignsChange = { fg = hi.orange },
           GitSignsDelete = { fg = hi.red },
-          DiffAdd = { bg = hi.dark_gray, fg = hi.green },
-          DiffChange = { bg = hi.dark_gray, fg = hi.orange },
-          DiffDelete = { bg = hi.dark_gray, fg = hi.red },
-          DiffText = { bg = hi.gray, fg = hi.cyan, bold = true },
-          DiffviewDiffAdd = { bg = hi.dark_gray, fg = hi.green },
-          DiffviewDiffChange = { bg = hi.dark_gray, fg = hi.orange },
-          DiffviewDiffDelete = { bg = hi.dark_gray, fg = hi.red },
-          DiffviewDiffText = { bg = hi.gray, fg = hi.cyan, bold = true },
+          DiffAdd = { bg = "#0d4a1f" },
+          DiffChange = { bg = "#2d2200" },
+          DiffDelete = { bg = "#4d0e0e" },
+          DiffText = { bg = "#1b6e32", bold = true },
+          DiffviewDiffAdd = { bg = "#0d4a1f" },
+          DiffviewDiffChange = { bg = "#2d2200" },
+          DiffviewDiffDelete = { bg = "#4d0e0e" },
+          DiffviewDiffText = { bg = "#1b6e32", bold = true },
 
           -- flash.nvim
           FlashLabel = { fg = hi.blue, bg = hi.black },

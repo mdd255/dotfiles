@@ -51,24 +51,17 @@ local function setup_cursor_options()
     "dbab_history",
   }
 
-  local function contains(list, item)
-    for _, v in ipairs(list) do
-      if v == item then
-        return true
-      end
-    end
-    return false
-  end
+  vim.opt_local.relativenumber = vim.tbl_contains(relativenumber_whitelist, ft)
+      and not vim.tbl_contains(number_blacklist, ft)
+    or false
+  vim.opt_local.number = not vim.tbl_contains(number_blacklist, ft)
 
-  vim.opt_local.relativenumber = contains(relativenumber_whitelist, ft) and not contains(number_blacklist, ft) or false
-  vim.opt_local.number = not contains(number_blacklist, ft)
-
-  if contains(number_blacklist, ft) then
+  if vim.tbl_contains(number_blacklist, ft) then
     vim.opt_local.statuscolumn = ""
     vim.opt_local.signcolumn = "no"
   end
 
-  vim.opt_local.cursorline = not contains(cursorline_blacklist, ft)
+  vim.opt_local.cursorline = not vim.tbl_contains(cursorline_blacklist, ft)
 end
 
 -- Enable cursorline and relativenumber for specific filetypes
