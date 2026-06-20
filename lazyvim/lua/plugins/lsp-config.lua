@@ -13,6 +13,13 @@ return {
         lua_ls = {
           cmd = { "lua-language-server", "--maxMemoryUsage=1024" },
         },
+        biome = {
+          cmd = { "biome", "lsp-proxy", "--watcher-kind=none" },
+          single_file_support = true,
+          on_attach = function(client, _)
+            client.server_capabilities.definitionProvider = false
+          end,
+        },
         clangd = {
           on_attach = function(client, _)
             client.server_capabilities.inlayHintProvider = false

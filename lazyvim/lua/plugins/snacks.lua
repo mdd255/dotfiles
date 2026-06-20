@@ -346,6 +346,67 @@ return {
       end,
     })
 
+    local gh_user_cache = nil
+
+    vim.system({ "gh", "api", "user", "-q", ".login" }, { text = true }, function(gh_result)
+      if gh_result.code == 0 then
+        gh_user_cache = vim.trim(gh_result.stdout or "")
+      end
+    end)
+
+    vim.api.nvim_create_autocmd("DirChanged", {
+      group = snacks_augroup,
+      callback = function(ev)
+        local new_cwd = ev.file
+
+        vim.system({ "git", "config", "user.name" }, { text = true, cwd = new_cwd }, function(git_result)
+          if git_result.code ~= 0 then
+            return
+          end
+          local git_user = vim.trim(git_result.stdout or "")
+          if git_user == "" then
+            return
+          end
+
+          local function try_switch(gh_user)
+            if gh_user == "" or gh_user == git_user then
+              return
+            end
+
+            vim.system({ "gh", "auth", "switch", "--user", git_user }, { text = true }, function(switch_result)
+              vim.schedule(function()
+                if switch_result.code == 0 then
+                  gh_user_cache = git_user
+                  Snacks.notify(
+                    string.format("gh: %s → %s", gh_user, git_user),
+                    { level = vim.log.levels.INFO, title = "gh auth" }
+                  )
+                else
+                  Snacks.notify(
+                    string.format("gh switch failed: '%s' not found", git_user),
+                    { level = vim.log.levels.WARN, title = "gh auth" }
+                  )
+                end
+              end)
+            end)
+          end
+
+          if gh_user_cache then
+            try_switch(gh_user_cache)
+          else
+            vim.system({ "gh", "api", "user", "-q", ".login" }, { text = true }, function(gh_result)
+              if gh_result.code ~= 0 then
+                return
+              end
+              local gh_user = vim.trim(gh_result.stdout or "")
+              gh_user_cache = gh_user
+              try_switch(gh_user)
+            end)
+          end
+        end)
+      end,
+    })
+
     vim.api.nvim_create_autocmd("FileType", {
       group = snacks_augroup,
       pattern = "claudecode",
