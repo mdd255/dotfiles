@@ -74,7 +74,14 @@ return {
           -- Treesitter
           ["@punctuation.delimiter"] = { fg = hi.yellow },
           ["@punctuation.special"] = { fg = hi.blue },
-          ["@punctuation.bracket"] = { fg = hi.yellow },
+          -- rainbow-delimiters overrides bracket highlights per nesting level
+          RainbowDelimiterRed = { fg = hi.red },
+          RainbowDelimiterYellow = { fg = hi.yellow },
+          RainbowDelimiterBlue = { fg = hi.blue },
+          RainbowDelimiterOrange = { fg = hi.orange },
+          RainbowDelimiterGreen = { fg = hi.green },
+          RainbowDelimiterViolet = { fg = hi.purple },
+          RainbowDelimiterCyan = { fg = hi.cyan },
           ["@operator"] = { fg = hi.yellow },
           ["@lsp.type.function.typescript"] = { fg = hi.purple },
           ["@type.property.typescript"] = { fg = hi.light_blue },
@@ -121,7 +128,13 @@ return {
 
           -- snacks
           SnacksIndent = { fg = hi.dark_gray },
-          SnacksIndentScope = { fg = hi.gray },
+          SnacksIndent1 = { fg = "#305777" }, -- blue   ~50%
+          SnacksIndent2 = { fg = "#155d62" }, -- cyan   ~50%
+          SnacksIndent3 = { fg = "#44653c" }, -- green  ~50%
+          SnacksIndent4 = { fg = "#72603d" }, -- yellow ~50%
+          SnacksIndent5 = { fg = "#684d33" }, -- orange ~50%
+          SnacksIndent6 = { fg = "#694575" }, -- purple ~50%
+          SnacksIndentScope = { fg = "#437aa7" },
           SnacksPickerPrompt = { bg = hi.black, fg = hi.white },
           SnacksPickerListCursorLine = { bg = hi.dark_gray },
           SnacksPickerList = { fg = hi.gray },

@@ -12,6 +12,10 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 })
 
 local function setup_cursor_options()
+  if vim.api.nvim_win_get_config(0).relative ~= "" then
+    return
+  end
+
   local ft = vim.bo.filetype
 
   local relativenumber_whitelist = {
@@ -35,6 +39,7 @@ local function setup_cursor_options()
     "",
     "snacks_dashboard",
     "snacks_terminal",
+    "snacks_win",
     "claudecode",
     "snacks_picker_list",
     "grug-far",
