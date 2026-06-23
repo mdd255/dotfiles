@@ -4,11 +4,24 @@ local function set_noice_hls()
   vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { link = "FloatBorder" })
 end
 
+local function set_transparent_bg()
+  if vim.g.neovide then return end
+  vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+  vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+  vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+  vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+end
+
 set_noice_hls()
+set_transparent_bg()
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = vim.api.nvim_create_augroup("NoiceHlOverrides", { clear = true }),
-  callback = set_noice_hls,
+  callback = function()
+    set_noice_hls()
+    set_transparent_bg()
+  end,
 })
 
 local function setup_cursor_options()
