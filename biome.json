@@ -1,49 +1,71 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
-	"linter": {
-		"enabled": true,
-		"rules": {
-			"style": {
-				"useImportType": "off",
-				"noParameterAssign": "off"
-			},
-			"performance": {
-				"noAccumulatingSpread": "off"
-			},
-			"suspicious": {
-				"noConsole": "error",
-				"noExplicitAny": "off"
-			},
-			"complexity": {
-				"useArrowFunction": "off",
-				"noForEach": "off",
-				"useLiteralKeys": "off"
-			},
-			"nursery": {}
-		}
-	},
-	"formatter": {
-		"enabled": true
-	},
-	"json": {
-		"formatter": {
-			"enabled": false
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"enabled": true,
-			"semicolons": "always",
-			"indentStyle": "space",
-			"quoteStyle": "single",
-			"trailingCommas": "all",
-			"lineEnding": "lf",
-			"arrowParentheses": "asNeeded",
-			"lineWidth": 100,
-			"indentWidth": 2
-		},
-		"parser": {
-			"unsafeParameterDecoratorsEnabled": true
-		}
-	}
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
+  "assist": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "project": "none"
+    },
+    "rules": {
+      "correctness": {
+        "noPrivateImports": "off"
+      },
+      "style": {
+        "useImportType": "off",
+        "noParameterAssign": "off"
+      },
+      "performance": {
+        "noAccumulatingSpread": "off"
+      },
+      "suspicious": {
+        "noConsole": "error",
+        "noExplicitAny": "off",
+        "noThenProperty": "off"
+      },
+      "complexity": {
+        "noStaticOnlyClass": "off",
+        "useArrowFunction": "off",
+        "noForEach": "off",
+        "useLiteralKeys": "off"
+      },
+      "nursery": {}
+    }
+  },
+  "formatter": {
+    "useEditorconfig": true,
+    "enabled": true
+  },
+  "json": {
+    "formatter": {
+      "enabled": false,
+      "indentStyle": "space"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "enabled": true,
+      "semicolons": "always",
+      "indentStyle": "space",
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "lineEnding": "lf",
+      "arrowParentheses": "asNeeded",
+      "lineWidth": 100,
+      "indentWidth": 2
+    },
+    "parser": {
+      "unsafeParameterDecoratorsEnabled": true
+    }
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!!**/node_modules",
+      "!!**/dist",
+      "!!**/build"
+    ]
+  }
 }

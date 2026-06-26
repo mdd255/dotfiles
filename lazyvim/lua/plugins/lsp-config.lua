@@ -16,6 +16,10 @@ return {
         biome = {
           cmd = { "biome", "lsp-proxy", "--watcher-kind=none" },
           single_file_support = true,
+          -- Only anchor at a real biome project or git root. Deliberately excludes
+          -- the default `package.json` marker so a stray manifest (e.g. ~/package.json)
+          -- can never re-root the workspace at $HOME and crawl every node_modules.
+          root_markers = { "biome.json", "biome.jsonc", ".git" },
           on_attach = function(client, _)
             client.server_capabilities.definitionProvider = false
           end,

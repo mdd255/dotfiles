@@ -1,64 +1,26 @@
 {
-	"layer": "top",
-	"position": "top",
-	"output": ["DP-3"],
-	"modules-right": [
-		"custom/bluetooth",
-		"network",
-		"pulseaudio",
-		"clock",
-		"battery"
-	],
-	"modules-center": ["custom/hubstaff"],
-	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
-	"network": {
-		"format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-		"format": "{icon}",
-		"format-wifi": "{icon} {essid}",
-		"format-ethernet": "󰀂",
-		"format-disconnected": "󰤮",
-		"tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-		"tooltip-format-ethernet": "⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
-		"tooltip-format-disconnected": "Disconnected",
-		"interval": 7,
-		"spacing": 1
-	},
-	"battery": {
-		"format": "{capacity}% {icon}",
-		"format-discharging": "{icon}",
-		"format-charging": "{icon}",
-		"format-plugged": "",
-		"format-icons": {
-			"charging": ["󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅"],
-			"default": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
-		},
-		"format-full": "󰂅",
-		"interval": 60,
-		"states": {
-			"warning": 20,
-			"critical": 10
-		}
-	},
-	"custom/bluetooth": {
-		"tooltip": true,
-		"interval": 10,
-		"exec": "~/.config/dotfiles/omarchy/scripts/bluetooth-custom.js",
-		"return-type": "json"
-	},
-	"custom/hubstaff": {
-		"tooltip": true,
-		"interval": 20,
-		"exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
-		"return-type": "json"
-	},
-	"pulseaudio": {
-		"format": "{icon}",
-		"scroll-step": 5,
-		"format-muted": "",
-		"format-icons": {
-			"headphone": "󱡬",
-			"headset": "󰂯",
-			"default": ["", "", ""]
-		}
-	}
+  "layer": "top",
+  "position": "top",
+  "output": [
+    "DP-3"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "clock#us",
+    "clock#ptg",
+    "clock"
+  ],
+  "include": [
+    "~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"
+  ],
+  "clock#us": {
+    "format": "{:L%H:%M %a %d NY} ",
+    "tooltip": false,
+    "timezone": "America/New_York"
+  },
+  "clock#ptg": {
+    "format": "{:L%H:%M %a %d PT} ",
+    "tooltip": false,
+    "timezone": "Portugal"
+  }
 }
