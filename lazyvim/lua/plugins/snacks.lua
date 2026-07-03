@@ -85,6 +85,16 @@ return {
             end)
           end
         end,
+        history_delete = function(picker)
+          local item = picker:current()
+
+          if not item or not item.cmd then
+            return
+          end
+
+          vim.fn.histdel("cmd", "^" .. vim.pesc(item.cmd) .. "$")
+          picker:refresh()
+        end,
       },
       formatters = {
         file = {
@@ -151,6 +161,17 @@ return {
         },
         command_history = {
           confirm = "cmd_execute",
+          win = {
+            list = { keys = { ["<C-k>"] = { "history_delete", mode = { "n" } } } },
+            input = { keys = { ["<C-k>"] = { "history_delete", mode = { "i" } } } },
+          },
+          transform = function(item)
+            local text = item.cmd or item.text or ""
+
+            if #text <= 3 or text:match("^%d+$") then
+              return false
+            end
+          end,
           layout = custom_layout({
             title = " Cmd history",
             width = 0.3,

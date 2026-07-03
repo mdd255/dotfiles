@@ -65,13 +65,24 @@ map({
   {
     "<C-y>",
     function()
-      term_cmd("claude")
+      term_cmd("claude-app")
 
       vim.schedule(function()
         vim.bo.filetype = "claudecode"
       end)
     end,
-    { modes = { "n" }, desc = "Open Claude in new tab" },
+    { modes = { "n" }, desc = "Open Claude (AcceleratorApp) in new tab" },
+  },
+  {
+    "<C-o>",
+    function()
+      term_cmd("claude-abd")
+
+      vim.schedule(function()
+        vim.bo.filetype = "claudecode"
+      end)
+    end,
+    { modes = { "n" }, desc = "Open Claude (ABD) in new tab" },
   },
 
   -- Window maximize

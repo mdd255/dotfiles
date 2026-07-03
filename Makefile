@@ -9,7 +9,7 @@ HOME_DIR := $(HOME)
 XORG_CONF_DIR := /etc/X11/xorg.conf.d
 APPS_DIR := ~/Apps
 
-Package lists
+# Package lists
 PACMAN_CORE := xclip git-delta eza jq postgresql-libs btop ibus go xorg-xev zip
 PACMAN_TOOLS := fzf fd bat dunst ttf-firacode-nerd unzip maim python-pip
 PACMAN_MEDIA := pavucontrol bluez bluez-utils blueman
@@ -198,6 +198,11 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/Code/vscode-nvim,~/.config/vscode-nvim)
 	$(call create_symlink,$(DOTFILES_DIR)/lazyvim,~/.config/nvim)
 	$(call create_symlink,$(DOTFILES_DIR)/lazygit,~/.config/lazygit/config.yml)
+	$(call create_symlink,$(DOTFILES_DIR)/claude/CLAUDE.md,~/.claude/CLAUDE.md)
+	$(call create_symlink,$(DOTFILES_DIR)/claude/settings.json,~/.claude/settings.json)
+	$(call create_symlink,$(DOTFILES_DIR)/claude/statusline-command.sh,~/.claude/statusline-command.sh)
+	$(call create_symlink,$(DOTFILES_DIR)/claude/hooks,~/.claude/hooks)
+	$(call create_symlink,$(DOTFILES_DIR)/claude/skills,~/.claude/skills)
 
 surfing-keys: ## Build SurfingKeys configuration
 	@echo "🔨 Building SurfingKeys configuration..."
