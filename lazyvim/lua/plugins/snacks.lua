@@ -454,7 +454,7 @@ return {
             local map_opts = { buffer = buf, nowait = true, silent = true }
             map({ "i", "n" }, "<C-Cr>", accept_scratch, map_opts)
 
-            map("n", "<Esc>", function()
+            map("n", "<Leader>q", function()
               vim.cmd("close")
             end, map_opts)
           end)

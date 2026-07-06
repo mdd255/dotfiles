@@ -113,17 +113,3 @@ alias psn="
    cd ~; omz update;
    omarchy-update;
 "
-
-# claude code accounts
-# NOTE: CLAUDE_CONFIG_DIR must stay UNSET for the default account -
-# setting it to ~/.claude (even though that's the default path) changes
-# where claude looks for .claude.json (~/.claude/.claude.json instead of
-# ~/.claude.json), breaking account resolution. Only claude-abd needs
-# the var actually set.
-claude-app() {
-  env -u CLAUDE_CONFIG_DIR claude "$@"
-}
-
-claude-abd() {
-  CLAUDE_CONFIG_DIR="$HOME/.claude-abd" command claude "$@"
-}

@@ -111,5 +111,14 @@ case ":${PATH}:" in
       ;;
 esac
 
+# claude code accounts
+claude-app() {
+  env -u CLAUDE_CONFIG_DIR claude "$@"
+}
+
+claude-abd() {
+  CLAUDE_CONFIG_DIR="$HOME/.claude-abd" command claude "$@"
+}
+
 # sensitive envs
 [ -s "/home/dh/.config/secret-env" ] && source "/home/dh/.config/secret-env"
