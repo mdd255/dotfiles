@@ -159,17 +159,7 @@ end
 local function fetch_containers_raw(filter_args, callback)
   local cmd = vim.list_extend({ "docker", "ps", "--format", "{{json .}}" }, filter_args)
 
-  vim.system(cmd, {}, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        vim.notify("Failed to list containers: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-        callback(nil)
-        return
-      end
-
-      callback(parse_json_lines(result.stdout))
-    end)
-  end)
+  utils.system_async(cmd, notify_opts, "Failed to list containers", parse_json_lines)(callback)
 end
 
 -- Cached container fetchers — one per filter, registered once at load time.
@@ -429,19 +419,16 @@ local function run_image_action(action_key, images)
 end
 
 -- Cached image fetcher. TTL 100 s.
-local get_images = cache.wrap("docker.images", 100000, function(callback)
-  vim.system({ "docker", "images", "--format", "{{json .}}" }, {}, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        vim.notify("Failed to list images: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-        callback(nil)
-        return
-      end
-
-      callback(parse_json_lines(result.stdout))
-    end)
-  end)
-end)
+local get_images = cache.wrap(
+  "docker.images",
+  100000,
+  utils.system_async(
+    { "docker", "images", "--format", "{{json .}}" },
+    notify_opts,
+    "Failed to list images",
+    parse_json_lines
+  )
+)
 
 local function image_preview(img)
   return table.concat({

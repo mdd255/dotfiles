@@ -77,23 +77,6 @@ local function with_ssh_passphrase(fn)
   end)
 end
 
--- Shared async shell helper: runs cmd, calls parse_fn(stdout) on success.
--- Returns function(callback) matching the pattern used by get_* helpers.
-local function system_async(cmd, err_msg, parse_fn)
-  return function(callback)
-    vim.system(cmd, {}, function(result)
-      vim.schedule(function()
-        if result.code ~= 0 then
-          vim.notify(err_msg, vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-        callback(parse_fn(result.stdout))
-      end)
-    end)
-  end
-end
-
 -- Helper function to get list of branches (no cache — cheap local command).
 -- @param exclude_current: boolean - whether to exclude current branch
 -- @param unique: boolean - whether to ensure unique values
@@ -172,10 +155,11 @@ local function branch_picker(opts)
       table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
     end
 
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
+    utils.menu_picker(items, function(item)
+      opts.on_confirm(item.text)
+    end, {
+      title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
+      width = 0.55,
       format = function(item, _)
         if opts.format then
           return opts.format(item, current_branch)
@@ -189,24 +173,14 @@ local function branch_picker(opts)
 
         return chunks
       end,
-      layout = custom_layout({
-        title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          opts.on_confirm(item.text)
-        end
-      end,
     })
   end)
 end
 
 local function get_recent_commits(limit)
-  return system_async(
+  return utils.system_async(
     { "git", "log", "--oneline", "--max-count=" .. (limit or 30) },
+    notify_opts,
     "Failed to get commits",
     function(out)
       local commits = {}
@@ -221,7 +195,7 @@ local function get_recent_commits(limit)
 end
 
 local function get_stashes()
-  return system_async({ "git", "stash", "list" }, "Failed to get stashes", function(out)
+  return utils.system_async({ "git", "stash", "list" }, notify_opts, "Failed to get stashes", function(out)
     local items = {}
     for line in out:gmatch("[^\r\n]+") do
       if line ~= "" then
@@ -245,10 +219,9 @@ local function stash_picker(title, on_confirm, title_hl)
       return
     end
 
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
+    utils.menu_picker(items, on_confirm, {
+      title = { { " " .. title, title_hl or "DiagnosticInfo" } },
+      width = 0.55,
       format = function(item, _)
         local ref = item.text:match("^(stash@{%d+})")
         if ref then
@@ -259,17 +232,6 @@ local function stash_picker(title, on_confirm, title_hl)
           }
         end
         return { { item.text, "Comment" } }
-      end,
-      layout = custom_layout({
-        title = { { " " .. title, title_hl or "DiagnosticInfo" } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          on_confirm(item)
-        end
       end,
     })
   end)
@@ -515,25 +477,9 @@ local function make_pr_fetcher(filter)
       vim.list_extend(cmd, { "--search", filter.search })
     end
 
-    vim.system(cmd, {}, function(result)
-      vim.schedule(function()
-        if result.code ~= 0 then
-          vim.notify("Failed to list PRs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-
-        local ok, data = pcall(vim.json.decode, result.stdout or "[]")
-
-        if not ok or type(data) ~= "table" then
-          vim.notify("Failed to parse PR list", vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-
-        callback(data)
-      end)
-    end)
+    utils.system_async(cmd, notify_opts, "Failed to list PRs", function(out)
+      return utils.safe_json_decode(out, "Failed to parse PR list", notify_opts)
+    end)(callback)
   end
 end
 
@@ -556,17 +502,17 @@ end
 -- Highlight maps keyed by mergeStateStatus / reviewDecision — module-level so
 -- the picker format fn doesn't rebuild them for every rendered row.
 local PR_STATE_HLS = {
-  CLEAN = "DiagnosticOk",
-  DIRTY = "DiagnosticError",
-  BLOCKED = "DiagnosticError",
-  BEHIND = "DiagnosticWarn",
-  UNSTABLE = "DiagnosticWarn",
+  CLEAN = HL.ok,
+  DIRTY = HL.err,
+  BLOCKED = HL.err,
+  BEHIND = HL.warn,
+  UNSTABLE = HL.warn,
 }
 
 local PR_REVIEW_HLS = {
-  APPROVED = "DiagnosticOk",
-  CHANGES_REQUESTED = "DiagnosticError",
-  REVIEW_REQUIRED = "DiagnosticWarn",
+  APPROVED = HL.ok,
+  CHANGES_REQUESTED = HL.err,
+  REVIEW_REQUIRED = HL.warn,
 }
 
 -- Preview badge strings — module-level so format_pr_items doesn't rebuild these
@@ -650,24 +596,24 @@ local pr_mutate_success = function()
 end
 
 local PR_ACTIONS = {
-  { text = "󰿄 Checkout", key = "checkout", hl = "DiagnosticOk" },
-  { text = "󰊯 Open browser", key = "browser", hl = "DiagnosticInfo" },
-  { text = " Copy URL", key = "copy_url", hl = "DiagnosticInfo" },
-  { text = " View diff", key = "diff", hl = "DiagnosticInfo" },
-  { text = " Merge", key = "merge", hl = "DiagnosticWarn" },
-  { text = " Merge squash", key = "squash", hl = "DiagnosticWarn" },
-  { text = " Approve", key = "approve", hl = "DiagnosticOk" },
-  { text = " Comment", key = "comment", hl = "Function" },
-  { text = " Edit title", key = "edit_title", hl = "Function" },
-  { text = " Edit body", key = "edit_body", hl = "Function" },
-  { text = " Edit reviewers", key = "edit_reviewers", hl = "Function" },
-  { text = " Close PR", key = "close", hl = "DiagnosticError" },
-  { text = " Convert to draft", key = "to_draft", hl = "Comment" },
-  { text = " Ready to review", key = "ready", hl = "DiagnosticOk" },
-  { text = " View checks", key = "checks", hl = "DiagnosticInfo" },
-  { text = " Request changes", key = "request_changes", hl = "DiagnosticError" },
-  { text = " Add label", key = "add_label", hl = "Function" },
-  { text = "󰑓 Reopen", key = "reopen", hl = "DiagnosticOk" },
+  { text = "󰿄 Checkout", key = "checkout", hl = HL.ok },
+  { text = "󰊯 Open browser", key = "browser", hl = HL.info },
+  { text = " Copy URL", key = "copy_url", hl = HL.info },
+  { text = " View diff", key = "diff", hl = HL.info },
+  { text = " Merge", key = "merge", hl = HL.warn },
+  { text = " Merge squash", key = "squash", hl = HL.warn },
+  { text = " Approve", key = "approve", hl = HL.ok },
+  { text = " Comment", key = "comment", hl = HL.ident },
+  { text = " Edit title", key = "edit_title", hl = HL.ident },
+  { text = " Edit body", key = "edit_body", hl = HL.ident },
+  { text = " Edit reviewers", key = "edit_reviewers", hl = HL.ident },
+  { text = " Close PR", key = "close", hl = HL.err },
+  { text = " Convert to draft", key = "to_draft", hl = HL.muted },
+  { text = " Ready to review", key = "ready", hl = HL.ok },
+  { text = " View checks", key = "checks", hl = HL.info },
+  { text = " Request changes", key = "request_changes", hl = HL.err },
+  { text = " Add label", key = "add_label", hl = HL.ident },
+  { text = "󰑓 Reopen", key = "reopen", hl = HL.ok },
 }
 
 local function handle_pr_action(action_key, pr)
@@ -858,9 +804,9 @@ local function show_pr_actions(pr)
       local unresolved_str = unresolved > 0 and (" · " .. unresolved .. " unresolved 󰅺") or ""
       local title = string.format(" #%d · %s %s%s", pr.number, merge_icon, pr.mergeStateStatus or "?", unresolved_str)
 
-      local title_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or "DiagnosticInfo"
+      local title_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or HL.info
       if pr.isDraft then
-        title_hl = "Comment"
+        title_hl = HL.muted
       end
 
       local labels_str = #pr.labels > 0
@@ -943,13 +889,13 @@ local function open_gh_pr()
       format = function(item, _)
         local pr = item._pr
 
-        local status_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or "Comment"
+        local status_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or HL.muted
 
         if pr.isDraft then
-          status_hl = "Comment"
+          status_hl = HL.muted
         end
 
-        local review_hl = PR_REVIEW_HLS[pr.reviewDecision or ""] or "Comment"
+        local review_hl = PR_REVIEW_HLS[pr.reviewDecision or ""] or HL.muted
 
         local draft_icon = pr.isDraft and " " or " "
         local review_icon = REVIEW_DECISION_ICONS[pr.reviewDecision] or " "
@@ -1007,7 +953,7 @@ local function open_gh_pr()
 end
 
 function M.gh_pr_picker()
-  open_gh_pr()
+  utils.ensure_gh_account(open_gh_pr)
 end
 
 function M.gh_switch_account()
@@ -1074,6 +1020,12 @@ function M.gh_switch_account()
 end
 
 function M.create_pr()
+  utils.ensure_gh_account(function()
+    M._create_pr_flow()
+  end)
+end
+
+function M._create_pr_flow()
   local function create_pr_with_gh(data)
     local head_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
     local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
@@ -1355,10 +1307,11 @@ local function reset_picker(title, title_hl, on_confirm)
       table.insert(items, { text = line, _hash = line:match("^(%S+)") })
     end
 
-    snacks.picker.pick({
-      finder = function()
-        return items
-      end,
+    utils.menu_picker(items, function(item)
+      on_confirm(item._hash)
+    end, {
+      title = { { title, title_hl } },
+      width = 0.55,
       format = function(item, _)
         if item._hash == "HEAD" then
           return { { item.text, "DiagnosticWarn" } }
@@ -1370,17 +1323,6 @@ local function reset_picker(title, title_hl, on_confirm)
           { (hash or item.text) .. " ", "DiagnosticInfo" },
           { rest or "", "Normal" },
         }
-      end,
-      layout = custom_layout({
-        title = { { title, title_hl } },
-        width = 0.55,
-      }),
-      confirm = function(picker, item)
-        picker:close()
-
-        if item then
-          on_confirm(item._hash)
-        end
       end,
     })
   end)

@@ -1,18 +1,24 @@
 {
-	"layer": "bottom",
-	"position": "top",
-	"output": ["eDP-1"],
-	"modules-center": [],
-	"modules-right": ["custom/events"],
-	"include": ["~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"],
-	"custom/events": {
-		"format-icons": {
-			"default": ""
-		},
-		"tooltip": false,
-		"interval": 60,
-		"exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js",
-		"return-type": "json",
-		"escape": false
-	}
+  "layer": "bottom",
+  "position": "top",
+  "output": [
+    "eDP-1"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "custom/events"
+  ],
+  "include": [
+    "~/.config/dotfiles/omarchy/waybar/base-bar.jsonc"
+  ],
+  "custom/events": {
+    "format-icons": {
+      "default": ""
+    },
+    "tooltip": false,
+    "interval": 60,
+    "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js",
+    "return-type": "json",
+    "escape": false
+  }
 }

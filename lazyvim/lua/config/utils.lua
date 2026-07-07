@@ -188,9 +188,9 @@ function M.custom_input(prompt, opts, callback)
   M.float_input(prompt, merged, callback)
 end
 
--- Prompt the user to type "yes" before running a destructive action. Shared by
+-- Prompt the user to type "y" before running a destructive action. Shared by
 -- the git / gh-actions / docker pickers so every irreversible op guards the same
--- way. on_confirm fires only on an exact (case-insensitive) "yes".
+-- way. on_confirm fires only on an exact (case-insensitive) "y".
 -- @param prompt string
 -- @param on_confirm function
 function M.confirm_dangerous(prompt, on_confirm)
@@ -477,12 +477,23 @@ function M.picker_selection(picker)
   return selected
 end
 
--- Shared single-column floating "action submenu" picker. Used by the docker /
--- gh-actions / package pickers, which were all hand-rolling the same finder +
--- vertical float layout + scheduled-confirm shape.
+-- Shared floating picker. Used by every git / docker / gh-actions list & action
+-- submenu, which were all hand-rolling the same finder + layout + confirm shape.
 -- @param items list - finder items (each needs `.text`; `.hl` honoured by default format)
--- @param on_confirm function(item) - runs scheduled, after the picker closes
--- @param opts? table - { title, title_hl, width_frac, width_max, height, format }
+-- @param on_confirm function(item) - runs scheduled, after the picker closes.
+--   Ignored if opts.confirm is given (multi-select pickers need the raw
+--   picker to resolve the selection themselves).
+-- @param opts? table
+--   title       string|table - plain title or a snacks chunk table for a coloured title
+--   width/height/fullscreen/preview_ratio - forwarded to custom_layout
+--   show_preview boolean     - reserve a preview pane in the layout
+--   format      function(item, picker) - row renderer, default colours by `.hl`
+--   finder      function()->items      - default: return the fixed `items` list
+--   preview     string                 - snacks top-level preview mode, e.g. "preview"
+--   multi       table                  - snacks top-level multi-select opts
+--   actions     table                  - custom picker actions (cycle_filter, refresh, ...)
+--   win         table                  - snacks win/keymap overrides
+--   confirm     function(picker, item) - full confirm override, bypasses on_confirm
 -- Default action-row renderer: colour each row by its `.hl` (falling back to the
 -- shared `text` group). Items embed their own icon in `.text`, so a single
 -- `{ text, hl }` segment keeps every action menu visually identical.
@@ -493,20 +504,8 @@ end
 function M.menu_picker(items, on_confirm, opts)
   opts = opts or {}
 
-  require("snacks").picker.pick({
-    finder = function()
-      return items
-    end,
-
-    format = opts.format or menu_default_format,
-
-    layout = M.custom_layout({
-      title = opts.title or "󱇬 Picker",
-      width = opts.width or 0.3,
-      height = opts.height or 0.4,
-    }),
-
-    confirm = function(picker, item)
+  local confirm = opts.confirm
+    or function(picker, item)
       picker:close()
 
       if item then
@@ -514,7 +513,30 @@ function M.menu_picker(items, on_confirm, opts)
           on_confirm(item)
         end)
       end
+    end
+
+  require("snacks").picker.pick({
+    finder = opts.finder or function()
+      return items
     end,
+
+    format = opts.format or menu_default_format,
+
+    preview = opts.preview,
+    multi = opts.multi,
+    actions = opts.actions,
+    win = opts.win,
+
+    layout = M.custom_layout({
+      title = opts.title or "󱇬 Picker",
+      width = opts.width or 0.3,
+      height = opts.height or 0.4,
+      preview = opts.show_preview,
+      preview_ratio = opts.preview_ratio,
+      fullscreen = opts.fullscreen,
+    }),
+
+    confirm = confirm,
   })
 end
 
@@ -534,6 +556,46 @@ function M.make_refresh_action(invalidate_fn, fetch_fn, populate_fn)
       picker:refresh()
     end)
   end
+end
+
+-- Shared async shell helper: runs cmd, calls parse_fn(stdout) on success.
+-- Returns function(callback) matching the pattern used by cached list fetchers
+-- across git / docker / gh-actions (commits, stashes, PRs, containers, images,
+-- runs, workflows). notify_opts is the caller's `{ title = ... }` table;
+-- err_msg fires only on a non-zero exit — parse failures are parse_fn's job
+-- (return nil + vim.notify, e.g. via safe_json_decode).
+function M.system_async(cmd, notify_opts, err_msg, parse_fn)
+  return function(callback)
+    vim.system(cmd, {}, function(result)
+      vim.schedule(function()
+        if result.code ~= 0 then
+          local msg = err_msg
+
+          if result.stderr and result.stderr ~= "" then
+            msg = msg .. ": " .. result.stderr
+          end
+
+          vim.notify(msg, vim.log.levels.ERROR, notify_opts)
+          callback(nil)
+          return
+        end
+        callback(parse_fn(result.stdout))
+      end)
+    end)
+  end
+end
+
+-- Decode a single JSON value (e.g. `gh ... --json ...`'s array output).
+-- Returns nil + notifies err_label on invalid JSON or a non-table result.
+function M.safe_json_decode(str, err_label, notify_opts)
+  local ok, data = pcall(vim.json.decode, str or "[]")
+
+  if not ok or type(data) ~= "table" then
+    vim.notify(err_label, vim.log.levels.ERROR, notify_opts)
+    return nil
+  end
+
+  return data
 end
 
 function M.exec_async(cmd, opts)
@@ -572,6 +634,60 @@ function M.exec_async(cmd, opts)
           opts.on_failure()
         end
       end
+    end)
+  end)
+end
+
+-- Switch `gh` CLI account to match the repo's git user before a gh pr/action
+-- command runs. Triggered on-demand (not on DirChanged) so multiple nvim
+-- instances on different projects don't race each other switching the
+-- shared, machine-wide `gh` auth state in the background.
+function M.ensure_gh_account(callback)
+  vim.system({ "git", "config", "user.name" }, { text = true }, function(git_result)
+    if git_result.code ~= 0 then
+      vim.schedule(callback)
+      return
+    end
+
+    local git_user = vim.trim(git_result.stdout or "")
+
+    if git_user == "" then
+      vim.schedule(callback)
+      return
+    end
+
+    vim.system({ "gh", "api", "user", "-q", ".login" }, { text = true }, function(gh_result)
+      vim.schedule(function()
+        if gh_result.code ~= 0 then
+          callback()
+          return
+        end
+
+        local gh_user = vim.trim(gh_result.stdout or "")
+
+        if gh_user == "" or gh_user == git_user then
+          callback()
+          return
+        end
+
+        vim.system({ "gh", "auth", "switch", "--user", git_user }, { text = true }, function(switch_result)
+          vim.schedule(function()
+            if switch_result.code == 0 then
+              Snacks.notify(
+                string.format("gh: %s → %s", gh_user, git_user),
+                { level = vim.log.levels.INFO, title = "gh auth" }
+              )
+            else
+              Snacks.notify(
+                string.format("gh switch failed: '%s' not found", git_user),
+                { level = vim.log.levels.WARN, title = "gh auth" }
+              )
+            end
+
+            callback()
+          end)
+        end)
+      end)
     end)
   end)
 end

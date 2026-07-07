@@ -29,31 +29,17 @@ end
 
 -- ── Status / conclusion icons ──────────────────────────────────────────────────
 
-local STATUS_ICONS = {
-  in_progress = "󱦟",
-  queued = "",
-  waiting = "",
-  requested = "",
-  pending = "",
-  completed = "",
-}
-
 local CONCLUSION_HLS = {
-  success = "DiagnosticOk",
-  failure = "DiagnosticError",
-  cancelled = "DiagnosticWarn",
-  skipped = "Comment",
-  timed_out = "DiagnosticError",
-  action_required = "DiagnosticWarn",
-  startup_failure = "DiagnosticError",
-  neutral = "Comment",
-  stale = "Comment",
+  success = HL.ok,
+  failure = HL.err,
+  cancelled = HL.warn,
+  skipped = HL.muted,
+  timed_out = HL.err,
+  action_required = HL.warn,
+  startup_failure = HL.err,
+  neutral = HL.muted,
+  stale = HL.muted,
 }
-
-local function run_status_icon(run)
-  local status = run.status
-  return (status and status ~= vim.NIL and STATUS_ICONS[status]) or "?"
-end
 
 -- gh `--json` fields can be missing or JSON null (decoded to vim.NIL); coerce to
 -- a safe string before :sub() to avoid nil-index crashes on odd runs.
@@ -84,25 +70,9 @@ local function make_runs_fetcher(filter)
       vim.list_extend(cmd, { "--status", filter.status })
     end
 
-    vim.system(cmd, {}, function(result)
-      vim.schedule(function()
-        if result.code ~= 0 then
-          vim.notify("Failed to list runs: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-
-        local ok, data = pcall(vim.json.decode, result.stdout or "[]")
-
-        if not ok or type(data) ~= "table" then
-          vim.notify("Failed to parse run list", vim.log.levels.ERROR, notify_opts)
-          callback(nil)
-          return
-        end
-
-        callback(data)
-      end)
-    end)
+    utils.system_async(cmd, notify_opts, "Failed to list runs", function(out)
+      return utils.safe_json_decode(out, "Failed to parse run list", notify_opts)
+    end)(callback)
   end
 end
 
@@ -297,10 +267,10 @@ local function open_actions_picker()
         local run = item._run
         local conclusion = run.conclusion
         local hl = (conclusion and conclusion ~= "" and conclusion ~= vim.NIL)
-            and (CONCLUSION_HLS[conclusion] or "Text")
-          or "DiagnosticInfo"
+            and (CONCLUSION_HLS[conclusion] or HL.text)
+          or HL.info
         local title_col = string.format("%-67s", safe_str(run.displayTitle):sub(1, 65))
-        local status_col = run_status_icon(run) .. "   "
+        local status_col = "   "
         local branch_col = string.format("%-27s", safe_str(run.headBranch):sub(1, 25))
         local date_col = run.startedAt or ""
         return {
@@ -356,30 +326,21 @@ end
 
 function M.gh_actions_picker()
   run_filter_idx = 1
-  open_actions_picker()
+  utils.ensure_gh_account(open_actions_picker)
 end
 
 -- ── Workflow dispatch ───────────────────────────────────────────────────────
 -- List repo workflows, pick one, trigger it on the current branch. Covers the
 -- "start a run" gap — gh_actions_picker can only act on runs that already exist.
 
-local get_workflows = cache.wrap("gh.workflows", CACHE_TTL_MS, function(callback)
-  vim.system({ "gh", "workflow", "list", "--json", "name,id,state" }, {}, function(result)
-    vim.schedule(function()
-      if result.code ~= 0 then
-        vim.notify("Failed to list workflows: " .. (result.stderr or ""), vim.log.levels.ERROR, notify_opts)
-        callback(nil)
-        return
-      end
-      local ok, data = pcall(vim.json.decode, result.stdout or "[]")
-      if not ok or type(data) ~= "table" or #data == 0 then
-        callback(nil)
-        return
-      end
-      callback(data)
-    end)
+local get_workflows = cache.wrap(
+  "gh.workflows",
+  CACHE_TTL_MS,
+  utils.system_async({ "gh", "workflow", "list", "--json", "name,id,state" }, notify_opts, "Failed to list workflows", function(out)
+    local data = utils.safe_json_decode(out, "Failed to parse workflow list", notify_opts)
+    return (data and #data > 0) and data or nil
   end)
-end)
+)
 
 function M.gh_workflow_dispatch()
   if not cache.is_cached("gh.workflows") then
