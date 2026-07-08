@@ -174,7 +174,7 @@ return {
           end,
           layout = custom_layout({
             title = " Cmd history",
-            width = 0.3,
+            width = 0.55,
           }),
         },
         files = {
