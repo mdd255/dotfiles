@@ -470,7 +470,7 @@ local function make_pr_fetcher(filter)
       "--limit",
       "50",
       "--json",
-      "number,title,author,headRefName,baseRefName,isDraft,createdAt,updatedAt,reviewDecision,labels,url,body,additions,deletions,changedFiles,mergeable,mergeStateStatus",
+      "number,title,author,headRefName,baseRefName,isDraft,createdAt,updatedAt,reviewDecision,labels,url,body,additions,deletions,changedFiles,mergeable,mergeStateStatus,reviews,reviewRequests,comments",
     }
 
     if filter.search and filter.search ~= "" then
@@ -531,6 +531,90 @@ local PR_REVIEW_BADGES = {
   REVIEW_REQUIRED = "⏳ REVIEW REQUIRED",
 }
 
+-- Badges for review-submission states shown in the preview activity feed.
+local REVIEW_STATE_BADGES = {
+  APPROVED = "✅ **approved**",
+  CHANGES_REQUESTED = "❌ **requested changes**",
+  COMMENTED = "💬 reviewed",
+  DISMISSED = "⊘ dismissed",
+}
+
+-- Collapse a multi-line comment/review body to a single truncated line so the
+-- activity feed stays scannable — the full text still lives on GitHub.
+local function one_line(text, limit)
+  local s = (text or ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  if s == "" then
+    return nil
+  end
+  if #s > limit then
+    s = s:sub(1, limit - 1) .. "…"
+  end
+  return s
+end
+
+-- Build the markdown "Activity" feed for a PR preview: review events
+-- (approvals / change requests / review comments), pending review requests,
+-- then issue-level comments. gh returns each list already in chronological order.
+local function format_pr_activity(pr)
+  local lines = {}
+
+  for _, r in ipairs(pr.reviews or {}) do
+    -- Skip PENDING (unsubmitted) reviews — no signal for a reader yet.
+    if r.state and r.state ~= "PENDING" then
+      local who = r.author and r.author.login or "?"
+      local badge = REVIEW_STATE_BADGES[r.state] or r.state
+      table.insert(lines, string.format("- %s — **%s**", badge, who))
+
+      local body = one_line(r.body, 100)
+      if body then
+        table.insert(lines, "  > " .. body)
+      end
+    end
+  end
+
+  -- reviewRequests entries are Users ({login}) or Teams ({name}/{slug}).
+  if pr.reviewRequests and #pr.reviewRequests > 0 then
+    local names = vim.tbl_map(function(rr)
+      return rr.login or rr.name or rr.slug or "?"
+    end, pr.reviewRequests)
+    table.insert(lines, "- ⏳ **review requested:** " .. table.concat(names, ", "))
+  end
+
+  for _, c in ipairs(pr.comments or {}) do
+    local who = c.author and c.author.login or "?"
+    table.insert(lines, string.format("- 💬 **%s:** %s", who, one_line(c.body, 100) or ""))
+  end
+
+  if #lines == 0 then
+    return "_No reviews or comments yet_"
+  end
+
+  return table.concat(lines, "\n")
+end
+
+-- Count distinct approving reviewers. A reviewer may submit many reviews, so we
+-- keep only each author's LATEST approval-state review (chronological `reviews`
+-- order means last write wins), ignoring COMMENTED/PENDING which don't change
+-- approval status, then count those left at APPROVED.
+local function count_approvals(pr)
+  local latest = {}
+
+  for _, r in ipairs(pr.reviews or {}) do
+    if r.author and (r.state == "APPROVED" or r.state == "CHANGES_REQUESTED" or r.state == "DISMISSED") then
+      latest[r.author.login] = r.state
+    end
+  end
+
+  local n = 0
+  for _, state in pairs(latest) do
+    if state == "APPROVED" then
+      n = n + 1
+    end
+  end
+
+  return n
+end
+
 local function format_pr_items(prs)
   local items = {}
 
@@ -550,12 +634,14 @@ local function format_pr_items(prs)
 
     local state_str = PR_STATE_BADGES[pr.mergeStateStatus or ""]
       or ("> ❓ **" .. (pr.mergeStateStatus or "UNKNOWN") .. "**")
-    local review_str = PR_REVIEW_BADGES[pr.reviewDecision or ""] or "💬 no review"
+    local approvals = count_approvals(pr)
+    local approval_suffix = (pr.reviewDecision == "APPROVED" and approvals > 0) and (" (" .. approvals .. ")") or ""
+    local review_str = (PR_REVIEW_BADGES[pr.reviewDecision or ""] or "💬 no review") .. approval_suffix
     local draft_str = pr.isDraft and "  ·  📝 **DRAFT**" or ""
     local status_line = state_str .. "  ·  " .. review_str .. draft_str
 
     local preview_text = string.format(
-      "%s\n\n# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s (%s)  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+      "%s\n\n# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s (%s)  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n## 󰆈 Activity\n\n%s\n\n---\n\n%s",
       status_line,
       pr.number,
       pr.title,
@@ -564,11 +650,12 @@ local function format_pr_items(prs)
       pr.baseRefName,
       pr.mergeStateStatus or "UNKNOWN",
       pr.mergeable or "UNKNOWN",
-      pr.reviewDecision or "none",
+      (pr.reviewDecision or "none") .. approval_suffix,
       labels_str,
       pr.additions,
       pr.deletions,
       pr.changedFiles,
+      format_pr_activity(pr),
       pr.body ~= "" and pr.body or "_No description_"
     )
 
@@ -818,19 +905,23 @@ local function show_pr_actions(pr)
           )
         or "—"
 
+      local approvals = count_approvals(pr)
+      local approval_suffix = (pr.reviewDecision == "APPROVED" and approvals > 0) and (" (" .. approvals .. ")") or ""
+
       local pr_preview = string.format(
-        "# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n---\n\n%s",
+        "# #%d %s\n\n**Author:** %s  **Branch:** `%s` → `%s`\n**Merge:** %s  **Review:** %s\n**Labels:** %s\n**+%d -%d** (%d files)\n\n## 󰆈 Activity\n\n%s\n\n---\n\n%s",
         pr.number,
         pr.title,
         pr.author.login,
         pr.headRefName,
         pr.baseRefName,
         pr.mergeStateStatus or "UNKNOWN",
-        pr.reviewDecision or "none",
+        (pr.reviewDecision or "none") .. approval_suffix,
         labels_str,
         pr.additions,
         pr.deletions,
         pr.changedFiles,
+        format_pr_activity(pr),
         pr.body ~= "" and pr.body or "_No description_"
       )
 
