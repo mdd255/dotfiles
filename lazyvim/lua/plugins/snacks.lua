@@ -272,6 +272,7 @@ return {
           ignored = false,
           diagnostics = false,
           replace_netrw = true,
+          jump = { close = true },
           layout = {
             fullscreen = false,
             layout = {

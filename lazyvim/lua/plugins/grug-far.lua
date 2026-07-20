@@ -4,7 +4,8 @@ return {
     debounceMs = 400,
     maxSearchMatches = 1000,
     breakindentopt = "shift:1",
-    normalModeSearch = false,
+    normalModeSearch = true,
+    startInInsertMode = false,
     headerMaxWidth = 80,
     showCompactInputs = true,
     astgreg = { placeholders = { enabled = false } },
@@ -40,6 +41,7 @@ return {
     local color = require("config.color")
     local ns = vim.api.nvim_create_namespace("grug-far-hl")
     vim.api.nvim_set_hl(ns, "CursorLine", { bg = color.dark_gray })
+
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "grug-far",
       callback = function(ev)

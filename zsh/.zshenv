@@ -10,7 +10,7 @@ export BROWSER=/usr/bin/brave
 export DOCKER_BUILDKIT=1
 
 # node
-export NODE_OPTIONS=--max-old-space-size=4096
+export NODE_OPTIONS=--max-old-space-size=6144
 
 # go envs
 export GOPATH=$HOME/go
