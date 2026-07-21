@@ -194,6 +194,7 @@ return {
           },
         },
         recent = {
+          format = "recent_file",
           layout = custom_layout({
             title = " Recent",
             preview = true,
@@ -308,6 +309,28 @@ return {
         },
         header = logo,
       },
+      formats = {
+        file = function(item, ctx)
+          local name = vim.fn.fnamemodify(item.file, ":t")
+
+          if item.icon == "directory" then
+            local folder = vim.fn.fnamemodify(item.file, ":h:t")
+            return { { folder .. "/", hl = "dir" }, { name, hl = "file" } }
+          end
+
+          local root = Snacks.git.get_root(item.file)
+          local project = root and vim.fn.fnamemodify(root, ":t") or nil
+
+          if ctx.width and project and #project + 1 + #name > ctx.width then
+            local avail = ctx.width - #project - 2
+            name = avail > 1 and "…" .. name:sub(-(avail - 1)) or name
+          elseif ctx.width and #name > ctx.width then
+            name = "…" .. name:sub(-(ctx.width - 1))
+          end
+
+          return project and { { project .. "/", hl = "dir" }, { name, hl = "file" } } or { { name, hl = "file" } }
+        end,
+      },
       sections = {
         { section = "header" },
         { icon = "", title = "Menu", section = "keys", indent = 5, padding = 1, gap = 0 },
@@ -323,6 +346,27 @@ return {
       local path = item.file or item.cwd or ""
       local name = vim.fn.fnamemodify(path, ":t")
       return { { name, "SnacksPickerFile" } }
+    end
+
+    Snacks.picker.format.recent_file = function(item, picker)
+      local ret = {}
+      local name = vim.fn.fnamemodify(item.file, ":t")
+      local root = Snacks.git.get_root(item.file)
+      local project = root and vim.fn.fnamemodify(root, ":t")
+
+      if picker.opts.icons.files.enabled ~= false then
+        local icon, hl = Snacks.util.icon(name, "file", { fallback = picker.opts.icons.files })
+        icon = Snacks.picker.util.align(icon, picker.opts.formatters.file.icon_width or 2)
+        ret[#ret + 1] = { icon, hl, virtual = true }
+      end
+
+      if project then
+        ret[#ret + 1] = { project .. "/", "SnacksPickerDirectory" }
+      end
+
+      ret[#ret + 1] = { name, "SnacksPickerFile" }
+
+      return ret
     end
 
     Snacks.picker.format.ui_select = function(_opts)
