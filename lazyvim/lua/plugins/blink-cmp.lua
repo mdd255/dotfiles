@@ -1,8 +1,3 @@
-local supermaven_ft_blacklist = {
-  snacks_input = true,
-  sql = true,
-}
-
 return {
   {
     "saghen/blink.cmp",
@@ -15,9 +10,12 @@ return {
         "Huijiro/blink-cmp-supermaven",
         config = function()
           require("supermaven-nvim").setup({
-            condition = function()
-              return supermaven_ft_blacklist[vim.bo.filetype] == true
-            end,
+            ignore_filetypes = {
+              snacks_input = true,
+              sql = true,
+              http = true,
+              graphql = true,
+            },
           })
         end,
       },
