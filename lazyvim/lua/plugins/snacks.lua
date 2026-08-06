@@ -187,6 +187,7 @@ return {
           exclude = {
             "node_modules",
             ".git",
+            ".turbo",
             "package-lock.json",
             "yarn.lock",
             "dist",
