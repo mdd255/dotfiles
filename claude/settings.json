@@ -30,7 +30,6 @@
   },
   "enabledPlugins": {
     "context-mode@context-mode": true,
-    "typescript-lsp@claude-plugins-official": true,
     "caveman@caveman": true
   },
   "extraKnownMarketplaces": {

@@ -38,6 +38,38 @@ local notify_opts = {
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
 
+-- Cached current branch (5 m TTL safety net — explicitly invalidated on our
+-- own checkout actions and on DirChanged, so the TTL rarely matters; it only
+-- covers checkouts done outside this plugin, e.g. a terminal or lazygit).
+local BRANCH_TTL_MS = 5 * 60 * 1000
+local fetch_current_branch_cached = cache.wrap("git.current_branch", BRANCH_TTL_MS, function(callback)
+  vim.system({ "git", "branch", "--show-current" }, {}, function(result)
+    vim.schedule(function()
+      callback(result.code == 0 and vim.trim(result.stdout or "") or "")
+    end)
+  end)
+end)
+
+-- Normalizes to "" (never nil): cache.invalidate() can drain a queued waiter
+-- with nil if it fires while a fetch for this key is already in flight
+-- (see cache.lua invalidate — the in-flight result lands on a cache entry
+-- that was just cleared, so it's dropped). Callers below concatenate this
+-- value straight into strings/argv, so a bare nil would throw or corrupt args.
+local function fetch_current_branch(callback)
+  fetch_current_branch_cached(function(branch)
+    callback(branch or "")
+  end)
+end
+
+local function invalidate_current_branch()
+  cache.invalidate("git.current_branch")
+end
+
+vim.api.nvim_create_autocmd("DirChanged", {
+  group = vim.api.nvim_create_augroup("GitCurrentBranchCache", { clear = true }),
+  callback = invalidate_current_branch,
+})
+
 -- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
 -- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
@@ -142,38 +174,38 @@ end
 --   format          function - optional (item, current_branch) chunk override;
 --                              replaces the default branch + worktree formatting
 local function branch_picker(opts)
-  local current_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+  fetch_current_branch(function(current_branch)
+    get_branches(opts.exclude_current, true)(function(branches, worktree_set)
+      if not branches then
+        return
+      end
 
-  get_branches(opts.exclude_current, true)(function(branches, worktree_set)
-    if not branches then
-      return
-    end
+      local items = {}
 
-    local items = {}
+      for _, branch in ipairs(branches) do
+        table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
+      end
 
-    for _, branch in ipairs(branches) do
-      table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
-    end
+      utils.menu_picker(items, function(item)
+        opts.on_confirm(item.text)
+      end, {
+        title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
+        width = 0.55,
+        format = function(item, _)
+          if opts.format then
+            return opts.format(item, current_branch)
+          end
 
-    utils.menu_picker(items, function(item)
-      opts.on_confirm(item.text)
-    end, {
-      title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
-      width = 0.55,
-      format = function(item, _)
-        if opts.format then
-          return opts.format(item, current_branch)
-        end
+          local chunks = format_branch(item, current_branch)
 
-        local chunks = format_branch(item, current_branch)
+          if item._in_worktree then
+            table.insert(chunks, { "  worktree", "Comment" })
+          end
 
-        if item._in_worktree then
-          table.insert(chunks, { "  worktree", "Comment" })
-        end
-
-        return chunks
-      end,
-    })
+          return chunks
+        end,
+      })
+    end)
   end)
 end
 
@@ -716,7 +748,10 @@ local function handle_pr_action(action_key, pr)
         info_label = "Checking out " .. label .. "...",
         success_label = "Checked out: " .. label,
         failed_label = "Failed to checkout: ",
-        on_success = cleanup,
+        on_success = function()
+          invalidate_current_branch()
+          cleanup()
+        end,
         on_failure = cleanup,
       })
     end)
@@ -732,6 +767,7 @@ local function handle_pr_action(action_key, pr)
       suppress_notify = true,
       failed_label = "Failed to checkout for diff: ",
       on_success = function()
+        invalidate_current_branch()
         vim.schedule(function()
           vim.cmd("DiffviewOpen " .. pr.baseRefName .. "...HEAD")
         end)
@@ -1118,54 +1154,55 @@ end
 
 function M._create_pr_flow()
   local function create_pr_with_gh(data)
-    local head_branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
-    local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
+    fetch_current_branch(function(head_branch)
+      local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
 
-    table.insert(args, "--body")
-    table.insert(args, data.body)
+      table.insert(args, "--body")
+      table.insert(args, data.body)
 
-    if data.assignee ~= "" then
-      table.insert(args, "--assignee")
-      table.insert(args, data.assignee)
-    end
+      if data.assignee ~= "" then
+        table.insert(args, "--assignee")
+        table.insert(args, data.assignee)
+      end
 
-    if data.reviewers ~= "" then
-      table.insert(args, "--reviewer")
-      table.insert(args, data.reviewers)
-    end
+      if data.reviewers ~= "" then
+        table.insert(args, "--reviewer")
+        table.insert(args, data.reviewers)
+      end
 
-    if data.label ~= "" then
-      table.insert(args, "--label")
-      table.insert(args, data.label)
-    end
+      if data.label ~= "" then
+        table.insert(args, "--label")
+        table.insert(args, data.label)
+      end
 
-    local cmd_str = table.concat(args, " ")
+      local cmd_str = table.concat(args, " ")
 
-    with_ssh_passphrase(function(env, cleanup)
-      exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
-        notify = notify_opts,
-        env = env,
-        suppress_notify = true,
-        failed_label = "Failed to push branch: ",
-        on_success = function()
-          vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
-          cleanup()
+      with_ssh_passphrase(function(env, cleanup)
+        exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
+          notify = notify_opts,
+          env = env,
+          suppress_notify = true,
+          failed_label = "Failed to push branch: ",
+          on_success = function()
+            vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+            cleanup()
 
-          exec_async(args, {
-            notify = notify_opts,
-            success_label = "PR created successfully: ",
-            failed_label = "Failed to create PR: ",
-            on_success = function()
-              vim.cmd("stopinsert")
-              cache.evict_pattern("gh.prs")
-            end,
-            on_failure = function()
-              vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
-            end,
-          })
-        end,
-        on_failure = cleanup,
-      })
+            exec_async(args, {
+              notify = notify_opts,
+              success_label = "PR created successfully: ",
+              failed_label = "Failed to create PR: ",
+              on_success = function()
+                vim.cmd("stopinsert")
+                cache.evict_pattern("gh.prs")
+              end,
+              on_failure = function()
+                vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
+              end,
+            })
+          end,
+          on_failure = cleanup,
+        })
+      end)
     end)
   end
 
@@ -1239,6 +1276,7 @@ function M.git_checkout_branch()
         notify = notify_opts,
         success_label = "Checked out " .. branch,
         failed_label = "Failed to checkout branch: ",
+        on_success = invalidate_current_branch,
       })
     end,
   })
@@ -1251,6 +1289,7 @@ function M.git_checkout_new_branch()
         notify = notify_opts,
         success_label = "Created and checked out " .. branch_name,
         failed_label = "Failed to create branch: ",
+        on_success = invalidate_current_branch,
       })
     end
   end
@@ -1502,72 +1541,72 @@ function M.close_diffview()
 end
 
 function M.git_push(force)
-  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+  fetch_current_branch(function(branch)
+    local push_args = { "git", "push" }
 
-  local push_args = { "git", "push" }
+    if force then
+      table.insert(push_args, "--force")
+    end
 
-  if force then
-    table.insert(push_args, "--force")
-  end
-
-  with_ssh_passphrase(function(env, cleanup)
-    exec_async(push_args, {
-      notify = notify_opts,
-      env = env,
-      info_label = "Pushing to: " .. branch .. "...",
-      success_label = "Pushed to: " .. branch,
-      failed_label = "Failed to push: ",
-      on_success = cleanup,
-      on_failure = cleanup,
-    })
+    with_ssh_passphrase(function(env, cleanup)
+      exec_async(push_args, {
+        notify = notify_opts,
+        env = env,
+        info_label = "Pushing to: " .. branch .. "...",
+        success_label = "Pushed to: " .. branch,
+        failed_label = "Failed to push: ",
+        on_success = cleanup,
+        on_failure = cleanup,
+      })
+    end)
   end)
 end
 
 function M.git_commit(amend)
-  local branch = vim.b.gitsigns_head or vim.fn.system("git branch --show-current"):gsub("\n", "")
+  fetch_current_branch(function(branch)
+    -- Get current commit message when amending
+    local default_msg = ""
 
-  -- Get current commit message when amending
-  local default_msg = ""
-
-  if amend then
-    -- Use %s to get only the subject line (first line) to avoid newline issues
-    default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
-  end
-
-  local function on_input(msg)
-    if msg and msg ~= "" then
-      vim.schedule(function()
-        M.close_diffview()
-
-        local commit_args = { "git", "commit" }
-
-        if amend then
-          table.insert(commit_args, "--amend")
-        end
-
-        table.insert(commit_args, "-m")
-        table.insert(commit_args, msg)
-
-        exec_async(commit_args, {
-          notify = notify_opts,
-          info_label = "Committing...",
-          success_label = "Committed successfully",
-          failed_label = "Commit failed: ",
-          on_success = function()
-            -- Intentional: always push after commit. Amend passes force=true → git push --force.
-            -- Uses --force (not --force-with-lease) by design; acceptable on personal branches.
-            M.git_push(amend)
-          end,
-        })
-      end)
+    if amend then
+      -- Use %s to get only the subject line (first line) to avoid newline issues
+      default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
     end
-  end
 
-  custom_input(
-    amend and "  Amend commit " or "  Commit to " .. branch .. " ",
-    { default = default_msg },
-    on_input
-  )
+    local function on_input(msg)
+      if msg and msg ~= "" then
+        vim.schedule(function()
+          M.close_diffview()
+
+          local commit_args = { "git", "commit" }
+
+          if amend then
+            table.insert(commit_args, "--amend")
+          end
+
+          table.insert(commit_args, "-m")
+          table.insert(commit_args, msg)
+
+          exec_async(commit_args, {
+            notify = notify_opts,
+            info_label = "Committing...",
+            success_label = "Committed successfully",
+            failed_label = "Commit failed: ",
+            on_success = function()
+              -- Intentional: always push after commit. Amend passes force=true → git push --force.
+              -- Uses --force (not --force-with-lease) by design; acceptable on personal branches.
+              M.git_push(amend)
+            end,
+          })
+        end)
+      end
+    end
+
+    custom_input(
+      amend and "  Amend commit " or "  Commit to " .. branch .. " ",
+      { default = default_msg },
+      on_input
+    )
+  end)
 end
 
 function M.git_commit_amend()
@@ -1658,6 +1697,7 @@ local function handle_commit_action(action_key, hash)
       notify = notify_opts,
       success_label = "Checked out " .. hash,
       failed_label = "Failed to checkout: ",
+      on_success = invalidate_current_branch,
     })
   elseif action_key == "cherry" then
     exec_async({ "git", "cherry-pick", hash }, {
