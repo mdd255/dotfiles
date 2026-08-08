@@ -1184,21 +1184,24 @@ function M._create_pr_flow()
           suppress_notify = true,
           failed_label = "Failed to push branch: ",
           on_success = function()
-            vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
             cleanup()
 
-            exec_async(args, {
-              notify = notify_opts,
-              success_label = "PR created successfully: ",
-              failed_label = "Failed to create PR: ",
-              on_success = function()
-                vim.cmd("stopinsert")
-                cache.evict_pattern("gh.prs")
-              end,
-              on_failure = function()
-                vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
-              end,
-            })
+            utils.ensure_gh_account(function()
+              vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+
+              exec_async(args, {
+                notify = notify_opts,
+                success_label = "PR created successfully: ",
+                failed_label = "Failed to create PR: ",
+                on_success = function()
+                  vim.cmd("stopinsert")
+                  cache.evict_pattern("gh.prs")
+                end,
+                on_failure = function()
+                  vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
+                end,
+              })
+            end)
           end,
           on_failure = cleanup,
         })
