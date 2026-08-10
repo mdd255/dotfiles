@@ -73,10 +73,6 @@ function M.custom_layout(opts)
   return layout
 end
 
--- Shared semantic highlight palette. Keep label colours consistent across the
--- git / gh-actions / docker pickers: ok = success/safe, err = destructive/failed,
--- warn = caution, info = neutral/title, muted = de-emphasised, ident = name/author,
--- text = plain body. Reference these names instead of hardcoding "Diagnostic*".
 M.HL = {
   ok = "DiagnosticOk",
   err = "DiagnosticError",
@@ -87,8 +83,6 @@ M.HL = {
   text = "Text",
 }
 
--- Centered floating single-line input. opts: { secret?: bool, default?: string, width?: number }
--- secret=true masks each char as * via extmark conceal.
 function M.float_input(prompt, opts, callback)
   local buf = vim.api.nvim_create_buf(false, true)
   local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
@@ -118,8 +112,6 @@ function M.float_input(prompt, opts, callback)
 
   if opts.secret then
     local ns = vim.api.nvim_create_namespace("float_input_mask")
-    -- conceallevel=2: extmarks with conceal char replace their range in the display.
-    -- concealcursor=nicv: conceal active in all modes so * shows even while typing.
     vim.wo[win].conceallevel = 2
     vim.wo[win].concealcursor = "nicv"
 
@@ -176,10 +168,6 @@ function M.float_input(prompt, opts, callback)
   end)
 end
 
--- Responsive single-line float input — like float_input but width adapts to
--- screen size via flex_picker_size. Use for all inputs except the SSH passphrase
--- prompt (which has secret masking and its own border_hl).
--- opts: same as float_input, plus optional width_frac (0–1, default 0.5).
 function M.custom_input(prompt, opts, callback)
   opts = opts or {}
   local size = M.flex_picker_size({ width = opts.width_frac or 0.5 })
@@ -188,11 +176,6 @@ function M.custom_input(prompt, opts, callback)
   M.float_input(prompt, merged, callback)
 end
 
--- Prompt the user to type "y" before running a destructive action. Shared by
--- the git / gh-actions / docker pickers so every irreversible op guards the same
--- way. on_confirm fires only on an exact (case-insensitive) "y".
--- @param prompt string
--- @param on_confirm function
 function M.confirm_dangerous(prompt, on_confirm)
   M.float_input(prompt .. " Y confirm ", {}, function(input)
     if input and input:lower() == "y" then
@@ -203,7 +186,6 @@ function M.confirm_dangerous(prompt, on_confirm)
   end)
 end
 
--- Treesitter incremental selection (history-based expand/shrink)
 local _ts_history = {}
 
 local function _ts_apply(node)
@@ -293,7 +275,6 @@ function M.move_to_start_of_word()
   end
 end
 
--- @param opts table
 function M.create_macro(opts)
   if opts.pre_fn then
     opts.pre_fn()
@@ -310,22 +291,7 @@ function M.term_cmd(cmd)
   vim.cmd("startinsert")
 end
 
--- Keymap utility functions
--- @param lhs string|table - keymap or table of keymap configs
--- @param rhs any - command/function (ignored if lhs is table)
--- @param opts? table - options (ignored if lhs is table)
--- @return nil
--- Usage examples:
--- map("H", "<cmd>bprevious<cr>") -- single keymap with default options
--- map("H", "<cmd>bprevious<cr>", { modes = {"n"}, desc = "Previous buffer" })
--- map({
---   {"H", "<cmd>bprevious<cr>", { modes = {"n"}, desc = "Previous" }},
---   {"I", "<cmd>bnext<cr>", { modes = {"n", "v"}, silent = false }},
---   {"<cr>", ":", { modes = {"n"} }}
--- })
 function M.map(lhs, rhs, opts)
-  -- String form: map("H", rhs, opts) — normalise to the table-of-configs shape
-  -- the loop below expects, so the documented single-keymap usage works.
   if type(lhs) == "string" then
     lhs = { { lhs, rhs, opts } }
     opts = nil
@@ -335,7 +301,6 @@ function M.map(lhs, rhs, opts)
 
   for _, item in ipairs(lhs) do
     if type(item) == "table" and #item >= 2 then
-      -- Table format: {keymap, command, opts}
       local key = item[1]
       local command = item[2]
       local key_opts = vim.tbl_deep_extend("force", {}, default_opts, item[3] or {})
@@ -367,14 +332,6 @@ function M.map(lhs, rhs, opts)
   end
 end
 
--- @param lhs string|table - keymap or table of keymaps/configs
--- @param modes? string|table - default modes if lhs is string, or fallback modes
--- @return nil
--- Usage examples:
--- unmap("H") -- unmap "H" in normal mode
--- unmap("H", {"n", "v"}) -- unmap "H" in normal and visual modes
--- unmap({"H", "I", "m"}) -- unmap multiple keys in normal mode
--- unmap({{"H", {"n", "v"}}, {"I", "n"}, "m"}) -- mixed: H in n+v, I in n, m in default
 function M.unmap(lhs, modes)
   if type(lhs) == "string" then
     lhs = { lhs }
@@ -388,10 +345,8 @@ function M.unmap(lhs, modes)
 
   for _, item in ipairs(lhs) do
     if type(item) == "string" then
-      -- Simple string keymap, use default modes
       pcall(vim.keymap.del, default_modes, item)
     elseif type(item) == "table" and #item >= 1 then
-      -- Table format: {keymap, modes}
       local key = item[1]
       local key_modes = item[2] or default_modes
 
@@ -416,7 +371,6 @@ function M.flex_picker_size(opts)
 
   local is_wide_screen = vim.o.columns > vim.o.lines * 2
 
-  -- horizontally screen
   if is_wide_screen then
     return {
       width = math.floor(width * max_width),
@@ -425,7 +379,6 @@ function M.flex_picker_size(opts)
     }
   end
 
-  -- vertical screen
   return {
     width = math.min(math.floor(max_width * width * 1.7), max_width),
     height = math.min(math.floor(max_height * height), max_height),
@@ -433,10 +386,6 @@ function M.flex_picker_size(opts)
   }
 end
 
--- Parse newline-delimited JSON (one object per line, e.g. `docker ... --format
--- '{{json .}}'`). Bad lines are skipped silently. Returns a list table.
--- @param stdout string|nil
--- @return table
 function M.parse_json_lines(stdout)
   local out = {}
   local skipped = 0
@@ -458,11 +407,6 @@ function M.parse_json_lines(stdout)
   return out
 end
 
--- Resolve a multi-select picker's effective selection: the explicit multi
--- selection if any, else the item under the cursor, else empty. Centralises the
--- "selected → current → bail" fallback repeated across pickers.
--- @param picker table
--- @return table list of items (possibly empty)
 function M.picker_selection(picker)
   local selected = picker:selected()
 
@@ -477,26 +421,6 @@ function M.picker_selection(picker)
   return selected
 end
 
--- Shared floating picker. Used by every git / docker / gh-actions list & action
--- submenu, which were all hand-rolling the same finder + layout + confirm shape.
--- @param items list - finder items (each needs `.text`; `.hl` honoured by default format)
--- @param on_confirm function(item) - runs scheduled, after the picker closes.
---   Ignored if opts.confirm is given (multi-select pickers need the raw
---   picker to resolve the selection themselves).
--- @param opts? table
---   title       string|table - plain title or a snacks chunk table for a coloured title
---   width/height/fullscreen/preview_ratio - forwarded to custom_layout
---   show_preview boolean     - reserve a preview pane in the layout
---   format      function(item, picker) - row renderer, default colours by `.hl`
---   finder      function()->items      - default: return the fixed `items` list
---   preview     string                 - snacks top-level preview mode, e.g. "preview"
---   multi       table                  - snacks top-level multi-select opts
---   actions     table                  - custom picker actions (cycle_filter, refresh, ...)
---   win         table                  - snacks win/keymap overrides
---   confirm     function(picker, item) - full confirm override, bypasses on_confirm
--- Default action-row renderer: colour each row by its `.hl` (falling back to the
--- shared `text` group). Items embed their own icon in `.text`, so a single
--- `{ text, hl }` segment keeps every action menu visually identical.
 local function menu_default_format(item)
   return { { item.text, item.hl or M.HL.text } }
 end
@@ -540,9 +464,6 @@ function M.menu_picker(items, on_confirm, opts)
   })
 end
 
--- Returns a `refresh` action for cached pickers.
--- invalidate_fn() evicts the cache; fetch_fn(cb) is pre-bound with any filter
--- args; populate_fn(data) rebuilds the items upvalue from the fresh payload.
 function M.make_refresh_action(invalidate_fn, fetch_fn, populate_fn)
   return function(picker)
     invalidate_fn()
@@ -558,12 +479,6 @@ function M.make_refresh_action(invalidate_fn, fetch_fn, populate_fn)
   end
 end
 
--- Shared async shell helper: runs cmd, calls parse_fn(stdout) on success.
--- Returns function(callback) matching the pattern used by cached list fetchers
--- across git / docker / gh-actions (commits, stashes, PRs, containers, images,
--- runs, workflows). notify_opts is the caller's `{ title = ... }` table;
--- err_msg fires only on a non-zero exit — parse failures are parse_fn's job
--- (return nil + vim.notify, e.g. via safe_json_decode).
 function M.system_async(cmd, notify_opts, err_msg, parse_fn)
   return function(callback)
     vim.system(cmd, {}, function(result)
@@ -585,8 +500,6 @@ function M.system_async(cmd, notify_opts, err_msg, parse_fn)
   end
 end
 
--- Decode a single JSON value (e.g. `gh ... --json ...`'s array output).
--- Returns nil + notifies err_label on invalid JSON or a non-table result.
 function M.safe_json_decode(str, err_label, notify_opts)
   local ok, data = pcall(vim.json.decode, str or "[]")
 
@@ -638,10 +551,6 @@ function M.exec_async(cmd, opts)
   end)
 end
 
--- Switch `gh` CLI account to match the repo's git user before a gh pr/action
--- command runs. Triggered on-demand (not on DirChanged) so multiple nvim
--- instances on different projects don't race each other switching the
--- shared, machine-wide `gh` auth state in the background.
 function M.ensure_gh_account(callback)
   vim.system({ "git", "config", "user.name" }, { text = true }, function(git_result)
     if git_result.code ~= 0 then

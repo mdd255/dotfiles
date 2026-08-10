@@ -59,7 +59,7 @@ return {
           end,
           labeler = function(matches)
             for _, m in ipairs(matches) do
-              m.label = m.label2 -- use the second label
+              m.label = m.label2
             end
           end,
         })

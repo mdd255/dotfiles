@@ -9,8 +9,6 @@ local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
--- Runs a chain of async steps sequentially without nesting.
--- Each step: function(data, continue) — call continue(data) to advance.
 local function step_chain(steps, initial_data)
   local function go(i, data)
     if i > #steps then
@@ -36,11 +34,8 @@ local notify_opts = {
   title = " Git",
 }
 
-local GH_TTL_MS = 5 * 60 * 60 * 1000 -- 5 h
+local GH_TTL_MS = 5 * 60 * 60 * 1000
 
--- Cached current branch (5 m TTL safety net — explicitly invalidated on our
--- own checkout actions and on DirChanged, so the TTL rarely matters; it only
--- covers checkouts done outside this plugin, e.g. a terminal or lazygit).
 local BRANCH_TTL_MS = 5 * 60 * 1000
 local fetch_current_branch_cached = cache.wrap("git.current_branch", BRANCH_TTL_MS, function(callback)
   vim.system({ "git", "branch", "--show-current" }, {}, function(result)
@@ -50,11 +45,6 @@ local fetch_current_branch_cached = cache.wrap("git.current_branch", BRANCH_TTL_
   end)
 end)
 
--- Normalizes to "" (never nil): cache.invalidate() can drain a queued waiter
--- with nil if it fires while a fetch for this key is already in flight
--- (see cache.lua invalidate — the in-flight result lands on a cache entry
--- that was just cleared, so it's dropped). Callers below concatenate this
--- value straight into strings/argv, so a bare nil would throw or corrupt args.
 local function fetch_current_branch(callback)
   fetch_current_branch_cached(function(branch)
     callback(branch or "")
@@ -70,8 +60,6 @@ vim.api.nvim_create_autocmd("DirChanged", {
   callback = invalidate_current_branch,
 })
 
--- Prompt for SSH key passphrase, write a temp SSH_ASKPASS helper script,
--- then call fn(env, cleanup). env is nil when passphrase is empty (key unlocked).
 local function with_ssh_passphrase(fn)
   float_input("  SSH passphrase ", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
@@ -81,20 +69,14 @@ local function with_ssh_passphrase(fn)
 
     local tmp = vim.fn.tempname() .. ".sh"
     local uv = vim.uv or vim.loop
-    -- Create owner-only (0700) from birth via fs_open: the file holds the SSH
-    -- passphrase in plaintext, so it must never be group/world-readable. io.open
-    -- would create it 0644 and a later `chmod +x` leaves a brief readable window.
     local fd = uv.fs_open(tmp, "w", tonumber("700", 8))
 
     if not fd then
       vim.notify("Failed to create SSH askpass script", vim.log.levels.ERROR, notify_opts)
-      -- Fall back to the no-askpass path instead of stranding the caller: fn must
-      -- still fire or the push/pull/checkout that awaits it hangs forever.
       fn(nil, function() end)
       return
     end
 
-    -- Use printf to safely echo passphrase; escape single quotes in passphrase.
     local safe = passphrase:gsub("'", "'\\''")
     uv.fs_write(fd, "#!/bin/sh\nprintf '%s\\n' '" .. safe .. "'\n")
     uv.fs_close(fd)
@@ -109,10 +91,6 @@ local function with_ssh_passphrase(fn)
   end)
 end
 
--- Helper function to get list of branches (no cache — cheap local command).
--- @param exclude_current: boolean - whether to exclude current branch
--- @param unique: boolean - whether to ensure unique values
--- @return function that takes a callback
 local function get_branches(exclude_current, unique)
   return function(callback)
     vim.system({ "git", "branch", "-a", "--sort=-committerdate" }, {}, function(result)
@@ -123,9 +101,6 @@ local function get_branches(exclude_current, unique)
           return
         end
 
-        -- Single pass: `git branch -a` lists the local `* current` entry before
-        -- its `remotes/origin/<current>` duplicate, so the current branch is
-        -- always discovered before exclude_current needs to compare against it.
         local branches = {}
         local seen = {}
         local current_branch = nil
@@ -163,16 +138,6 @@ local function get_branches(exclude_current, unique)
   end
 end
 
--- Shared branch picker. Fetches branches, renders them with the standard branch
--- formatting (current = green, main/master = warn, worktree tag), then calls
--- on_confirm(branch) with the selected branch name.
--- @param opts table:
---   title           string   - picker title text
---   title_hl        string   - title highlight group (default "DiagnosticInfo")
---   exclude_current boolean  - drop the current branch from the list
---   on_confirm      function - called with the selected branch name
---   format          function - optional (item, current_branch) chunk override;
---                              replaces the default branch + worktree formatting
 local function branch_picker(opts)
   fetch_current_branch(function(current_branch)
     get_branches(opts.exclude_current, true)(function(branches, worktree_set)
@@ -242,9 +207,6 @@ local function get_stashes()
   end)
 end
 
--- Shared stash picker layout factory.
--- @param title string - picker title
--- @param on_confirm function - called with selected item
 local function stash_picker(title, on_confirm, title_hl)
   get_stashes()(function(items)
     if not items then
@@ -269,7 +231,6 @@ local function stash_picker(title, on_confirm, title_hl)
   end)
 end
 
--- Cached GH accounts fetcher (5 h TTL — network call, warmed on session load).
 local get_gh_accounts = cache.wrap("gh.accounts", GH_TTL_MS, function(callback)
   vim.system({ "gh", "auth", "status" }, {}, function(result)
     vim.schedule(function()
@@ -307,7 +268,6 @@ local get_gh_accounts = cache.wrap("gh.accounts", GH_TTL_MS, function(callback)
   end)
 end)
 
--- Cached current GH login fetcher (5 h TTL — warmed on session load).
 local fetch_current_login = cache.wrap("gh.current_login", GH_TTL_MS, function(callback)
   vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(result)
     vim.schedule(function()
@@ -317,7 +277,6 @@ local fetch_current_login = cache.wrap("gh.current_login", GH_TTL_MS, function(c
   end)
 end)
 
--- Cached repo name fetcher (5 h TTL — never changes within a session).
 local fetch_repo_name = cache.wrap("gh.repo_name", GH_TTL_MS, function(callback)
   vim.system({ "gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner" }, {}, function(result)
     vim.schedule(function()
@@ -331,7 +290,6 @@ local fetch_repo_name = cache.wrap("gh.repo_name", GH_TTL_MS, function(callback)
   end)
 end)
 
--- Cached collaborators fetcher (5 h TTL — warmed on session load).
 local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(callback)
   fetch_repo_name(function(repo)
     if not repo then
@@ -355,9 +313,6 @@ local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(c
   end)
 end)
 
--- ── Shared PR helpers (module-level so PR picker + create_pr both use them) ───
-
--- Multi-line floating text editor. default_lines: optional table of strings.
 local function prompt_body(default_lines, callback)
   local buf = vim.api.nvim_create_buf(false, true)
   vim.bo[buf].bufhidden = "wipe"
@@ -419,7 +374,6 @@ local function prompt_body(default_lines, callback)
   end, map_opts)
 end
 
--- Multi-select reviewer picker. title: optional string override.
 local function select_reviewers(title, callback)
   if not cache.is_cached("gh.collaborators") then
     vim.notify("Loading reviewers...", vim.log.levels.INFO, notify_opts)
@@ -464,8 +418,6 @@ local function select_reviewers(title, callback)
 
   fetch_collaborators(show_picker)
 end
-
--- ── PR picker ─────────────────────────────────────────────────────────────────
 
 local PR_FILTERS = {
   { name = "All open", search = "" },
@@ -531,8 +483,6 @@ local function get_gh_prs(filter, callback)
   gh_pr_fetchers[key](callback)
 end
 
--- Highlight maps keyed by mergeStateStatus / reviewDecision — module-level so
--- the picker format fn doesn't rebuild them for every rendered row.
 local PR_STATE_HLS = {
   CLEAN = HL.ok,
   DIRTY = HL.err,
@@ -547,8 +497,6 @@ local PR_REVIEW_HLS = {
   REVIEW_REQUIRED = HL.warn,
 }
 
--- Preview badge strings — module-level so format_pr_items doesn't rebuild these
--- literal tables for every PR row.
 local PR_STATE_BADGES = {
   CLEAN = "> ✅ **CLEAN**",
   DIRTY = "> ❌ **DIRTY**",
@@ -563,7 +511,6 @@ local PR_REVIEW_BADGES = {
   REVIEW_REQUIRED = "⏳ REVIEW REQUIRED",
 }
 
--- Badges for review-submission states shown in the preview activity feed.
 local REVIEW_STATE_BADGES = {
   APPROVED = "✅ **approved**",
   CHANGES_REQUESTED = "❌ **requested changes**",
@@ -571,44 +518,42 @@ local REVIEW_STATE_BADGES = {
   DISMISSED = "⊘ dismissed",
 }
 
--- Collapse a multi-line comment/review body to a single truncated line so the
--- activity feed stays scannable — the full text still lives on GitHub.
 local function one_line(text, limit)
   local s = (text or ""):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+
   if s == "" then
     return nil
   end
+
   if #s > limit then
     s = s:sub(1, limit - 1) .. "…"
   end
+
   return s
 end
 
--- Build the markdown "Activity" feed for a PR preview: review events
--- (approvals / change requests / review comments), pending review requests,
--- then issue-level comments. gh returns each list already in chronological order.
 local function format_pr_activity(pr)
   local lines = {}
 
   for _, r in ipairs(pr.reviews or {}) do
-    -- Skip PENDING (unsubmitted) reviews — no signal for a reader yet.
     if r.state and r.state ~= "PENDING" then
       local who = r.author and r.author.login or "?"
       local badge = REVIEW_STATE_BADGES[r.state] or r.state
       table.insert(lines, string.format("- %s — **%s**", badge, who))
 
       local body = one_line(r.body, 100)
+
       if body then
         table.insert(lines, "  > " .. body)
       end
     end
   end
 
-  -- reviewRequests entries are Users ({login}) or Teams ({name}/{slug}).
   if pr.reviewRequests and #pr.reviewRequests > 0 then
     local names = vim.tbl_map(function(rr)
       return rr.login or rr.name or rr.slug or "?"
     end, pr.reviewRequests)
+
     table.insert(lines, "- ⏳ **review requested:** " .. table.concat(names, ", "))
   end
 
@@ -624,10 +569,6 @@ local function format_pr_activity(pr)
   return table.concat(lines, "\n")
 end
 
--- Count distinct approving reviewers. A reviewer may submit many reviews, so we
--- keep only each author's LATEST approval-state review (chronological `reviews`
--- order means last write wins), ignoring COMMENTED/PENDING which don't change
--- approval status, then count those left at APPROVED.
 local function count_approvals(pr)
   local latest = {}
 
@@ -638,6 +579,7 @@ local function count_approvals(pr)
   end
 
   local n = 0
+
   for _, state in pairs(latest) do
     if state == "APPROVED" then
       n = n + 1
@@ -666,6 +608,7 @@ local function format_pr_items(prs)
 
     local state_str = PR_STATE_BADGES[pr.mergeStateStatus or ""]
       or ("> ❓ **" .. (pr.mergeStateStatus or "UNKNOWN") .. "**")
+
     local approvals = count_approvals(pr)
     local approval_suffix = (pr.reviewDecision == "APPROVED" and approvals > 0) and (" (" .. approvals .. ")") or ""
     local review_str = (PR_REVIEW_BADGES[pr.reviewDecision or ""] or "💬 no review") .. approval_suffix
@@ -820,8 +763,6 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "edit_body" then
-    -- vim.split with plain=true: `gmatch("[^\n]*")` matches the empty string
-    -- between every newline, injecting phantom blank lines into the editor.
     local default_lines = vim.split(pr.body or "", "\n", { plain = true })
     prompt_body(default_lines, function(body)
       exec_async({ "gh", "pr", "edit", id, "--body", body }, {
@@ -878,7 +819,6 @@ local function handle_pr_action(action_key, pr)
       })
     end)
   elseif action_key == "checks" then
-    -- Stream CI status in a terminal; gh --watch blocks until checks settle.
     utils.term_cmd("gh pr checks " .. id .. " --watch")
   elseif action_key == "add_label" then
     custom_input("  Labels ", {}, function(lbl)
@@ -905,7 +845,6 @@ local function handle_pr_action(action_key, pr)
   end
 end
 
--- Fetch unresolved comment count, then show action submenu.
 local function show_pr_actions(pr)
   vim.system({ "gh", "pr", "view", tostring(pr.number), "--json", "reviewThreads" }, {}, function(result)
     vim.schedule(function()
@@ -926,8 +865,8 @@ local function show_pr_actions(pr)
       local merge_icon = MERGE_STATE_ICONS[pr.mergeStateStatus or ""] or "?"
       local unresolved_str = unresolved > 0 and (" · " .. unresolved .. " unresolved 󰅺") or ""
       local title = string.format(" #%d · %s %s%s", pr.number, merge_icon, pr.mergeStateStatus or "?", unresolved_str)
-
       local title_hl = PR_STATE_HLS[pr.mergeStateStatus or ""] or HL.info
+
       if pr.isDraft then
         title_hl = HL.muted
       end
@@ -962,6 +901,7 @@ local function show_pr_actions(pr)
       )
 
       local items = {}
+
       for _, a in ipairs(PR_ACTIONS) do
         table.insert(items, {
           text = a.text,
@@ -1093,7 +1033,6 @@ function M.gh_switch_account()
       return
     end
 
-    -- Use cached current login to exclude from the list
     fetch_current_login(function(current_login)
       local filtered = vim.tbl_filter(function(account)
         return account ~= current_login
@@ -1261,8 +1200,6 @@ function M._create_pr_flow()
   }, { assignee = "@me", base = nil, title = nil, body = nil, reviewers = "", label = "" })
 end
 
--- Exported functions
-
 function M.git_add_all()
   exec_async({ "git", "add", "." }, {
     notify = notify_opts,
@@ -1309,6 +1246,7 @@ function M.git_delete_branch()
       local parts = vim.split(item.text, "/")
       if #parts > 1 then
         local prefix = table.concat({ unpack(parts, 1, #parts - 1) }, "/") .. "/"
+
         return {
           { prefix, "Comment" },
           { parts[#parts], "DiagnosticError" },
@@ -1332,7 +1270,6 @@ end
 function M.git_cherry_pick()
   local function on_commit_selected(selected)
     if selected then
-      -- Extract commit hash (first word before space)
       local hash = selected:match("^(%S+)")
 
       exec_async({ "git", "cherry-pick", hash }, {
@@ -1364,7 +1301,6 @@ end
 function M.git_revert()
   local function on_commit_selected(selected)
     if selected then
-      -- Extract commit hash (first word before space)
       local hash = selected:match("^(%S+)")
 
       exec_async({ "git", "revert", hash, "--no-edit" }, {
@@ -1567,11 +1503,9 @@ end
 
 function M.git_commit(amend)
   fetch_current_branch(function(branch)
-    -- Get current commit message when amending
     local default_msg = ""
 
     if amend then
-      -- Use %s to get only the subject line (first line) to avoid newline issues
       default_msg = vim.fn.system("git log -1 --pretty=%s"):gsub("\n$", "")
     end
 
@@ -1595,8 +1529,6 @@ function M.git_commit(amend)
             success_label = "Committed successfully",
             failed_label = "Commit failed: ",
             on_success = function()
-              -- Intentional: always push after commit. Amend passes force=true → git push --force.
-              -- Uses --force (not --force-with-lease) by design; acceptable on personal branches.
               M.git_push(amend)
             end,
           })
@@ -1654,7 +1586,6 @@ function M.git_merge_branch()
   })
 end
 
--- Line blame for the cursor position — lightweight notify, no extra window.
 function M.git_blame()
   local file = vim.fn.expand("%:.")
 
@@ -1677,8 +1608,6 @@ function M.git_blame()
   end)
 end
 
--- ── Commit log browser ────────────────────────────────────────────────────────
-
 local COMMIT_ACTIONS = {
   { text = " View diff", key = "diff", hl = HL.info },
   { text = " Copy hash", key = "copy", hl = HL.info },
@@ -1690,7 +1619,6 @@ local COMMIT_ACTIONS = {
 
 local function handle_commit_action(action_key, hash)
   if action_key == "diff" then
-    -- `<hash>^!` is git shorthand for "this commit vs its parent".
     vim.cmd("DiffviewOpen " .. hash .. "^!")
   elseif action_key == "copy" then
     vim.fn.setreg("+", hash)
@@ -1744,6 +1672,7 @@ function M.git_log()
       end,
       format = function(item, _)
         local hash, rest = item.text:match("^(%S+)%s+(.*)$")
+
         return {
           { (hash or item.text) .. " ", "DiagnosticInfo" },
           { rest or "", "Normal" },
@@ -1771,8 +1700,6 @@ function M.git_log()
   end)
 end
 
--- Warm GH-related caches in background (called on SessionLoadPost).
--- Fires all three network fetches concurrently with no-op callbacks.
 function M.warm_gh_cache()
   get_gh_accounts(function() end)
   fetch_current_login(function() end)

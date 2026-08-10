@@ -128,12 +128,12 @@ return {
 
           -- snacks
           SnacksIndent = { fg = hi.dark_gray },
-          SnacksIndent1 = { fg = "#305777" }, -- blue   ~50%
-          SnacksIndent2 = { fg = "#155d62" }, -- cyan   ~50%
-          SnacksIndent3 = { fg = "#44653c" }, -- green  ~50%
-          SnacksIndent4 = { fg = "#72603d" }, -- yellow ~50%
-          SnacksIndent5 = { fg = "#684d33" }, -- orange ~50%
-          SnacksIndent6 = { fg = "#694575" }, -- purple ~50%
+          SnacksIndent1 = { fg = "#305777" },
+          SnacksIndent2 = { fg = "#155d62" },
+          SnacksIndent3 = { fg = "#44653c" },
+          SnacksIndent4 = { fg = "#72603d" },
+          SnacksIndent5 = { fg = "#684d33" },
+          SnacksIndent6 = { fg = "#694575" },
           SnacksIndentScope = { fg = "#437aa7" },
           SnacksPickerPrompt = { bg = hi.black, fg = hi.white },
           SnacksPickerListCursorLine = { bg = hi.dark_gray },

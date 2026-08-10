@@ -9,11 +9,9 @@ local snacks = require("snacks")
 local M = {}
 
 local cache = require("config.cache")
-local CACHE_TTL_MS = 300000 -- 5 min in ms
+local CACHE_TTL_MS = 300000
 
 local notify_opts = { title = " GH Actions" }
-
--- ── Filters ───────────────────────────────────────────────────────────────────
 
 local RUN_FILTERS = {
   { name = "Recent", status = nil },
@@ -27,8 +25,6 @@ local function run_cache_key(f)
   return "gh.runs." .. (f.status or "recent")
 end
 
--- ── Status / conclusion icons ──────────────────────────────────────────────────
-
 local CONCLUSION_HLS = {
   success = HL.ok,
   failure = HL.err,
@@ -41,8 +37,6 @@ local CONCLUSION_HLS = {
   stale = HL.muted,
 }
 
--- gh `--json` fields can be missing or JSON null (decoded to vim.NIL); coerce to
--- a safe string before :sub() to avoid nil-index crashes on odd runs.
 local function safe_str(v)
   if v == nil or v == vim.NIL then
     return "N/A"
@@ -51,9 +45,6 @@ local function safe_str(v)
   return tostring(v)
 end
 
--- ── Fetch runs ────────────────────────────────────────────────────────────────
-
--- Raw async fetcher factory for a given filter (no cache logic here).
 local function make_runs_fetcher(filter)
   return function(callback)
     local cmd = {
@@ -76,7 +67,6 @@ local function make_runs_fetcher(filter)
   end
 end
 
--- One cache.wrap entry per filter — inflight deduplication + TTL per filter key.
 local gh_runs_fetchers = cache.wrap_filters(RUN_FILTERS, CACHE_TTL_MS, run_cache_key, make_runs_fetcher)
 
 local function get_gh_runs(filter, callback)
@@ -88,8 +78,6 @@ local function get_gh_runs(filter, callback)
 
   gh_runs_fetchers[key](callback)
 end
-
--- ── Preview text ──────────────────────────────────────────────────────────────
 
 local function run_preview(run)
   local conclusion = run.conclusion
@@ -104,8 +92,6 @@ local function run_preview(run)
     "id:       " .. tostring(run.databaseId),
     "title:    " .. (run.displayTitle or "N/A"),
     "workflow: " .. (run.workflowName or "N/A"),
-    -- safe_str everywhere: gh --json fields can be missing or vim.NIL (null),
-    -- and raw concat against vim.NIL throws.
     "branch:   " .. safe_str(run.headBranch),
     "event:    " .. (run.event or "N/A"),
     "status:   " .. status_str,
@@ -115,12 +101,7 @@ local function run_preview(run)
   }, "\n")
 end
 
--- ── Confirmation prompt ───────────────────────────────────────────────────────
-
--- Shared "type yes" guard lives in utils now so git / docker guard identically.
 local confirm_dangerous = utils.confirm_dangerous
-
--- ── Actions ───────────────────────────────────────────────────────────────────
 
 local RUN_ACTIONS = {
   { text = "󰑓 re-run", key = "rerun", hl = HL.ok },
@@ -218,10 +199,7 @@ local function run_action(action_key, run)
   end
 end
 
--- ── Action submenu picker ──────────────────────────────────────────────────────
-
 local function show_action_picker(run)
-  -- No format override: menu_picker now colours each row by its `.hl` field.
   utils.menu_picker(RUN_ACTIONS, function(item)
     run_action(item.key, run)
   end, {
@@ -229,8 +207,6 @@ local function show_action_picker(run)
     height = 0.55,
   })
 end
-
--- ── Main picker ────────────────────────────────────────────────────────────────
 
 local function open_actions_picker()
   local f = RUN_FILTERS[run_filter_idx]
@@ -329,10 +305,6 @@ function M.gh_actions_picker()
   utils.ensure_gh_account(open_actions_picker)
 end
 
--- ── Workflow dispatch ───────────────────────────────────────────────────────
--- List repo workflows, pick one, trigger it on the current branch. Covers the
--- "start a run" gap — gh_actions_picker can only act on runs that already exist.
-
 local get_workflows = cache.wrap(
   "gh.workflows",
   CACHE_TTL_MS,
@@ -359,7 +331,6 @@ function M.gh_workflow_dispatch()
         text = (wf.state == "active" and "  " or "  ") .. wf.name,
         _id = tostring(wf.id),
         _name = wf.name,
-        -- Disabled workflows can't be dispatched — mute them so it's obvious.
         hl = wf.state == "active" and HL.ok or HL.muted,
       })
     end

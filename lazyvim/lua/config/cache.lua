@@ -1,17 +1,9 @@
 local M = {}
 
 local uv = vim.uv or vim.loop
-
--- Runtime cache entries: key → { data, ts, inflight, waiters }
 local _cache = {}
-
--- Registry for background reload: key → { fn, ttl_ms }
--- Populated by wrap(), used by invalidate to re-prime the cache.
 local _registry = {}
 
---- Internal: run a fetch and store the result. Drains any queued waiters.
--- @param key   string
--- @param fn    function(callback)
 local function _do_fetch(key, fn)
   local entry = _cache[key]
 
@@ -42,13 +34,6 @@ local function _do_fetch(key, fn)
   end)
 end
 
---- Wrap an async fn(callback) with a TTL cache.
--- If the cached value is fresh, callback is called immediately (scheduled).
--- If a fetch is already in flight, callback is queued and called when it lands.
--- @param key     string  — cache key
--- @param ttl_ms  number  — time-to-live in milliseconds
--- @param fn      function(callback) — original async fetcher
--- @return function(callback) — drop-in cached replacement
 function M.wrap(key, ttl_ms, fn)
   _registry[key] = { fn = fn, ttl_ms = ttl_ms }
 
@@ -56,7 +41,6 @@ function M.wrap(key, ttl_ms, fn)
     local entry = _cache[key]
     local now = uv.now()
 
-    -- Cache hit: data present and fresh
     if entry and entry.data ~= nil and (now - entry.ts) < ttl_ms then
       vim.schedule(function()
         callback(entry.data)
@@ -64,26 +48,16 @@ function M.wrap(key, ttl_ms, fn)
       return
     end
 
-    -- Inflight: another caller is already fetching — queue this callback
     if entry and entry.inflight then
       table.insert(entry.waiters, callback)
       return
     end
 
-    -- Miss: fetch and immediately serve caller via _do_fetch
-    -- Inject callback as a waiter so _do_fetch drains it on completion
     _cache[key] = { data = nil, ts = 0, inflight = false, waiters = { callback } }
     _do_fetch(key, fn)
   end
 end
 
---- Build a table of cached fetchers, one per filter entry.
--- key_fn(f) → string used as BOTH the cache key and the table index.
--- fetcher_fn(f) → function(callback) — the async fetcher for that filter.
--- @param filters    table   list of filter descriptors
--- @param ttl        number  TTL in milliseconds, shared by all entries
--- @param key_fn     function(f) → string
--- @param fetcher_fn function(f) → function(callback)
 function M.wrap_filters(filters, ttl, key_fn, fetcher_fn)
   local fetchers = {}
   for _, f in ipairs(filters) do
@@ -93,10 +67,6 @@ function M.wrap_filters(filters, ttl, key_fn, fetcher_fn)
   return fetchers
 end
 
---- Invalidate one or more exact cache keys and async-reload them in background.
--- If a fetch is already in flight for a key, skip rescheduling — the in-flight
--- result will land into a fresh entry shortly anyway.
--- @param keys string|string[]
 function M.invalidate(keys)
   if type(keys) == "string" then
     keys = { keys }
@@ -108,7 +78,9 @@ function M.invalidate(keys)
 
     if entry and entry.inflight then
       for _, w in ipairs(entry.waiters or {}) do
-        vim.schedule(function() w(nil) end)
+        vim.schedule(function()
+          w(nil)
+        end)
       end
     else
       local reg = _registry[k]
@@ -122,10 +94,6 @@ function M.invalidate(keys)
   end
 end
 
---- Evict all keys starting with prefix without scheduling a background reload.
--- Use when the next caller should fetch fresh data lazily (e.g. after create-PR where
--- a background fetch would race GitHub's API before the new PR is indexed).
--- @param prefix string  e.g. "gh.prs"
 function M.evict_pattern(prefix)
   for k, entry in pairs(_cache) do
     if k:sub(1, #prefix) == prefix and not entry.inflight then
@@ -134,9 +102,6 @@ function M.evict_pattern(prefix)
   end
 end
 
---- Invalidate all keys starting with prefix (plain string, not a Lua pattern) and async-reload each.
--- Inflight entries: drain their waiters with nil (so callers don't hang), then clear and reload.
--- @param prefix string  e.g. "docker.containers" or "gh.runs"
 function M.invalidate_pattern(prefix)
   local to_reload = {}
 
@@ -144,7 +109,9 @@ function M.invalidate_pattern(prefix)
     if k:sub(1, #prefix) == prefix then
       if entry.inflight then
         for _, w in ipairs(entry.waiters or {}) do
-          vim.schedule(function() w(nil) end)
+          vim.schedule(function()
+            w(nil)
+          end)
         end
       else
         table.insert(to_reload, k)
@@ -165,9 +132,6 @@ function M.invalidate_pattern(prefix)
   end
 end
 
---- Returns true if key has fresh data (cache hit, no fetch needed).
--- Use to gate "Loading..." notifies so they only fire on misses.
--- @param key string
 function M.is_cached(key)
   local entry = _cache[key]
   if not entry or entry.data == nil then

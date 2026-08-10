@@ -56,7 +56,6 @@ return {
           return
         end
 
-        -- diffview API varies by version: panel.cur_file or view.cur_file
         local cur = view.panel.cur_file or view.cur_file
 
         if cur then

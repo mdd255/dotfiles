@@ -82,7 +82,6 @@ local function setup_cursor_options()
   vim.opt_local.cursorline = not vim.tbl_contains(cursorline_blacklist, ft)
 end
 
--- Enable cursorline and relativenumber for specific filetypes
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FileType" }, {
   group = vim.api.nvim_create_augroup("CursorOptionsEnter", { clear = true }),
   callback = function()
@@ -135,8 +134,6 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
       end
     end
 
-    -- Warm GH caches in background so first picker open is instant.
-    -- Runs after a short delay to not compete with session restore I/O.
     vim.defer_fn(function()
       require("config.git-functions").warm_gh_cache()
     end, 10000)

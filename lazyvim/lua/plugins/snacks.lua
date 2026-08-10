@@ -118,7 +118,6 @@ return {
         input = {
           minimal = true,
           keys = {
-            -- <C-i> and <Tab> share the same keycode in terminals but are distinct in Neovide — intentional.
             ["<C-i>"] = { "preview_scroll_up", mode = { "n", "i" } },
             ["<Esc>"] = { "close", mode = { "n", "i" } },
             ["<C-n>"] = { "list_down", mode = { "n", "i" } },

@@ -29,9 +29,6 @@ local function format_container_ports(str)
   return ports
 end
 
--- ── Containers ────────────────────────────────────────────────────────────────
-
--- Forward declarations — referenced in action callbacks before their definitions.
 local open_container_picker
 local open_image_picker
 
@@ -66,8 +63,6 @@ local CONTAINER_ACTIONS = {
   { text = " copy name", key = "copy_name", hl = HL.info },
 }
 
--- Table-driven docker container CLI actions. Each entry produces an
--- exec_async call against the container ID with consistent notify labels.
 local CONTAINER_CMD_ACTIONS = {
   stop = { args = { "stop" }, verb = "Stopping", past = "Stopped" },
   start = { args = { "start" }, verb = "Starting", past = "Started" },
@@ -96,7 +91,6 @@ local function run_container_action(action_key, containers)
       end
     end
 
-    -- `remove` is irreversible (docker rm -f) — gate it behind a yes prompt.
     if action_key == "remove" then
       utils.confirm_dangerous(" 󰧧 Remove " .. #containers .. " container(s)?", run_all)
     else
@@ -155,14 +149,12 @@ local function show_action_picker(selected_containers, action_list, on_action)
   end, { height = 0.5 })
 end
 
--- Raw container fetcher (no cache). Used internally by get_containers.
 local function fetch_containers_raw(filter_args, callback)
   local cmd = vim.list_extend({ "docker", "ps", "--format", "{{json .}}" }, filter_args)
 
   utils.system_async(cmd, notify_opts, "Failed to list containers", parse_json_lines)(callback)
 end
 
--- Cached container fetchers — one per filter, registered once at load time.
 local _container_fetchers = cache.wrap_filters(CONTAINER_FILTERS, 30000, function(f)
   return "docker.containers." .. table.concat(f.args, "_")
 end, function(f)
@@ -317,8 +309,6 @@ local IMAGE_ACTIONS = {
   { text = "󰋚 history", key = "history", hl = HL.info },
 }
 
--- Display label: short last path segment (registry/namespace stripped) for the
--- picker rows only.
 local function image_label(img)
   if img.Repository and img.Repository ~= "<none>" then
     local tag = (img.Tag and img.Tag ~= "<none>") and img.Tag or "latest"
@@ -329,9 +319,6 @@ local function image_label(img)
   return img.ID
 end
 
--- Command-safe reference: keep the FULL repository path (registry + namespace)
--- so `docker run/tag/history` resolve. `myorg/img` or `ghcr.io/org/img` must not
--- be truncated to the last segment. Falls back to the image ID when untagged.
 local function image_ref(img)
   if img.Repository and img.Repository ~= "<none>" then
     local tag = (img.Tag and img.Tag ~= "<none>") and img.Tag or "latest"
@@ -418,7 +405,6 @@ local function run_image_action(action_key, images)
   end
 end
 
--- Cached image fetcher. TTL 100 s.
 local get_images = cache.wrap(
   "docker.images",
   100000,
@@ -529,8 +515,6 @@ function M.docker_images()
   open_image_picker()
 end
 
--- ── Docker Build ──────────────────────────────────────────────────────────────
-
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
@@ -548,8 +532,6 @@ function M.docker_build()
     end)
   end)
 end
-
--- ── Docker Compose ────────────────────────────────────────────────────────────
 
 local COMPOSE_UP_OPTIONS = {
   { text = "up (attached)", args = {} },
@@ -605,16 +587,10 @@ function M.docker_compose_down()
   end)
 end
 
--- Stream compose logs in a terminal tab (the missing daily companion to up/down).
 function M.docker_compose_logs()
   term_cmd("docker compose logs -f --tail=100")
 end
 
--- ── Prune / Pull ──────────────────────────────────────────────────────────────
-
--- Every entry deletes data, so all are gated by confirm_dangerous. `-f` skips
--- docker's own y/N because the yes-prompt already covers consent. err = wipes
--- reusable data (images/volumes), warn = clears regenerable cruft.
 local PRUNE_OPTIONS = {
   { text = "dangling images", args = { "image", "prune", "-f" }, hl = HL.warn },
   { text = "all unused images", args = { "image", "prune", "-a", "-f" }, hl = HL.err },
@@ -627,7 +603,6 @@ local PRUNE_OPTIONS = {
 function M.docker_prune()
   utils.menu_picker(PRUNE_OPTIONS, function(item)
     utils.confirm_dangerous(" 󰧧 Prune " .. item.text .. "?", function()
-      -- term_cmd so the reclaimed-space report is visible.
       term_cmd("docker " .. table.concat(item.args, " "))
     end)
   end, { title = "   Prune ", height = 0.4 })
@@ -638,7 +613,6 @@ function M.docker_pull()
     if not ref or ref == "" then
       return
     end
-    -- Stream pull progress in a terminal; refresh the image picker with <C-k>.
     term_cmd("docker pull " .. vim.fn.shellescape(ref))
   end)
 end

@@ -14,9 +14,6 @@ local MAX_HISTORY = 20
 -- ── Utilities ───────────────────────────────────────────────────────────────
 
 local function find_pkg_root()
-  -- Search upward from the CURRENT FILE's directory, not the cwd. In a monorepo
-  -- the cwd is usually the repo root, so `.;` would always resolve the root
-  -- package.json even when editing packages/foo/*. Anchor to the buffer's dir.
   local base = vim.fn.expand("%:p:h")
 
   if base == "" then
@@ -137,9 +134,6 @@ local function make_output_win(title, lines)
   _last_win = snacks.win({
     title = " " .. title .. " ",
     title_pos = "center",
-    -- Pass lines as a table (set directly, no concat+resplit). No `ft`: a
-    -- filetype makes snacks attach treesitter/syntax to the whole buffer, which
-    -- is what made huge output (70k+ lines) lag badly.
     ft = "log",
     text = lines,
     width = width,
@@ -172,10 +166,6 @@ local function run_with_output(root, cmd, title, label)
   _run_seq = _run_seq + 1
   local notif_id = "pkgjson_run_" .. _run_seq
 
-  -- Persistent notification (timeout = false): stays up while the script runs,
-  -- dismissed once the output popup is ready. Call snacks.notifier directly —
-  -- vim.notify is intercepted by noice, so snacks.notifier.hide() can't match
-  -- the id and the toast would expire on noice's own timeout instead.
   local display = label or (cmd[1] == "sh" and cmd[2] == "-c") and cmd[3] or table.concat(cmd, " ")
   snacks.notifier.notify(" " .. display, "info", {
     id = notif_id,
@@ -211,9 +201,6 @@ end
 
 local open_packages_picker
 
--- YAML-safe double-quoted scalar. Plain scalars starting with reserved
--- indicators (notably `@` for scoped package names) are invalid YAML and break
--- treesitter highlighting for the rest of the buffer. Quoting + escaping avoids it.
 local function yq(v)
   v = tostring(v == nil and "—" or v)
   v = v:gsub("\\", "\\\\"):gsub('"', '\\"')
@@ -289,12 +276,14 @@ end
 
 open_packages_picker = function()
   local root = find_pkg_root()
+
   if not root then
     vim.notify("No package.json found", vim.log.levels.WARN, notify_opts)
     return
   end
 
   local pkg = read_json(root .. "/package.json")
+
   if not pkg then
     vim.notify("Cannot parse package.json", vim.log.levels.ERROR, notify_opts)
     return
@@ -402,10 +391,6 @@ local function pick_args_and_run(root, pm, script)
     table.insert(items, { text = h })
   end
 
-  -- Custom run action bound to <CR>. Replaces the built-in `confirm`, whose
-  -- guard warns "No results" and bails when the list is empty (no history) or
-  -- the typed args match nothing. Typed text wins (new arg); falls back to the
-  -- highlighted history entry when the input is empty.
   local function run_args(picker)
     local typed = vim.trim(table.concat(vim.api.nvim_buf_get_lines(picker.input.win.buf, 0, -1, false), ""))
     local item = picker:current()
@@ -425,10 +410,6 @@ local function pick_args_and_run(root, pm, script)
     format = function(item, _)
       return { { item.text, "DiagnosticInfo" } }
     end,
-    -- Keep the picker open with an empty list (no history yet). Without this,
-    -- picker.lua closes + warns "No results" before the input is usable.
-    -- No `live = true`: finder runs once on open so history shows immediately,
-    -- LRU first. Typing still filters the static item list.
     show_empty = true,
     layout = custom_layout({
       title = { { " Args · " .. pm .. " run " .. script, "DiagnosticInfo" } },

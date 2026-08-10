@@ -4,7 +4,6 @@ local map = utils.map
 
 -- Colemak-specific keymaps
 map({
-  -- Colemak navigation
   { "n", "v:count == 0 ? 'gj' : 'j'", { expr = true, desc = "Down" } },
   { "e", "v:count == 0 ? 'gk' : 'k'", { expr = true, desc = "Up" } },
   { "i", "l", { desc = "Right" } },

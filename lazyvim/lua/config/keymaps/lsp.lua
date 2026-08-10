@@ -6,11 +6,9 @@ local lsp_functions = require("config.lsp-functions")
 
 -- Disable LazyVim default keymaps
 unmap({
-  -- Misc
   { "<Leader>up" },
   { "<Leader>uG" },
   { "gO" },
-  -- LSP
   { "gra" },
   { "gri" },
   { "grn" },
