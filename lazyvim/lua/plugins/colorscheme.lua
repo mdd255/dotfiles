@@ -105,6 +105,9 @@ return {
           IblWhitespace = { fg = hi.dark_gray },
           WinSeparator = { fg = hi.blue },
 
+          -- LSP
+          LspInlayHint = { fg = hi.comment },
+
           -- gitsigns & diffview
           GitSignsCurrentLineBlame = { bg = hi.black, fg = hi.comment },
           GitSignsAdd = { fg = hi.green },

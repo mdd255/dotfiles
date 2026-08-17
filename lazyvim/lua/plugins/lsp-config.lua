@@ -30,7 +30,8 @@ return {
             client.server_capabilities.inlayHintProvider = false
           end,
         },
-        tsgo = {
+        tsc = {
+          cmd = { "tsc", "--lsp", "--stdio" },
           cmd_env = { GOMEMLIMIT = "6GiB" },
           on_attach = function(client, _)
             client.server_capabilities.documentFormattingProvider = false
@@ -38,18 +39,6 @@ return {
             client.server_capabilities.semanticTokensProvider = nil
             client.server_capabilities.documentHighlightProvider = false
           end,
-          settings = {
-            typescript = {
-              inlayHints = {
-                enumMemberValues = { enabled = false },
-                functionLikeReturnTypes = { enabled = false },
-                parameterNames = { enabled = "none" },
-                parameterTypes = { enabled = false },
-                propertyDeclarationTypes = { enabled = false },
-                variableTypes = { enabled = false },
-              },
-            },
-          },
         },
       },
     },
@@ -68,7 +57,7 @@ return {
         "gopls",
         "tailwindcss-language-server",
         "docker-language-server",
-        "tsgo",
+        "tsc",
         "graphql-language-service-cli",
       },
       ui = { scrollbar = false },

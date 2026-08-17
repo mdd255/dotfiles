@@ -1,3 +1,4 @@
+local cache = require("config.cache")
 local M = {}
 
 ---@class PickerSize
@@ -568,6 +569,10 @@ function M.ensure_gh_account(callback)
     vim.system({ "gh", "api", "user", "-q", ".login" }, { text = true }, function(gh_result)
       vim.schedule(function()
         if gh_result.code ~= 0 then
+          Snacks.notify(
+            "gh auth check failed, skipping account switch: " .. vim.trim(gh_result.stderr or ""),
+            { level = vim.log.levels.WARN, title = "gh auth" }
+          )
           callback()
           return
         end
@@ -581,19 +586,43 @@ function M.ensure_gh_account(callback)
 
         vim.system({ "gh", "auth", "switch", "--user", git_user }, { text = true }, function(switch_result)
           vim.schedule(function()
-            if switch_result.code == 0 then
-              Snacks.notify(
-                string.format("gh: %s → %s", gh_user, git_user),
-                { level = vim.log.levels.INFO, title = "gh auth" }
-              )
-            else
+            if switch_result.code ~= 0 then
               Snacks.notify(
                 string.format("gh switch failed: '%s' not found", git_user),
                 { level = vim.log.levels.WARN, title = "gh auth" }
               )
+              callback()
+              return
             end
 
-            callback()
+            -- gh auth switch can exit 0 without changing who API calls use
+            -- (e.g. GH_TOKEN/GITHUB_TOKEN env var pins the account) so verify.
+            vim.system({ "gh", "api", "user", "-q", ".login" }, { text = true }, function(verify_result)
+              vim.schedule(function()
+                local verified_user = vim.trim(verify_result.stdout or "")
+
+                if verify_result.code == 0 and verified_user == git_user then
+                  cache.invalidate({ "gh.current_login" })
+                  cache.invalidate_pattern("gh.prs")
+                  cache.invalidate_pattern("gh.collaborators")
+
+                  Snacks.notify(
+                    string.format("gh: %s → %s", gh_user, git_user),
+                    { level = vim.log.levels.INFO, title = "gh auth" }
+                  )
+                else
+                  Snacks.notify(
+                    string.format(
+                      "gh switch reported success but still authenticated as '%s' — check GH_TOKEN/GITHUB_TOKEN env var",
+                      verified_user ~= "" and verified_user or gh_user
+                    ),
+                    { level = vim.log.levels.ERROR, title = "gh auth" }
+                  )
+                end
+
+                callback()
+              end)
+            end)
           end)
         end)
       end)

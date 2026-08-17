@@ -1150,18 +1150,14 @@ function M._create_pr_flow()
 
   step_chain({
     function(d, next)
-      fetch_current_login(function(current_login)
-        local title = current_login ~= "" and ("  Select base branch (" .. current_login .. ") ")
-          or "  Select base branch "
-        branch_picker({
-          title = title,
-          exclude_current = true,
-          on_confirm = function(base)
-            d.base = base
-            next(d)
-          end,
-        })
-      end)
+      branch_picker({
+        title = "  Select base branch ",
+        exclude_current = true,
+        on_confirm = function(base)
+          d.base = base
+          next(d)
+        end,
+      })
     end,
     function(d, next)
       vim.system({ "git", "log", "-1", "--pretty=%s" }, {}, function(result)
