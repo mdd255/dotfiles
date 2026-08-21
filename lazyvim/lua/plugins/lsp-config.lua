@@ -38,6 +38,7 @@ return {
             client.server_capabilities.documentRangeFormattingProvider = false
             client.server_capabilities.semanticTokensProvider = nil
             client.server_capabilities.documentHighlightProvider = false
+            client.server_capabilities.inlayHintProvider = false
           end,
         },
       },

@@ -2,11 +2,9 @@
   "permissions": {
     "allow": [
       "Read",
-      "Bash",
       "Edit",
       "WebFetch",
       "Mcp",
-      "Agent",
       "Search"
     ],
     "defaultMode": "auto"
@@ -49,6 +47,7 @@
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "default",
+  "skipWorkflowUsageWarning": true,
   "theme": "dark-daltonized",
   "verbose": false,
   "fileCheckpointingEnabled": false,
@@ -58,5 +57,37 @@
   "inputNeededNotifEnabled": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
-  "skipWorkflowUsageWarning": true
+  "autoMode": {
+    "soft_deny": [
+      "$defaults",
+      "Bash(yarn migration:run-prod:*) in this repo — production migration script",
+      "Bash(yarn db:reset:*) and Bash(yarn migration:drop:*) in this repo — destructive schema operations called out as DESTRUCTIVE in CLAUDE.md"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: Alpha-Bravo-Development (from git remote git-abd:Alpha-Bravo-Development/innovative-roofing-internal-be.git)",
+      "**Cloud provider(s)**: AWS (S3 storage referenced in CLAUDE.md, README, and .env.example)",
+      "**Repository visibility**: assume private unless the remote host and repo name indicate otherwise, or a visibility check in the transcript shows public — gh visibility check not queryable here",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: None configured",
+      "**Default / protected branches**: Default branch is prod (per Repo facts); protection status not queryable here (gh check unavailable) — treat prod as sensitive by name",
+      "**CI/CD deploy targets**: None configured",
+      "**Network posture**: None configured",
+      "**Source control**: This repo's remote — Alpha-Bravo-Development/innovative-roofing-internal-be.git only (no additional orgs configured)",
+      "**Trusted internal domains**: None configured",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: None configured",
+      "**Internal package registry**: None configured",
+      "**Sensitive data locations & audiences**: .env, .env.staging, .env.production, and any file or store holding credentials (JWT_SECRET, AWS keys, DB passwords, BoldSign/QuickMeasure/Slack/Samsara/QBO secrets), personal data (user/contact/lead records), or regulated business data (roofing company financials, job/lead records); preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries prod or production as a whole word or name segment — includes this repo's prod default branch, DATABASE_NAME=god_staging / god_staging_user (staging), and QBO_ENVIRONMENT=sandbox distinctions in .env.example",
+      "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic (note: yarn migration:run-prod script exists in package.json, treat as a prod-namespace operation)",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries prod or production as a whole word or name segment",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development (NestJS backend work in this repo)",
+      "**Trusted repo**: This repo (roofing-be, working directory /home/dh/Projects/ABD/roofing-be) and its origin remote (Alpha-Bravo-Development/innovative-roofing-internal-be.git) only",
+      "**Org-specific CLIs**: None configured",
+      "routine under this repo's src/, test/, and scripts/ prefixes"
+    ]
+  }
 }
