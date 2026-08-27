@@ -6,6 +6,7 @@ local ctrl = "CTRL"
 local ctrl_shift = "CTRL|SHIFT"
 local ctrl_cmd = "CTRL|CMD"
 local alt = "ALT"
+local cmd = "CMD"
 
 config.color_scheme = "AdventureTime"
 config.font = wezterm.font("FiraCode Nerd Font Mono")
@@ -79,6 +80,11 @@ config.keys = {
 	{
 		key = "v",
 		mods = alt,
+		action = action.PasteFrom("Clipboard"),
+	},
+	{
+		key = "v",
+		mods = cmd,
 		action = action.PasteFrom("Clipboard"),
 	},
 	{
