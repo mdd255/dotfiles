@@ -28,7 +28,8 @@
   },
   "enabledPlugins": {
     "context-mode@context-mode": true,
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "superpowers@superpowers-marketplace": true
   },
   "extraKnownMarketplaces": {
     "context-mode": {
@@ -41,6 +42,12 @@
       "source": {
         "source": "github",
         "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
       }
     }
   },

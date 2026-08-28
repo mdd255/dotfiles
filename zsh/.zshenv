@@ -57,6 +57,14 @@ export FZF_DEFAULT_COMMAND='ag -g "" \
   --ignore "node_modules/*" \
   --ignore ".oh-my-zsh/plugins" \
   --ignore ".memestra/*" \
+  --ignore ".claude/*" \
+  --ignore ".claude-abd/*" \
+  --ignore ".cmake/*" \
+  --ignore ".calendars/*" \
+  --ignore ".platformio/*" \
+  --ignore ".thunderbird/*" \
+  --ignore "thunderbird/*" \
+  --ignore "go/*" \
   --ignore "node_modules/*"'
 
 export FZF_CONTROL_T_COMMAND='fd . $HOME'
