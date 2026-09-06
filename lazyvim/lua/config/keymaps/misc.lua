@@ -61,28 +61,26 @@ map({
     { desc = "Comment", remap = true },
   },
 
-  -- Open Claude in new tab
-  {
-    "<C-y>",
-    function()
-      term_cmd("claude-app")
-
-      vim.schedule(function()
-        vim.bo.filetype = "claudecode"
-      end)
-    end,
-    { modes = { "n" }, desc = "Open Claude (AcceleratorApp) in new tab" },
-  },
+  -- Open Claude in new tab (cmd picked by cwd path)
   {
     "<C-o>",
     function()
-      term_cmd("claude-abd")
+      local cwd = vim.fn.getcwd():lower()
+      local cmd = "claude"
+
+      if cwd:find("/abd/", 1, true) then
+        cmd = "claude-abd"
+      elseif cwd:find("/accelerator-app/", 1, true) then
+        cmd = "claude-app"
+      end
+
+      term_cmd(cmd)
 
       vim.schedule(function()
         vim.bo.filetype = "claudecode"
       end)
     end,
-    { modes = { "n" }, desc = "Open Claude (ABD) in new tab" },
+    { modes = { "n" }, desc = "Open Claude (auto by project path) in new tab" },
   },
 
   -- Window maximize
