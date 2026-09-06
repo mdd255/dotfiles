@@ -139,3 +139,28 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
     end, 10000)
   end,
 })
+
+vim.api.nvim_create_autocmd("SessionLoadPost", {
+  group = vim.api.nvim_create_augroup("LspStaleClientCleanup", { clear = true }),
+  callback = function()
+    local cwd = vim.loop.cwd()
+
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      if vim.api.nvim_buf_is_loaded(buf) and not vim.bo[buf].modified then
+        local name = vim.api.nvim_buf_get_name(buf)
+
+        if name ~= "" and not vim.startswith(name, cwd) then
+          vim.api.nvim_buf_delete(buf, { force = true })
+        end
+      end
+    end
+
+    for _, client in ipairs(vim.lsp.get_clients()) do
+      local root = client.root_dir
+
+      if root and not vim.startswith(root, cwd) then
+        vim.lsp.stop_client(client.id, false)
+      end
+    end
+  end,
+})

@@ -8,7 +8,7 @@ local M = {}
 local notify_opts = { title = "󰼷 LSP" }
 
 local LSP_ACTIONS = {
-  { text = " stop", key = "stop", hl = HL.warn },
+  { text = " stop", key = "stop", hl = HL.warn },
   { text = "󰦛 restart", key = "restart", hl = HL.warn },
 }
 
@@ -113,7 +113,6 @@ local function open_lsp_picker()
 end
 
 function M.lsp_clients()
-  vim.notify("Loading lsp clients ...", vim.log.levels.INFO, notify_opts)
   open_lsp_picker()
 end
 
