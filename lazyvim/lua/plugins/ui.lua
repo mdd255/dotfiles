@@ -60,6 +60,15 @@ return {
         long_message_to_split = true,
         lsp_doc_border = true,
       },
+      routes = {
+        {
+          filter = {
+            event = "notify",
+            find = "quit with exit code",
+          },
+          opts = { skip = true },
+        },
+      },
     },
   },
 }

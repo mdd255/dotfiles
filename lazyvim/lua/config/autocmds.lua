@@ -159,7 +159,7 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
       local root = client.root_dir
 
       if root and not vim.startswith(root, cwd) then
-        vim.lsp.stop_client(client.id, false)
+        vim.lsp.stop_client(client.id, true)
       end
     end
   end,
