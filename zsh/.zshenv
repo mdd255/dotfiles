@@ -25,50 +25,35 @@ export FZF_DEFAULT_OPTS="--preview-window 'right:50%' \
   --margin=1,4 \
   --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
 
-export FZF_DEFAULT_COMMAND='ag -g "" \
-  --hidden --ignore-case \
-  --skip-vcs-ignores \
-  --ignore ".git/*" \
-  --ignore "build/*" \
-  --ignore ".gk/*" \
-  --ignore ".pyenv/*" \
-  --ignore ".ssh/*" \
-  --ignore ".biome/*" \
-  --ignore "yay/*" \
-  --ignore ".electron-gyp/*" \
-  --ignore ".swt/*" \
-  --ignore ".password-store/*" \
-  --ignore ".screenlayout/*" \
-  --ignore ".aws/*" \
-  --ignore ".yarn/*" \
-  --ignore ".vim/*" \
-  --ignore "package-lock.json" \
-  --ignore ".idea/*" \
-  --ignore ".eclipse/*" \
-  --ignore "skypeforlinux/*" \
-  --ignore "MongoDB Compass/*" \
-  --ignore "libreoffice/*" \
-  --ignore "Postman/*" \
-  --ignore ".npm/*" \
-  --ignore "virtualenvs/*" \
-  --ignore "BraveSoftware" \
-  --ignore ".gem" \
-  --ignore ".mypy_cache/*" \
-  --ignore "node_modules/*" \
-  --ignore ".oh-my-zsh/plugins" \
-  --ignore ".memestra/*" \
-  --ignore ".claude/*" \
-  --ignore ".claude-abd/*" \
-  --ignore ".cmake/*" \
-  --ignore ".calendars/*" \
-  --ignore ".platformio/*" \
-  --ignore ".thunderbird/*" \
-  --ignore "thunderbird/*" \
-  --ignore "go/*" \
-  --ignore "node_modules/*"'
+export FZF_SEARCH_PATHS="$HOME/Projects $HOME/.config $HOME/Downloads $HOME/Apps $HOME/Documents"
 
-export FZF_CONTROL_T_COMMAND='fd . $HOME'
-export FZF_ALT_C_COMMAND='fdfind -t d . $HOME'
+_fzf_ignore_names=(
+  .git build dist node_modules .next .gk .pyenv .ssh .biome yay .electron-gyp
+  .swt .password-store .screenlayout .aws .yarn .vim package-lock.json .idea
+  .eclipse skypeforlinux "MongoDB Compass" .mongoDB libreoffice Postman .npm
+  virtualenvs BraveSoftware .gem .mypy_cache .oh-my-zsh/plugins .memestra
+  .claude .claude-abd .cmake .calendars .platformio .thunderbird thunderbird go
+  Slack Insomnia google-chrome chromium gtk-3.0 gtk-4.0 dconf pulse systemd
+  fontconfig ibus fcitx fcitx5 nautilus evolution wireplumber xdg-desktop-portal
+  procps swayosd rustdesk khal vdirsyncer mpv imv qalculate SEGGER wiremix
+  hyprland-preview-share-picker waybar mako omarchy uwsm menus autostart
+  environment.d tool_state elephant aether fallow cliamp composer configstore
+  btop eza ngrok xournalpp
+)
+
+_fzf_ag_ignores=""
+_fzf_fd_excludes=""
+for _n in $_fzf_ignore_names; do
+  _fzf_ag_ignores="$_fzf_ag_ignores --ignore \"$_n\""
+  _fzf_fd_excludes="$_fzf_fd_excludes --exclude \"$_n\""
+done
+export FZF_AG_IGNORES="$_fzf_ag_ignores"
+export FZF_FD_EXCLUDES="$_fzf_fd_excludes"
+unset _fzf_ignore_names _fzf_ag_ignores _fzf_fd_excludes _n
+
+export FZF_DEFAULT_COMMAND='ag -g "" --hidden --ignore-case --skip-vcs-ignores '"$FZF_AG_IGNORES"' '"$FZF_SEARCH_PATHS"
+export FZF_CONTROL_T_COMMAND='fd --type f --hidden --ignore-case --no-ignore '"$FZF_FD_EXCLUDES"' . '"$FZF_SEARCH_PATHS"
+export FZF_ALT_C_COMMAND='fd --type d --hidden --ignore-case --no-ignore '"$FZF_FD_EXCLUDES"' . '"$FZF_SEARCH_PATHS"
 
 # zsh envs
 export ZSH=$HOME/.oh-my-zsh
