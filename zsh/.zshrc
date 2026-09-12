@@ -78,3 +78,6 @@ esac
 
 # pnpm env
 export PATH="$HOME/.local/bin:$PATH"
+
+# ssh-agent: cache key passphrase 5 min instead of every op
+[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s -t 300)" > /dev/null
