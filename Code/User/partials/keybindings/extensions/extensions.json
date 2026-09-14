@@ -1,7 +1,0 @@
-[
-	{
-		"key": "ctrl+o",
-		"command": "workbench.extensions.action.installExtensions",
-		"when": "!sideBarVisible && neovim.mode != insert && !inSearchEditor"
-	}
-]

@@ -28,7 +28,7 @@ export FZF_DEFAULT_OPTS="--preview-window 'right:50%' \
 export FZF_SEARCH_PATHS="$HOME/Projects $HOME/.config $HOME/Downloads $HOME/Apps $HOME/Documents"
 
 _fzf_ignore_names=(
-  .git build dist node_modules .next .gk .pyenv .ssh .biome yay .electron-gyp
+  .git build dist node_modules .next .gk .ssh .biome yay .electron-gyp
   .swt .password-store .screenlayout .aws .yarn .vim package-lock.json .idea
   .eclipse skypeforlinux "MongoDB Compass" .mongoDB libreoffice Postman .npm
   virtualenvs BraveSoftware .gem .mypy_cache .oh-my-zsh/plugins .memestra
@@ -37,7 +37,7 @@ _fzf_ignore_names=(
   fontconfig ibus fcitx fcitx5 nautilus evolution wireplumber xdg-desktop-portal
   procps swayosd rustdesk khal vdirsyncer mpv imv qalculate SEGGER wiremix
   hyprland-preview-share-picker waybar mako omarchy uwsm menus autostart
-  environment.d tool_state elephant aether fallow cliamp composer configstore
+  environment.d tool_state aether fallow cliamp composer configstore
   btop eza ngrok xournalpp
 )
 

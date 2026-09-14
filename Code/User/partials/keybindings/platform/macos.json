@@ -1,6 +1,0 @@
-[
-	{
-		"key": "ctrl+cmd+f",
-		"command": "workbench.action.toggleFullScreen"
-	}
-]

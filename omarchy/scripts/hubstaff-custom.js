@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// biome-ignore-all lint/suspicious/noConsole: we need console here
 
 const { execSync } = require('node:child_process');
 
@@ -9,10 +10,10 @@ try {
   const status = JSON.parse(raw);
   const tracking = status.tracking;
   const project = status.active_project;
-  const icon = tracking ? '󱄅' : '󱄊';
+  const label = tracking ? project?.name ?? '(unknown project)' : '󱄊';
   const time = project?.tracked_today?.slice(0, 4) || '0:00';
-  const text = tracking ? `${icon} ${time}  ` : `${icon}  `;
-  const tooltip = tracking ? `Tracking: ${project.name}\nToday: ${time}` : 'Not tracking';
+  const text = tracking ? `${label} - ${time}` : `${label}`;
+  const tooltip = tracking ? `Tracking: ${label}\nToday: ${time}` : 'Not tracking';
   const cls = tracking ? 'tracking' : 'idle';
 
   console.log(JSON.stringify({ text, tooltip, class: cls }));

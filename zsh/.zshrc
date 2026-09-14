@@ -79,5 +79,19 @@ esac
 # pnpm env
 export PATH="$HOME/.local/bin:$PATH"
 
-# ssh-agent: cache key passphrase 5 min instead of every op
-[ -z "$SSH_AUTH_SOCK" ] && eval "$(ssh-agent -s -t 300)" > /dev/null
+# ssh-agent: one agent reused across all shells (env cached in file), keys live 15min
+# skip entirely if SSH_AUTH_SOCK already points at a live socket (forwarded agent, or parent shell already sourced it)
+if [ ! -S "$SSH_AUTH_SOCK" ]; then
+  SSH_ENV="$HOME/.ssh/agent-env"
+  if [ -f "$SSH_ENV" ]; then
+    source "$SSH_ENV" > /dev/null
+  fi
+  if ! { [ -n "$SSH_AGENT_PID" ] && kill -0 "$SSH_AGENT_PID" 2>/dev/null && [ -S "$SSH_AUTH_SOCK" ]; }; then
+    (umask 077; ssh-agent -s -t 900 > "$SSH_ENV")
+    source "$SSH_ENV" > /dev/null
+  fi
+fi
+
+# ssh-askpass: GUI passphrase prompt only when no tty available (non-interactive shells, sandboxes)
+export SSH_ASKPASS="/usr/lib/ssh/ssh-askpass"
+[ -t 0 ] || export SSH_ASKPASS_REQUIRE="prefer"
