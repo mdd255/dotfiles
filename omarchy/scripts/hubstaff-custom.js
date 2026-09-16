@@ -12,7 +12,7 @@ try {
   const project = status.active_project;
   const label = tracking ? project?.name ?? '(unknown project)' : '󱄊';
   const time = project?.tracked_today?.slice(0, 4) || '0:00';
-  const text = tracking ? `${label} - ${time}` : `${label}`;
+  const text = tracking ? `${label} - ${time} ` : `${label} `;
   const tooltip = tracking ? `Tracking: ${label}\nToday: ${time}` : 'Not tracking';
   const cls = tracking ? 'tracking' : 'idle';
 
