@@ -10,7 +10,6 @@ aether
 elephant
 node_modules
 dist
-.git
 telemetry
 .dotnet
 .bun

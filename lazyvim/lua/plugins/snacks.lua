@@ -150,7 +150,6 @@ return {
             "~/.config/dotfiles/",
             "~/Projects/priv/",
             "~/Projects/ABD/",
-            "~/Projects/hipages/",
             "~/Projects/accelerator-app/",
           },
           layout = custom_layout({
