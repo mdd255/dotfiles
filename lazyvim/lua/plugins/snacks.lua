@@ -142,6 +142,7 @@ return {
           format = "project_name",
           recent = true,
           confirm = "load_session",
+          max_depth = 3,
           patterns = {
             ".git",
             "package.json",
