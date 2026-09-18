@@ -35,8 +35,9 @@ local notify_opts = {
 }
 
 local GH_TTL_MS = 5 * 60 * 60 * 1000
-
+local fetch_current_login
 local BRANCH_TTL_MS = 5 * 60 * 1000
+
 local fetch_current_branch_cached = cache.wrap("git.current_branch", BRANCH_TTL_MS, function(callback)
   vim.system({ "git", "branch", "--show-current" }, {}, function(result)
     vim.schedule(function()
@@ -140,36 +141,44 @@ end
 
 local function branch_picker(opts)
   fetch_current_branch(function(current_branch)
-    get_branches(opts.exclude_current, true)(function(branches, worktree_set)
-      if not branches then
-        return
-      end
+    fetch_current_login(function(current_login)
+      get_branches(opts.exclude_current, true)(function(branches, worktree_set)
+        if not branches then
+          return
+        end
 
-      local items = {}
+        local items = {}
 
-      for _, branch in ipairs(branches) do
-        table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
-      end
+        for _, branch in ipairs(branches) do
+          table.insert(items, { text = branch, _in_worktree = worktree_set and worktree_set[branch] })
+        end
 
-      utils.menu_picker(items, function(item)
-        opts.on_confirm(item.text)
-      end, {
-        title = { { opts.title, opts.title_hl or "DiagnosticInfo" } },
-        width = 0.55,
-        format = function(item, _)
-          if opts.format then
-            return opts.format(item, current_branch)
-          end
+        local title = { { opts.title, opts.title_hl or "DiagnosticInfo" } }
 
-          local chunks = format_branch(item, current_branch)
+        if current_login and current_login ~= "" then
+          table.insert(title, { "\u{00A0}(" .. current_login .. ")", "Comment" })
+        end
 
-          if item._in_worktree then
-            table.insert(chunks, { "  worktree", "Comment" })
-          end
+        utils.menu_picker(items, function(item)
+          opts.on_confirm(item.text)
+        end, {
+          title = title,
+          width = 0.55,
+          format = function(item, _)
+            if opts.format then
+              return opts.format(item, current_branch)
+            end
 
-          return chunks
-        end,
-      })
+            local chunks = format_branch(item, current_branch)
+
+            if item._in_worktree then
+              table.insert(chunks, { "  worktree", "Comment" })
+            end
+
+            return chunks
+          end,
+        })
+      end)
     end)
   end)
 end
@@ -268,7 +277,7 @@ local get_gh_accounts = cache.wrap("gh.accounts", GH_TTL_MS, function(callback)
   end)
 end)
 
-local fetch_current_login = cache.wrap("gh.current_login", GH_TTL_MS, function(callback)
+fetch_current_login = cache.wrap("gh.current_login", GH_TTL_MS, function(callback)
   vim.system({ "gh", "api", "user", "-q", ".login" }, {}, function(result)
     vim.schedule(function()
       local login = result.code == 0 and result.stdout:gsub("%s+", "") or ""
