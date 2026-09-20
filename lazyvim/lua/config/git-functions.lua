@@ -302,18 +302,21 @@ end)
 local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(callback)
   fetch_repo_name(function(repo)
     if not repo then
-      callback({})
+      callback(nil)
       return
     end
 
     vim.system({ "gh", "api", "repos/" .. repo .. "/collaborators", "--jq", ".[].login" }, {}, function(collab_result)
       vim.schedule(function()
+        if collab_result.code ~= 0 then
+          callback(nil)
+          return
+        end
+
         local items = {}
 
-        if collab_result.code == 0 then
-          for line in collab_result.stdout:gmatch("[^\r\n]+") do
-            table.insert(items, { text = line })
-          end
+        for line in collab_result.stdout:gmatch("[^\r\n]+") do
+          table.insert(items, { text = line })
         end
 
         callback(items)
@@ -389,6 +392,12 @@ local function select_reviewers(title, callback)
   end
 
   local function show_picker(items)
+    if not items then
+      vim.notify("Failed to load reviewers", vim.log.levels.ERROR, notify_opts)
+      callback("")
+      return
+    end
+
     snacks.picker.pick({
       finder = function()
         return items
