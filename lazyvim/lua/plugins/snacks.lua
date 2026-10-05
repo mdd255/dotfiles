@@ -60,6 +60,14 @@ return {
     picker = {
       prompt = " ",
       actions = {
+        load_session_no_terminals = function(picker, item)
+          for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            if vim.bo[buf].buftype == "terminal" then
+              vim.api.nvim_buf_delete(buf, { force = true })
+            end
+          end
+          Snacks.picker.actions.load_session(picker, item)
+        end,
         select_and_clear = function(picker)
           picker.list:select()
           vim.api.nvim_buf_set_lines(picker.input.win.buf, 0, -1, false, { "" })
@@ -141,7 +149,7 @@ return {
         projects = {
           format = "project_name",
           recent = true,
-          confirm = "load_session",
+          confirm = "load_session_no_terminals",
           max_depth = 3,
           patterns = {
             ".git",

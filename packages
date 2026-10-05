@@ -261,7 +261,6 @@ wl-clipboard
 wlroots-git
 woff2-font-awesome
 wpa_supplicant
-x11-ssh-askpass
 xdg-desktop-portal-gnome
 xdg-desktop-portal-hyprland
 xdg-terminal-exec

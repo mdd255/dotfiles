@@ -91,7 +91,3 @@ if [ ! -S "$SSH_AUTH_SOCK" ]; then
     source "$SSH_ENV" > /dev/null
   fi
 fi
-
-# ssh-askpass: GUI passphrase prompt only when no tty available (non-interactive shells, sandboxes)
-export SSH_ASKPASS="/usr/lib/ssh/ssh-askpass"
-[ -t 0 ] || export SSH_ASKPASS_REQUIRE="prefer"
