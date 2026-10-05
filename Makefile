@@ -149,8 +149,7 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/claude/hooks,~/.claude/hooks)
 	$(call create_symlink,$(DOTFILES_DIR)/claude/skills,~/.claude/skills)
 
-surfing-keys: ## Build SurfingKeys configuration
-	@echo "🔨 Building SurfingKeys configuration..."
-	@cd $(DOTFILES_DIR)/surfing-keys && make build
-
+update-vimium:
+	@echo "🔗 Update configuration for vimium..."
+	node ./vimium/update-config
 # =============================================================================

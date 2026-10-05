@@ -1,10 +1,15 @@
+#!/usr/bin/env node
 const { writeFileSync } = require('node:fs')
 const configs = ["abd", "aa"]
+const source = require('./base.json')
+const customKeyMaps = JSON.parse(JSON.stringify(source.customKeyMaps))
+delete source.customKeyMaps
 
 configs.forEach(workspace => {
   const filename = `${workspace}.json`
-  const source = require('./base.json')
-  const keymaps = source.customKeyMaps[workspace]
+  const keymaps = customKeyMaps[workspace] || []
+
+  delete source.customKeyMaps
 
   writeFileSync(filename, JSON.stringify({
     ...source,
