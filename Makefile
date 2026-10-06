@@ -48,9 +48,9 @@ endef
 # =============================================================================
 
 .PHONY: help install uninstall clean check-deps surfing-keys
-.PHONY: install-deps install-zsh install-nvim create-links install-packages
+.PHONY: install-deps install-zsh install-nvim create-links install-packs
 .PHONY: deps-dco deps-media deps-docker
-.PHONY: clean-post
+.PHONY: clean-post update-vimium
 
 help: ## Show this help message
 	@echo "Dotfiles Installation Makefile"
@@ -59,7 +59,7 @@ help: ## Show this help message
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-install: check-deps install-packages install-deps install-zsh install-nvim create-links clean-post ## Full installation
+install: check-deps install-packs install-deps install-zsh install-nvim create-links clean-post ## Full installation
 	@echo "✅ Installation completed successfully!"
 
 uninstall: ## Remove installed configurations (keeps packages)
@@ -90,7 +90,7 @@ clean-post: ## Remove temporary directories
 
 install-deps: deps-dco deps-media deps-docker ## Install all dependencies
 
-install-packages: ## Install all packages tracked in the packages file
+install-packs: ## Install all packages tracked in the packages file
 	$(call install_yay_packages,$$(cat $(DOTFILES_DIR)/packages))
 
 deps-dco: ## Install Docker Color Output
@@ -117,7 +117,7 @@ deps-docker: ## Setup Docker service and user permissions
 # Application Installation
 # =============================================================================
 
-install-zsh: install-packages ## Install and configure Zsh with Oh My Zsh
+install-zsh: install-packs ## Install and configure Zsh with Oh My Zsh
 	@echo "🔧 Installing Zsh and Oh My Zsh..."
 	rm -rf ~/.oh-my-zsh ~/.zshrc ~/.zshenv
 	curl -fsSL $(OMZ_INSTALL_URL) | bash
@@ -149,7 +149,7 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/claude/hooks,~/.claude/hooks)
 	$(call create_symlink,$(DOTFILES_DIR)/claude/skills,~/.claude/skills)
 
-update-vimium:
+update-vimium: ## Update vimium configuration
 	@echo "🔗 Update configuration for vimium..."
 	node ./vimium/update-config
 # =============================================================================
