@@ -7,30 +7,6 @@ local browser = "brave"
 local editor = "neovide"
 local script = os.getenv("HOME") .. "/.config/dotfiles/omarchy/scripts"
 
--- Unbind Omarchy defaults that are replaced or removed below.
-for _, keys in ipairs({
-	"SUPER + W",
-	"SUPER + R",
-	"SUPER + F",
-	"SUPER + TAB",
-	"ALT + TAB",
-	"ALT + P",
-	"CTRL + SUPER + N",
-	"CTRL + SUPER + E",
-	"CTRL + SUPER + I",
-	"SUPER + T",
-	"SUPER + SPACE",
-	"SUPER + L",
-	"SUPER + C",
-	"SUPER + X",
-	"SUPER + V",
-	"SUPER + S",
-	"SUPER + O",
-	"SUPER + P",
-}) do
-	hl.unbind(keys)
-end
-
 -- App bindings
 o.bind("ALT + RETURN", "Terminal", term)
 o.bind("ALT + B", "Browser", browser)
@@ -91,12 +67,56 @@ o.bind("ALT + P", "Screenrecord", "omarchy-capture-screenrecording")
 -- Media
 local repeat_locked = { locked = true, repeating = true }
 
-o.bind("SUPER + Z", "Volume down", "omarchy-audio-output-volume lower", repeat_locked)
-o.bind("SUPER + X", "Volume up", "omarchy-audio-output-volume raise", repeat_locked)
-o.bind("SUPER + C", "Mute", "omarchy-audio-output-volume mute-toggle", repeat_locked)
-o.bind("SUPER + V", "Mute microphone", "omarchy-audio-input-mute", repeat_locked)
-o.bind("SUPER + B", "Next audio output", "omarchy-audio-output-switch", repeat_locked)
+o.bind("ALT + l", "Volume down", "omarchy-audio-output-volume lower", repeat_locked)
+o.bind("ALT + u", "Volume up", "omarchy-audio-output-volume raise", repeat_locked)
+o.bind("ALT + y", "Mute", "omarchy-audio-output-volume mute-toggle", repeat_locked)
+o.bind("ALT + semicolon", "Mute microphone", "omarchy-audio-input-mute", repeat_locked)
+o.bind("ALT + j", "Next audio output", "omarchy-audio-output-switch", repeat_locked)
 
 -- Brightness
 o.bind("SUPER + Q", "Brightness down", "omarchy-brightness-display 5%-", repeat_locked)
 o.bind("SUPER + W", "Brightness up", "omarchy-brightness-display +5%", repeat_locked)
+
+-- Clipboard
+local function send_shortcut_once(mods, key)
+	return function()
+		hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "down" }))
+
+		hl.timer(function()
+			hl.dispatch(hl.dsp.send_key_state({ mods = mods, key = key, state = "up" }))
+		end, { timeout = 50, type = "oneshot" })
+	end
+end
+
+-- Lean on the terminal tag from default/hypr/apps/terminals.lua so there's one
+-- definition of what counts as a terminal. Dynamic tags carry a trailing "*".
+local function active_window_is_terminal()
+	local window = hl.get_active_window()
+
+	if not window then
+		return false
+	end
+
+	for _, tag in ipairs(window.tags or {}) do
+		if tag:gsub("%*$", "") == "terminal" then
+			return true
+		end
+	end
+
+	return false
+end
+
+local function universal_clipboard_shortcut(default_mods, default_key, terminal_mods, terminal_key)
+	return function()
+		if active_window_is_terminal() then
+			send_shortcut_once(terminal_mods, terminal_key)()
+		else
+			send_shortcut_once(default_mods, default_key)()
+		end
+	end
+end
+
+o.bind("SUPER + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "CTRL", "Insert"))
+o.bind("SUPER + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "SHIFT", "Insert"))
+o.bind("SUPER + X", "Universal cut", send_shortcut_once("CTRL", "X"))
+o.bind("SUPER + Z", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
