@@ -1,3 +1,4 @@
+require("config.remote_clipboard").setup()
 vim.g.maplocalleader = "t"
 vim.opt.timeoutlen = 350
 vim.opt.winborder = "rounded"

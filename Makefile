@@ -148,6 +148,16 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/claude/statusline-command.sh,~/.claude/statusline-command.sh)
 	$(call create_symlink,$(DOTFILES_DIR)/claude/hooks,~/.claude/hooks)
 	$(call create_symlink,$(DOTFILES_DIR)/claude/skills,~/.claude/skills)
+	mkdir -p ~/.config/omarchy/plugins
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/shell.json,~/.config/omarchy/shell.json)
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.bar,~/.config/omarchy/plugins/dh.bar)
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.active-window,~/.config/omarchy/plugins/dh.active-window)
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.focus-dot,~/.config/omarchy/plugins/dh.focus-dot)
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/shell.toml,~/.config/omarchy/shell.toml)
+	mkdir -p ~/.config/kitty
+	$(call create_symlink,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
+	mkdir -p ~/.config/fontconfig
+	$(call create_symlink,$(DOTFILES_DIR)/omarchy/fontconfig/fonts.conf,~/.config/fontconfig/fonts.conf)
 
 update-vimium: ## Update vimium configuration
 	@echo "🔗 Update configuration for vimium..."

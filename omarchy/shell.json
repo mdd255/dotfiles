@@ -1,0 +1,131 @@
+{
+  "bar": {
+    "centerAnchor": "omarchy.clock",
+    "id": "dh.bar",
+    "layout": {
+      "center": [
+        {
+          "format": "HH:mm dd.MM ddd",
+          "formatAlt": "d MMMM 'W'ww yyyy",
+          "id": "omarchy.clock",
+          "monitors": [
+            "DP-3",
+            "HDMI-A-1"
+          ],
+          "timezone": "Asia/Ho_Chi_Minh",
+          "verticalFormat": "HH\n—\nmm"
+        },
+        {
+          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
+          "id": "hubstaff",
+          "interval": 20,
+          "monitors": [
+            "DP-3"
+          ],
+          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
+          "type": "command"
+        },
+        {
+          "id": "omarchy.indicators",
+          "monitors": [
+            "DP-3"
+          ]
+        },
+        {
+          "id": "omarchy.system-update",
+          "monitors": [
+            "DP-3"
+          ]
+        }
+      ],
+      "left": [
+        {
+          "id": "dh.focus-dot"
+        },
+        {
+          "id": "dh.active-window",
+          "rewrite": {
+            ".*Brave": "󰈹 Brave",
+            "kitty": " Term"
+          }
+        }
+      ],
+      "right": [
+        {
+          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null | sed -E 's/<[^>]+>//g'",
+          "id": "events",
+          "interval": 60,
+          "monitors": [
+            "eDP-1"
+          ],
+          "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
+          "type": "command"
+        },
+        {
+          "format": "HH:mm ddd dd 'NY'",
+          "id": "omarchy.clock",
+          "monitors": [
+            "HDMI-A-1"
+          ],
+          "timezone": "America/New_York"
+        },
+        {
+          "format": "HH:mm ddd dd 'PT'",
+          "id": "omarchy.clock",
+          "monitors": [
+            "HDMI-A-1"
+          ],
+          "timezone": "Europe/Lisbon"
+        },
+        {
+          "exec": "fcitx5-remote -n | sed -E 's/^bamboo.*//; s/^keyboard-.*//'",
+          "id": "input-method",
+          "interval": 1,
+          "monitors": [
+            "DP-3"
+          ],
+          "onClick": "~/.config/dotfiles/omarchy/scripts/fcit5-custom.js",
+          "type": "command"
+        },
+        {
+          "id": "omarchy.tray",
+          "monitors": [
+            "DP-3"
+          ]
+        },
+        {
+          "id": "omarchy.audio",
+          "monitors": [
+            "DP-3"
+          ]
+        },
+        {
+          "id": "omarchy.bluetooth",
+          "monitors": [
+            "DP-3"
+          ]
+        },
+        {
+          "id": "omarchy.network",
+          "monitors": [
+            "DP-3"
+          ]
+        },
+        {
+          "id": "omarchy.power",
+          "monitors": [
+            "DP-3"
+          ]
+        }
+      ]
+    },
+    "position": "top",
+    "transparent": false
+  },
+  "idle": {
+    "lock": 900,
+    "screensaver": 600
+  },
+  "plugins": [],
+  "version": 1
+}
