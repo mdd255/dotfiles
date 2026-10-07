@@ -20,6 +20,7 @@ function parseNextEvent(output) {
     const t = new Date();
     t.setHours(Number(m[1]), Number(m[2]), 0, 0);
     if (t <= now) continue;
+
     if (!earliest || t < earliest.time) {
       earliest = { time: t, title: formatEventTitle(m[3].trim()) };
     }
@@ -49,6 +50,7 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
   const delaySec = Math.floor((eventTime.getTime() - offsetMs - now) / 1000);
   if (delaySec <= 0) return;
   const slug = label.replace(/\s+/g, '');
+
   const result = spawnSync('systemd-run', [
     '--user',
     `--on-active=${delaySec}`,
@@ -64,6 +66,7 @@ function scheduleNotify(eventTime, title, offsetMs, label, now) {
     `Event in ${label}`,
     title,
   ]);
+
   if (result.status !== 0) {
     console.error(`Failed to schedule ${label} reminder:`, result.stderr?.toString().trim());
   }

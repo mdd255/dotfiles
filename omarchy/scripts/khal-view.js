@@ -1,43 +1,51 @@
 #!/usr/bin/env node
-const { spawnSync } = require('node:child_process');
+// Bar click opens a floating terminal (matched by Hyprland on its app-id) that
+// runs this same script with --print, then closes on any key or after 15s.
+const { spawn, spawnSync } = require('node:child_process');
 const { formatEventTitle, generateCalendar, extractEventLines } = require('./calendar-utils');
 
-function padEndVisual(str, width) {
-  const visual = str.replace(/<[^>]+>/g, '').length;
-  return str + ' '.repeat(Math.max(0, width - visual));
+const APP_ID = 'dh.calendar';
+const CAL_COL = 28;
+
+const visualLength = str => str.replace(/<[^>]+>/g, '').length;
+
+// Pango-style <span color="#rrggbb"> markup -> 24-bit ANSI.
+const toAnsi = str =>
+  str
+    .replace(/<span color="#(..)(..)(..)">/g, (_, r, g, b) =>
+      `\x1b[38;2;${parseInt(r, 16)};${parseInt(g, 16)};${parseInt(b, 16)}m`,
+    )
+    .replaceAll('</span>', '\x1b[0m')
+    .replaceAll('&amp;', '&');
+
+function print() {
+  const raw = spawnSync('khal', ['calendar', '--notstarted'], { encoding: 'utf8' }).stdout;
+  const calendar = generateCalendar(3);
+  const events = [...new Set(extractEventLines(raw).map(formatEventTitle))];
+
+  const rows = Array.from({ length: Math.max(calendar.length, events.length) }, (_, i) => {
+    const cal = calendar[i] ?? '';
+    const event = (events[i] ?? '').trimEnd();
+    return event ? cal + ' '.repeat(Math.max(0, CAL_COL - visualLength(cal))) + `  ${event}` : cal;
+  });
+
+  console.log(`\n${toAnsi(rows.join('\n'))}`);
 }
 
-function main() {
-  try {
-    const raw = spawnSync('khal', ['calendar', '--notstarted'], { encoding: 'utf8' }).stdout;
-    const calLines = generateCalendar(3);
-    const eventLines = Array.from(new Set(extractEventLines(raw).map(e => formatEventTitle(e))));
-
-    const CAL_COL = 28;
-    const maxLines = Math.max(calLines.length, eventLines.length);
-    const lines = [];
-
-    for (let i = 0; i < maxLines; i++) {
-      const cal = padEndVisual(calLines[i] ?? '', CAL_COL);
-      const event = (eventLines[i] ?? '').trimEnd();
-      lines.push(event ? `${cal}  ${event}` : cal.trimEnd());
-    }
-
-    const body = lines.join('\n');
-
-    spawnSync('notify-send', ['-t', '7000', '-a', 'calendar', 'Event', body]);
-  } catch (err) {
-    spawnSync('notify-send', [
-      '-t',
-      '7000',
+function open() {
+  spawn(
+    'uwsm-app',
+    [
+      '--',
+      'xdg-terminal-exec',
+      `--app-id=${APP_ID}`,
+      '-e',
+      'bash',
       '-c',
-      'reminder',
-      '-a',
-      'calendar',
-      'Event',
-      err.message,
-    ]);
-  }
+      `node "${__filename}" --print; read -rsn1 -t 15`,
+    ],
+    { detached: true, stdio: 'ignore' },
+  ).unref();
 }
 
-main();
+process.argv.includes('--print') ? print() : open();

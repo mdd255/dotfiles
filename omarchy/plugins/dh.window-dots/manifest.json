@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "dh.window-dots",
+  "name": "Window dots",
+  "version": "1.0.0",
+  "author": "dh",
+  "description": "One dot per window on this monitor's workspace, focused one filled (for monocle layout)",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "WindowDots.qml"
+  },
+  "barWidget": {
+    "displayName": "Window dots",
+    "description": "Shows how many windows the workspace on this bar's monitor has",
+    "category": "Compositor",
+    "allowMultiple": false,
+    "defaultSection": "left"
+  }
+}

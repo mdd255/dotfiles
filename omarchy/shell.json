@@ -1,12 +1,23 @@
 {
   "bar": {
-    "centerAnchor": "omarchy.clock",
     "id": "dh.bar",
     "layout": {
       "center": [
         {
+          "id": "dh.menu"
+        },
+        {
+          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null | sed -E 's/<[^>]+>//g'",
+          "id": "events",
+          "interval": 60,
+          "monitors": [
+            "eDP-1"
+          ],
+          "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
+          "type": "command"
+        },
+        {
           "format": "HH:mm dd.MM ddd",
-          "formatAlt": "d MMMM 'W'ww yyyy",
           "id": "omarchy.clock",
           "monitors": [
             "DP-3",
@@ -14,36 +25,11 @@
           ],
           "timezone": "Asia/Ho_Chi_Minh",
           "verticalFormat": "HH\n—\nmm"
-        },
-        {
-          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
-          "id": "hubstaff",
-          "interval": 20,
-          "monitors": [
-            "DP-3"
-          ],
-          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
-          "type": "command"
-        },
-        {
-          "id": "omarchy.indicators",
-          "monitors": [
-            "DP-3"
-          ]
-        },
-        {
-          "id": "omarchy.system-update",
-          "monitors": [
-            "DP-3"
-          ]
-        },
-        {
-          "id": "dh.menu"
         }
       ],
       "left": [
         {
-          "id": "dh.focus-dot"
+          "id": "dh.window-dots"
         },
         {
           "id": "dh.active-window",
@@ -55,13 +41,13 @@
       ],
       "right": [
         {
-          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null | sed -E 's/<[^>]+>//g'",
-          "id": "events",
-          "interval": 60,
+          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
+          "id": "hubstaff",
+          "interval": 20,
           "monitors": [
             "eDP-1"
           ],
-          "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
+          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
           "type": "command"
         },
         {
@@ -89,12 +75,6 @@
           ],
           "onClick": "~/.config/dotfiles/omarchy/scripts/fcit5-custom.js",
           "type": "command"
-        },
-        {
-          "id": "omarchy.tray",
-          "monitors": [
-            "DP-3"
-          ]
         },
         {
           "id": "omarchy.audio",
@@ -133,7 +113,8 @@
   "version": 1,
   "disabledPlugins": [
     "omarchy.emojis",
-    "omarchy.menu"
+    "omarchy.menu",
+    "omarchy.dev-gallery"
   ],
   "cloneSourceRestores": [
     "dh.menu"

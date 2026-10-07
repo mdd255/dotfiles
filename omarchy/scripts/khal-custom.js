@@ -29,7 +29,7 @@ function main() {
       .filter(Boolean);
 
     nextEvents = Array.from(new Set(nextEvents.slice(0, 4))).join('   ') || '';
-    nextEvents = nextEvents.length ? `${nextEvents}` : '[No event for today]';
+    nextEvents = nextEvents.length ? `${nextEvents}` : '[No event]';
 
     const payload = { text: nextEvents, tooltip: '' };
     console.log(JSON.stringify(payload));

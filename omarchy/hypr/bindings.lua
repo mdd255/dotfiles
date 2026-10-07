@@ -13,7 +13,6 @@ o.bind("ALT + B", "Browser", browser)
 o.bind("ALT + A", "Editor", editor)
 
 -- Window controls
-o.bind("ALT + F", "Full width", hl.dsp.window.fullscreen({ mode = "maximized" }))
 o.bind("SUPER + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 o.bind("ALT + T", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
 
@@ -45,7 +44,7 @@ end
 
 -- Scripts
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
-o.bind("ALT + semicolon", "Hubstaff toggle", script .. "/hubstaff-toggle.js")
+o.bind("ALT + F", "Hubstaff toggle", script .. "/hubstaff-toggle.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
