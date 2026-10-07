@@ -36,6 +36,9 @@
           "monitors": [
             "DP-3"
           ]
+        },
+        {
+          "id": "dh.menu"
         }
       ],
       "left": [
@@ -127,5 +130,12 @@
     "screensaver": 600
   },
   "plugins": [],
-  "version": 1
+  "version": 1,
+  "disabledPlugins": [
+    "omarchy.emojis",
+    "omarchy.menu"
+  ],
+  "cloneSourceRestores": [
+    "dh.menu"
+  ]
 }

@@ -43,7 +43,6 @@ o.bind("ALT + T", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
 
 o.bind("ALT + Q", "Kill active", hl.dsp.window.close())
 o.bind("ALT + O", "Cycle next", hl.dsp.layout("cyclenext"))
-o.bind("ALT + TAB", "Cycle next", hl.dsp.layout("cyclenext"))
 o.bind("ALT + SHIFT + TAB", "Cycle previous", hl.dsp.layout("cycleprev"))
 o.bind("ALT + N", "Focus down", hl.dsp.focus({ direction = "d" }))
 o.bind("ALT + E", "Focus up", hl.dsp.focus({ direction = "u" }))
@@ -81,6 +80,8 @@ o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
 
 -- Misc
 o.bind("ALT + ESCAPE", "Application", "omarchy-menu toggle apps")
+o.bind("SUPER + ESCAPE", "Application", "omarchy-menu toggle system")
+o.bind("ALT + TAB", "Omarchy menu", "omarchy-menu")
 o.bind("SUPER + L", "Suspend", "hubstaff stop; omarchy-system-lock")
 o.bind("CTRL + SUPER + Q", "Quit hyprland", "omarchy-system-logout")
 o.bind("SUPER + SHIFT + R", "Reload config", "hyprctl reload")
