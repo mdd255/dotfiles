@@ -16,6 +16,8 @@ BarWidget {
 
   readonly property var windows: hostWorkspace ? hostWorkspace.toplevels.values : []
   readonly property var focused: Hyprland.activeToplevel
+  // This bar's monitor holds keyboard focus: all its dots go red, else white.
+  readonly property bool monitorFocused: !!hostMonitor && hostMonitor === Hyprland.focusedMonitor
 
   visible: windows.length > 0
   implicitWidth: visible ? row.implicitWidth + Style.spacing.controlPaddingX : 0
@@ -34,7 +36,7 @@ BarWidget {
         readonly property bool isFocused: !!root.focused && root.focused.address === modelData.address
 
         text: isFocused ? "●" : "○"
-        color: root.bar ? root.bar.barForeground : Color.foreground
+        color: root.monitorFocused ? (root.bar ? root.bar.urgent : Color.urgent) : "#ffffff"
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.body
 

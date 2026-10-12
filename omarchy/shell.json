@@ -17,7 +17,7 @@
           "type": "command"
         },
         {
-          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null | sed -E 's/<[^>]+>//g'",
+          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null",
           "id": "events",
           "interval": 60,
           "monitors": [
@@ -62,14 +62,13 @@
       ],
       "left": [
         {
-          "id": "dh.window-dots"
-        },
-        {
           "id": "dh.active-window",
+          "defaultIcon": "󰣆",
           "rewrite": {
-            ".*Brave": "󰈹 Brave",
-            "kitty": " Term",
-            "Omamail": " Mail"
+            "brave-browser": "󰈹",
+            "kitty": "",
+            "neovide": "",
+            "Omamail": ""
           }
         }
       ],

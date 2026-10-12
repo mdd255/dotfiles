@@ -2056,14 +2056,42 @@ Item {
       outputActive = klass === "active" || (Array.isArray(klass) && klass.indexOf("active") !== -1)
     }
 
+    // WidgetButton paints plain text only, so markup output (<span color="…">)
+    // is drawn by an overlay label. The base label keeps the tag-free text so
+    // the button still sizes itself to what is visible.
+    readonly property string rawText: outputText || String(setting("text", ""))
+    readonly property bool hasMarkup: /<span[\s>]/.test(rawText)
+
+    // Qt rich text has no Pango-style color attribute (<font color> is its
+    // equivalent) and collapses runs of spaces, so those outside tags become
+    // non-breaking.
+    function richText(raw) {
+      return String(raw)
+        .replace(/<span\s+color="([^"]*)"\s*>/g, '<font color="$1">')
+        .replace(/<\/span>/g, "</font>")
+        .replace(/(<[^>]*>)|( )/g, function(m, tag) { return tag ? tag : "&nbsp;" })
+    }
+
     bar: root
-    text: outputText || String(setting("text", ""))
+    text: hasMarkup ? rawText.replace(/<[^>]+>/g, "").replace(/&amp;/g, "&") : rawText
+    labelVisible: !hasMarkup
     tooltipText: outputTooltip || String(setting("tooltip", ""))
     active: outputActive
     keepSpace: setting("keepSpace", false) === true
     horizontalMargin: Number(setting("horizontalMargin", 7.5))
     verticalPadding: Number(setting("verticalPadding", 6))
     fontSize: Number(setting("fontSize", Style.font.body))
+
+    Text {
+      visible: customRoot.hasMarkup
+      anchors.centerIn: parent
+      textFormat: Text.RichText
+      text: customRoot.richText(customRoot.rawText)
+      color: customRoot.foreground
+      font.family: customRoot.fontFamily
+      font.pixelSize: customRoot.fontSize
+      renderType: Text.NativeRendering
+    }
 
     onPressed: function(button) {
       var command = ""

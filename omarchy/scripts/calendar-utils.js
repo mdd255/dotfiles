@@ -88,20 +88,23 @@ function extractEventLines(khalOutput) {
 }
 
 function formatEventTitle(title) {
+  // general format
   const formatedTitle = title
     .replaceAll('|', '')
-    .replaceAll('Alpha Bravo Development', '')
-    .replaceAll('(with Dung Thai)', '')
-    .replaceAll('Innovative Roofing & BOR', '')
-    .replaceAll('&', '&amp;')
-    .replaceAll(' Bor project', 'BOR')
-    .replaceAll('AcceleratorApp', 'AA');
-
-  return formatedTitle
-    .replaceAll('[', '')
-    .replaceAll(']', '')
     .replaceAll('-', '')
-    .replace(/[^\S\r\n]+/g, ' ');
+    .replaceAll('&', '&amp;')
+    .replaceAll(/\(.*\)/g, '')
+    .replaceAll(/\[.*\]/g, '')
+
+  // specific formats
+  return formatedTitle
+    .replaceAll('Alpha Bravo Development', '')
+    .replaceAll('Innovative Roofing', 'IRI')
+    .replaceAll('Bor project', 'BOR')
+    .replaceAll('AcceleratorApp', 'AA')
+    .replaceAll(/Arise\s?Trucking/g, 'AT')
+    .replaceAll('Pod LMS', '');
+
 }
 
 module.exports = { formatEventTitle, generateCalendar, extractEventLines };

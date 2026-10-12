@@ -44,7 +44,7 @@ o.bind("ALT + F", "Hubstaff toggle", script .. "/hubstaff-toggle.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
-o.bind("SUPER + SHIFT + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
+o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
 o.bind("SUPER + R", "Bluetooth picker", "omarchy-shell shell toggle omarchy.bluetooth")
 o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
@@ -112,8 +112,10 @@ local function universal_clipboard_shortcut(default_mods, default_key, terminal_
 	end
 end
 
-o.bind("SUPER + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "CTRL", "Insert"))
-o.bind("SUPER + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "SHIFT", "Insert"))
+-- kitty.conf clears all default shortcuts and maps Alt+C/V to the clipboard
+-- (Shift+Insert would paste the primary selection instead).
+o.bind("SUPER + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "ALT", "C"))
+o.bind("SUPER + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "ALT", "V"))
 o.bind("SUPER + X", "Universal cut", send_shortcut_once("CTRL", "X"))
 o.bind("SUPER + B", "Universal select all", send_shortcut_once("CTRL", "A"))
 o.bind("SUPER + Z", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
