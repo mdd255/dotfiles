@@ -61,7 +61,24 @@ vim.api.nvim_create_autocmd("DirChanged", {
   callback = invalidate_current_branch,
 })
 
-local function with_ssh_passphrase(fn)
+local function ssh_agent_has_key(callback)
+  if (vim.env.SSH_AUTH_SOCK or "") == "" then
+    callback(false)
+    return
+  end
+
+  local ok, proc = pcall(vim.system, { "ssh-add", "-l" }, {}, function(result)
+    vim.schedule(function()
+      callback(result.code == 0)
+    end)
+  end)
+
+  if not ok or not proc then
+    callback(false)
+  end
+end
+
+local function prompt_ssh_passphrase(fn)
   float_input("  SSH passphrase ", { secret = true, border_hl = "FloatBorder" }, function(passphrase)
     if passphrase == "" then
       fn(nil, function() end)
@@ -89,6 +106,17 @@ local function with_ssh_passphrase(fn)
     end
 
     fn(env, cleanup)
+  end)
+end
+
+-- Use cached agent key when loaded; prompt only when agent has no identity.
+local function with_ssh_passphrase(fn)
+  ssh_agent_has_key(function(cached)
+    if cached then
+      fn(nil, function() end)
+    else
+      prompt_ssh_passphrase(fn)
+    end
   end)
 end
 

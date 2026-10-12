@@ -65,8 +65,8 @@
           "id": "dh.active-window",
           "defaultIcon": "󰣆",
           "rewrite": {
-            "brave-browser": "󰈹",
-            "kitty": "",
+            "brave-browser": "",
+            "kitty": "",
             "neovide": "",
             "Omamail": ""
           }
