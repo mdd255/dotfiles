@@ -7,6 +7,16 @@
           "id": "dh.menu"
         },
         {
+          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
+          "id": "hubstaff",
+          "interval": 20,
+          "monitors": [
+            "HDMI-A-1"
+          ],
+          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
+          "type": "command"
+        },
+        {
           "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null | sed -E 's/<[^>]+>//g'",
           "id": "events",
           "interval": 60,
@@ -17,14 +27,37 @@
           "type": "command"
         },
         {
-          "format": "HH:mm dd.MM ddd",
-          "id": "omarchy.clock",
+          "id": "dh.timezones",
           "monitors": [
-            "DP-3",
-            "HDMI-A-1"
+            "DP-3"
           ],
-          "timezone": "Asia/Ho_Chi_Minh",
-          "verticalFormat": "HH\n—\nmm"
+          "hourFormat": "24h",
+          "showIcon": false,
+          "hoverExpand": false,
+          "homeZones": [
+            "Asia/Ho_Chi_Minh"
+          ],
+          "zones": [
+            {
+              "label": "Vietnam",
+              "shortLabel": "VN",
+              "expand": true,
+              "format": "ddd D MMM HH:mm",
+              "home": true
+            },
+            {
+              "label": "New York",
+              "shortLabel": "NY",
+              "zone": "America/New_York",
+              "expand": true
+            },
+            {
+              "label": "Portugal",
+              "shortLabel": "PT",
+              "zone": "Europe/Lisbon",
+              "expand": true
+            }
+          ]
         }
       ],
       "left": [
@@ -35,37 +68,12 @@
           "id": "dh.active-window",
           "rewrite": {
             ".*Brave": "󰈹 Brave",
-            "kitty": " Term"
+            "kitty": " Term",
+            "Omamail": " Mail"
           }
         }
       ],
       "right": [
-        {
-          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
-          "id": "hubstaff",
-          "interval": 20,
-          "monitors": [
-            "eDP-1"
-          ],
-          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
-          "type": "command"
-        },
-        {
-          "format": "HH:mm ddd dd 'NY'",
-          "id": "omarchy.clock",
-          "monitors": [
-            "HDMI-A-1"
-          ],
-          "timezone": "America/New_York"
-        },
-        {
-          "format": "HH:mm ddd dd 'PT'",
-          "id": "omarchy.clock",
-          "monitors": [
-            "HDMI-A-1"
-          ],
-          "timezone": "Europe/Lisbon"
-        },
         {
           "exec": "fcitx5-remote -n | sed -E 's/^bamboo.*//; s/^keyboard-.*//'",
           "id": "input-method",
@@ -99,6 +107,26 @@
           "monitors": [
             "DP-3"
           ]
+        },
+        {
+          "id": "omamail",
+          "refreshIntervalSec": 120,
+          "maxMessages": 50,
+          "heavyMessageRendering": "Show plain text first",
+          "contentDirection": "Auto",
+          "appearance": "System",
+          "defaultQuery": "in:inbox",
+          "notifyNewMail": "On",
+          "oauthPort": 9481,
+          "undoSendSeconds": 30,
+          "unifiedCalendarView": true,
+          "calendarRemindersEnabled": true,
+          "calendarSnoozeMinutes": 3,
+          "showBarIcon": false,
+          "unifiedMailboxes": true,
+          "suggestEvents": false,
+          "aiAgent": "System default",
+          "aiModel": ""
         }
       ]
     },

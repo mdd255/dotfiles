@@ -1,7 +1,3 @@
--- Keep only your personal keybinding overrides here. Add new bindings or
--- unbind defaults before replacing them.
-
--- Focus the window if it exists, otherwise launch it.
 local term = "kitty"
 local browser = "brave"
 local editor = "neovide"
@@ -48,10 +44,11 @@ o.bind("ALT + F", "Hubstaff toggle", script .. "/hubstaff-toggle.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
-o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
+o.bind("SUPER + SHIFT + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
 o.bind("SUPER + R", "Bluetooth picker", "omarchy-shell shell toggle omarchy.bluetooth")
 o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
+o.bind("SUPER + G", "Timezones", "omarchy-shell io.github.sspaeti.timezones toggle")
 
 -- Misc
 o.bind("ALT + ESCAPE", "Application", "omarchy-menu toggle apps")
@@ -66,11 +63,11 @@ o.bind("ALT + P", "Screenrecord", "omarchy-capture-screenrecording")
 -- Media
 local repeat_locked = { locked = true, repeating = true }
 
-o.bind("ALT + l", "Volume down", "omarchy-audio-output-volume lower", repeat_locked)
-o.bind("ALT + u", "Volume up", "omarchy-audio-output-volume raise", repeat_locked)
-o.bind("ALT + y", "Mute", "omarchy-audio-output-volume mute-toggle", repeat_locked)
+o.bind("ALT + L", "Volume down", "omarchy-audio-output-volume lower", repeat_locked)
+o.bind("ALT + U", "Volume up", "omarchy-audio-output-volume raise", repeat_locked)
+o.bind("ALT + Y", "Mute", "omarchy-audio-output-volume mute-toggle", repeat_locked)
 o.bind("ALT + semicolon", "Mute microphone", "omarchy-audio-input-mute", repeat_locked)
-o.bind("ALT + j", "Next audio output", "omarchy-audio-output-switch", repeat_locked)
+o.bind("ALT + J", "Next audio output", "omarchy-audio-output-switch", repeat_locked)
 
 -- Brightness
 o.bind("SUPER + Q", "Brightness down", "omarchy-brightness-display 5%-", repeat_locked)
@@ -118,4 +115,8 @@ end
 o.bind("SUPER + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "CTRL", "Insert"))
 o.bind("SUPER + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "SHIFT", "Insert"))
 o.bind("SUPER + X", "Universal cut", send_shortcut_once("CTRL", "X"))
+o.bind("SUPER + B", "Universal select all", send_shortcut_once("CTRL", "A"))
 o.bind("SUPER + Z", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
+
+-- Misc
+o.bind("SUPER + SHIFT + E", "Email", "omarchy-shell shell summon omamail '{}'")

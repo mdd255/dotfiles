@@ -1,7 +1,3 @@
-# nav aliases
-alias "1"="cd .."
-alias "2"="cd ../.."
-
 # applications
 alias vi="neovide & disown"
 alias ls="eza --long"
@@ -14,30 +10,37 @@ alias gbd="git branch -d $@"
 alias gbr="git branch -m $@"
 alias gbn="git checkout -b $@"
 alias gbc="git checkout $@"
+
 # reset/revert
 alias grs="git reset --soft $@"
 alias grh="git reset --hard $@"
 alias grv="git revert $@"
+
 # add
 alias gaa="git add ."
 alias gaf="git add $@"
 alias gad="git restore --staged $@"
 alias gaq="git restore --staged ."
+
 # commit
 alias gcm="git commit -m "$@""
 alias gco="git commit"
 alias gca="git commit --amend"
 alias gcl="git log --oneline -n 500"
+
 # cherry pick
 alias gcp="git cherry-pick $@"
 alias gcd="git cherry-pick --abort"
+
 # push/pull
 alias gpl="git pull $@"
 alias gpu="git push $@"
+
 # misc
 alias gdi="git diff $@"
 alias glo="git log"
 alias gi="git init"
+
 # stash/status
 alias gst="git status"
 alias gss="git stash -u"
@@ -105,11 +108,9 @@ alias zhead="zcat $1 | head"
 
 # misc
 alias psn="
-   sudo pacman -Suy --noconfirm;
-   yay --noconfirm;
+   omarchy update;
    cd /home/$(whoami)/.config/dotfiles;
    pacman -Qqe > packages;
    ggu \"feat: automate commit\";
    cd ~; omz update;
-   omarchy-update;
 "

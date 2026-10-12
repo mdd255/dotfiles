@@ -118,46 +118,55 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+local function is_blank_buf(buf)
+  if vim.api.nvim_buf_get_name(buf) ~= "" or vim.bo[buf].buftype ~= "" or vim.bo[buf].modified then
+    return false
+  end
+  local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  return #lines == 0 or (#lines == 1 and lines[1] == "")
+end
+
+-- sessions drop terminal buffers but keep their tab as an empty unnamed one
+local function close_blank_tabs()
+  local tabs = vim.api.nvim_list_tabpages()
+  for i = #tabs, 1, -1 do
+    if #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_tabpage_is_valid(tabs[i]) then
+      local blank = true
+      for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabs[i])) do
+        if not is_blank_buf(vim.api.nvim_win_get_buf(win)) then
+          blank = false
+          break
+        end
+      end
+      if blank then
+        vim.cmd("tabclose " .. vim.api.nvim_tabpage_get_number(tabs[i]))
+      end
+    end
+  end
+
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and is_blank_buf(buf) then
+      pcall(vim.api.nvim_buf_delete, buf, { force = false })
+    end
+  end
+end
+
+local session_cleanup_pending = false
+
 vim.api.nvim_create_autocmd("SessionLoadPost", {
   group = vim.api.nvim_create_augroup("SessionLoadPostHook", { clear = true }),
   callback = function()
-    -- sessions drop terminal buffers but keep their tab as an empty unnamed one
-    local function is_blank(buf)
-      if vim.api.nvim_buf_get_name(buf) ~= "" or vim.bo[buf].buftype ~= "" or vim.bo[buf].modified then
-        return false
-      end
-      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-      return #lines == 0 or (#lines == 1 and lines[1] == "")
+    -- fires once per loaded buffer (doautoall) while the session is still being
+    -- sourced, so tabs aren't final yet: wait for it to settle, then clean up once
+    if session_cleanup_pending then
+      return
     end
+    session_cleanup_pending = true
 
-    local tabs = vim.api.nvim_list_tabpages()
-    for i = #tabs, 1, -1 do
-      if #vim.api.nvim_list_tabpages() > 1 then
-        local blank = true
-        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabs[i])) do
-          if not is_blank(vim.api.nvim_win_get_buf(win)) then
-            blank = false
-            break
-          end
-        end
-        if blank then
-          vim.cmd("tabclose " .. vim.api.nvim_tabpage_get_number(tabs[i]))
-        end
-      end
-    end
-
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      if vim.api.nvim_buf_is_valid(buf) and not vim.bo[buf].modified then
-        local name = vim.api.nvim_buf_get_name(buf)
-        local buftype = vim.bo[buf].buftype
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local is_empty = #lines == 0 or (#lines == 1 and lines[1] == "")
-
-        if name == "" and buftype == "" and is_empty then
-          vim.api.nvim_buf_delete(buf, { force = false })
-        end
-      end
-    end
+    vim.defer_fn(function()
+      session_cleanup_pending = false
+      close_blank_tabs()
+    end, 100)
 
     vim.defer_fn(function()
       require("config.git-functions").warm_gh_cache()
