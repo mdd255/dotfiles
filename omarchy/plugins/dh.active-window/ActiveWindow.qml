@@ -27,11 +27,13 @@ BarWidget {
   // the window title for apps that share a generic class (Quickshell windows
   // all report "org.quickshell"), e.g. { "kitty": "", "Omamail": "" }.
   // Windows with no entry get `defaultIcon`.
-  function iconFor(win) {
-    var toplevel = win ? win.wayland : null
-    if (!toplevel) return defaultIcon
+  // At boot the foreign-toplevel handle (`wayland`) can bind after the window
+  // maps, and its appId can be empty at first. Fall back to the Hyprland IPC
+  // class/title, which is known as soon as the window opens.
+  function iconFor(win, appId, title, ipcClass, ipcTitle) {
+    if (!win) return defaultIcon
     var rules = setting("rewrite", ({}))
-    var candidates = [toplevel.appId, toplevel.title]
+    var candidates = [appId, ipcClass, title, ipcTitle]
     for (var i = 0; i < candidates.length; i++) {
       var value = String(candidates[i] || "").toLowerCase()
       if (!value) continue
@@ -64,7 +66,12 @@ BarWidget {
         readonly property bool isFocused: !!root.focused && root.focused.address === modelData.address
 
         textFormat: Text.PlainText
-        text: root.iconFor(modelData)
+        // Read here so the binding re-runs when any of them arrives late.
+        readonly property string appId: modelData.wayland ? modelData.wayland.appId : ""
+        readonly property string winTitle: modelData.wayland ? modelData.wayland.title : ""
+        readonly property var ipc: modelData.lastIpcObject
+
+        text: root.iconFor(modelData, appId, winTitle, ipc ? ipc.class : "", ipc ? ipc.title : "")
         color: !isFocused ? "#808080"
           : root.monitorFocused ? (root.bar ? root.bar.urgent : Color.urgent)
           : (root.bar ? root.bar.barForeground : Color.foreground)

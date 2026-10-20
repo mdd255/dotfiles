@@ -32,7 +32,7 @@ local shorten_filename = function(full_filename, context)
   return filename
 end
 
-local file_name = {
+local file_path = {
   "filename",
   file_status = true,
   path = 1,
@@ -77,7 +77,7 @@ local diagnostics = {
   colored = false,
 }
 
-local windows = {
+local filename = {
   "windows",
   show_filename_only = true,
   show_modified_status = true,
@@ -96,6 +96,11 @@ local project_name = function()
   return " " .. string.gsub(cwd, "^.*/", "")
 end
 
+-- "%=" splits free space; with lualine's own split between c and x, next component lands centered
+local center_marker = function()
+  return "%="
+end
+
 return {
   "nvim-lualine/lualine.nvim",
   config = function()
@@ -105,15 +110,15 @@ return {
       sections = {
         lualine_a = {},
         lualine_b = { mode },
-        lualine_c = { file_name, diagnostics },
+        lualine_c = { branch, diff, lsp_status },
         lualine_x = { "searchcount", recorder.recordingStatus, recorder.displaySlots },
-        lualine_y = { diff, "location", "progress", project_name, branch },
+        lualine_y = { diagnostics, "location", "progress" },
         lualine_z = {},
       },
       tabline = {
-        lualine_a = { windows, lsp_status },
+        lualine_a = { project_name },
         lualine_b = {},
-        lualine_c = {},
+        lualine_c = { center_marker, file_path },
         lualine_x = {},
         lualine_y = { tabs },
         lualine_z = {},
