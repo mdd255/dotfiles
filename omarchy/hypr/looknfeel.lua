@@ -45,7 +45,7 @@ hl.config({
 })
 
 -- Personal window rules.
-o.window("Netsoft-com.netsoft.hubstaff", { size = { 340, 160 } })
+o.window("Netsoft-com.netsoft.hubstaff", { size = { 850, 400 }, center = true })
 o.window("dh.calendar", { float = true, size = { 850, 400 }, center = true })
 
 -- Tiled windows stay borderless (general.border_size = 0); floating ones get a border.
