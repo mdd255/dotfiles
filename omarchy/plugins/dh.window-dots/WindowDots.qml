@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // One copy per bar: a dot per window on the workspace visible on this bar's
@@ -36,7 +37,7 @@ BarWidget {
         readonly property bool isFocused: !!root.focused && root.focused.address === modelData.address
 
         text: isFocused ? "●" : "○"
-        color: root.monitorFocused ? (root.bar ? root.bar.urgent : Color.urgent) : "#ffffff"
+        color: root.monitorFocused ? (root.bar ? root.bar.urgent : Commons.Color.urgent) : "#ffffff"
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.body
 

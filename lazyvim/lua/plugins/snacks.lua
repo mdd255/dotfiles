@@ -67,6 +67,11 @@ return {
             end
           end
           Snacks.picker.actions.load_session(picker, item)
+
+          local cache = require("config.cache")
+          cache.invalidate_pattern("gh.prs")
+          cache.invalidate_pattern("gh.runs")
+          cache.invalidate_pattern("gh.collaborators")
         end,
         select_and_clear = function(picker)
           picker.list:select()

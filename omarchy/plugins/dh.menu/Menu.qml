@@ -3,6 +3,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 import "MenuModel.js" as MenuModel
 
@@ -76,91 +77,22 @@ Item {
   property int providerRevision: 0
 
   // Shared application engine (entries, hidden filters, icons, launch,
-  // removal), owned by the shell. A third-party menu's shell facade comes back
-  // without one on this Omarchy version, so fall back to a small local library
-  // built on the same DesktopEntries source.
-  readonly property var appLibrary: root.shell && root.shell.appLibrary ? root.shell.appLibrary : localApps
-
-  QtObject {
-    id: localApps
-
-    signal appsChanged()
-
-    function entryName(entry) { return String(entry.name || entry.id || "") }
-    function entrySubtext(entry) { return String(entry.genericName || entry.comment || "") }
-
-    function sortedEntries(query) {
-      var values = DesktopEntries.applications.values || []
-      var rows = []
-      for (var i = 0; i < values.length; i++) {
-        if (values[i] && !values[i].noDisplay) rows.push({ entry: values[i], name: entryName(values[i]).toLowerCase() })
-      }
-      rows.sort(function(a, b) { return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0) })
-      return rows
-    }
-
-    // Icon name -> file, found by scanning the XDG icon dirs (the themed
-    // lookup misses many app icons). Swapping the property re-evaluates every
-    // iconSource() binding, so icons appear once the scan finishes.
-    property var iconIndex: ({})
-    property var pendingIconIndex: ({})
-
-    function iconSource(icon) {
-      var value = String(icon || "")
-      if (value.charAt(0) === "/") return "file://" + value
-      var found = iconIndex[value]
-      if (found) return "file://" + found
-      var themed = value ? Quickshell.iconPath(value, true) : ""
-      return themed.length > 0 ? themed : Quickshell.iconPath("application-x-executable", true)
-    }
-
-    function indexIconLine(path) {
-      var value = String(path || "").trim()
-      var file = value.slice(value.lastIndexOf("/") + 1)
-      var name = file.lastIndexOf(".") > 0 ? file.slice(0, file.lastIndexOf(".")) : file
-      if (name && pendingIconIndex[name] === undefined) pendingIconIndex[name] = value
-    }
-
-    function refreshIcons() {
-      if (!iconScan.running) iconScan.running = true
-    }
-
-    function launch(desktopId, name) {
-      Quickshell.execDetached(["uwsm-app", "--", "gtk-launch", String(desktopId) + ".desktop"])
-    }
-
-    function remove(desktopId, name) {
-      Quickshell.execDetached([root.omarchyPath + "/bin/omarchy-remove-launcher-entry", String(desktopId), String(name || desktopId)])
-    }
-  }
-
-  Connections {
-    target: DesktopEntries.applications
-    function onValuesChanged() { localApps.appsChanged() }
-  }
-
-  Process {
-    id: iconScan
-    // SVGs first so the first hit per name prefers scalable icons.
-    command: ["bash", "-c", 'dirs="$HOME/.icons $HOME/.local/share/icons"; IFS=":"; for d in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do dirs="$dirs $d/icons"; done; unset IFS; for ext in svg png; do for base in $dirs; do [[ -d $base ]] && find "$base" \\( -path "*/apps/*" -o -path "*/devices/*" \\) -name "*.$ext" 2>/dev/null; done; find /usr/share/pixmaps -maxdepth 1 -name "*.$ext" 2>/dev/null; done']
-    stdout: SplitParser { onRead: function(line) { localApps.indexIconLine(line) } }
-    onStarted: localApps.pendingIconIndex = ({})
-    onExited: localApps.iconIndex = localApps.pendingIconIndex
-  }
+  // removal), owned by the shell and also used by the standalone launcher.
+  readonly property var appLibrary: root.shell ? root.shell.appLibrary : null
   property bool deleteConfirmOpen: false
   property var deleteTarget: null
   onOpenedChanged: if (!opened) { deleteConfirmOpen = false; deleteTarget = null }
-  // Bound to the central [menu] section in shell.toml via Color.qml.
+  // Bound to the central [menu] section in shell.toml via Commons.Color.qml.
   // Each color already includes its alpha companion (composed in the
   // singleton), so consumers can drop them straight into a Rectangle.
-  property color background: Color.menu.background
-  property color foreground: Color.menu.text
-  property color border: Color.menu.border
+  property color background: Commons.Color.menu.background
+  property color foreground: Commons.Color.menu.text
+  property color border: Commons.Color.menu.border
   property var borderSpec: Border.surfaceSpec("menu", "border", border, Math.max(1, Style.space(2)))
-  property color scrim: Color.menu.scrim
-  property color selectedBackground: Color.menu.selectedBackground
-  property color selectedText: Color.menu.selectedText
-  property color selectedBorder: Color.menu.selectedBorder
+  property color scrim: Commons.Color.menu.scrim
+  property color selectedBackground: Commons.Color.menu.selectedBackground
+  property color selectedText: Commons.Color.menu.selectedText
+  property color selectedBorder: Commons.Color.menu.selectedBorder
   property var selectedBorderSpec: Border.surfaceSpec("menu", "selected-border", selectedBorder, 0)
   readonly property real rowReservedBorderLeft: Border.left(selectedBorderSpec)
   readonly property real rowReservedBorderRight: Border.right(selectedBorderSpec)

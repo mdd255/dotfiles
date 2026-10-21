@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 
 // One copy per bar: an application icon per window on the workspace visible on
@@ -73,8 +74,8 @@ BarWidget {
 
         text: root.iconFor(modelData, appId, winTitle, ipc ? ipc.class : "", ipc ? ipc.title : "")
         color: !isFocused ? "#808080"
-          : root.monitorFocused ? (root.bar ? root.bar.urgent : Color.urgent)
-          : (root.bar ? root.bar.barForeground : Color.foreground)
+          : root.monitorFocused ? (root.bar ? root.bar.urgent : Commons.Color.urgent)
+          : (root.bar ? root.bar.barForeground : Commons.Color.foreground)
         font.family: root.bar ? root.bar.fontFamily : Style.font.family
         font.pixelSize: Style.font.body
 
