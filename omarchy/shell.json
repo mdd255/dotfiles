@@ -133,10 +133,9 @@
     "transparent": false
   },
   "idle": {
-    "lock": 900,
-    "screensaver": 600
+    "lock": 4000,
+    "screensaver": 3600
   },
-  "plugins": [],
   "version": 1,
   "disabledPlugins": [
     "omarchy.emojis",

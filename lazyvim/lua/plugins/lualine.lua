@@ -77,15 +77,6 @@ local diagnostics = {
   colored = false,
 }
 
-local filename = {
-  "windows",
-  show_filename_only = true,
-  show_modified_status = true,
-  mode = 0,
-  fmt = trim_ft,
-  disabled_buftypes = { "terminal", "nofile", "" },
-}
-
 local lsp_status = {
   "lsp_status",
   icon = "󰙴 ",
