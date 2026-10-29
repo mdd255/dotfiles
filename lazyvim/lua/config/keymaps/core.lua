@@ -77,8 +77,7 @@ map({
   { "<S-BS>", "<C-w>", { modes = { "i" }, desc = "Delete word backward" } },
 
   -- vim edit register control
-  { "p", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
-  { "P", '"_dP', { modes = { "x" }, desc = "Paste without overwrite default register" } },
+  { "p", "P", { modes = { "x" }, desc = "Paste without overwrite default register" } },
 
   -- fold overwrite
   { "zz", "za", { modes = { "n", "v" }, desc = "Toggle current fold" } },

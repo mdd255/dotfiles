@@ -57,6 +57,9 @@ source $HOME/.config/dotfiles/zsh/.zsh_aliases
 # bindkey
 source $HOME/.config/dotfiles/zsh/.zsh_custom_keys
 
+# env
+source $HOME/.config/dotfiles/zsh/.zshenv
+
 zstyle ':completion:*' matcher-list '' \
   'm:{a-z\-}={A-Z\_}' \
   'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \

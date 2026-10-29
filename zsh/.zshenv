@@ -91,7 +91,7 @@ case ":${PATH}:" in
    *:"/usr/bin/mise":*)
       ;;
    *)
-     eval "$(mise activate zsh)"
+     command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
       ;;
 esac
 
@@ -114,4 +114,4 @@ claude-abd() {
 }
 
 # sensitive envs
-[ -s "/home/dh/.config/secret-env" ] && source "/home/dh/.config/secret-env"
+[ -s "$HOME/.config/secret-env" ] && source "$HOME/.config/secret-env"

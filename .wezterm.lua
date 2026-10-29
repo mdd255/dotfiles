@@ -48,6 +48,22 @@ end
 
 wezterm.on("format-window-title", format_win_tile)
 
+local fullscreened = {}
+
+wezterm.on("window-config-reloaded", function(window)
+	local id = window:window_id()
+
+	if fullscreened[id] then
+		return
+	end
+
+	fullscreened[id] = true
+
+	if not window:get_dimensions().is_full_screen then
+		window:toggle_fullscreen()
+	end
+end)
+
 config.colors = {
 	background = "black",
 	cursor_bg = "#89ca78",

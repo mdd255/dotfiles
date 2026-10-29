@@ -1,12 +1,12 @@
 local apps = {
 	b = "Brave Browser",
-	["return"] = "Wezterm",
+	["return"] = "WezTerm",
 	w = "Neovide",
 }
 
 for key, app in pairs(apps) do
 	hs.hotkey.bind({ "cmd" }, key, function()
-		hs.application.launchOrFocus(app)
+		hs.execute("open -n -a '" .. app .. "'")
 	end)
 end
 
@@ -72,6 +72,8 @@ local function reloadConfig(files)
 	end
 end
 
+hs.hotkey.bind({ "cmd" }, "r", hs.reload)
+
 hs.pathwatcher.new(os.getenv("HOME") .. "/.config/dotfiles/hammerspoon.lua", reloadConfig):start()
 hs.alert.show("Config loaded successfully")
 
@@ -93,13 +95,15 @@ hs.hotkey.bind({ "cmd" }, "o", function()
 		end
 	end
 
-	-- Focus the next window (wrap around)
-	local nextIdx = idx + 1
+	-- Focus the next non-Finder window (wrap around)
+	for step = 1, #allWins - 1 do
+		local nextWin = allWins[(idx + step - 1) % #allWins + 1]
+		local app = nextWin:application()
 
-	if nextIdx > #allWins then
-		nextIdx = 1
+		if not app or app:name() ~= "Finder" then
+			nextWin:focus()
+			nextWin:raise()
+			return
+		end
 	end
-
-	allWins[nextIdx]:focus()
-	allWins[nextIdx]:raise()
 end)

@@ -6,4 +6,9 @@ hl.env("SHELL", "/usr/bin/zsh")
 hl.env("XCURSOR_SIZE", "21")
 
 -- Load secret environment variables into Hyprland for GUI apps (e.g. Neovide).
-o.exec_on_start([[bash -c 'source /home/dh/.config/secret-env && grep "^export " /home/dh/.config/secret-env | sed "s/^export //" | while IFS= read -r line; do key="${line%%=*}"; eval "val=\$$key"; hyprctl keyword env "$key,$val"; done']])
+local secret_env = (os.getenv("HOME") or "") .. "/.config/secret-env"
+
+o.exec_on_start(string.format(
+	[[bash -c '[ -f "%s" ] || exit 0; source "%s" && grep "^export " "%s" | sed "s/^export //" | while IFS= read -r line; do key="${line%%%%=*}"; eval "val=\$$key"; hyprctl keyword env "$key,$val"; done']],
+	secret_env, secret_env, secret_env
+))
