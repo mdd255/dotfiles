@@ -37,6 +37,9 @@ local file_path = {
   file_status = true,
   path = 1,
   shorting_target = 50,
+  cond = function()
+    return not vim.bo.filetype:match("claudecode")
+  end,
 }
 
 local tabs = {

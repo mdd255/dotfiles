@@ -67,11 +67,6 @@ return {
             end
           end
           Snacks.picker.actions.load_session(picker, item)
-
-          local cache = require("config.cache")
-          cache.invalidate_pattern("gh.prs")
-          cache.invalidate_pattern("gh.runs")
-          cache.invalidate_pattern("gh.collaborators")
         end,
         select_and_clear = function(picker)
           picker.list:select()
@@ -422,6 +417,18 @@ return {
             end
           end)
         end
+      end,
+    })
+
+    -- covers every session load path (project picker, dashboard, :lua require("persistence").load())
+    vim.api.nvim_create_autocmd("User", {
+      group = snacks_augroup,
+      pattern = "PersistenceLoadPost",
+      callback = function()
+        local cache = require("config.cache")
+        cache.invalidate_pattern("gh.prs")
+        cache.invalidate_pattern("gh.runs")
+        cache.invalidate_pattern("gh.collaborators")
       end,
     })
 
