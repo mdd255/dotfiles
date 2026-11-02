@@ -49,6 +49,7 @@ o.bind("SUPER + R", "Bluetooth picker", "omarchy-shell shell toggle omarchy.blue
 o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
 o.bind("SUPER + G", "Timezones", "omarchy-shell io.github.sspaeti.timezones toggle")
+o.bind("SUPER + Y", "Clear notifications", "omarchy osd -i keyboard -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll")
 
 -- Misc
 o.bind("ALT + ESCAPE", "Application", "omarchy-menu toggle apps")
@@ -56,7 +57,7 @@ o.bind("SUPER + ESCAPE", "Application", "omarchy-menu toggle system")
 o.bind("ALT + TAB", "Omarchy menu", "omarchy-menu")
 o.bind("SUPER + L", "Suspend", "hubstaff stop; omarchy-system-lock")
 o.bind("CTRL + SUPER + Q", "Quit hyprland", "omarchy-system-logout")
-o.bind("SUPER + SHIFT + R", "Reload config", "hyprctl reload")
+o.bind("SUPER + SHIFT + R", "Reload config", "omarchy osd -i keyboard -m 'Keybinds reloaded' -d 500 && hyprctl reload")
 o.bind("SUPER + P", "Screenshot", "omarchy-capture-screenshot")
 o.bind("ALT + P", "Screenrecord", "omarchy-capture-screenrecording")
 

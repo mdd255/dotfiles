@@ -133,8 +133,8 @@
     "transparent": false
   },
   "idle": {
-    "lock": 4000,
-    "screensaver": 3600
+    "lock": 0,
+    "screensaver": 0
   },
   "version": 1,
   "disabledPlugins": [
