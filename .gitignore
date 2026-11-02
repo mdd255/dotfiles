@@ -1,5 +1,5 @@
 .vim
 surfing-keys/node_modules/
 lazyvim/lazy-lock.json
-config.bat
 node_modules
+.vscode

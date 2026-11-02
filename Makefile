@@ -50,7 +50,7 @@ endef
 .PHONY: help install uninstall clean check-deps surfing-keys
 .PHONY: install-deps install-zsh install-nvim create-links install-packs
 .PHONY: deps-dco deps-media deps-docker
-.PHONY: clean-post update-vimium
+.PHONY: clean-post update-vimium setup-keyboard
 
 help: ## Show this help message
 	@echo "Dotfiles Installation Makefile"
@@ -59,7 +59,7 @@ help: ## Show this help message
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-install: check-deps install-packs install-deps install-zsh install-nvim create-links clean-post ## Full installation
+install: check-deps install-packs install-deps install-zsh install-nvim create-links setup-keyboard clean-post ## Full installation
 	@echo "✅ Installation completed successfully!"
 
 uninstall: ## Remove installed configurations (keeps packages)
@@ -159,6 +159,11 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
 	mkdir -p ~/.config/fontconfig
 	$(call create_symlink,$(DOTFILES_DIR)/omarchy/fontconfig/fonts.conf,~/.config/fontconfig/fonts.conf)
+
+setup-keyboard: ## Set Colemak for login screen (X11) and TTY
+	@echo "⌨️  Setting system keyboard to Colemak..."
+	sudo localectl set-x11-keymap us pc105 colemak
+	sudo localectl set-keymap colemak
 
 update-vimium: ## Update vimium configuration
 	@echo "🔗 Update configuration for vimium..."

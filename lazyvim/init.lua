@@ -7,4 +7,8 @@ if vim.g.neovide then
   end
 end
 
+if vim.fn.has("linux") == 1 then
+  require("config.linux")
+end
+
 require("config.package_json")
