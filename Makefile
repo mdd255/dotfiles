@@ -50,7 +50,7 @@ endef
 .PHONY: help install uninstall clean check-deps surfing-keys
 .PHONY: install-deps install-zsh install-nvim create-links install-packs
 .PHONY: deps-dco deps-media deps-docker
-.PHONY: clean-post update-vimium setup-keyboard
+.PHONY: clean-post update-vimium setup-keyboard install-git-hooks
 
 help: ## Show this help message
 	@echo "Dotfiles Installation Makefile"
@@ -59,7 +59,7 @@ help: ## Show this help message
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-install: check-deps install-packs install-deps install-zsh install-nvim create-links setup-keyboard clean-post ## Full installation
+install: check-deps install-packs install-deps install-zsh install-nvim create-links install-git-hooks setup-keyboard clean-post ## Full installation
 	@echo "✅ Installation completed successfully!"
 
 uninstall: ## Remove installed configurations (keeps packages)
@@ -159,6 +159,12 @@ create-links: ## Create all configuration symlinks
 	$(call create_symlink,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
 	mkdir -p ~/.config/fontconfig
 	$(call create_symlink,$(DOTFILES_DIR)/omarchy/fontconfig/fonts.conf,~/.config/fontconfig/fonts.conf)
+
+install-git-hooks: ## Install global git hooks (core.hooksPath)
+	@echo "🪝 Installing global git hooks..."
+	chmod +x $(DOTFILES_DIR)/git/hooks/*
+	git config --global core.hooksPath $(DOTFILES_DIR)/git/hooks
+	@echo "✅ core.hooksPath -> $$(git config --global core.hooksPath)"
 
 setup-keyboard: ## Set Colemak for login screen (X11) and TTY
 	@echo "⌨️  Setting system keyboard to Colemak..."

@@ -1,0 +1,36 @@
+#!/bin/sh
+# Global pre-commit: block added lines that are >200 chars, contain a space, and contain "Math".
+# Catches obfuscated JS appended to otherwise normal files. Bypass once with: git commit --no-verify
+
+echo "[global pre-commit] running suspicious-line check" >&2
+
+git diff --cached --diff-filter=ACM -U0 --no-color | awk '
+  /^\+\+\+ / { file = substr($0, 7); next }
+  /^@@ /     { match($0, /\+[0-9]+/); ln = substr($0, RSTART + 1, RLENGTH - 1) + 0; next }
+  /^\+/ {
+    line = substr($0, 2)
+    if (length(line) > 200 && index(line, " ") && index(line, "Math")) {
+      printf "pre-commit: %s:%d suspicious line (%d chars, contains spaces and \"Math\")\n", file, ln, length(line) > "/dev/stderr"
+      bad = 1
+    }
+    ln++
+  }
+  END { exit bad }
+' || {
+  echo "pre-commit: commit blocked. Inspect the line(s) above, or use --no-verify if legitimate." >&2
+  exit 1
+}
+
+# Chain to the repo's local hook (ignored by git once core.hooksPath is set).
+local_hook="$(git rev-parse --git-path hooks/pre-commit 2>/dev/null)"
+self="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+
+if [ -n "$local_hook" ] && [ -x "$local_hook" ]; then
+  local_abs="$(cd "$(dirname "$local_hook")" && pwd)/$(basename "$local_hook")"
+  # Guard against recursion if the local hook is this same file (e.g. symlink).
+  if [ "$local_abs" != "$self" ]; then
+    exec "$local_hook" "$@"
+  fi
+fi
+
+exit 0
