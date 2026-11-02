@@ -1,6 +1,5 @@
 #!/bin/sh
-# Global pre-commit: block added lines that are >200 chars, contain a space, and contain "Math".
-# Catches obfuscated JS appended to otherwise normal files. Bypass once with: git commit --no-verify
+# Global pre-commit: block added lines that are >200 chars, contain a space, and contain "Math": catches obfuscated JS appended to otherwise normal files. Bypass once with: git commit --no-verify
 
 echo "[global pre-commit] running suspicious-line check" >&2
 
