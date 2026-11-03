@@ -1181,6 +1181,7 @@ function M._create_pr_flow()
                 on_success = function()
                   vim.cmd("stopinsert")
                   cache.evict_pattern("gh.prs")
+                  vim.schedule(open_gh_pr)
                 end,
                 on_failure = function()
                   vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
