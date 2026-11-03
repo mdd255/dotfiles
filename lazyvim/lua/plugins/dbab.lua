@@ -52,7 +52,10 @@ return {
           prev_tab = "te",
           close_tab = "tq",
         },
-        result = {},
+        result = {
+          scroll_down = "m",
+          scroll_up = "M",
+        },
       },
     })
   end,
