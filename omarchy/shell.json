@@ -66,6 +66,7 @@
           "defaultIcon": "󰣆",
           "rewrite": {
             "brave-browser": "",
+            "Netsoft-com.netsoft.hubstaff": "󰍹",
             "kitty": "",
             "neovide": "",
             "Omamail": ""
