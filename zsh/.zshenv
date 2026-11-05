@@ -91,8 +91,12 @@ case ":${PATH}:" in
    *:"/usr/bin/mise":*)
       ;;
    *)
-     command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
-      ;;
+      if command -v mise >/dev/null 2>&1; then
+        eval "$(mise activate zsh)"
+      elif [ -x /opt/homebrew/bin/mise ]; then
+        eval "$(/opt/homebrew/bin/mise activate zsh)"
+      fi
+  ;;
 esac
 
 # go envs
