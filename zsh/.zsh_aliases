@@ -113,4 +113,5 @@ alias psn="
    pacman -Qqe > packages;
    ggu \"feat: automate commit\";
    cd ~; omz update;
+   mise upgrade;
 "

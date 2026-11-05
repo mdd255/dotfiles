@@ -6,13 +6,13 @@ local script = os.getenv("HOME") .. "/.config/dotfiles/omarchy/scripts"
 -- App bindings
 o.bind("ALT + RETURN", "Terminal", term)
 o.bind("ALT + B", "Browser", browser)
-o.bind("ALT + A", "Editor", editor)
+o.bind("ALT + W", "Editor", editor)
 
 -- Window controls
 o.bind("SUPER + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 o.bind("ALT + T", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
 
-o.bind("ALT + Q", "Kill active", hl.dsp.window.close())
+o.bind("SUPER + Q", "Kill active", hl.dsp.window.close())
 o.bind("ALT + O", "Cycle next", hl.dsp.layout("cyclenext"))
 o.bind("ALT + SHIFT + TAB", "Cycle previous", hl.dsp.layout("cycleprev"))
 o.bind("ALT + N", "Focus down", hl.dsp.focus({ direction = "d" }))
@@ -71,8 +71,8 @@ o.bind("ALT + semicolon", "Mute microphone", "omarchy-audio-input-mute", repeat_
 o.bind("ALT + J", "Next audio output", "omarchy-audio-output-switch", repeat_locked)
 
 -- Brightness
-o.bind("SUPER + Q", "Brightness down", "omarchy-brightness-display 5%-", repeat_locked)
-o.bind("SUPER + W", "Brightness up", "omarchy-brightness-display +5%", repeat_locked)
+o.bind("SUPER + X", "Brightness down", "omarchy-brightness-display 5%-", repeat_locked)
+o.bind("SUPER + C", "Brightness up", "omarchy-brightness-display +5%", repeat_locked)
 
 -- Clipboard
 local function send_shortcut_once(mods, key)
@@ -113,12 +113,28 @@ local function universal_clipboard_shortcut(default_mods, default_key, terminal_
 	end
 end
 
--- kitty.conf clears all default shortcuts and maps Alt+C/V to the clipboard
--- (Shift+Insert would paste the primary selection instead).
-o.bind("SUPER + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "ALT", "C"))
-o.bind("SUPER + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "ALT", "V"))
-o.bind("SUPER + X", "Universal cut", send_shortcut_once("CTRL", "X"))
-o.bind("SUPER + B", "Universal select all", send_shortcut_once("CTRL", "A"))
+-- Terminals (kitty/wezterm) and neovide map Alt+C/X/A/V natively, so forward
+-- Alt unchanged there; every other app gets the usual Ctrl shortcut.
+local function active_window_is_neovide()
+	local window = hl.get_active_window()
+
+	return window ~= nil and window.class == "neovide"
+end
+
+local function alt_clipboard_shortcut(key)
+	return function()
+		if active_window_is_terminal() or active_window_is_neovide() then
+			send_shortcut_once("ALT", key)()
+		else
+			send_shortcut_once("CTRL", key)()
+		end
+	end
+end
+
+o.bind("ALT + C", "Universal copy", alt_clipboard_shortcut("C"))
+o.bind("ALT + X", "Universal cut", alt_clipboard_shortcut("X"))
+o.bind("ALT + A", "Universal select all", alt_clipboard_shortcut("A"))
+o.bind("ALT + V", "Universal paste", alt_clipboard_shortcut("V"))
 o.bind("SUPER + Z", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
 
 -- Misc

@@ -50,3 +50,8 @@ o.window("dh.calendar", { float = true, size = { 850, 400 }, center = true })
 
 -- Tiled windows stay borderless (general.border_size = 0); floating ones get a border.
 o.window({ float = true }, { border_size = 1 })
+
+-- Opt another application in to Omarchy's standard transparency.
+-- Find its class with: hyprctl clients
+-- o.transparent_window("my-app")
+-- o.transparent_window("my-app", "0.9 0.85") -- Custom active/inactive opacity.

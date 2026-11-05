@@ -99,6 +99,21 @@ config.keys = {
 		action = action.PasteFrom("Clipboard"),
 	},
 	{
+		key = "c",
+		mods = alt,
+		action = action.CopyTo("Clipboard"),
+	},
+	{
+		key = "x",
+		mods = alt,
+		action = action.CopyTo("Clipboard"),
+	},
+	{
+		key = "a",
+		mods = alt,
+		action = action.Nop,
+	},
+	{
 		key = "v",
 		mods = cmd,
 		action = action.PasteFrom("Clipboard"),

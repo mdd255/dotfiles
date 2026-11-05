@@ -30,6 +30,7 @@ ddcutil
 debtap
 device-mapper
 diffutils
+disktree-bin
 dmraid
 dnsmasq
 docker
@@ -40,7 +41,6 @@ dotnet-runtime
 dotnet-runtime-9.0
 downgrade
 dracut
-dua-cli
 duf
 e2fsprogs
 efibootmgr
@@ -61,7 +61,11 @@ fakeroot
 fastfetch
 fcitx5
 fcitx5-bamboo
+fcitx5-chewing
+fcitx5-chinese-addons
 fcitx5-gtk
+fcitx5-hangul
+fcitx5-mozc
 fcitx5-qt
 fd
 ffmpegthumbnailer
@@ -72,6 +76,7 @@ fzf
 git
 git-delta
 github-cli
+gliff
 gnome-disk-utility
 gnome-keyring
 gnome-themes-extra
@@ -92,6 +97,7 @@ hdparm
 herdr
 hwdetect
 hwinfo
+hype
 hyprland
 hyprland-guiutils
 hyprland-preview-share-picker
@@ -154,6 +160,7 @@ meson
 mise-bin
 modemmanager
 mongosh
+monologue
 mpv
 mpv-mpris
 mtools
@@ -179,13 +186,18 @@ obsidian
 omacalc
 omacut
 omarchy
+omarchy-hyprland-titlebars
 omarchy-keyring
 omarchy-nvim
+omarchy-power-profiles-daemon
 omarchy-settings
+omasnap
 omawrite
 opencl-nvidia
 openssh
 openvpn-update-systemd-resolved
+owe
+owe-lockfeed
 pacman-contrib
 pamixer
 patool
@@ -204,7 +216,6 @@ plocate
 plymouth
 poppler-glib
 postgresql-libs
-power-profiles-daemon
 pv
 python
 python-aiohttp-oauthlib
@@ -233,6 +244,7 @@ ruby
 rust
 sddm
 sg3_utils
+signed
 slurp
 smartmontools
 socat
@@ -243,7 +255,6 @@ sushi
 sysfsutils
 system-config-printer
 systemd-sysvcompat
-tensaku
 tesseract
 tesseract-data-eng
 texinfo
@@ -275,6 +286,7 @@ usb_modeswitch
 usbutils
 uwsm
 vdirsyncer
+vi
 vpl-gpu-rt
 vulkan-intel
 webkit2gtk-4.1
@@ -298,6 +310,7 @@ xf86-input-libinput
 xfsprogs
 xl2tpd
 xmlstarlet
+xorg-xsetroot
 xournalpp
 yaru-icon-theme
 yay
