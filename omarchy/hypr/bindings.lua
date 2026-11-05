@@ -103,38 +103,28 @@ local function active_window_is_terminal()
 	return false
 end
 
-local function universal_clipboard_shortcut(default_mods, default_key, terminal_mods, terminal_key)
-	return function()
-		if active_window_is_terminal() then
-			send_shortcut_once(terminal_mods, terminal_key)()
-		else
-			send_shortcut_once(default_mods, default_key)()
-		end
-	end
-end
-
--- Terminals (kitty/wezterm) and neovide map Alt+C/X/A/V natively, so forward
--- Alt unchanged there; every other app gets the usual Ctrl shortcut.
+-- Neovide maps Alt+C/X/A/V itself (lazyvim/lua/config/linux.lua), like terminals.
 local function active_window_is_neovide()
 	local window = hl.get_active_window()
 
 	return window ~= nil and window.class == "neovide"
 end
 
-local function alt_clipboard_shortcut(key)
+local function universal_clipboard_shortcut(default_mods, default_key, native_mods, native_key)
 	return function()
 		if active_window_is_terminal() or active_window_is_neovide() then
-			send_shortcut_once("ALT", key)()
+			send_shortcut_once(native_mods, native_key)()
 		else
-			send_shortcut_once("CTRL", key)()
+			send_shortcut_once(default_mods, default_key)()
 		end
 	end
 end
 
-o.bind("ALT + C", "Universal copy", alt_clipboard_shortcut("C"))
-o.bind("ALT + X", "Universal cut", alt_clipboard_shortcut("X"))
-o.bind("ALT + A", "Universal select all", alt_clipboard_shortcut("A"))
-o.bind("ALT + V", "Universal paste", alt_clipboard_shortcut("V"))
+-- Terminals and neovide get Alt forwarded unchanged; other apps get Ctrl.
+o.bind("ALT + C", "Universal copy", universal_clipboard_shortcut("CTRL", "C", "ALT", "C"))
+o.bind("ALT + X", "Universal cut", universal_clipboard_shortcut("CTRL", "X", "ALT", "X"))
+o.bind("ALT + A", "Universal select all", universal_clipboard_shortcut("CTRL", "A", "ALT", "A"))
+o.bind("ALT + V", "Universal paste", universal_clipboard_shortcut("CTRL", "V", "ALT", "V"))
 o.bind("SUPER + Z", "Clipboard manager", "omarchy-shell shell toggle omarchy.clipboard")
 
 -- Misc
