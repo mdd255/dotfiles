@@ -12,7 +12,7 @@ o.bind("ALT + W", "Editor", editor)
 o.bind("SUPER + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 o.bind("ALT + T", "Toggle floating", hl.dsp.window.float({ action = "toggle" }))
 
-o.bind("SUPER + Q", "Kill active", hl.dsp.window.close())
+o.bind("ALT + Q", "Kill active", hl.dsp.window.close())
 o.bind("ALT + O", "Cycle next", hl.dsp.layout("cyclenext"))
 o.bind("ALT + SHIFT + TAB", "Cycle previous", hl.dsp.layout("cycleprev"))
 o.bind("ALT + N", "Focus down", hl.dsp.focus({ direction = "d" }))
@@ -41,6 +41,7 @@ end
 -- Scripts
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
 o.bind("ALT + F", "Hubstaff toggle", script .. "/hubstaff-toggle.js")
+o.bind("ALT + SHIFT + F", "Hubstaff project picker", script .. "/hubstaff-project.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
@@ -50,7 +51,7 @@ o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
 o.bind("SUPER + D", "Display picker", "omarchy-shell shell toggle omarchy.monitor")
 o.bind("SUPER + G", "Timezones", "omarchy-shell io.github.sspaeti.timezones toggle")
-o.bind("SUPER + Y", "Clear notifications", "omarchy osd -i keyboard -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll")
+o.bind("SUPER + Y", "Clear notifications", "omarchy osd -i 󰎟 -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll")
 
 -- Misc
 o.bind("ALT + ESCAPE", "Application", "omarchy-menu toggle apps")
@@ -58,7 +59,7 @@ o.bind("SUPER + ESCAPE", "Application", "omarchy-menu toggle system")
 o.bind("ALT + TAB", "Omarchy menu", "omarchy-menu")
 o.bind("SUPER + L", "Suspend", "hubstaff stop; omarchy-system-lock")
 o.bind("CTRL + SUPER + Q", "Quit hyprland", "omarchy-system-logout")
-o.bind("SUPER + SHIFT + R", "Reload config", "omarchy osd -i keyboard -m 'Keybinds reloaded' -d 500 && hyprctl reload")
+o.bind("SUPER + SHIFT + R", "Reload config", "omarchy osd -i  -m 'Keybinds reloaded' -d 500 && hyprctl reload")
 o.bind("SUPER + P", "Screenshot", "omarchy-capture-screenshot")
 o.bind("ALT + P", "Screenrecord", "omarchy-capture-screenrecording")
 
