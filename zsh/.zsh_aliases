@@ -110,8 +110,14 @@ alias zhead="zcat $1 | head"
 alias psn="
    omarchy update;
    cd /home/$(whoami)/.config/dotfiles;
-   pacman -Qqe > packages;
-   ggu \"feat: automate commit\";
+   omarchy/plugins/sync-upstream.sh --apply;
+   if grep -rqs '<<<<<<<' omarchy/plugins --include=*.qml --include=*.js; then
+      echo 'plugin merge conflicts: resolve markers in omarchy/plugins, then run ggu';
+   else
+      omarchy restart shell;
+      pacman -Qqe > packages;
+      ggu \"feat: automate commit\";
+   fi;
    cd ~; omz update;
    mise upgrade;
 "

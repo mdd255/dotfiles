@@ -48,6 +48,7 @@ o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
 o.bind("SUPER + R", "Bluetooth picker", "omarchy-shell shell toggle omarchy.bluetooth")
 o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
+o.bind("SUPER + D", "Display picker", "omarchy-shell shell toggle omarchy.monitor")
 o.bind("SUPER + G", "Timezones", "omarchy-shell io.github.sspaeti.timezones toggle")
 o.bind("SUPER + Y", "Clear notifications", "omarchy osd -i keyboard -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll")
 

@@ -18,6 +18,7 @@ repo=https://github.com/omacom/omarchy.git
 # local plugin | upstream directory | file
 MAP=(
   "dh.bar|shell/plugins/bar|Bar.qml"
+  "dh.bar|shell/plugins/bar|BarModel.js"
   "dh.menu|shell/plugins/menu|Menu.qml"
   "dh.menu|shell/plugins/menu|MenuModel.js"
   "dh.active-window|shell/plugins/bar/widgets|ActiveWindow.qml"
@@ -32,7 +33,7 @@ else
   git clone --quiet --filter=blob:none --no-checkout "$repo" "$cache"
 fi
 
-tag=${TAG:-$(git -C "$cache" tag -l 'v*' --sort=-v:refname | head -1)}
+tag=${TAG:-$(git -C "$cache" tag -l 'v*' --sort=-v:refname | grep -v -- '-rc\|-beta\|-alpha' | head -1)}
 new=$(git -C "$cache" rev-parse "$tag^{commit}")
 old=$(cat "$snap/BASE")
 echo "upstream: ${old:0:9} -> $tag (${new:0:9})"
