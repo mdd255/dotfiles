@@ -12,3 +12,8 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy
 hl.monitor({ output = "HDMI-A-1", mode = "1920x1080", position = "0x0", scale = 1, transform = 1 })
 hl.monitor({ output = "DP-3", mode = "1920x1080", position = "1080x0", scale = 1, transform = 2 })
 hl.monitor({ output = "eDP-1", mode = "1920x1080", position = "1080x1080", scale = 1.25 })
+
+-- Pin workspaces to monitors (colemak keys: N = 1, E = 2, I = 3).
+hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true, persistent = true })
+hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1", default = true, persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "DP-3", default = true, persistent = true })
