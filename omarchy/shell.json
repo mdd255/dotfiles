@@ -125,7 +125,10 @@
         {
           "id": "omarchy.monitor"
         }
-      ]
+      ],
+      "centerBegin": [],
+      "centerEnd": [],
+      "tray": []
     },
     "position": "top",
     "transparent": false
