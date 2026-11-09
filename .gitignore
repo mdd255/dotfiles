@@ -2,4 +2,4 @@
 surfing-keys/node_modules/
 lazyvim/lazy-lock.json
 node_modules
-.vscode
+config.bat

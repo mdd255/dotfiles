@@ -60,6 +60,24 @@ source $HOME/.config/dotfiles/zsh/.zsh_custom_keys
 # env
 source $HOME/.config/dotfiles/zsh/.zshenv
 
+# history: only keep commands that exit 0, so autosuggestions never offer invalid ones
+# zshaddhistory returns 1 = drop line from history entirely; precmd re-adds it only if it succeeded
+zshaddhistory() { _LASTHIST=$1; return 1 }
+
+_save_valid_history() {
+  local rc=$?
+  if [[ $rc -eq 0 && -n ${_LASTHIST//[[:space:]]/} ]]; then
+    print -sr -- "${_LASTHIST%%$'\n'}"
+  fi
+  unset _LASTHIST
+}
+
+precmd_functions=(_save_valid_history $precmd_functions)
+
+# history: unique entries only. Re-running a command drops its older copy and keeps the newest
+# (set after oh-my-zsh, which only enables HIST_IGNORE_DUPS = consecutive dups)
+setopt HIST_IGNORE_ALL_DUPS HIST_SAVE_NO_DUPS HIST_FIND_NO_DUPS
+
 zstyle ':completion:*' matcher-list '' \
   'm:{a-z\-}={A-Z\_}' \
   'r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}' \

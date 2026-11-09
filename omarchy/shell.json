@@ -123,7 +123,11 @@
           "aiModel": ""
         },
         {
-          "id": "omarchy.monitor"
+          "id": "omarchy.monitor",
+          "monitors": [
+            "eDP-1"
+          ]
+ 
         }
       ],
       "centerBegin": [],

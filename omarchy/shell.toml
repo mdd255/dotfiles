@@ -1,5 +1,5 @@
 [font]
-base-size = 14
+base-size = 15
 
 # Lock screen, migrated from the old hyprlock.conf. Values name theme palette
 # roles, so the colors still follow the active theme.

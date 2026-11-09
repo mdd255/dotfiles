@@ -11,7 +11,7 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = omarchy
 -- Portrait/rotated secondary monitor (transform: 1 = 90°, 3 = 270°).
 hl.monitor({ output = "HDMI-A-1", mode = "1920x1080", position = "0x0", scale = 1, transform = 1 })
 hl.monitor({ output = "DP-3", mode = "1920x1080", position = "1080x0", scale = 1, transform = 2 })
-hl.monitor({ output = "eDP-1", mode = "1920x1080", position = "1080x1080", scale = 1.25 })
+hl.monitor({ output = "eDP-1", mode = "1920x1080", position = "1080x1080", scale = 1.20 })
 
 -- Pin workspaces to monitors (colemak keys: N = 1, E = 2, I = 3).
 hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true, persistent = true })
