@@ -1665,7 +1665,23 @@ Item {
   Connections {
     target: Hyprland
     function onRawEvent(event) {
-      if (event && String(event.name) === "fullscreen") Hyprland.refreshToplevels()
+      if (!event) return
+      var name = String(event.name)
+      if (name === "fullscreen") Hyprland.refreshToplevels()
+      // Lock/unlock powers monitors off and on; the monitor, workspace and
+      // window lists can go stale, leaving the active-window icons wrong.
+      else if (name === "monitoradded" || name === "monitoraddedv2" || name === "monitorremoved" || name === "monitorremovedv2" || name === "dpms")
+        resyncAfterMonitorChange.restart()
+    }
+  }
+
+  Timer {
+    id: resyncAfterMonitorChange
+    interval: 400
+    onTriggered: {
+      Hyprland.refreshMonitors()
+      Hyprland.refreshWorkspaces()
+      Hyprland.refreshToplevels()
     }
   }
 
