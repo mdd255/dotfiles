@@ -138,8 +138,8 @@
     "transparent": false
   },
   "idle": {
-    "lock": 0,
-    "screensaver": 0
+    "lock": 300,
+    "screensaver": 180
   },
   "version": 1,
   "disabledPlugins": [
