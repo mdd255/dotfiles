@@ -6,7 +6,7 @@ const customKeyMaps = JSON.parse(JSON.stringify(source.customKeyMaps))
 delete source.customKeyMaps
 
 configs.forEach(workspace => {
-  const filename = `${workspace}.json`
+  const filename = `vimium/${workspace}.json`
   const keymaps = customKeyMaps[workspace] || []
 
   delete source.customKeyMaps

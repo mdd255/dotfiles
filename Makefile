@@ -2,176 +2,101 @@
 # Dotfiles Installation Makefile
 # =============================================================================
 
-# Variables
-DOTFILES_DIR := ~/.config/dotfiles
-USER := $(shell whoami)
-HOME_DIR := $(HOME)
-APPS_DIR := ~/Apps
+DOTFILES_DIR := $(HOME)/.config/dotfiles
+APPS_DIR     := $(HOME)/Apps
 
-# URLs
-OMZ_INSTALL_URL := https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-ZSH_AUTOSUGGESTIONS_REPO := https://github.com/zsh-users/zsh-autosuggestions
-ZSH_HIGHLIGHTING_REPO := https://github.com/zsh-users/zsh-syntax-highlighting.git
+OMZ_INSTALL_URL    := https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
 POWERLEVEL10K_REPO := https://github.com/romkatv/powerlevel10k.git
-DCO_REPO := https://github.com/devemio/docker-color-output.git
+DCO_REPO           := https://github.com/devemio/docker-color-output.git
 
-# Helper functions
-define install_pacman_packages
-	@echo "Installing pacman packages: $(1)"
-	sudo pacman -S --needed --noconfirm $(1)
+# link <src> <dest>: symlink dest to src; a real file/dir at dest is moved to dest.bak.<ts>
+define link
+	mkdir -p $$(dirname $(2))
+	@if [ -e $(2) ] && [ ! -L $(2) ]; then mv $(2) $(2).bak.$$(date +%s); fi
+	ln -sfn $(1) $(2)
 endef
 
-define install_yay_packages
-	@echo "Installing AUR packages: $(1)"
-	yay -S --needed --noconfirm $(1)
-endef
-
-define create_symlink
-	@echo "Creating symlink: $(2) -> $(1)"
-	rm -rf $(2)
-	ln -fs $(1) $(2)
-endef
-
-define create_sudo_symlink
-	@echo "Creating system symlink: $(2) -> $(1)"
-	sudo ln -fs $(1) $(2)
-endef
-
+# enable_service <services...>: enable and (re)start services
 define enable_service
-	@echo "Enabling and starting service: $(1)"
 	sudo systemctl enable $(1)
 	sudo systemctl restart $(1)
 endef
 
-# =============================================================================
-# Main Targets
-# =============================================================================
+# Steps in `install` depend on order
+.NOTPARALLEL:
 
-.PHONY: help install uninstall clean check-deps surfing-keys
-.PHONY: install-deps install-zsh install-nvim create-links install-packs
-.PHONY: deps-dco deps-media deps-docker
-.PHONY: clean-post update-vimium setup-keyboard install-git-hooks
+.PHONY: help install install-packs install-dco \
+	setup-docker install-zsh setup-nvim setup-omarchy \
+	setup-tools setup-keyboard setup-sddm update-vimium
 
 help: ## Show this help message
-	@echo "Dotfiles Installation Makefile"
-	@echo "Usage: make [target]"
-	@echo ""
-	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-install: check-deps install-packs install-deps install-zsh install-nvim create-links install-git-hooks setup-keyboard clean-post ## Full installation
-	@echo "✅ Installation completed successfully!"
-
-uninstall: ## Remove installed configurations (keeps packages)
-	rm -rf ~/.oh-my-zsh ~/.zshrc
-	rm -rf ~/.config/zsh
-	rm -f ~/.{wezterm.lua,p10k.zsh} ~/.cargo/env
-	@echo "✅ Configurations removed"
-
-clean: clean-post ## Clean temporary files
-
-check-deps: ## Check for required dependencies
-	@command -v pacman >/dev/null || (echo "❌ pacman not found" && exit 1)
-	@command -v yay >/dev/null || (echo "❌ yay not found - install it first" && exit 1)
-	@command -v git >/dev/null || (echo "❌ git not found" && exit 1)
-	@command -v curl >/dev/null || (echo "❌ curl not found" && exit 1)
-	@echo "✅ All dependencies found"
-
 # =============================================================================
-# Post Clean
+# Packages & services
 # =============================================================================
-
-clean-post: ## Remove temporary directories
-	rm -rf ~/.config/zsh/zsh
-
-# =============================================================================
-# Dependencies Installation
-# =============================================================================
-
-install-deps: deps-dco deps-media deps-docker ## Install all dependencies
 
 install-packs: ## Install all packages tracked in the packages file
-	$(call install_yay_packages,$$(cat $(DOTFILES_DIR)/packages))
+	yay -S --needed --noconfirm $$(cat $(DOTFILES_DIR)/essential-packages)
 
-deps-dco: ## Install Docker Color Output
-	@echo "🔧 Installing Docker Color Output..."
+install-dco: ## Install Docker Color Output
 	mkdir -p $(APPS_DIR)
-	rm -rf $(APPS_DIR)/docker-color-output
-	git clone $(DCO_REPO) $(APPS_DIR)/docker-color-output
+	if [ -d $(APPS_DIR)/docker-color-output/.git ]; then \
+		git -C $(APPS_DIR)/docker-color-output pull --ff-only; \
+	else \
+		rm -rf $(APPS_DIR)/docker-color-output; \
+		git clone $(DCO_REPO) $(APPS_DIR)/docker-color-output; \
+	fi
 	$(MAKE) build -C $(APPS_DIR)/docker-color-output
-	$(call create_sudo_symlink,$(APPS_DIR)/docker-color-output/bin/docker-color-output,/usr/bin/docker-color-output)
+	sudo ln -fs $(APPS_DIR)/docker-color-output/bin/docker-color-output /usr/bin/docker-color-output
 
-deps-media: ## Enable media and bluetooth services
-	@echo "🔧 Configuring media services..."
-	$(call enable_service,bluetooth.service)
-
-deps-docker: ## Setup Docker service and user permissions
-	@echo "🔧 Configuring Docker..."
-	$(call enable_service,docker.service)
-	$(call enable_service,containerd.service)
+setup-docker: ## Setup Docker service and user permissions
+	$(call enable_service,docker.service containerd.service)
 	sudo groupadd -f docker
-	sudo usermod -aG docker $(USER)
-	@echo "📝 You may need to log out and back in for Docker permissions to take effect"
+	sudo usermod -aG docker $$(whoami)
+	@echo "📝 Log out and back in for Docker permissions to take effect"
 
 # =============================================================================
-# Application Installation
+# Configs
 # =============================================================================
 
-install-zsh: install-packs ## Install and configure Zsh with Oh My Zsh
-	@echo "🔧 Installing Zsh and Oh My Zsh..."
+install-zsh: ## Install Oh My Zsh + p10k and link zsh configs
 	rm -rf ~/.oh-my-zsh ~/.zshrc ~/.zshenv
-	curl -fsSL $(OMZ_INSTALL_URL) | bash
-	git clone $(ZSH_AUTOSUGGESTIONS_REPO) ~/.oh-my-zsh/plugins/zsh-autosuggestions
-	git clone $(ZSH_HIGHLIGHTING_REPO) ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+	curl -fsSL $(OMZ_INSTALL_URL) | RUNZSH=no CHSH=no KEEP_ZSHRC=yes bash
 	git clone --depth=1 $(POWERLEVEL10K_REPO) ~/.oh-my-zsh/themes/powerlevel10k
-	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zshrc,~/.zshrc)
-	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zsh_env,~/.zshenv)
-	mkdir -p ~/.cargo
-	$(call create_symlink,$(DOTFILES_DIR)/zsh/.zshenv,~/.cargo/env)
-	$(call create_symlink,$(DOTFILES_DIR)/zsh/.p10k.zsh,~/.p10k.zsh)
+	$(call link,$(DOTFILES_DIR)/zsh/.zshrc,~/.zshrc)
+	$(call link,$(DOTFILES_DIR)/zsh/.zsh_env,~/.zshenv)
+	$(call link,$(DOTFILES_DIR)/zsh/.p10k.zsh,~/.p10k.zsh)
+	sudo chsh -s /usr/bin/zsh $$(whoami)
 
-install-nvim: ## Neovim post-install notes
-	@echo "📝 Note: You may need to manually link neovim-ruby-host based on your Ruby version"
+setup-nvim: ## Link LazyVim config
+	$(call link,$(DOTFILES_DIR)/lazyvim,~/.config/nvim)
 
-# =============================================================================
-# Configuration Linking
-# =============================================================================
+setup-omarchy: ## Link Omarchy shell and Hyprland configs
+	$(call link,$(DOTFILES_DIR)/omarchy/shell.json,~/.config/omarchy/shell.json)
+	$(call link,$(DOTFILES_DIR)/omarchy/shell.toml,~/.config/omarchy/shell.toml)
+	$(call link,$(DOTFILES_DIR)/omarchy/hypr,~/.config/hypr)
 
-create-links: ## Create all configuration symlinks
-	@echo "🔗 Creating configuration symlinks..."
-	$(call create_symlink,$(DOTFILES_DIR)/.wezterm.lua,~/.wezterm.lua)
-	$(call create_symlink,$(DOTFILES_DIR)/zsh,~/.config/zsh)
-	$(call create_symlink,$(DOTFILES_DIR)/lazyvim,~/.config/nvim)
-	$(call create_symlink,$(DOTFILES_DIR)/lazygit,~/.config/lazygit/config.yml)
-	$(call create_symlink,$(DOTFILES_DIR)/claude/CLAUDE.md,~/.claude/CLAUDE.md)
-	$(call create_symlink,$(DOTFILES_DIR)/claude/settings.json,~/.claude/settings.json)
-	$(call create_symlink,$(DOTFILES_DIR)/claude/statusline-command.sh,~/.claude/statusline-command.sh)
-	$(call create_symlink,$(DOTFILES_DIR)/claude/hooks,~/.claude/hooks)
-	$(call create_symlink,$(DOTFILES_DIR)/claude/skills,~/.claude/skills)
-	mkdir -p ~/.config/omarchy/plugins
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/shell.json,~/.config/omarchy/shell.json)
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.bar,~/.config/omarchy/plugins/dh.bar)
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.active-window,~/.config/omarchy/plugins/dh.active-window)
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.focus-dot,~/.config/omarchy/plugins/dh.focus-dot)
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/plugins/dh.menu,~/.config/omarchy/plugins/dh.menu)
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/shell.toml,~/.config/omarchy/shell.toml)
-	mkdir -p ~/.config/kitty
-	$(call create_symlink,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
-	mkdir -p ~/.config/fontconfig
-	$(call create_symlink,$(DOTFILES_DIR)/omarchy/fontconfig/fonts.conf,~/.config/fontconfig/fonts.conf)
+setup-tools: ## Link wezterm, kitty and Claude configs
+	$(call link,$(DOTFILES_DIR)/.wezterm.lua,~/.wezterm.lua)
+	mkdir -p ~/.claude ~/.config/kitty
+	$(call link,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
+	for f in CLAUDE.md settings.json statusline-command.sh hooks skills; do \
+		rm -rf ~/.claude/$$f; ln -s $(DOTFILES_DIR)/claude/$$f ~/.claude/$$f; \
+	done
 
-install-git-hooks: ## Install global git hooks (core.hooksPath)
-	@echo "🪝 Installing global git hooks..."
-	chmod +x $(DOTFILES_DIR)/git/hooks/*
-	git config --global core.hooksPath $(DOTFILES_DIR)/git/hooks
-	@echo "✅ core.hooksPath -> $$(git config --global core.hooksPath)"
-
-setup-keyboard: ## Set Colemak for login screen (X11) and TTY
-	@echo "⌨️  Setting system keyboard to Colemak..."
-	sudo localectl set-x11-keymap us pc105 colemak
+setup-keyboard: ## Set Colemak for the TTY / login screen (SDDM reads XKB vars from vconsole.conf)
 	sudo localectl set-keymap colemak
+	sudo localectl --no-convert set-x11-keymap us "" colemak
+
+setup-sddm: ## Make the SDDM login screen read the dotfiles monitors.lua
+	sudo setfacl -m u:sddm:x ~
+	sudo install -Dm644 $(DOTFILES_DIR)/omarchy/sddm/hyprland.lua /etc/sddm/hyprland.lua
+	sudo install -d /etc/sddm.conf.d
+	printf '[Wayland]\nCompositorCommand=start-hyprland -- --config /etc/sddm/hyprland.lua\n' \
+		| sudo tee /etc/sddm.conf.d/20-dh-monitors.conf >/dev/null
 
 update-vimium: ## Update vimium configuration
-	@echo "🔗 Update configuration for vimium..."
-	node ./vimium/update-config
-# =============================================================================
+	node $(DOTFILES_DIR)/vimium/update-config
+
+install: install-packs install-dco install-zsh setup-docker setup-nvim setup-omarchy setup-tools setup-keyboard setup-sddm update-vimium

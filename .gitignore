@@ -1,4 +1,5 @@
 .vim
-surfing-keys/node_modules/
 lazyvim/lazy-lock.json
 .vscode
+aa.json
+abd.json

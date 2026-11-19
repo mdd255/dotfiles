@@ -1,133 +1,38 @@
 {
   "bar": {
-    "id": "dh.bar",
     "layout": {
       "center": [
-        {
-          "id": "dh.menu"
-        },
-        {
-          "exec": "~/.config/dotfiles/omarchy/scripts/hubstaff-custom.js",
-          "id": "hubstaff",
-          "interval": 20,
-          "monitors": [
-            "HDMI-A-1"
-          ],
-          "onClick": "~/.config/dotfiles/omarchy/scripts/hubstaff-toggle.js",
-          "type": "command"
-        },
         {
           "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null",
           "id": "events",
           "interval": 60,
-          "monitors": [
-            "eDP-1"
-          ],
           "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
           "type": "command"
-        },
-        {
-          "id": "dh.timezones",
-          "monitors": [
-            "DP-3"
-          ],
-          "hourFormat": "24h",
-          "showIcon": false,
-          "hoverExpand": false,
-          "homeZones": [
-            "Asia/Ho_Chi_Minh"
-          ],
-          "zones": [
-            {
-              "label": "Vietnam",
-              "shortLabel": "VN",
-              "expand": true,
-              "format": "ddd D MMM HH:mm",
-              "home": true
-            },
-            {
-              "label": "New York",
-              "shortLabel": "NY",
-              "zone": "America/New_York",
-              "expand": true
-            }
-          ]
         }
       ],
-      "left": [
-        {
-          "id": "dh.active-window",
-          "defaultIcon": "󰣆",
-          "rewrite": {
-            "brave-browser": "",
-            "Netsoft-com.netsoft.hubstaff": "󰍹",
-            "kitty": "",
-            "neovide": "",
-            "Omamail": ""
-          }
-        }
-      ],
+      "left": [],
       "right": [
         {
           "exec": "fcitx5-remote -n | sed -E 's/^bamboo.*//; s/^keyboard-.*//'",
           "id": "input-method",
           "interval": 1,
-          "monitors": [
-            "DP-3"
-          ],
           "onClick": "~/.config/dotfiles/omarchy/scripts/fcit5-custom.js",
           "type": "command"
         },
         {
-          "id": "omarchy.audio",
-          "monitors": [
-            "DP-3"
-          ]
+          "id": "omarchy.audio"
         },
         {
-          "id": "omarchy.bluetooth",
-          "monitors": [
-            "DP-3"
-          ]
+          "id": "omarchy.bluetooth"
         },
         {
-          "id": "omarchy.network",
-          "monitors": [
-            "DP-3"
-          ]
+          "id": "omarchy.network"
         },
         {
-          "id": "omarchy.power",
-          "monitors": [
-            "DP-3"
-          ]
+          "id": "omarchy.monitor"
         },
         {
-          "id": "omamail",
-          "refreshIntervalSec": 120,
-          "maxMessages": 50,
-          "heavyMessageRendering": "Show plain text first",
-          "contentDirection": "Auto",
-          "appearance": "System",
-          "defaultQuery": "in:inbox",
-          "notifyNewMail": "On",
-          "oauthPort": 9481,
-          "undoSendSeconds": 30,
-          "unifiedCalendarView": true,
-          "calendarRemindersEnabled": true,
-          "calendarSnoozeMinutes": 3,
-          "showBarIcon": false,
-          "unifiedMailboxes": true,
-          "suggestEvents": false,
-          "aiAgent": "System default",
-          "aiModel": ""
-        },
-        {
-          "id": "omarchy.monitor",
-          "monitors": [
-            "eDP-1"
-          ]
- 
+          "id": "omarchy.power"
         }
       ],
       "centerBegin": [],
@@ -144,14 +49,10 @@
   "version": 1,
   "disabledPlugins": [
     "omarchy.emojis",
-    "omarchy.menu",
     "omarchy.elsewhen",
     "omarchy.reminders",
     "omarchy.image-picker",
     "omarchy.dev-gallery"
-  ],
-  "cloneSourceRestores": [
-    "dh.menu"
   ],
   "plugins": []
 }
