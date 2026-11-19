@@ -7,10 +7,10 @@ hl.config({
 	input = {
 		-- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
 		kb_layout = "us,dk,eu",
-		kb_options = "compose:caps,shift:both_capslock_cancel,grp:alts_toggle",
+		kb_options = "",
 		kb_variant = "colemak",
-		repeat_rate = 40,
-		repeat_delay = 250,
+		repeat_rate = 80,
+		repeat_delay = 200,
 		numlock_by_default = true,
 
 		-- Increase sensitivity for mouse/trackpad (default: 0).

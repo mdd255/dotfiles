@@ -6,6 +6,10 @@
     "checkThirdParty": false
   },
   "diagnostics": {
-    "globals": ["hl", "o"]
-  }
+    "globals": ["hl", "o",
+            "omarchy_default_bindings"]
+  },
+    "diagnostics.disable": [
+        "param-type-mismatch"
+    ]
 }

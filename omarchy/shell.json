@@ -3,6 +3,10 @@
     "layout": {
       "center": [
         {
+          "id": "omarchy.clock",
+          "format": "dddd HH:mm:ss"
+        },
+        {
           "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null",
           "id": "events",
           "interval": 60,
@@ -29,15 +33,18 @@
           "id": "omarchy.network"
         },
         {
+          "id": "omarchy.power"
+        },
+        {
           "id": "omarchy.monitor"
         },
         {
-          "id": "omarchy.power"
+          "id": "superwhisper.panel"
         }
       ],
+      "tray": [],
       "centerBegin": [],
-      "centerEnd": [],
-      "tray": []
+      "centerEnd": []
     },
     "position": "top",
     "transparent": false
@@ -52,7 +59,12 @@
     "omarchy.elsewhen",
     "omarchy.reminders",
     "omarchy.image-picker",
-    "omarchy.dev-gallery"
+    "omarchy.dev-gallery",
+    "omarchy.speedtest",
+    "omarchy.disk-speedtest",
+    "omarchy.polkit",
+    "omarchy.wifiqr",
+    "omarchy.remote-session"
   ],
   "plugins": []
 }

@@ -27,7 +27,7 @@ endef
 
 .PHONY: help install install-packs install-dco \
 	setup-docker install-zsh setup-nvim setup-omarchy \
-	setup-tools setup-keyboard setup-sddm update-vimium
+	setup-tools setup-chromium setup-keyboard setup-sddm update-vimium
 
 help: ## Show this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -65,7 +65,7 @@ install-zsh: ## Install Oh My Zsh + p10k and link zsh configs
 	curl -fsSL $(OMZ_INSTALL_URL) | RUNZSH=no CHSH=no KEEP_ZSHRC=yes bash
 	git clone --depth=1 $(POWERLEVEL10K_REPO) ~/.oh-my-zsh/themes/powerlevel10k
 	$(call link,$(DOTFILES_DIR)/zsh/.zshrc,~/.zshrc)
-	$(call link,$(DOTFILES_DIR)/zsh/.zsh_env,~/.zshenv)
+	$(call link,$(DOTFILES_DIR)/zsh/.zshenv,~/.zshenv)
 	$(call link,$(DOTFILES_DIR)/zsh/.p10k.zsh,~/.p10k.zsh)
 	sudo chsh -s /usr/bin/zsh $$(whoami)
 
@@ -85,6 +85,9 @@ setup-tools: ## Link wezterm, kitty and Claude configs
 		rm -rf ~/.claude/$$f; ln -s $(DOTFILES_DIR)/claude/$$f ~/.claude/$$f; \
 	done
 
+setup-chromium: ## Force-install the same extensions in all Chromium profiles
+	sudo install -Dm644 $(DOTFILES_DIR)/chromium/extensions.json /etc/chromium/policies/managed/extensions.json
+
 setup-keyboard: ## Set Colemak for the TTY / login screen (SDDM reads XKB vars from vconsole.conf)
 	sudo localectl set-keymap colemak
 	sudo localectl --no-convert set-x11-keymap us "" colemak
@@ -99,4 +102,4 @@ setup-sddm: ## Make the SDDM login screen read the dotfiles monitors.lua
 update-vimium: ## Update vimium configuration
 	node $(DOTFILES_DIR)/vimium/update-config
 
-install: install-packs install-dco install-zsh setup-docker setup-nvim setup-omarchy setup-tools setup-keyboard setup-sddm update-vimium
+install: install-packs install-dco install-zsh setup-docker setup-nvim setup-omarchy setup-tools setup-chromium setup-keyboard setup-sddm update-vimium

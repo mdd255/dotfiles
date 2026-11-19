@@ -1,6 +1,6 @@
 -- Extra env variables. NVIDIA vars now come from Omarchy's default.hypr.nvidia.
 hl.env("TERMINAL", "kitty")
-hl.env("BROWSER", "brave")
+hl.env("BROWSER", "chromium")
 hl.env("EDITOR", "neovide")
 hl.env("SHELL", "/usr/bin/zsh")
 hl.env("XCURSOR_SIZE", "21")
