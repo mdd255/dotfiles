@@ -24,18 +24,49 @@ o.bind("ALT + SHIFT + E", "Swap up", hl.dsp.window.swap({ direction = "u" }))
 o.bind("ALT + SHIFT + H", "Swap left", hl.dsp.window.swap({ direction = "l" }))
 o.bind("ALT + SHIFT + I", "Swap right", hl.dsp.window.swap({ direction = "r" }))
 
--- Workspace controls (colemak home row: N E I O H = 1..5)
-local workspace_keys = { "N", "E", "I", "O", "H" }
+-- Workspace controls (colemak home row). Each key targets a fixed monitor and slot,
+-- and jumps to that monitor. Omarchy gives each monitor its own workspaces 1-10
+-- (default/hypr/monitor-workspaces.lua), so go through o.workspaces, not raw ids.
+local workspace_targets = {
+	{ key = "N", monitor = "eDP-1", slot = 1 },
+	{ key = "E", monitor = "HDMI-A-1", slot = 1 },
+	{ key = "I", monitor = "DP-3", slot = 1 },
+}
 
-for index, key in ipairs(workspace_keys) do
-	local workspace = tostring(index)
-	o.bind("SUPER + " .. key, "Switch to workspace " .. workspace, hl.dsp.focus({ workspace = workspace }))
+-- Focus the monitor first: o.workspaces.focus alone left focus on the old monitor.
+local function focus_workspace(target)
+	return function()
+		hl.dispatch(hl.dsp.focus({ monitor = target.monitor }))
+		hl.dispatch(o.workspaces.focus(target.slot, target.monitor))
+	end
+end
 
-	o.bind(
-		"CTRL + SUPER + " .. key,
-		"Move window to workspace " .. workspace,
-		hl.dsp.window.move({ workspace = workspace })
-	)
+local function move_window_to(target)
+	return function()
+		local window = hl.get_active_window()
+		local monitor = hl.get_monitor(target.monitor)
+
+		if not (window and monitor) then
+			return
+		end
+
+		focus_workspace(target)()
+
+		local id = o.workspaces.workspace_id(monitor, target.slot)
+
+		hl.dispatch(hl.dsp.window.move({
+			workspace = tostring(id),
+			follow = true,
+			window = "address:" .. window.address,
+		}))
+	end
+end
+
+for _, target in ipairs(workspace_targets) do
+	local label = target.monitor .. " " .. target.slot
+
+	o.bind("SUPER + " .. target.key, "Switch to " .. label, focus_workspace(target))
+	o.bind("CTRL + SUPER + " .. target.key, "Move window to " .. label, move_window_to(target))
 end
 
 -- Scripts
@@ -47,13 +78,8 @@ o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
 o.bind("SUPER + R", "Bluetooth picker", "omarchy-shell shell toggle omarchy.bluetooth")
 o.bind("SUPER + S", "Wifi picker", "omarchy-shell shell toggle omarchy.network")
 o.bind("SUPER + T", "Power picker", "omarchy-shell shell toggle omarchy.power")
-o.bind("SUPER + D", "Display picker", "omarchy-shell shell toggle omarchy.monitor")
-o.bind("SUPER + G", "Timezones", "omarchy-shell io.github.sspaeti.timezones toggle")
-o.bind(
-	"SUPER + Y",
-	"Clear notifications",
-	"omarchy osd -i 󰎟 -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll"
-)
+o.bind("SUPER + D", "Superwhisper", "omarchy-shell shell toggle superwhisper.panel")
+o.bind("SUPER + G", "Display picker", "omarchy-shell shell toggle omarchy.monitor")
 
 -- Misc
 o.bind("ALT + ESCAPE", "Application", "omarchy-menu toggle apps")
@@ -64,6 +90,12 @@ o.bind("CTRL + SUPER + Q", "Quit hyprland", "omarchy-system-logout")
 o.bind("SUPER + SHIFT + R", "Reload config", "omarchy osd -i  -m 'Keybinds reloaded' -d 500 && hyprctl reload")
 o.bind("SUPER + P", "Screenshot", "omarchy-capture-screenshot")
 o.bind("ALT + P", "Screenrecord", "omarchy-capture-screenrecording")
+o.bind("SUPER + TAB", "Indicators", "omarchy-menu toggle toggle")
+o.bind(
+	"SUPER + Y",
+	"Clear notifications",
+	"omarchy osd -i 󰎟 -m 'Notifications cleared' -d 500 && omarchy-shell notifications dismissAll"
+)
 
 -- Media
 local repeat_locked = { locked = true, repeating = true }
@@ -91,13 +123,7 @@ end
 
 -- Lean on the terminal tag from default/hypr/apps/terminals.lua so there's one
 -- definition of what counts as a terminal. Dynamic tags carry a trailing "*".
-local function active_window_is_terminal()
-	local window = hl.get_active_window()
-
-	if not window then
-		return false
-	end
-
+local function active_window_is_terminal(window)
 	for _, tag in ipairs(window.tags or {}) do
 		if tag:gsub("%*$", "") == "terminal" then
 			return true
@@ -107,16 +133,12 @@ local function active_window_is_terminal()
 	return false
 end
 
--- Neovide maps Alt+C/X/A/V itself (lazyvim/lua/config/linux.lua), like terminals.
-local function active_window_is_neovide()
-	local window = hl.get_active_window()
-
-	return window ~= nil and window.class == "neovide"
-end
-
 local function universal_clipboard_shortcut(default_mods, default_key, native_mods, native_key)
 	return function()
-		if active_window_is_terminal() or active_window_is_neovide() then
+		local window = hl.get_active_window()
+
+		-- Neovide maps Alt+C/X/A/V itself (lazyvim/lua/config/linux.lua), like terminals.
+		if window and (active_window_is_terminal(window) or window.class == "neovide") then
 			send_shortcut_once(native_mods, native_key)()
 		else
 			send_shortcut_once(default_mods, default_key)()

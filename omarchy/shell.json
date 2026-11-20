@@ -4,22 +4,33 @@
       "center": [
         {
           "id": "omarchy.clock",
-          "format": "dddd HH:mm:ss"
+          "format": "HH:mm ddd dd.MM.yy",
+          "interval": 60
         },
         {
-          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js 2>/dev/null",
+          "exec": "~/.config/dotfiles/omarchy/scripts/world-clock.js NYC=America/New_York",
+          "id": "world-clock",
+          "interval": 60,
+          "type": "command"
+        },
+        {
+          "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js",
           "id": "events",
           "interval": 60,
           "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
           "type": "command"
         }
       ],
-      "left": [],
+      "left": [
+        {
+          "id": "omarchy.indicators"
+        }
+      ],
       "right": [
         {
-          "exec": "fcitx5-remote -n | sed -E 's/^bamboo.*//; s/^keyboard-.*//'",
+          "exec": "fcitx5-remote -n | sed -E 's/^bamboo.*/\uf52a/; s/^keyboard-.*/\uf456/'",
           "id": "input-method",
-          "interval": 1,
+          "interval": 3,
           "onClick": "~/.config/dotfiles/omarchy/scripts/fcit5-custom.js",
           "type": "command"
         },
@@ -36,10 +47,10 @@
           "id": "omarchy.power"
         },
         {
-          "id": "omarchy.monitor"
+          "id": "superwhisper.panel"
         },
         {
-          "id": "superwhisper.panel"
+          "id": "omarchy.monitor"
         }
       ],
       "tray": [],

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// biome-ignore-all lint/suspicious/noConsole: we need it
 
 const { spawnSync } = require('node:child_process');
 const { homedir } = require('node:os');

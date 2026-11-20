@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// biome-ignore-all lint/suspicious/noConsole: we need it
 
 const { execSync, spawnSync } = require('node:child_process');
 const { formatEventTitle } = require('./calendar-utils');
