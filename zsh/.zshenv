@@ -4,7 +4,8 @@ export LC_ALL="en_US.UTF-8"
 export ARCHFLAGS="-arch x86_64"
 export EDITOR=nvim
 export VISUAL=nvim
-export BROWSER=/usr/bin/brave
+export BROWSER=/usr/bin/chromium
+export TERMINAL=/usr/bin/kitty
 
 # docker
 export DOCKER_BUILDKIT=1
