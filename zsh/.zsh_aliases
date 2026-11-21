@@ -109,6 +109,7 @@ alias zhead="zcat $1 | head"
 # misc
 alias psn="
    omarchy update;
+   cd ~/.config/dotfiles;
    ggu \"feat: automate commit\";
    cd ~; omz update;
    mise upgrade;
