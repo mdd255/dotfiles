@@ -67,8 +67,9 @@ end
 
 -- Scripts
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
+o.bind("SUPER + O", "Reminders", script .. "/reminder.js")
 o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
-o.bind("ALT + B", "Browser profile", script .. "/browser.js")
+o.bind("SUPER + B", "Browser profile", script .. "/browser.js")
 o.bind("ALT + W", "Editor", script .. "/editor.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
