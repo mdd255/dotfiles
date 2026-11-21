@@ -1,11 +1,9 @@
 local term = "kitty"
-local browser = "chromium"
 local editor = "neovide"
 local script = os.getenv("HOME") .. "/.config/dotfiles/omarchy/scripts"
 
 -- App bindings
 o.bind("ALT + RETURN", "Terminal", term)
-o.bind("ALT + B", "Browser", browser)
 o.bind("ALT + W", "Editor", editor)
 
 -- Window controls
@@ -72,6 +70,7 @@ end
 -- Scripts
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
 o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
+o.bind("ALT + B", "Browser profile", script .. "/browser.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
