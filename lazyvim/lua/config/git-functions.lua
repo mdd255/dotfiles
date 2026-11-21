@@ -318,6 +318,11 @@ local fetch_repo_name = cache.wrap("gh.repo_name", GH_TTL_MS, function(callback)
   vim.system({ "gh", "repo", "view", "--json", "nameWithOwner", "-q", ".nameWithOwner" }, {}, function(result)
     vim.schedule(function()
       if result.code ~= 0 then
+        vim.notify(
+          "Failed to get repo name (gh repo view, exit " .. result.code .. "): " .. vim.trim(result.stderr or ""),
+          vim.log.levels.ERROR,
+          notify_opts
+        )
         callback(nil)
         return
       end
@@ -337,6 +342,16 @@ local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(c
     vim.system({ "gh", "api", "repos/" .. repo .. "/collaborators", "--jq", ".[].login" }, {}, function(collab_result)
       vim.schedule(function()
         if collab_result.code ~= 0 then
+          vim.notify(
+            "Failed to get collaborators of "
+              .. repo
+              .. " (gh api, exit "
+              .. collab_result.code
+              .. "): "
+              .. vim.trim(collab_result.stderr or ""),
+            vim.log.levels.ERROR,
+            notify_opts
+          )
           callback(nil)
           return
         end
@@ -421,7 +436,7 @@ local function select_reviewers(title, callback)
 
   local function show_picker(items)
     if not items then
-      vim.notify("Failed to load reviewers", vim.log.levels.ERROR, notify_opts)
+      vim.notify("Failed to load reviewers (see error above for cause)", vim.log.levels.ERROR, notify_opts)
       callback("")
       return
     end
@@ -1138,6 +1153,36 @@ function M.create_pr()
 end
 
 function M._create_pr_flow()
+  local function push_diagnostics()
+    local function run(cmd)
+      local ok, res = pcall(function()
+        return vim.system(cmd, { text = true, timeout = 8000 }):wait()
+      end)
+
+      if not ok or not res then
+        return "(failed to run)"
+      end
+
+      local out = vim.trim((res.stderr or "") .. "\n" .. (res.stdout or ""))
+      return out ~= "" and out or ("(no output, exit " .. res.code .. ")")
+    end
+
+    local url = vim.trim(run({ "git", "remote", "get-url", "origin" }))
+    local host = url:match("^[^@]+@([^:]+):") or url:match("^ssh://[^@]*@?([^/:]+)")
+    local lines = {
+      "remote origin: " .. url,
+      "branch: " .. run({ "git", "status", "-sb", "--porcelain" }):match("^[^\n]*"),
+      "upstream: " .. run({ "git", "rev-parse", "--abbrev-ref", "@{u}" }),
+      "ssh-add -l: " .. run({ "ssh-add", "-l" }),
+    }
+
+    if host then
+      table.insert(lines, "ssh -T " .. host .. ": " .. run({ "ssh", "-T", "-o", "BatchMode=yes", "-o", "ConnectTimeout=5", host }))
+    end
+
+    vim.notify("Push diagnostics:\n" .. table.concat(lines, "\n"), vim.log.levels.WARN, notify_opts)
+  end
+
   local function create_pr_with_gh(data)
     fetch_current_branch(function(head_branch)
       local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
@@ -1163,7 +1208,7 @@ function M._create_pr_flow()
       local cmd_str = table.concat(args, " ")
 
       with_ssh_passphrase(function(env, cleanup)
-        exec_async({ "git", "push", "-u", "origin", "HEAD" }, {
+        exec_async({ "git", "push", "-v", "-u", "origin", "HEAD" }, {
           notify = notify_opts,
           env = env,
           suppress_notify = true,
@@ -1189,7 +1234,10 @@ function M._create_pr_flow()
               })
             end)
           end,
-          on_failure = cleanup,
+          on_failure = function()
+            cleanup()
+            push_diagnostics()
+          end,
         })
       end)
     end)

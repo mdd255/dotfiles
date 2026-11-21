@@ -542,7 +542,32 @@ function M.exec_async(cmd, opts)
           opts.on_success()
         end
       else
-        vim.notify(opts.failed_label .. (cmd_result.stderr or "unknown error"), vim.log.levels.ERROR, opts.notify)
+        local parts = {}
+
+        for _, stream in ipairs({ cmd_result.stderr, cmd_result.stdout }) do
+          local t = vim.trim(stream or "")
+
+          if t ~= "" then
+            table.insert(parts, t)
+          end
+        end
+
+        local detail = #parts > 0 and table.concat(parts, "\n") or "unknown error"
+
+        local reason = cmd_result.signal and cmd_result.signal ~= 0 and (" signal " .. cmd_result.signal) or ""
+
+        vim.notify(
+          string.format(
+            "%s%s\n[exit %s%s] $ %s",
+            opts.failed_label,
+            detail,
+            tostring(cmd_result.code),
+            reason,
+            table.concat(cmd, " ")
+          ),
+          vim.log.levels.ERROR,
+          opts.notify
+        )
 
         if opts.on_failure then
           opts.on_failure()

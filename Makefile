@@ -76,9 +76,11 @@ setup-omarchy: ## Link Omarchy shell and Hyprland configs
 	$(call link,$(DOTFILES_DIR)/omarchy/shell.json,~/.config/omarchy/shell.json)
 	$(call link,$(DOTFILES_DIR)/omarchy/shell.toml,~/.config/omarchy/shell.toml)
 	$(call link,$(DOTFILES_DIR)/omarchy/hypr,~/.config/hypr)
+	$(call link,$(DOTFILES_DIR)/omarchy/branding,~/.config/omarchy/branding)
 
-setup-tools: ## Link wezterm, kitty and Claude configs
+setup-tools: ## Link wezterm, kitty, zathura and Claude configs
 	$(call link,$(DOTFILES_DIR)/.wezterm.lua,~/.wezterm.lua)
+	$(call link,$(DOTFILES_DIR)/zathura/zathurarc,~/.config/zathura/zathurarc)
 	mkdir -p ~/.claude ~/.config/kitty
 	$(call link,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)
 	for f in CLAUDE.md settings.json statusline-command.sh hooks skills; do \

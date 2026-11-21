@@ -1,0 +1,37 @@
+# Colemak keybinds mirroring nvim (lazyvim/lua/config/keymaps)
+
+# Unbind qwerty defaults
+unmap j
+unmap k
+unmap l
+unmap J
+unmap K
+
+# Scroll: h left, n down, e up, i right
+map h scroll left
+map n scroll down
+map e scroll up
+map i scroll right
+
+# Half page scroll: m down, M up
+map m scroll half-down
+map M scroll half-up
+
+# Page nav: N prev page, E next page
+map N navigate previous
+map E navigate next
+
+# Jumplist: H back, I forward
+map H jumplist backward
+map I jumplist forward
+
+# Search nav: <C-n> next, <C-e> previous
+map <C-n> search forward
+map <C-e> search backward
+
+# Misc
+map U reload
+map <Esc> abort
+
+set selection-clipboard clipboard
+set recolor false
