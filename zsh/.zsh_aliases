@@ -111,5 +111,4 @@ alias psn="
    omarchy update -y;
    cd ~/.config/dotfiles; ggu \"feat: automate commit\";
    cd ~; omz update;
-   mise upgrade;
 "

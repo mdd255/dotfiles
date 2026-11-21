@@ -71,6 +71,7 @@ end
 
 -- Scripts
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
+o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
