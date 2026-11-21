@@ -1,10 +1,8 @@
 local term = "kitty"
-local editor = "neovide"
 local script = os.getenv("HOME") .. "/.config/dotfiles/omarchy/scripts"
 
 -- App bindings
 o.bind("ALT + RETURN", "Terminal", term)
-o.bind("ALT + W", "Editor", editor)
 
 -- Window controls
 o.bind("SUPER + F", "Full screen", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
@@ -71,6 +69,7 @@ end
 o.bind("ALT + K", "Events", script .. "/khal-view.js")
 o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
 o.bind("ALT + B", "Browser profile", script .. "/browser.js")
+o.bind("ALT + W", "Editor", script .. "/editor.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
 
 -- Picker
@@ -138,7 +137,7 @@ local function universal_clipboard_shortcut(default_mods, default_key, native_mo
 		local window = hl.get_active_window()
 
 		-- Neovide maps Alt+C/X/A/V itself (lazyvim/lua/config/linux.lua), like terminals.
-		if window and (active_window_is_terminal(window) or window.class == "neovide") then
+		if window and (active_window_is_terminal(window) or (window.class:find("^code%-") or window.class:find("^neovide"))) then
 			send_shortcut_once(native_mods, native_key)()
 		else
 			send_shortcut_once(default_mods, default_key)()
