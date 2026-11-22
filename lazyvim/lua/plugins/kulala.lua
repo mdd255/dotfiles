@@ -1,32 +1,30 @@
--- return {
---   {
---     "dont-be-evil-company/kulala.nvim",
---     commit = "de0e6370e4ffa1a8da95cb4ff9b8a3057e0ac6e5",
---     ft = { "http", "rest" },
---     keys = {
---       { "ty", "<cmd>lua require('kulala').copy()<cr>", desc = "Copy as cURL", ft = "http" },
---       { "tp", "<cmd>lua require('kulala').from_curl()<cr>", desc = "Paste from curl", ft = "http" },
---       {
---         "td",
---         "<cmd>lua require('kulala').download_graphql_schema()<cr>",
---         desc = "Download GraphQL schema",
---         ft = "http",
---       },
---       { "th", "<cmd>lua require('kulala').inspect()<cr>", desc = "Inspect current request", ft = "http" },
---       { "tn", "<cmd>lua require('kulala').jump_next()<cr>", desc = "Jump to next request", ft = "http" },
---       { "te", "<cmd>lua require('kulala').jump_prev()<cr>", desc = "Jump to previous request", ft = "http" },
---       { "tt", "<cmd>lua require('kulala').run()<cr>", desc = "Send the request", ft = "http" },
---       { "ts", "<cmd>lua require('kulala').show_stats()<cr>", desc = "Show stats", ft = "http" },
---     },
---     opts = {
---       environment_scope = "g",
---       kulala_core = {
---         path = nil,
---         timeout = 60000,
---         download_url = "https://core.kulala.app/releases/%s/%s",
---         download_tool = "curl",
---       },
---     },
---   },
--- }
-return {}
+return {
+  {
+    "dont-be-evil-company/kulala.nvim",
+    ft = { "http", "rest" },
+    keys = {
+      { "ty", "<cmd>lua require('kulala').copy()<cr>", desc = "Copy as cURL", ft = "http" },
+      { "tp", "<cmd>lua require('kulala').from_curl()<cr>", desc = "Paste from curl", ft = "http" },
+      {
+        "td",
+        "<cmd>lua require('kulala').download_graphql_schema()<cr>",
+        desc = "Download GraphQL schema",
+        ft = "http",
+      },
+      { "th", "<cmd>lua require('kulala').inspect()<cr>", desc = "Inspect current request", ft = "http" },
+      { "tn", "<cmd>lua require('kulala').jump_next()<cr>", desc = "Jump to next request", ft = "http" },
+      { "te", "<cmd>lua require('kulala').jump_prev()<cr>", desc = "Jump to previous request", ft = "http" },
+      { "tt", "<cmd>lua require('kulala').run()<cr>", desc = "Send the request", ft = "http" },
+      { "ts", "<cmd>lua require('kulala').show_stats()<cr>", desc = "Show stats", ft = "http" },
+    },
+    opts = {
+      environment_scope = "g",
+      kulala_core = {
+        path = nil,
+        timeout = 60000,
+        download_url = "https://core.kulala.app/releases/%s/%s",
+        download_tool = "curl",
+      },
+    },
+  },
+}
