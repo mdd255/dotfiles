@@ -4,10 +4,12 @@ vim.opt.timeoutlen = 350
 vim.opt.winborder = "rounded"
 vim.opt.numberwidth = 1
 vim.opt.swapfile = false
-vim.opt.history = 200
-vim.opt.undolevels = 100
+vim.opt.history = 10000
+vim.opt.undolevels = 1000
 
 -- Backup and undo configuration
+vim.fn.mkdir(vim.fn.stdpath("data") .. "/backup", "p")
+vim.fn.mkdir(vim.fn.stdpath("data") .. "/undo", "p")
 vim.opt.backup = true
 vim.opt.backupdir = vim.fn.stdpath("data") .. "/backup"
 vim.opt.undodir = vim.fn.stdpath("data") .. "/undo"

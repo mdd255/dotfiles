@@ -470,6 +470,7 @@ return {
     map({ "n", "i", "t" }, "<C-Cr>", "<cmd>lua Snacks.terminal()<Cr>", { desc = "Toggle terminal" })
     map("n", "-", "<cmd>lua Snacks.picker.explorer()<Cr>", { desc = "Toggle explorer" })
     map("n", "/", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer" })
+    map("n", "<kDivide>", "<cmd>lua Snacks.picker.lines()<Cr>", { desc = "Grep current buffer (keypad /)" })
     map("n", "<Leader><Space>", "<cmd>lua Snacks.picker.resume()<Cr>", { desc = "Resume last picker" })
     map("n", "sr", "<cmd>lua Snacks.rename.rename_file()<Cr>", { desc = "Rename file (LSP-aware)" })
   end,

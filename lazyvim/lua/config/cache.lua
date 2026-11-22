@@ -3,6 +3,7 @@ local M = {}
 local uv = vim.uv or vim.loop
 local _cache = {}
 local _registry = {}
+local NEGATIVE_TTL_MS = 60 * 1000
 
 local function _do_fetch(key, fn)
   local entry = _cache[key]
@@ -40,6 +41,13 @@ function M.wrap(key, ttl_ms, fn)
   return function(callback)
     local entry = _cache[key]
     local now = uv.now()
+
+    if entry and not entry.inflight and entry.data == nil and entry.ts > 0 and (now - entry.ts) < NEGATIVE_TTL_MS then
+      vim.schedule(function()
+        callback(nil)
+      end)
+      return
+    end
 
     if entry and entry.data ~= nil and (now - entry.ts) < ttl_ms then
       vim.schedule(function()

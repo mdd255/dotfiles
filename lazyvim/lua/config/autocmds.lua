@@ -1,4 +1,3 @@
-local utils = require("config.utils")
 
 local function set_noice_hls()
   vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { link = "FloatBorder" })
@@ -24,62 +23,69 @@ vim.api.nvim_create_autocmd("ColorScheme", {
   end,
 })
 
+local function to_set(list)
+  local set = {}
+  for _, v in ipairs(list) do
+    set[v] = true
+  end
+  return set
+end
+
+local relativenumber_whitelist = to_set({
+  "typescript",
+  "php",
+  "javascript",
+  "java",
+  "lua",
+  "http",
+  "yaml",
+  "python",
+  "sh",
+})
+
+local cursorline_blacklist = to_set({
+  "gitcommit",
+  "snacks_dashboard",
+})
+
+local number_blacklist = to_set({
+  "",
+  "snacks_dashboard",
+  "snacks_terminal",
+  "snacks_win",
+  "claudecode",
+  "snacks_picker_list",
+  "grug-far",
+  "lazy",
+  "mason",
+  "DiffviewFiles",
+  "text.kulala_ui",
+  "json.kulala_ui",
+  "noice",
+  "blink-cmp-menu",
+  "blink-cmp-documentation",
+  "markdown.gh",
+  "dbab_sidebar",
+  "dbab_history",
+})
+
 local function setup_cursor_options()
   if vim.api.nvim_win_get_config(0).relative ~= "" then
     return
   end
 
   local ft = vim.bo.filetype
+  local no_number = number_blacklist[ft] == true
 
-  local relativenumber_whitelist = {
-    "typescript",
-    "php",
-    "javascript",
-    "java",
-    "lua",
-    "http",
-    "yaml",
-    "python",
-    "sh",
-  }
+  vim.opt_local.relativenumber = relativenumber_whitelist[ft] == true and not no_number
+  vim.opt_local.number = not no_number
 
-  local cursorline_blacklist = {
-    "gitcommit",
-    "snacks_dashboard",
-  }
-
-  local number_blacklist = {
-    "",
-    "snacks_dashboard",
-    "snacks_terminal",
-    "snacks_win",
-    "claudecode",
-    "snacks_picker_list",
-    "grug-far",
-    "lazy",
-    "mason",
-    "DiffviewFiles",
-    "text.kulala_ui",
-    "json.kulala_ui",
-    "noice",
-    "blink-cmp-menu",
-    "blink-cmp-documentation",
-    "markdown.gh",
-    "dbab_sidebar",
-    "dbab_history",
-  }
-
-  vim.opt_local.relativenumber = vim.tbl_contains(relativenumber_whitelist, ft)
-      and not vim.tbl_contains(number_blacklist, ft)
-    or false
-  vim.opt_local.number = not vim.tbl_contains(number_blacklist, ft)
-
-  if vim.tbl_contains(number_blacklist, ft) then
+  if no_number then
     vim.opt_local.statuscolumn = ""
     vim.opt_local.signcolumn = "no"
   end
 
-  vim.opt_local.cursorline = not vim.tbl_contains(cursorline_blacklist, ft)
+  vim.opt_local.cursorline = cursorline_blacklist[ft] ~= true
 end
 
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "FileType" }, {
@@ -106,6 +112,7 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "typescript",
   callback = function()
     local function console_log()
+      local utils = require("config.utils")
       local expr = "yeoconsole.log({<Esc>pa})<Esc>hh"
 
       return utils.create_macro({
@@ -177,13 +184,14 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
 vim.api.nvim_create_autocmd("SessionLoadPost", {
   group = vim.api.nvim_create_augroup("LspStaleClientCleanup", { clear = true }),
   callback = function()
-    local cwd = vim.loop.cwd()
+    local cwd = vim.uv.cwd()
+    local cwd_prefix = cwd .. "/"
 
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_loaded(buf) and not vim.bo[buf].modified then
         local name = vim.api.nvim_buf_get_name(buf)
 
-        if name ~= "" and not vim.startswith(name, cwd) then
+        if name ~= "" and name ~= cwd and not vim.startswith(name, cwd_prefix) then
           vim.api.nvim_buf_delete(buf, { force = true })
         end
       end
@@ -192,7 +200,7 @@ vim.api.nvim_create_autocmd("SessionLoadPost", {
     for _, client in ipairs(vim.lsp.get_clients()) do
       local root = client.root_dir
 
-      if root and not vim.startswith(root, cwd) then
+      if root and root ~= cwd and not vim.startswith(root, cwd_prefix) then
         vim.lsp.stop_client(client.id, true)
       end
     end

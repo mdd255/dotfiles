@@ -87,14 +87,14 @@ map({
   {
     "<C-Space>",
     function()
-      local is_maximized = vim.g.window_maximized or false
-      if is_maximized then
-        vim.cmd("wincmd =")
-        vim.g.window_maximized = false
+      local restore = vim.t.maximize_restore
+      if restore then
+        vim.t.maximize_restore = nil
+        vim.cmd(restore)
       else
+        vim.t.maximize_restore = vim.fn.winrestcmd()
         vim.cmd("resize")
         vim.cmd("vertical resize")
-        vim.g.window_maximized = true
       end
     end,
     { modes = { "i", "n", "t" }, desc = "Maximize current window" },

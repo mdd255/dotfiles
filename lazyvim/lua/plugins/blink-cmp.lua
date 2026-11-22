@@ -39,7 +39,6 @@ return {
         ["<C-o>"] = { "hide", "fallback" },
         ["<C-d>"] = { "show_documentation", "fallback" },
         ["<C-u>"] = { "hide_documentation", "fallback" },
-        ["<C-i>"] = { "fallback" },
         ["<C-p>"] = { "select_prev", "fallback" },
       },
       completion = {

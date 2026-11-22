@@ -11,7 +11,7 @@ return {
   },
   {
     "chrisgrieser/nvim-recorder",
-    lazy = true,
+    event = "VeryLazy",
     opts = {
       slots = { "a", "b" },
       clear = true,

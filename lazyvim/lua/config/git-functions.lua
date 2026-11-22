@@ -342,6 +342,12 @@ local fetch_collaborators = cache.wrap("gh.collaborators", GH_TTL_MS, function(c
     vim.system({ "gh", "api", "repos/" .. repo .. "/collaborators", "--jq", ".[].login" }, {}, function(collab_result)
       vim.schedule(function()
         if collab_result.code ~= 0 then
+          -- 403 = no push access; collaborators list unavailable, not an error
+          if (collab_result.stderr or ""):find("HTTP 403", 1, true) then
+            callback({})
+            return
+          end
+
           vim.notify(
             "Failed to get collaborators of "
               .. repo
