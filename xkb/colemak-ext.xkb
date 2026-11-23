@@ -1,17 +1,20 @@
 // xkb symbols, port of karabiner.json. Base layout = Colemak.
 // Right Super (right_command) = Level3 shift. Level3 = layer, Level4 (+Shift) = symbols.
-// Install: cp kbmap ~/.config/xkb/symbols/kbmap
-// Hyprland:  input { kb_layout = kbmap }
+// Install: ln -s corne-cherry ~/.config/xkb/symbols/corne-cherry
 
 default partial alphanumeric_keys modifier_keys
 xkb_symbols "basic" {
     include "us(colemak)"
     include "level3(rwin_switch)"
-    name[Group1] = "Colemak (kbmap)";
+    name[Group1] = "Extended Colemak";
 
     // caps_lock <-> escape (esc also carries layer 1 / !)
     key <CAPS> { [ Escape ] };
-    key <ESC>  { type = "FOUR_LEVEL", [ Caps_Lock, Caps_Lock, 1, exclam ] };
+    key <ESC>  {
+        type = "FOUR_LEVEL",
+        symbols[Group1] = [ NoSymbol, NoSymbol, 1, exclam ],
+        actions[Group1] = [ NoAction(), LockMods(modifiers=Lock), NoAction(), NoAction() ]
+    };
 
     // misc
     key <RTRN> { type = "FOUR_LEVEL", [ Return,       Return,      equal,        plus ] };
