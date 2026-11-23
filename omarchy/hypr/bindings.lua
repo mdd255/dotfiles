@@ -72,6 +72,7 @@ o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
 o.bind("SUPER + B", "Browser profile", script .. "/browser.js")
 o.bind("ALT + W", "Editor", script .. "/editor.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
+o.bind("CTRL + SPACE", "Switch keyboard layout", script .. "/kb-layout.js")
 
 -- Picker
 o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")

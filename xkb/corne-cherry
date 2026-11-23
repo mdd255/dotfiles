@@ -1,0 +1,38 @@
+// xkb symbols, port of karabiner.json. Base layout = Colemak.
+// Right Super (right_command) = Level3 shift. Level3 = layer, Level4 (+Shift) = symbols.
+// Install: cp kbmap ~/.config/xkb/symbols/kbmap
+// Hyprland:  input { kb_layout = kbmap }
+
+default partial alphanumeric_keys modifier_keys
+xkb_symbols "basic" {
+    include "us(colemak)"
+    include "level3(rwin_switch)"
+    name[Group1] = "Colemak (kbmap)";
+
+    // caps_lock <-> escape (esc also carries layer 1 / !)
+    key <CAPS> { [ Escape ] };
+    key <ESC>  { type = "FOUR_LEVEL", [ Caps_Lock, Caps_Lock, 1, exclam ] };
+
+    // misc
+    key <RTRN> { type = "FOUR_LEVEL", [ Return,       Return,      equal,        plus ] };
+    key <AC10> { type = "FOUR_LEVEL", [ o,            O,           minus,        underscore ] };
+    key <AB08> { type = "FOUR_LEVEL", [ comma,        less,        bracketleft,  braceleft ] };
+    key <AB09> { type = "FOUR_LEVEL", [ period,       greater,     bracketright, braceright ] };
+
+    // navigation (qwer positions; colemak q w f p)
+    key <AD01> { type = "FOUR_LEVEL", [ q, Q, Left,  Left ] };
+    key <AD02> { type = "FOUR_LEVEL", [ w, W, Down,  Down ] };
+    key <AD03> { type = "FOUR_LEVEL", [ f, F, Up,    Up ] };
+    key <AD04> { type = "FOUR_LEVEL", [ p, P, Right, Right ] };
+
+    // numbers / symbols (asdfghjkl positions; colemak a r s t d h n e i)
+    key <AC01> { type = "FOUR_LEVEL", [ a, A, 2, at ] };
+    key <AC02> { type = "FOUR_LEVEL", [ r, R, 3, numbersign ] };
+    key <AC03> { type = "FOUR_LEVEL", [ s, S, 4, dollar ] };
+    key <AC04> { type = "FOUR_LEVEL", [ t, T, 5, percent ] };
+    key <AC05> { type = "FOUR_LEVEL", [ d, D, 6, asciicircum ] };
+    key <AC06> { type = "FOUR_LEVEL", [ h, H, 7, ampersand ] };
+    key <AC07> { type = "FOUR_LEVEL", [ n, N, 8, asterisk ] };
+    key <AC08> { type = "FOUR_LEVEL", [ e, E, 9, parenleft ] };
+    key <AC09> { type = "FOUR_LEVEL", [ i, I, 0, parenright ] };
+};

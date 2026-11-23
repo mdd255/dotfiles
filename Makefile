@@ -80,6 +80,7 @@ setup-omarchy: ## Link Omarchy shell and Hyprland configs
 
 setup-tools: ## Link wezterm, kitty, zathura and Claude configs
 	$(call link,$(DOTFILES_DIR)/.wezterm.lua,~/.wezterm.lua)
+	$(call link,$(DOTFILES_DIR)/xkb/corne-cherry,~/.config/xkb/symbols/corne-cherry)
 	$(call link,$(DOTFILES_DIR)/zathura/zathurarc,~/.config/zathura/zathurarc)
 	mkdir -p ~/.claude ~/.config/kitty
 	$(call link,$(DOTFILES_DIR)/kitty/kitty.conf,~/.config/kitty/kitty.conf)

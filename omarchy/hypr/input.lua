@@ -6,7 +6,7 @@
 hl.config({
 	input = {
 		-- Use multiple keyboard layouts and switch between them with Left Alt + Right Alt.
-		kb_layout = "us,dk,eu",
+		kb_layout = "us,corne-cherry",
 		kb_options = "",
 		kb_variant = "colemak",
 		repeat_rate = 80,
