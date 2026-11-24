@@ -72,7 +72,7 @@ o.bind("SUPER + V", "VPN toggle", script .. "/vpn.js toggle")
 o.bind("SUPER + B", "Browser profile", script .. "/browser.js")
 o.bind("ALT + W", "Editor", script .. "/editor.js")
 o.bind("SUPER + SPACE", "Change method", script .. "/fcit5-custom.js")
-o.bind("CTRL + SPACE", "Switch keyboard layout", script .. "/kb-layout.js")
+o.bind("CTRL + SUPER + SPACE", "Switch keyboard layout", script .. "/kb-layout.js")
 
 -- Picker
 o.bind("SUPER + A", "Audio picker", "omarchy-shell shell toggle omarchy.audio")
@@ -139,7 +139,10 @@ local function universal_clipboard_shortcut(default_mods, default_key, native_mo
 		local window = hl.get_active_window()
 
 		-- Neovide maps Alt+C/X/A/V itself (lazyvim/lua/config/linux.lua), like terminals.
-		if window and (active_window_is_terminal(window) or (window.class:find("^code%-") or window.class:find("^neovide"))) then
+		if
+			window
+			and (active_window_is_terminal(window) or (window.class:find("^code%-") or window.class:find("^neovide")))
+		then
 			send_shortcut_once(native_mods, native_key)()
 		else
 			send_shortcut_once(default_mods, default_key)()
