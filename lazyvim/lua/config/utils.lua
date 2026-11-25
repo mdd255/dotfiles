@@ -655,4 +655,715 @@ function M.ensure_gh_account(callback)
   end)
 end
 
+local FORM_NS = vim.api.nvim_create_namespace("UtilsForm")
+
+-- statuscolumn for M.form: plain gutter, but separator rows draw ── so they meet the border
+function M._form_statuscol()
+  local ok, sep_row = pcall(vim.api.nvim_win_get_var, vim.g.statusline_winid, "form_sep_row")
+
+  if vim.v.virtnum < 0 or (ok and vim.v.virtnum == 0 and vim.v.lnum == sep_row) then
+    return "%#FloatBorder#──%*"
+  end
+
+  return "  "
+end
+
+local function form_normalize_items(list)
+  local out = {}
+
+  for _, it in ipairs(list or {}) do
+    if type(it) == "string" then
+      table.insert(out, { word = it })
+    elseif it.word and it.word ~= "" then
+      table.insert(out, it)
+    end
+  end
+
+  return out
+end
+
+-- Single float form: one line per field (+ optional multi-line body).
+-- opts = {
+--   title = " icon  Title ", submit_label = "create", width = 0.7 (fraction), notify_title = "...",
+--   extra_height = 0 (extra rows below the fields, body-less forms),
+--   fields = { {
+--     key, label, icon, value, hint, required,
+--     compact = true,  -- comma separated value, whitespace stripped, completes the last segment
+--     items = list | function(cb, data) cb(list) end,  -- completion menu entries: "str" | { word, menu }
+--   } },
+--   body = { hint = "placeholder" } | nil,
+--   on_submit = function(data) end,
+-- }
+-- Keys: <C-n>/<C-e> next/prev field, <Tab>/<S-Tab> walk completion menu, <CR> accept / next / submit,
+-- <C-CR> submit, q (normal) cancel.
+function M.form(opts)
+  local fields = opts.fields
+  local nf = #fields
+  local has_body = opts.body ~= nil
+  local sep_row = nf + 1
+  local body_row = nf + 2
+  local min_lines = has_body and body_row or nf
+  local any_items = false
+
+  for _, f in ipairs(fields) do
+    any_items = any_items or f.items ~= nil
+  end
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].filetype = has_body and "markdown" or "text"
+
+  local init = {}
+
+  for i, f in ipairs(fields) do
+    init[i] = f.value or ""
+  end
+
+  while #init < min_lines do
+    table.insert(init, "")
+  end
+
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, init)
+
+  local label_w = 0
+
+  for _, f in ipairs(fields) do
+    label_w = math.max(label_w, vim.fn.strdisplaywidth(f.label))
+  end
+
+  local function label_text(f)
+    return string.format("%s  %s", f.icon or " ", f.label .. string.rep(" ", label_w - vim.fn.strdisplaywidth(f.label)))
+  end
+
+  local join_col = vim.fn.strdisplaywidth(label_text(fields[1])) + 1
+  local text_off = 2 + (join_col - 1) + 3 -- gutter + label + " │ ": where field text starts in the window
+
+  local ui = vim.api.nvim_list_uis()[1] or { width = 120, height = 40 }
+  local width = math.floor(ui.width * (opts.width or (has_body and 0.7 or 0.5)))
+  local height = has_body and math.floor(ui.height * 0.65) or (nf * 2 + (opts.extra_height or 0)) -- fields + separators + one empty line
+
+  local footer = {
+    { " <C-CR>", "DiagnosticOk" },
+    { " " .. (opts.submit_label or "confirm") .. "  ", "Comment" },
+  }
+
+  if any_items then
+    vim.list_extend(footer, { { "<Tab>", "DiagnosticWarn" }, { " choose ", "Comment" } })
+  end
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = math.floor((ui.height - height) / 2),
+    col = math.floor((ui.width - width) / 2),
+    style = "minimal",
+    border = "rounded",
+    title = { { opts.title or " Form ", "DiagnosticInfo" } },
+    title_pos = "center",
+    footer = footer,
+    footer_pos = "center",
+  })
+
+  vim.b[buf].completion = false -- blink.cmp off: the form drives its own completion menu
+  vim.w[win].form_sep_row = has_body and sep_row or -1
+  vim.wo[win].wrap = true
+  vim.wo[win].linebreak = true
+  vim.wo[win].cursorline = false
+  vim.wo[win].statuscolumn = "%!v:lua.require'config.utils'._form_statuscol()"
+  vim.wo[win].winhighlight = "FloatBorder:DiagnosticInfo"
+
+  local function render()
+    if not vim.api.nvim_buf_is_valid(buf) then
+      return
+    end
+
+    while vim.api.nvim_buf_line_count(buf) < min_lines do
+      vim.api.nvim_buf_set_lines(buf, -1, -1, false, { "" })
+    end
+
+    vim.api.nvim_buf_clear_namespace(buf, FORM_NS, 0, -1)
+
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, nf, false)
+    local w = (vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_width(win) or width) - 2
+
+    -- horizontal rule across the window; junction sits under the label/value divider
+    local function rule(junction)
+      return string.rep("─", join_col) .. junction .. string.rep("─", math.max(w - join_col - 1, 0))
+    end
+
+    for i, f in ipairs(fields) do
+      vim.api.nvim_buf_set_extmark(buf, FORM_NS, i - 1, 0, {
+        virt_text = { { label_text(f), "DiagnosticInfo" }, { " │ ", "FloatBorder" } },
+        virt_text_pos = "inline",
+        right_gravity = false,
+      })
+
+      if (lines[i] or "") == "" then
+        local hint = f.hint or (f.items and "<Tab> to choose" or "")
+
+        vim.api.nvim_buf_set_extmark(buf, FORM_NS, i - 1, 0, {
+          virt_text = { { hint, "Comment" } },
+          virt_text_pos = "eol",
+        })
+      end
+
+      if i < nf then
+        vim.api.nvim_buf_set_extmark(buf, FORM_NS, i - 1, 0, {
+          virt_lines = { { { rule("┼"), "FloatBorder" } } },
+        })
+      end
+    end
+
+    if has_body then
+      vim.api.nvim_buf_set_extmark(buf, FORM_NS, sep_row - 1, 0, {
+        virt_text = { { rule("┴"), "FloatBorder" } },
+        virt_text_pos = "overlay",
+      })
+
+      if (vim.api.nvim_buf_get_lines(buf, body_row - 1, body_row, false)[1] or "") == "" then
+        vim.api.nvim_buf_set_extmark(buf, FORM_NS, body_row - 1, 0, {
+          virt_text = { { opts.body.hint or "", "Comment" } },
+          virt_text_pos = "eol",
+        })
+      end
+    end
+  end
+
+  render()
+
+  local function parse()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    local data = {}
+
+    for i, f in ipairs(fields) do
+      local v = vim.trim(lines[i] or "")
+
+      if f.compact then
+        v = v:gsub("%s+", "")
+      end
+
+      data[f.key] = v
+    end
+
+    if has_body then
+      data.body = vim.trim(table.concat(vim.list_slice(lines, body_row), "\n"))
+    end
+
+    return data
+  end
+
+  -- text of all fields; TextChangedI also fires once when insert mode starts and after our own edits,
+  -- so only react when the text really differs from this snapshot
+  local function snapshot_text()
+    return table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), "\n")
+  end
+
+  local snapshot = snapshot_text()
+
+  -- own completion menu: a float whose first entry sits on the line below the cursor
+  local menu = { buf = nil, win = nil, items = {}, sel = 0, start = 1 }
+  local MENU_NS = vim.api.nvim_create_namespace("UtilsFormMenu")
+
+  local function menu_open()
+    return menu.win ~= nil and vim.api.nvim_win_is_valid(menu.win)
+  end
+
+  local function menu_close()
+    if menu_open() then
+      vim.api.nvim_win_close(menu.win, true)
+    end
+
+    menu.win = nil
+    menu.items = {}
+    menu.sel = 0
+  end
+
+  local function menu_hl(name, fallback)
+    return vim.fn.hlexists(name) == 1 and name or fallback
+  end
+
+  local MENU_ICON = "󰉿" -- blink "Text" kind icon
+
+  -- same layout as blink: " <icon>  label desc ", matched chars highlighted, long entries cut to one line
+  local function menu_fit(text, max)
+    if max <= 0 then
+      return ""
+    end
+
+    if vim.fn.strdisplaywidth(text) <= max then
+      return text
+    end
+
+    return vim.fn.strcharpart(text, 0, math.max(max - 1, 0)) .. "…"
+  end
+
+  local function menu_draw()
+    local lines, parts = {}, {}
+    local prefix = " " .. MENU_ICON .. "  "
+    local avail = menu.width - vim.fn.strdisplaywidth(prefix) - 1
+
+    vim.api.nvim_buf_clear_namespace(menu.buf, MENU_NS, 0, -1)
+
+    for i, it in ipairs(menu.items) do
+      local word = menu_fit(it.word, avail)
+      local desc = ""
+
+      if it.menu and it.menu ~= "" then
+        local room = avail - vim.fn.strdisplaywidth(word) - 1
+
+        if room >= 2 then
+          desc = menu_fit(it.menu, room)
+        end
+      end
+
+      parts[i] = { word = word, desc = desc }
+      lines[i] = prefix .. word .. (desc ~= "" and (" " .. desc) or "") .. " "
+    end
+
+    vim.api.nvim_buf_set_lines(menu.buf, 0, -1, false, lines)
+
+    local kind_hl = menu_hl("BlinkCmpKindText", menu_hl("BlinkCmpKind", "PmenuKind"))
+    local label_hl = menu_hl("BlinkCmpLabel", "Pmenu")
+    local match_hl = menu_hl("BlinkCmpLabelMatch", "Special")
+    local desc_hl = menu_hl("BlinkCmpLabelDescription", "PmenuExtra")
+
+    for i, it in ipairs(menu.items) do
+      local p = parts[i]
+
+      vim.api.nvim_buf_set_extmark(menu.buf, MENU_NS, i - 1, 1, { end_col = 1 + #MENU_ICON, hl_group = kind_hl })
+
+      vim.api.nvim_buf_set_extmark(
+        menu.buf,
+        MENU_NS,
+        i - 1,
+        #prefix,
+        { end_col = #prefix + #p.word, hl_group = label_hl }
+      )
+
+      if it.mstart and it.mstart <= #p.word then
+        vim.api.nvim_buf_set_extmark(menu.buf, MENU_NS, i - 1, #prefix + it.mstart - 1, {
+          end_col = #prefix + math.min(it.mend, #p.word),
+          hl_group = match_hl,
+          priority = 200,
+        })
+      end
+
+      if p.desc ~= "" then
+        vim.api.nvim_buf_set_extmark(
+          menu.buf,
+          MENU_NS,
+          i - 1,
+          #prefix + #p.word + 1,
+          { end_col = #lines[i] - 1, hl_group = desc_hl }
+        )
+      end
+    end
+
+    -- selected row: explicit line highlight (cursorline is not drawn in non-current windows)
+    vim.wo[menu.win].cursorline = false
+
+    if menu.sel > 0 then
+      vim.api.nvim_buf_set_extmark(
+        menu.buf,
+        MENU_NS,
+        menu.sel - 1,
+        0,
+        { line_hl_group = "UtilsFormMenuSel", priority = 100 }
+      )
+    end
+
+    vim.api.nvim_win_set_cursor(menu.win, { math.max(menu.sel, 1), 0 })
+  end
+
+  local function menu_show(row, line, start, matches, sel)
+    if #matches == 0 then
+      menu_close()
+      return
+    end
+
+    menu.items = matches
+    menu.start = start
+    menu.row = row
+    menu.sel = sel or 1 -- first entry preselected
+    menu.engaged = false -- first <Tab> selects entry 1 instead of moving to 2
+
+    local w = 15 -- blink min_width
+
+    for _, it in ipairs(matches) do
+      local ww = 1 + vim.fn.strdisplaywidth(MENU_ICON) + 2 + vim.fn.strdisplaywidth(it.word) + 1
+
+      if it.menu and it.menu ~= "" then
+        ww = ww + 1 + vim.fn.strdisplaywidth(it.menu)
+      end
+
+      w = math.max(w, ww)
+    end
+
+    w = math.min(w, 80, vim.o.columns - 4)
+    menu.width = w
+
+    local h = math.min(#matches, 10)
+    local wp = vim.fn.win_screenpos(win)
+    local sp = vim.fn.screenpos(win, row, 1)
+    local cursor_row = sp.row > 0 and sp.row or (wp[1] + (row - 1) * 2) -- 1-based screen row of cursor line
+    local label_off = 1 + vim.fn.strdisplaywidth(MENU_ICON) + 2
+    local text_col = (wp[2] - 1) + text_off + vim.fn.strdisplaywidth(line:sub(1, start - 1))
+    local col0 = text_col - label_off - 1 -- align label with the typed text (1 for the border)
+    local row0 = cursor_row -- 0-based row == the line below the cursor (top border sits there)
+
+    if row0 + h + 2 > vim.o.lines - 1 then
+      row0 = math.max(cursor_row - 1 - h - 2, 0)
+    end
+
+    col0 = math.max(math.min(col0, vim.o.columns - w - 2), 0)
+
+    if not (menu.buf and vim.api.nvim_buf_is_valid(menu.buf)) then
+      menu.buf = vim.api.nvim_create_buf(false, true)
+      vim.bo[menu.buf].bufhidden = "wipe"
+    end
+
+    local cfg = { relative = "editor", row = row0, col = col0, width = w, height = h }
+
+    if menu_open() then
+      vim.api.nvim_win_set_config(menu.win, cfg)
+    else
+      menu.win = vim.api.nvim_open_win(
+        menu.buf,
+        false,
+        vim.tbl_extend("force", cfg, { style = "minimal", border = "rounded", focusable = false, zindex = 200, noautocmd = true })
+      )
+
+      local m = menu_hl("BlinkCmpMenu", "Pmenu")
+      local ok, colors = pcall(require, "config.color")
+      local pmenu = vim.api.nvim_get_hl(0, { name = m, link = false })
+
+      -- blue rounded border, gray selected row
+      vim.api.nvim_set_hl(0, "UtilsFormMenuBorder", { fg = ok and colors.blue or nil, bg = pmenu.bg })
+      vim.api.nvim_set_hl(0, "UtilsFormMenuSel", { bg = ok and colors.dark_gray or nil })
+
+      vim.wo[menu.win].wrap = false
+      vim.wo[menu.win].winhighlight = string.format(
+        "Normal:%s,NormalFloat:%s,EndOfBuffer:%s,FloatBorder:UtilsFormMenuBorder,CursorLine:UtilsFormMenuSel,Search:None",
+        m,
+        m,
+        m
+      )
+    end
+
+    menu_draw()
+  end
+
+  local function menu_move(step)
+    if not menu_open() then
+      return
+    end
+
+    local n = #menu.items
+
+    if menu.engaged or step < 0 then
+      menu.sel = menu.sel + step
+    end
+
+    menu.engaged = true
+
+    if menu.sel < 1 then
+      menu.sel = n -- prev from the top wraps to the bottom
+    elseif menu.sel > n then
+      menu.sel = n -- next stops at the bottom
+    end
+
+    menu_draw()
+
+    -- auto insert: put the selected word in place of the typed token
+    local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+    local line = vim.api.nvim_get_current_line()
+    local word = menu.items[menu.sel].word
+    local new = line:sub(1, menu.start - 1) .. word .. line:sub(col + 1)
+
+    vim.api.nvim_set_current_line(new)
+    vim.api.nvim_win_set_cursor(win, { row, menu.start - 1 + #word })
+    snapshot = snapshot_text()
+    render()
+  end
+
+  -- completion menu of the field's items, filtered by what is typed (last segment for compact fields)
+  local function show_completion(all)
+    if not vim.api.nvim_win_is_valid(win) or vim.api.nvim_get_current_win() ~= win then
+      return
+    end
+
+    if not vim.fn.mode():match("^i") then
+      return
+    end
+
+    local row, col = unpack(vim.api.nvim_win_get_cursor(win))
+    local f = fields[row]
+
+    if not f or not f.items then
+      return
+    end
+
+    local function present(list)
+      if not vim.api.nvim_win_is_valid(win) or not vim.fn.mode():match("^i") then
+        return
+      end
+
+      local r, c = unpack(vim.api.nvim_win_get_cursor(win))
+
+      if r ~= row then
+        return
+      end
+
+      local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, false)[1] or ""
+      local before = line:sub(1, c)
+      local start = f.compact and (before:match(".*,()") or 1) or 1
+      local current = before:sub(start)
+      local token = all and "" or current:lower()
+
+      if not all and current == "" then
+        menu_close() -- typed menus need at least one character; <Tab> opens the full list
+        return
+      end
+      local chosen = {}
+
+      if f.compact then
+        for part in line:gmatch("[^,]+") do
+          chosen[vim.trim(part)] = true
+        end
+      end
+
+      local matches = {}
+
+      for _, it in ipairs(form_normalize_items(list)) do
+        local lw = it.word:lower()
+
+        if lw ~= token and not chosen[it.word] and (token == "" or lw:find(token, 1, true)) then
+          local ms, me
+          if token ~= "" then
+            ms, me = lw:find(token, 1, true)
+          end
+
+          table.insert(matches, { word = it.word, menu = it.menu, mstart = ms, mend = me })
+        end
+      end
+
+      menu_show(row, line, start, matches, 1) -- first entry preselected
+    end
+
+    if type(f.items) == "function" then
+      f.items(vim.schedule_wrap(present), parse())
+    else
+      present(f.items)
+    end
+  end
+
+  local goto_row, field_cycle, submit
+
+  goto_row = function(row)
+    menu_close()
+
+    if not vim.api.nvim_win_is_valid(win) then
+      return
+    end
+
+    row = math.min(row, vim.api.nvim_buf_line_count(buf))
+
+    local text = vim.api.nvim_buf_get_lines(buf, row - 1, row, false)[1] or ""
+
+    vim.api.nvim_win_set_cursor(win, { row, #text })
+    vim.cmd("startinsert!")
+  end
+
+  field_cycle = function(step)
+    menu_close()
+    local row = vim.api.nvim_win_get_cursor(win)[1]
+    local order = {}
+
+    for i = 1, nf do
+      table.insert(order, i)
+    end
+
+    if has_body then
+      table.insert(order, body_row)
+    end
+
+    local idx = 1
+
+    for i, r in ipairs(order) do
+      if row >= r then
+        idx = i
+      end
+    end
+
+    goto_row(order[(idx - 1 + step) % #order + 1])
+  end
+
+  goto_row(opts.start_row or 1)
+
+
+  local group = vim.api.nvim_create_augroup("UtilsForm" .. buf, { clear = true })
+
+  vim.api.nvim_create_autocmd("TextChangedI", {
+    group = group,
+    buffer = buf,
+    callback = function()
+      local now = snapshot_text()
+
+      if now == snapshot then
+        return
+      end
+
+      snapshot = now
+
+      vim.schedule(function()
+        render()
+        show_completion()
+      end)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("TextChanged", {
+    group = group,
+    buffer = buf,
+    callback = function()
+      vim.schedule(render)
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("WinResized", { group = group, callback = vim.schedule_wrap(render) })
+  vim.api.nvim_create_autocmd("InsertLeave", { group = group, buffer = buf, callback = menu_close })
+
+  -- keeps the cursor off the divider row; also drops a menu whose row the cursor left (arrows, mouse, ...)
+  local last_row = opts.start_row or 1
+  vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+    group = group,
+    buffer = buf,
+    callback = function()
+      local r = vim.api.nvim_win_get_cursor(win)[1]
+
+      if has_body and r == sep_row then
+        -- skip the divider row (moving down -> body, moving up -> last field)
+        r = last_row <= nf and body_row or nf
+        vim.api.nvim_win_set_cursor(win, { r, #(vim.api.nvim_buf_get_lines(buf, r - 1, r, false)[1] or "") })
+      end
+
+      last_row = r
+
+      if menu_open() and r ~= menu.row then
+        menu_close()
+      end
+    end,
+  })
+
+  vim.api.nvim_create_autocmd("BufWipeout", {
+    group = group,
+    buffer = buf,
+    callback = function()
+      menu_close()
+      pcall(vim.api.nvim_del_augroup_by_id, group) -- drops the global WinResized autocmd too
+    end,
+  })
+
+  local function close()
+    menu_close()
+    vim.cmd("stopinsert")
+
+    if vim.api.nvim_win_is_valid(win) then
+      vim.api.nvim_win_close(win, true)
+    end
+  end
+
+  submit = function()
+    local data = parse()
+
+    for i, f in ipairs(fields) do
+      if f.required and data[f.key] == "" then
+        vim.notify(f.label .. " is required", vim.log.levels.WARN, { title = opts.notify_title })
+        goto_row(i)
+        return
+      end
+    end
+
+    close()
+    vim.schedule(function()
+      opts.on_submit(data)
+    end)
+  end
+
+  local map_opts = { buffer = buf, nowait = true, silent = true }
+
+  vim.keymap.set({ "n", "i" }, "<C-CR>", submit, map_opts)
+  vim.keymap.set("n", "q", close, map_opts)
+
+  vim.keymap.set({ "n", "i" }, "<C-n>", function()
+    field_cycle(1)
+  end, map_opts)
+
+  vim.keymap.set({ "n", "i" }, "<C-e>", function()
+    field_cycle(-1)
+  end, map_opts)
+
+  vim.keymap.set({ "n", "i" }, "<S-CR>", function()
+    field_cycle(-1)
+  end, map_opts)
+
+  -- <Tab>/<S-Tab>: walk the completion menu (open it first when closed)
+  vim.keymap.set("i", "<Tab>", function()
+    if menu_open() then
+      menu_move(1)
+    else
+      show_completion(true)
+    end
+  end, map_opts)
+
+  vim.keymap.set("i", "<S-Tab>", function()
+    menu_move(-1)
+  end, map_opts)
+
+  vim.keymap.set("i", "<CR>", function()
+    local row = vim.api.nvim_win_get_cursor(win)[1]
+    local f = fields[row]
+
+    if menu_open() and menu.sel > 0 then
+      -- accept the highlighted entry, then continue
+      local item = menu.items[menu.sel]
+      local col = vim.api.nvim_win_get_cursor(win)[2]
+      local line = vim.api.nvim_get_current_line()
+      local new = line:sub(1, menu.start - 1) .. item.word
+
+      menu_close()
+
+      if f and f.compact then
+        new = new .. ","
+      end
+
+      vim.api.nvim_set_current_line(new .. line:sub(col + 1))
+      vim.api.nvim_win_set_cursor(win, { row, #new })
+      snapshot = snapshot_text()
+      render()
+
+      if f and f.compact then
+        show_completion()
+      elseif row < nf or has_body then
+        field_cycle(1)
+      end
+
+      return
+    end
+
+    menu_close()
+
+    if row < nf or (row == nf and has_body) then
+      field_cycle(1)
+    elseif row == nf then
+      submit()
+    elseif has_body and row == sep_row then
+      field_cycle(1) -- divider row takes no input
+    else
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
+    end
+  end, map_opts)
+end
+
 return M

@@ -9,18 +9,6 @@ local cache = require("config.cache")
 local snacks = require("snacks")
 local M = {}
 
-local function step_chain(steps, initial_data)
-  local function go(i, data)
-    if i > #steps then
-      return
-    end
-    steps[i](data, function(d)
-      go(i + 1, d)
-    end)
-  end
-  go(1, initial_data)
-end
-
 local function format_branch(item, current_branch)
   if current_branch and item.text == current_branch then
     return { { item.text, "DiagnosticOk" } }
@@ -56,7 +44,7 @@ local function invalidate_current_branch()
   cache.invalidate("git.current_branch")
 end
 
-vim.api.nvim_create_autocmd("DirChanged", {
+vim.api.nvim_create_autocmd({ "DirChanged", "FocusGained" }, {
   group = vim.api.nvim_create_augroup("GitCurrentBranchCache", { clear = true }),
   callback = invalidate_current_branch,
 })
@@ -484,6 +472,63 @@ local function select_reviewers(title, callback)
   end
 
   fetch_collaborators(show_picker)
+end
+
+local function branch_items(skip_key)
+  return function(cb, data)
+    get_branches(false, true)(function(branches)
+      cb(vim.tbl_filter(function(b)
+        return b ~= data[skip_key]
+      end, branches or {}))
+    end)
+  end
+end
+
+local function prompt_pr_form(defaults, callback)
+  utils.form({
+    title = "   Create Pull Request ",
+    submit_label = "create",
+    notify_title = notify_opts.title,
+    start_row = 2, -- cursor starts on Base
+    fields = {
+      {
+        key = "target",
+        icon = "",
+        label = "Target",
+        value = defaults.target,
+        hint = "branch to open the PR from",
+        required = true,
+        items = branch_items(),
+      },
+      {
+        key = "base",
+        icon = "",
+        label = "Base",
+        value = defaults.base,
+        hint = "<Tab> to choose branch to merge into",
+        required = true,
+        items = branch_items("target"),
+      },
+      { key = "title", icon = "", label = "Title", value = defaults.title, hint = "pull request title", required = true },
+      {
+        key = "reviewers",
+        icon = "󰭖",
+        label = "Reviewers",
+        hint = "<Tab> to choose reviewers",
+        compact = true,
+        items = function(cb)
+          fetch_collaborators(function(collabs)
+            cb(vim.tbl_map(function(c)
+              return c.text
+            end, collabs or {}))
+          end)
+        end,
+      },
+      { key = "label", icon = "", label = "Label", hint = "optional" },
+    },
+    body = { hint = "Describe your changes (markdown)…" },
+    on_submit = callback,
+  })
 end
 
 local PR_FILTERS = {
@@ -1190,111 +1235,92 @@ function M._create_pr_flow()
   end
 
   local function create_pr_with_gh(data)
-    fetch_current_branch(function(head_branch)
-      local args = { "gh", "pr", "create", "--base", data.base, "--head", head_branch, "--title", data.title }
+    local args = { "gh", "pr", "create", "--base", data.base, "--head", data.target, "--title", data.title }
 
-      table.insert(args, "--body")
-      table.insert(args, data.body)
+    table.insert(args, "--body")
+    table.insert(args, data.body)
 
-      if data.assignee ~= "" then
-        table.insert(args, "--assignee")
-        table.insert(args, data.assignee)
-      end
+    if data.assignee ~= "" then
+      table.insert(args, "--assignee")
+      table.insert(args, data.assignee)
+    end
 
-      if data.reviewers ~= "" then
-        table.insert(args, "--reviewer")
-        table.insert(args, data.reviewers)
-      end
+    if data.reviewers ~= "" then
+      table.insert(args, "--reviewer")
+      table.insert(args, data.reviewers)
+    end
 
-      if data.label ~= "" then
-        table.insert(args, "--label")
-        table.insert(args, data.label)
-      end
+    if data.label ~= "" then
+      table.insert(args, "--label")
+      table.insert(args, data.label)
+    end
 
-      local cmd_str = table.concat(args, " ")
+    local cmd_str = table.concat(args, " ")
 
-      with_ssh_passphrase(function(env, cleanup)
-        exec_async({ "git", "push", "-v", "-u", "origin", "HEAD" }, {
-          notify = notify_opts,
-          env = env,
-          suppress_notify = true,
-          failed_label = "Failed to push branch: ",
-          on_success = function()
-            cleanup()
+    with_ssh_passphrase(function(env, cleanup)
+      exec_async({ "git", "push", "-v", "-u", "origin", data.target }, {
+        notify = notify_opts,
+        env = env,
+        suppress_notify = true,
+        failed_label = "Failed to push branch: ",
+        on_success = function()
+          cleanup()
 
-            utils.ensure_gh_account(function()
-              vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
+          utils.ensure_gh_account(function()
+            vim.notify("PR Creating...", vim.log.levels.INFO, notify_opts)
 
-              exec_async(args, {
-                notify = notify_opts,
-                success_label = "PR created successfully: ",
-                failed_label = "Failed to create PR: ",
-                on_success = function()
-                  vim.cmd("stopinsert")
-                  cache.evict_pattern("gh.prs")
-                  vim.schedule(open_gh_pr)
-                end,
-                on_failure = function()
-                  vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
-                end,
-              })
-            end)
-          end,
-          on_failure = function()
-            cleanup()
-            push_diagnostics()
-          end,
-        })
+            exec_async(args, {
+              notify = notify_opts,
+              success_label = "PR created successfully: ",
+              failed_label = "Failed to create PR: ",
+              on_success = function()
+                vim.cmd("stopinsert")
+                cache.evict_pattern("gh.prs")
+                vim.schedule(open_gh_pr)
+              end,
+              on_failure = function()
+                vim.notify("Command:\n" .. cmd_str, vim.log.levels.WARN, notify_opts)
+              end,
+            })
+          end)
+        end,
+        on_failure = function()
+          cleanup()
+          push_diagnostics()
+        end,
+      })
+    end)
+  end
+
+  local function git_out(args, cb)
+    vim.system(args, { text = true }, function(res)
+      vim.schedule(function()
+        cb(res.code == 0 and vim.trim(res.stdout or "") or "")
       end)
     end)
   end
 
-  step_chain({
-    function(d, next)
-      branch_picker({
-        title = "  Select base branch ",
-        exclude_current = true,
-        on_confirm = function(base)
-          d.base = base
-          next(d)
-        end,
-      })
-    end,
-    function(d, next)
-      vim.system({ "git", "log", "-1", "--pretty=%s" }, {}, function(result)
-        vim.schedule(function()
-          local default_title = result.code == 0 and vim.trim(result.stdout or "") or ""
-          custom_input("  PR Title ", { default = default_title, width_frac = 0.5 }, function(title)
-            if title and title ~= "" then
-              d.title = title
-              next(d)
-            end
-          end)
+  git_out({ "git", "log", "-1", "--pretty=%s" }, function(title)
+    git_out({ "git", "symbolic-ref", "--short", "refs/remotes/origin/HEAD" }, function(ref)
+      invalidate_current_branch() -- branch may have changed outside nvim
+      fetch_current_branch(function(head)
+        local base = ref:gsub("^origin/", "")
+
+        if base == "" then
+          base = "main"
+        end
+
+        if base == head then
+          base = "" -- cannot open a PR into itself: let the user pick
+        end
+
+        prompt_pr_form({ target = head, base = base, title = title }, function(d)
+          d.assignee = "@me"
+          create_pr_with_gh(d)
         end)
       end)
-    end,
-    function(d, next)
-      prompt_body({}, function(body)
-        d.body = body
-        next(d)
-      end)
-    end,
-    function(d, next)
-      select_reviewers(" 󰭖 Select reviewers ", function(reviewers)
-        d.reviewers = reviewers
-        next(d)
-      end)
-    end,
-    function(d, next)
-      custom_input("  Label ", {}, function(label)
-        d.label = label or ""
-        next(d)
-      end)
-    end,
-    function(d, _)
-      create_pr_with_gh(d)
-    end,
-  }, { assignee = "@me", base = nil, title = nil, body = nil, reviewers = "", label = "" })
+    end)
+  end)
 end
 
 function M.git_add_all()

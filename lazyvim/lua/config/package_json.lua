@@ -382,52 +382,6 @@ end
 
 -- ── Scripts ─────────────────────────────────────────────────────────────────
 
-local function pick_args_and_run(root, pm, script)
-  local key = root .. "|" .. script
-  local history = get_history(key)
-
-  local items = {}
-  for _, h in ipairs(history) do
-    table.insert(items, { text = h })
-  end
-
-  local function run_args(picker)
-    local typed = vim.trim(table.concat(vim.api.nvim_buf_get_lines(picker.input.win.buf, 0, -1, false), ""))
-    local item = picker:current()
-    picker:close()
-
-    local args = typed ~= "" and typed or (item and item.text) or ""
-    add_to_history(key, args)
-    add_to_script_order(root, script)
-    local label = script .. (args ~= "" and (" -- " .. args) or "")
-    run_with_output(root, build_run_cmd(pm, script, args), pm .. " run " .. script, label)
-  end
-
-  snacks.picker.pick({
-    finder = function()
-      return items
-    end,
-    format = function(item, _)
-      return { { item.text, "DiagnosticInfo" } }
-    end,
-    show_empty = true,
-    layout = custom_layout({
-      title = { { " Args · " .. pm .. " run " .. script, "DiagnosticInfo" } },
-      width = 0.8,
-    }),
-    actions = {
-      run_args = run_args,
-    },
-    win = {
-      input = {
-        keys = {
-          ["<CR>"] = { "run_args", mode = { "i", "n" } },
-        },
-      },
-    },
-  })
-end
-
 function M.pick_scripts()
   local root = find_pkg_root()
 
@@ -446,13 +400,8 @@ function M.pick_scripts()
   local pm = get_pkg_manager(root)
   local items = {}
 
-  for name, cmd in pairs(pkg.scripts) do
-    table.insert(items, {
-      name = name,
-      cmd = cmd,
-      text = name,
-      preview = { text = pm .. " run " .. name .. "\n\n" .. cmd, ft = "sh" },
-    })
+  for name in pairs(pkg.scripts) do
+    table.insert(items, { name = name })
   end
 
   local order = get_script_order(root)
@@ -480,29 +429,44 @@ function M.pick_scripts()
     return a.name < b.name
   end)
 
-  snacks.picker.pick({
-    finder = function()
-      return items
-    end,
-    format = function(item, _)
-      return {
-        { string.format("%-28s ", item.name), "Function" },
-      }
-    end,
-    preview = "preview",
-    layout = custom_layout({
-      title = { { " Scripts · " .. pm, "DiagnosticInfo" } },
-      width = 0.8,
-      preview = true,
-      preview_ratio = 0.75,
-    }),
-    confirm = function(picker, item)
-      picker:close()
-      if item then
-        vim.schedule(function()
-          pick_args_and_run(root, pm, item.name)
-        end)
+  utils.form({
+    title = "   Run script · " .. pm .. " ",
+    submit_label = "run",
+    notify_title = notify_opts.title,
+    fields = {
+      {
+        key = "script",
+        icon = "",
+        label = "Script",
+        hint = "<Tab> to choose script",
+        required = true,
+        items = function(cb)
+          cb(vim.tbl_map(function(i)
+            return { word = i.name }
+          end, items))
+        end,
+      },
+      {
+        key = "args",
+        icon = "",
+        label = "Args",
+        hint = "extra args (optional, <Tab> for history)",
+        items = function(cb, data)
+          cb(get_history(root .. "|" .. (data.script or "")))
+        end,
+      },
+    },
+    on_submit = function(d)
+      if not pkg.scripts[d.script] then
+        vim.notify("Unknown script: " .. d.script, vim.log.levels.WARN, notify_opts)
+        return
       end
+
+      add_to_history(root .. "|" .. d.script, d.args)
+      add_to_script_order(root, d.script)
+
+      local label = d.script .. (d.args ~= "" and (" -- " .. d.args) or "")
+      run_with_output(root, build_run_cmd(pm, d.script, d.args), pm .. " run " .. d.script, label)
     end,
   })
 end

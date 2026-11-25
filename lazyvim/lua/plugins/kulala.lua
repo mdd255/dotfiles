@@ -19,6 +19,9 @@ return {
     },
     opts = {
       environment_scope = "g",
+      ui = {
+        max_response_size = 327680, -- 320kb
+      },
       kulala_core = {
         path = nil,
         timeout = 60000,

@@ -340,16 +340,22 @@ local function run_image_action(action_key, images)
       return
     end
 
-    custom_input("  Container name ", {}, function(name)
-      custom_input("  Ports ", {}, function(ports)
+    utils.form({
+      title = "   Run detached · " .. image_ref(img) .. " ",
+      submit_label = "run",
+      fields = {
+        { key = "name", icon = "", label = "Name", hint = "container name (optional)" },
+        { key = "ports", icon = "", label = "Ports", hint = "e.g. 8080:80 (optional)" },
+      },
+      on_submit = function(d)
         local args = { "docker", "run", "-d" }
 
-        if name and name ~= "" then
-          vim.list_extend(args, { "--name", name })
+        if d.name ~= "" then
+          vim.list_extend(args, { "--name", d.name })
         end
 
-        if ports and ports ~= "" then
-          vim.list_extend(args, { "-p", ports })
+        if d.ports ~= "" then
+          vim.list_extend(args, { "-p", d.ports })
         end
 
         table.insert(args, image_ref(img))
@@ -361,8 +367,8 @@ local function run_image_action(action_key, images)
           failed_label = "Failed to start container: ",
           on_success = container_mutate_success,
         })
-      end)
-    end)
+      end,
+    })
   elseif action_key == "remove_force" then
     utils.confirm_dangerous(" 󰧧 Force-remove " .. #images .. " image(s)?", function()
       for _, img in ipairs(images) do
@@ -518,19 +524,17 @@ end
 function M.docker_build()
   local default_tag = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
 
-  custom_input("  Image tag ", { default = default_tag }, function(tag)
-    if not tag or tag == "" then
-      return
-    end
-
-    custom_input("  Dockerfile path ", { default = "Dockerfile" }, function(dockerfile)
-      if not dockerfile or dockerfile == "" then
-        return
-      end
-
-      term_cmd("docker build -t " .. vim.fn.shellescape(tag) .. " -f " .. vim.fn.shellescape(dockerfile) .. " .")
-    end)
-  end)
+  utils.form({
+    title = "   Docker build ",
+    submit_label = "build",
+    fields = {
+      { key = "tag", icon = "", label = "Image tag", value = default_tag, hint = "image name[:tag]", required = true },
+      { key = "dockerfile", icon = "", label = "Dockerfile", value = "Dockerfile", hint = "path to Dockerfile", required = true },
+    },
+    on_submit = function(d)
+      term_cmd("docker build -t " .. vim.fn.shellescape(d.tag) .. " -f " .. vim.fn.shellescape(d.dockerfile) .. " .")
+    end,
+  })
 end
 
 local COMPOSE_UP_OPTIONS = {
