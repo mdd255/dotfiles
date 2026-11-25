@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_CODE_MODE": "1"
+  },
   "permissions": {
     "allow": [
       "Read",
@@ -22,6 +25,7 @@
       }
     ]
   },
+  "enableArtifact": false,
   "statusLine": {
     "type": "command",
     "command": "bash /home/dh/.claude/statusline-command.sh"
@@ -51,12 +55,14 @@
       }
     }
   },
+  "spinnerTipsEnabled": false,
   "promptSuggestionEnabled": false,
   "awaySummaryEnabled": false,
   "tui": "default",
   "skipWorkflowUsageWarning": true,
   "theme": "dark-daltonized",
   "verbose": false,
+  "autoCompactEnabled": true,
   "fileCheckpointingEnabled": false,
   "showTurnDuration": true,
   "terminalProgressBarEnabled": true,

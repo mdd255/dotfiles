@@ -46,6 +46,10 @@ local tabs = {
   "tabs",
   mode = 1,
   fmt = shorten_filename,
+  tabs_color = {
+    active = { bg = color.black, fg = color.blue },
+    inactive = { bg = color.black, fg = color.gray },
+  },
   max_length = function()
     return vim.o.columns * 0.65
   end,
