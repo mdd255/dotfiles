@@ -1293,6 +1293,39 @@ function M.form(opts)
 
   local map_opts = { buffer = buf, nowait = true, silent = true }
 
+  -- field rows are fixed lines: never let <BS>/<Del>/dd join or remove them (would shift values between fields)
+  local function guarded(key, fallback, joins_next)
+    vim.keymap.set("i", key, function()
+      local pos = vim.api.nvim_win_get_cursor(win)
+      local row, col = pos[1], pos[2]
+      local line = vim.api.nvim_buf_get_lines(buf, row - 1, row, false)[1] or ""
+      local locked = row <= nf or (has_body and row <= body_row)
+
+      if locked and ((not joins_next and col == 0) or (joins_next and col >= #line)) then
+        return ""
+      end
+
+      return vim.api.nvim_replace_termcodes(fallback, true, false, true)
+    end, vim.tbl_extend("force", map_opts, { expr = true, replace_keycodes = false }))
+  end
+
+  guarded("<BS>", "<BS>")
+  guarded("<C-h>", "<C-h>")
+  guarded("<C-w>", "<C-w>")
+  guarded("<C-u>", "<C-u>")
+  guarded("<Del>", "<Del>", true)
+
+  vim.keymap.set("n", "dd", function()
+    local row = vim.api.nvim_win_get_cursor(win)[1]
+
+    if row <= nf or (has_body and row <= body_row) then
+      vim.api.nvim_buf_set_lines(buf, row - 1, row, false, { "" }) -- clear, keep the line
+    else
+      vim.cmd("normal! dd")
+    end
+  end, map_opts)
+
+
   vim.keymap.set({ "n", "i" }, "<C-CR>", submit, map_opts)
   vim.keymap.set("n", "q", close, map_opts)
 

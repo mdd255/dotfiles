@@ -445,6 +445,7 @@ return {
             vim.opt_local.statuscolumn = ""
 
             local buf = vim.api.nvim_get_current_buf()
+            vim.b[buf].completion = false -- no blink completion in the scratchpad
 
             local function accept_scratch()
               vim.cmd("%y+")
