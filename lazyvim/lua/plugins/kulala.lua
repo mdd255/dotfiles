@@ -22,6 +22,11 @@ return {
       ui = {
         max_response_size = 327680, -- 320kb
       },
+      lsp = {
+        on_attach = function(client, _)
+          client.server_capabilities.inlayHintProvider = false
+        end,
+      },
       kulala_core = {
         path = nil,
         timeout = 60000,
