@@ -9,5 +9,6 @@ fcitx5-bamboo
 fcitx5-config-qt
 vdirsyncer
 khal
+python-aiohttp-oauthlib
 zathura
 zathura-pdf-mupdf

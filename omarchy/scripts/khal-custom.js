@@ -4,12 +4,6 @@ const { formatEventTitle } = require('./calendar-utils');
 const { execSync } = require('node:child_process');
 
 function main() {
-  const CALENDAR_COLORS = {
-    abd: '#6bcbff',
-    aa: '#606060',
-    mdd: '#c5c5c5',
-  };
-
   try {
     const raw = execSync(
       'khal list --format "{calendar}:::{start-time} {title}" now eod',
@@ -20,12 +14,10 @@ function main() {
       .filter(line => line.includes(':::'))
       .map(line => {
         const sep = line.indexOf(':::');
-        const cal = line.slice(0, sep).trim();
         const eventText = line.slice(sep + 3).trim();
         const title = formatEventTitle(eventText);
         const truncated = title.length > 50 ? title.slice(0, 35) : title;
-        const color = CALENDAR_COLORS[cal] ?? '#ffffff';
-        return `<span color="${color}">${truncated}</span>`;
+        return truncated;
       })
       .filter(Boolean);
 

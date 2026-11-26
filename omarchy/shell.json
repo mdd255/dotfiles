@@ -9,12 +9,18 @@
         },
         {
           "exec": "~/.config/dotfiles/omarchy/scripts/world-clock.js NYC=America/New_York",
+          "fontSize": 14,
+          "horizontalMargin": 8,
+          "verticalPadding": 4,
           "id": "world-clock",
           "interval": 60,
           "type": "command"
         },
         {
           "exec": "~/.config/dotfiles/omarchy/scripts/khal-custom.js",
+          "fontSize": 14,
+          "horizontalMargin": 8,
+          "verticalPadding": 4,
           "id": "events",
           "interval": 60,
           "onClick": "~/.config/dotfiles/omarchy/scripts/khal-view.js",
@@ -29,8 +35,8 @@
       "right": [
         {
           "exec": "~/.config/dotfiles/omarchy/scripts/vpn.js status",
-          "fontSize": 13,
-          "horizontalMargin": 10,
+          "fontSize": 14,
+          "horizontalMargin": 8,
           "id": "vpn",
           "interval": 5,
           "onClick": "~/.config/dotfiles/omarchy/scripts/vpn.js toggle",
