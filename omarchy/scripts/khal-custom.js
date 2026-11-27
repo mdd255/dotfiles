@@ -3,6 +3,10 @@
 const { formatEventTitle } = require('./calendar-utils');
 const { execSync } = require('node:child_process');
 
+const MAX_EVENT_LEN = 24;
+const MAX_TOTAL_LEN = 40;
+const SEP = '   ';
+
 function main() {
   try {
     const raw = execSync(
@@ -16,15 +20,29 @@ function main() {
         const sep = line.indexOf(':::');
         const eventText = line.slice(sep + 3).trim();
         const title = formatEventTitle(eventText);
-        const truncated = title.length > 50 ? title.slice(0, 35) : title;
-        return truncated;
+        return title.length > MAX_EVENT_LEN
+          ? `${title.slice(0, MAX_EVENT_LEN - 1)}…`
+          : title;
       })
       .filter(Boolean);
 
-    nextEvents = Array.from(new Set(nextEvents.slice(0, 4))).join('   ') || '';
-    nextEvents = nextEvents.length ? `${nextEvents}` : '[No event]';
+    const unique = Array.from(new Set(nextEvents));
+    const shown = [];
+    let len = 0;
 
-    const payload = { text: nextEvents, tooltip: '' };
+    for (const ev of unique) {
+      const add = ev.length + (shown.length ? SEP.length : 0);
+      if (shown.length && len + add > MAX_TOTAL_LEN) break;
+      shown.push(ev);
+      len += add;
+    }
+
+    const hidden = unique.length - shown.length;
+    nextEvents = shown.join(SEP);
+    if (hidden > 0) nextEvents += `${SEP}+${hidden}`;
+    if (!nextEvents) nextEvents = '[No event]';
+
+    const payload = { text: nextEvents, tooltip: unique.join('\n') };
     console.log(JSON.stringify(payload));
   } catch (err) {
     console.log(JSON.stringify({ text: 'Khal error', tooltip: err.message }));

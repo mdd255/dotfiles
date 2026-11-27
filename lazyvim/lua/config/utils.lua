@@ -693,6 +693,8 @@ end
 --   } },
 --   body = { hint = "placeholder" } | nil,
 --   on_submit = function(data) end,
+--   on_change = function(data) end,  -- optional: after every text edit (live preview)
+--   on_close = function() end,       -- optional: form buffer wiped (submit or cancel)
 -- }
 -- Keys: <C-n>/<C-e> next/prev field, <Tab>/<S-Tab> walk completion menu, <CR> accept / next / submit,
 -- <C-CR> submit, q (normal) cancel.
@@ -860,6 +862,12 @@ function M.form(opts)
   end
 
   local snapshot = snapshot_text()
+
+  local function notify_change()
+    if opts.on_change then
+      opts.on_change(parse())
+    end
+  end
 
   -- own completion menu: a float whose first entry sits on the line below the cursor
   local menu = { buf = nil, win = nil, items = {}, sel = 0, start = 1 }
@@ -1070,7 +1078,7 @@ function M.form(opts)
     if menu.sel < 1 then
       menu.sel = n -- prev from the top wraps to the bottom
     elseif menu.sel > n then
-      menu.sel = n -- next stops at the bottom
+      menu.sel = 1 -- next from the bottom wraps to the top
     end
 
     menu_draw()
@@ -1085,6 +1093,7 @@ function M.form(opts)
     vim.api.nvim_win_set_cursor(win, { row, menu.start - 1 + #word })
     snapshot = snapshot_text()
     render()
+    notify_change()
   end
 
   -- completion menu of the field's items, filtered by what is typed (last segment for compact fields)
@@ -1201,6 +1210,10 @@ function M.form(opts)
 
   goto_row(opts.start_row or 1)
 
+  if opts.on_change then
+    vim.schedule(notify_change) -- initial state (e.g. highlight for prefilled values)
+  end
+
 
   local group = vim.api.nvim_create_augroup("UtilsForm" .. buf, { clear = true })
 
@@ -1219,6 +1232,8 @@ function M.form(opts)
       vim.schedule(function()
         render()
         show_completion()
+
+        notify_change()
       end)
     end,
   })
@@ -1261,6 +1276,11 @@ function M.form(opts)
     buffer = buf,
     callback = function()
       menu_close()
+
+      if opts.on_close then
+        opts.on_close()
+      end
+
       pcall(vim.api.nvim_del_augroup_by_id, group) -- drops the global WinResized autocmd too
     end,
   })
@@ -1375,6 +1395,7 @@ function M.form(opts)
       vim.api.nvim_win_set_cursor(win, { row, #new })
       snapshot = snapshot_text()
       render()
+      notify_change()
 
       if f and f.compact then
         show_completion()

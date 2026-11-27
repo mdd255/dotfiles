@@ -3,7 +3,7 @@
 // Bar click opens a floating terminal (matched by Hyprland on its app-id) that
 // runs this same script with --print, then closes on any key or after 15s.
 const { spawn, spawnSync } = require('node:child_process');
-const { formatEventTitle, generateCalendar, extractEventLines } = require('./calendar-utils');
+const { formatEventTitle, generateCalendar } = require('./calendar-utils');
 
 const APP_ID = 'dh.calendar';
 const CAL_COL = 28;
@@ -20,10 +20,20 @@ const toAnsi = str =>
     .replaceAll('</span>', '\x1b[0m')
     .replaceAll('&amp;', '&');
 
+// "start:::end:::[Org] Title" -> "start - end [Org] Title"; other lines (day headers) pass through.
+function formatLine(line) {
+  const m = line.match(/^\s*(.*?):::(.*?):::(.*)$/);
+  if (!m) return formatEventTitle(line);
+  const [, start, end, title] = m;
+  const org = title.match(/^\s*\[(.*?)\]\s*(.*)$/);
+  const label = org ? `[${formatEventTitle(org[1]).trim()}] ${formatEventTitle(org[2]).trim()}` : formatEventTitle(title).trim();
+  return `${start} - ${end} ${label}`;
+}
+
 function print() {
-  const raw = spawnSync('khal', ['calendar', '--notstarted'], { encoding: 'utf8' }).stdout;
+  const raw = spawnSync('khal', ['list', '--notstarted', '--format', '{start-time}:::{end-time}:::{title}'], { encoding: 'utf8' }).stdout;
   const calendar = generateCalendar(3);
-  const events = [...new Set(extractEventLines(raw).map(formatEventTitle))];
+  const events = [...new Set(raw.split('\n').map(formatLine))];
 
   const rows = Array.from({ length: Math.max(calendar.length, events.length) }, (_, i) => {
     const cal = calendar[i] ?? '';
